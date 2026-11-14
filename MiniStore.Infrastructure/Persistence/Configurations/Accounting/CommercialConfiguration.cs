@@ -61,3 +61,9 @@ public class PaymentMethodConfiguration : IEntityTypeConfiguration<PaymentMethod
 {
     public void Configure(EntityTypeBuilder<PaymentMethod> builder) { builder.HasKey(x => x.Id); builder.Property(x => x.Name).HasMaxLength(100).IsRequired(); builder.HasIndex(x => x.Name).IsUnique(); builder.HasOne<Account>().WithMany().HasForeignKey(x => x.AccountId).OnDelete(DeleteBehavior.Restrict); }
 }
+public class BankAccountConfiguration : IEntityTypeConfiguration<BankAccount>
+{ public void Configure(EntityTypeBuilder<BankAccount> b) { b.HasKey(x=>x.Id);b.Property(x=>x.Name).HasMaxLength(120).IsRequired();b.Property(x=>x.MaskedIdentifier).HasMaxLength(40).IsRequired();b.Property(x=>x.CurrencyCode).HasMaxLength(3).IsRequired();b.HasIndex(x=>new{x.Name}).IsUnique();b.HasOne<Account>().WithMany().HasForeignKey(x=>x.AccountId).OnDelete(DeleteBehavior.Restrict); } }
+public class BankStatementImportConfiguration : IEntityTypeConfiguration<BankStatementImport>
+{ public void Configure(EntityTypeBuilder<BankStatementImport> b) { b.HasKey(x=>x.Id);b.Property(x=>x.FileName).HasMaxLength(255).IsRequired();b.Property(x=>x.ContentHash).HasMaxLength(64).IsRequired();b.HasIndex(x=>new{x.BankAccountId,x.ContentHash}).IsUnique();b.HasOne<BankAccount>().WithMany().HasForeignKey(x=>x.BankAccountId).OnDelete(DeleteBehavior.Restrict);b.HasMany(x=>x.Lines).WithOne().HasForeignKey(x=>x.BankStatementImportId).OnDelete(DeleteBehavior.Cascade); } }
+public class BankStatementLineConfiguration : IEntityTypeConfiguration<BankStatementLine>
+{ public void Configure(EntityTypeBuilder<BankStatementLine> b) { b.HasKey(x=>x.Id);b.Property(x=>x.Description).HasMaxLength(500).IsRequired();b.Property(x=>x.Reference).HasMaxLength(120).IsRequired();b.Property(x=>x.Fingerprint).HasMaxLength(64).IsRequired();b.Property(x=>x.Debit).HasPrecision(18,2);b.Property(x=>x.Credit).HasPrecision(18,2);b.HasIndex(x=>new{x.BankStatementImportId,x.Fingerprint}).IsUnique(); } }

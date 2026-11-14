@@ -570,6 +570,12 @@ largest underrepresented modules; production deployment readiness and physical M
 - Release passed cleanly with 1,656 regression checks, 242/242 Angular tests and bundle/browser gates.
 - Active inventory is 45 MVC controllers, 263 actions, 143 Razor files and 127 user-facing views.
 
+## UX-017B — bank-statement evidence foundation — COMPLETED 2026-11-14
+
+- Added tenant bank accounts and immutable CSV-import evidence with SHA-256 duplicate fingerprints; raw files are not retained.
+- Added `BankStatements.View` / `BankStatements.Import`, a CSRF-protected API and one cohesive bilingual Angular workspace.
+- Matching, unmatching, adjustments, posting and close-readiness remain UX-017C/D work.
+
 ## MOD-031C — fifteen-controller commercial retirement — COMPLETED 2026-11-14
 
 - Retired 15 MVC controllers and 39 Razor/page-model/partial files.
@@ -627,6 +633,12 @@ largest underrepresented modules; production deployment readiness and physical M
 - Found no current bank-account, statement/import, immutable line or partial-allocation model.
 - Defined UX-017B as the smallest safe foundation: bounded CSV evidence and read-only journal candidates, without matching,
   journal creation, adjustments or close-readiness mutation.
+
+## UX-017B — bank-statement evidence foundation — COMPLETED 2026-11-14
+
+- Added tenant bank accounts and immutable CSV-import evidence with SHA-256 duplicate fingerprints; raw files are not retained.
+- Added `BankStatements.View` / `BankStatements.Import`, a CSRF-protected API and one cohesive bilingual Angular workspace.
+- Matching, unmatching, adjustments, posting and close-readiness remain UX-017C/D work.
 
 ## MOD-031C — fifteen-controller commercial retirement — COMPLETED 2026-11-14
 

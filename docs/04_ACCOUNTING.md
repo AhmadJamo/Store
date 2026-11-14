@@ -225,3 +225,7 @@ design is allocation-based rather than a matched flag so partial many-to-many cl
 posted journals. UX-017B is limited to tenant-owned bank accounts, immutable bounded-CSV import evidence and read-only
 candidate visibility. Match/unmatch, fees, interest, transfers, journal creation and close-readiness blocking are explicitly
 deferred. See `modernization/UX_017_BANK_RECONCILIATION_READINESS_AUDIT.md`.
+
+# Bank statement evidence foundation (UX-017B, 2026-11-14)
+
+Tenant-scoped bank accounts now link to ledger accounts. CSV imports retain immutable normalized transaction evidence and SHA-256 duplicate fingerprints without storing raw statements. `BankStatements.View` and `BankStatements.Import` protect the boundary. Matching, adjustments, journal creation and close-readiness remain deferred.

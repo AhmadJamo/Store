@@ -1347,6 +1347,7 @@ export const routes: Routes = [
         path: 'accounting/cash-flow-close',
         loadComponent: () => import('./features/accounting/cash-flow-close-page').then((module) => module.CashFlowClosePageComponent),
       },
+      { path: 'accounting/bank-statements', loadComponent: () => import('./features/accounting/bank-statements-page').then((module) => module.BankStatementsPageComponent) },
       {
         path: 'accounting/manual-journals',
         canDeactivate: [(component) => component.canDeactivate()],

@@ -1,6 +1,10 @@
 # Codebase map
 ## Angular modernization foundation
 
+UX-017B adds `BankStatementService`, `BankStatementsApiController`, tenant-scoped bank evidence entities and the cohesive Angular `features/accounting/bank-statements-page` workspace. CSV evidence is immutable and fingerprinted; matching is intentionally absent. See ADR `2026-11-14-bank-statement-evidence-foundation.md`.
+
+UX-017B adds `BankStatementService`, `BankStatementsApiController`, tenant-scoped bank evidence entities and the cohesive Angular `features/accounting/bank-statements-page` workspace. CSV evidence is immutable and fingerprinted; matching is intentionally absent. See ADR `2026-11-14-bank-statement-evidence-foundation.md`.
+
 UX-015 extends `FiscalPeriodService` and the `FiscalPeriod` domain entity with stepwise transitions, transactional UX-014
 readiness enforcement and registered semantic audit evidence. `SettingsApiController` exposes separate CSRF-protected
 soft-close/close/reopen commands under four `FiscalPeriods.*` permissions. Angular `features/settings/fiscal-periods-*`

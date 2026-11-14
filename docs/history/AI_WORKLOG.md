@@ -1,5 +1,7 @@
 # AI Work Log
 
+- 2026-11-14: Completed UX-017B bank-statement evidence foundation: tenant bank accounts, bounded immutable CSV evidence, SHA-256 duplicate protection, permissions, API, EF migration and Angular workspace. Matching and posting remain intentionally out of scope.
+
 - 2026-11-14: Completed `MOD-031A` and `MOD-031B`. Selected and retired the ten-controller inventory/warehouse cohort:
   LocationMovements, StockTransactions, UnassignedStock, InventoryAdjustments, InventoryTracking, WarehouseLocations,
   Warehouses, StockTransfers, GoodsReceipts and PurchaseDocumentReversals. Removed 25 user-facing views and ten page

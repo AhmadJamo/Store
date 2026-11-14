@@ -77,3 +77,7 @@ ledger lines, one ledger line may clear through several statement lines, and eit
 
 UX-017A authorizes no runtime change. UX-017B is the smallest safe implementation slice because it creates immutable source
 evidence and read-only candidate visibility without changing journals or claiming reconciliation.
+
+## UX-017B completion (2026-11-14)
+
+Implemented tenant BankAccount, immutable import batches and statement lines, bounded CSV parsing, SHA-256 file and transaction fingerprints, View/Import permissions, API and bilingual Angular evidence workspace. Raw files, matching, posting, adjustments and close-readiness effects remain excluded.

@@ -1,0 +1,7 @@
+using System.ComponentModel.DataAnnotations;
+namespace MiniStore.Application.Dtos.Accounting;
+public sealed class CreateBankAccountDto { [Required,StringLength(120)] public string Name {get;set;}=""; [Required,StringLength(40)] public string MaskedIdentifier {get;set;}=""; [Required,StringLength(3,MinimumLength=3)] public string CurrencyCode {get;set;}=""; [Range(1,int.MaxValue)] public int AccountId {get;set;} }
+public sealed record BankAccountDto(int Id,string Name,string MaskedIdentifier,string CurrencyCode,int AccountId);
+public sealed record BankStatementLineDto(int Id,DateTime TransactionDate,DateTime? ValueDate,string Description,string Reference,decimal Debit,decimal Credit);
+public sealed record BankStatementImportDto(int Id,int BankAccountId,string FileName,DateTime ImportedAtUtc,int LineCount,IReadOnlyList<BankStatementLineDto> Lines);
+public sealed record BankStatementWorkspaceDto(IReadOnlyList<BankAccountDto> Accounts,IReadOnlyList<BankStatementImportDto> Imports);

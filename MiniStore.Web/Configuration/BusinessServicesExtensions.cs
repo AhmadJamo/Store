@@ -3,11 +3,14 @@ using MiniStore.Application.DTOs.Security;
 using MiniStore.Application.Saas;
 using MiniStore.Application.Services;
 using MiniStore.Application.Services.Api;
+using MiniStore.Application.Services.Accounting;
 using MiniStore.Domain.Interfaces;
+using MiniStore.Domain.Interfaces.Accounting;
 using MiniStore.Infrastructure.Authorization;
 using MiniStore.Infrastructure.Documents;
 using MiniStore.Infrastructure.Persistence;
 using MiniStore.Infrastructure.Repositories;
+using MiniStore.Infrastructure.Repositories.Accounting;
 using MiniStore.Infrastructure.Services;
 using MiniStore.Web.Services;
 
@@ -98,7 +101,9 @@ public static class BusinessServicesExtensions
         services.AddScoped<IRecurringJournalTemplateRepository, RecurringJournalTemplateRepository>();
         services.AddScoped<RecurringJournalService>();
         services.AddScoped<IPaymentMethodRepository, PaymentMethodRepository>();
+        services.AddScoped<IBankStatementRepository, BankStatementRepository>();
         services.AddScoped<PaymentMethodService>();
+        services.AddScoped<BankStatementService>();
         services.AddScoped<IDocumentSequenceRepository, DocumentSequenceRepository>();
         services.AddScoped<DocumentNumberService>();
         services.AddScoped<IGeneralSettingsRepository, GeneralSettingsRepository>();
