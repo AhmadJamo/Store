@@ -1,5 +1,8 @@
 # Products and recipes
 
+`MOD-031C` physically retires Products plus Branches, PaymentMethods and TaxRates MVC/Razor presentation. Angular catalog
+workspaces and authenticated APIs retain Application-owned validation, permissions and master-data rules.
+
 `MOD-030Z` physically retires the ProductAttributes and ProductTemplates MVC presentation controllers and their three
 Razor views. Protected legacy GET/HEAD entry points navigate to the established Angular workspaces, with positive product
 identity required for attribute values. Attribute/template mutations remain in their authenticated APIs and Application

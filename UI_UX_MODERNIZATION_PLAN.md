@@ -569,3 +569,26 @@ largest underrepresented modules; production deployment readiness and physical M
 - Preserved authenticated Angular APIs, Application services, antiforgery, UnitOfWork and inventory/accounting authority.
 - Release passed cleanly with 1,656 regression checks, 242/242 Angular tests and bundle/browser gates.
 - Active inventory is 45 MVC controllers, 263 actions, 143 Razor files and 127 user-facing views.
+
+## MOD-031C — fifteen-controller commercial retirement — COMPLETED 2026-11-14
+
+- Retired 15 MVC controllers and 39 Razor/page-model/partial files.
+- Preserved Angular, APIs, Application/domain authority and 34 protected legacy reads; writes return 405.
+- Inventory is 30 MVC surfaces, 214 actions, 100 Razor rows and 93 views.
+- Release passed with zero warnings/errors, 1,638 checks, 242/242 Angular tests and bundle/browser gates.
+
+## MOD-031C — fifteen-controller commercial retirement — COMPLETED 2026-11-14
+
+- Retired 15 MVC controllers spanning catalog masters, products, purchasing and sales returns/credits.
+- Removed 39 Razor/page-model/partial files while preserving Angular, APIs and Application/domain authority.
+- Added 34 protected legacy GET/HEAD routes; writes return 405 and supplier attachment downloads remain API-only.
+- Inventory is 30 MVC surfaces, 214 actions, 100 Razor rows and 93 views.
+- Release passed with zero warnings/errors, 1,638 regression checks, 242/242 Angular tests and bundle/browser gates.
+
+## MOD-031C — fifteen-controller commercial retirement — COMPLETED 2026-11-14
+
+- Retired 15 MVC controllers spanning catalog masters, products, purchasing and sales returns/credits.
+- Removed 39 Razor/page-model/partial files while preserving Angular, APIs and Application/domain authority.
+- Added 34 protected legacy GET/HEAD routes; writes return 405 and supplier attachment downloads remain API-only.
+- Inventory is 30 MVC surfaces, 214 actions, 100 Razor rows and 93 views.
+- Release passed with zero warnings/errors, 1,638 regression checks, 242/242 Angular tests and bundle/browser gates.

@@ -1780,12 +1780,9 @@ foreach (var admin in new[] { false, true })
         "Tenant Admin session projection must include every protected administration permission");
 }
 
-foreach (var controller in new[] { typeof(RolesController), typeof(ProductsController) })
-{
-    var action = controller.GetMethod("Delete")!;
-    Check(action.GetCustomAttribute<HttpPostAttribute>() != null, $"Delete must require POST: {controller.Name}");
-    Check(action.GetCustomAttribute<HttpGetAttribute>() == null, $"Delete must reject GET: {controller.Name}");
-}
+var roleDeleteAction = typeof(RolesController).GetMethod("Delete")!;
+Check(roleDeleteAction.GetCustomAttribute<HttpPostAttribute>() != null, "Role deletion must require POST");
+Check(roleDeleteAction.GetCustomAttribute<HttpGetAttribute>() == null, "Role deletion must reject GET");
 Check(typeof(AccountController).GetMethods().Single(m => m.Name == "Login" && m.GetCustomAttribute<HttpPostAttribute>() != null)
     .GetCustomAttribute<Microsoft.AspNetCore.RateLimiting.EnableRateLimitingAttribute>()?.PolicyName == "login", "Login rate limiter missing");
 Check(typeof(AccountController).GetMethods().Single(m => m.Name == "Register" && m.GetCustomAttribute<HttpPostAttribute>() != null)
@@ -1800,7 +1797,7 @@ Check(typeof(MiniStore.Web.Areas.Platform.Controllers.PlatformAccountController)
         .GetParameters().Select(parameter => parameter.Name)
         .Contains("retryAfterSeconds"),
     "Platform login page must accept friendly rate-limit retry information");
-foreach (var controller in new[] { typeof(SettingsController), typeof(AccountsController), typeof(BranchesController), typeof(PaymentMethodsController), typeof(TaxRatesController) })
+foreach (var controller in new[] { typeof(SettingsController), typeof(AccountsController) })
 {
     var policy = controller.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy;
     Check(policy == $"{PermissionAuthorizeAttribute.PolicyPrefix}Administration.Access",
@@ -2041,15 +2038,6 @@ Check(DocumentSequence.CreateDefault(DocumentNumberType.CustomerReturnRequest).P
     "Customer return requests must use an independent centralized CRQ document sequence");
 Check(PermissionDefinitions.All.Count(x=>x.Name.StartsWith("CustomerReturnReceipts.",StringComparison.Ordinal))==5,
     "Customer return receipts must separate view, creation, inspection, disposition posting and cancellation permissions");
-var customerReturnReceiptController=typeof(CustomerReturnReceiptsController);
-Check(customerReturnReceiptController.GetMethod(nameof(CustomerReturnReceiptsController.Index))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:CustomerReturnReceipts.View"&&
-      customerReturnReceiptController.GetMethods().Single(x=>x.Name==nameof(CustomerReturnReceiptsController.Create)&&x.GetCustomAttribute<HttpPostAttribute>() is not null).GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:CustomerReturnReceipts.Create"&&
-      customerReturnReceiptController.GetMethod(nameof(CustomerReturnReceiptsController.Inspect))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:CustomerReturnReceipts.Inspect"&&
-      customerReturnReceiptController.GetMethod(nameof(CustomerReturnReceiptsController.Post))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:CustomerReturnReceipts.PostDisposition"&&
-      customerReturnReceiptController.GetMethod(nameof(CustomerReturnReceiptsController.Cancel))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:CustomerReturnReceipts.Cancel",
-    "Customer return receipt endpoints must enforce dedicated server-side permissions");
-Check(customerReturnReceiptController.GetMethods().Where(x=>x.GetCustomAttribute<HttpPostAttribute>() is not null).All(x=>x.GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null),
-    "Every customer return receipt mutation must require antiforgery validation");
 var customerReturnReceipt=new CustomerReturnReceipt("CRR-000001",1,new DateOnly(2026,10,21),null,"receiver");
 customerReturnReceipt.AddLine(new CustomerReturnReceiptLine(1,1,1,1,null,1m,CustomerReturnDisposition.Quarantine,"Package damaged",null,3m,"P-1","Product"));
 customerReturnReceipt.Inspect("inspector");
@@ -2069,11 +2057,6 @@ Check(DocumentSequence.CreateDefault(DocumentNumberType.CustomerReturnReceipt).P
     "Customer return receipts must use an independent centralized CRR document sequence");
 Check(PermissionDefinitions.All.Count(x=>x.Name.StartsWith("CustomerCreditNotes.",StringComparison.Ordinal))==2,
     "Customer credit notes must separate visibility from financial posting authority");
-var customerCreditController=typeof(CustomerCreditNotesController);
-Check(customerCreditController.GetMethod(nameof(CustomerCreditNotesController.Index))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:CustomerCreditNotes.View"&&
-      customerCreditController.GetMethods().Single(x=>x.Name==nameof(CustomerCreditNotesController.Create)&&x.GetCustomAttribute<HttpPostAttribute>() is not null).GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:CustomerCreditNotes.Create"&&
-      customerCreditController.GetMethods().Where(x=>x.GetCustomAttribute<HttpPostAttribute>() is not null).All(x=>x.GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null),
-    "Customer credit note endpoints must enforce dedicated permissions and antiforgery");
 foreach(var type in new[]{typeof(CustomerCreditNote),typeof(CustomerCreditNoteLine)})
     Check(TenantIsolationModel.TenantOwnedTypes.Contains(type)&&db.Model.FindEntityType(type)!.FindProperty("TenantId") is {IsNullable:false},$"{type.Name} must be tenant owned");
 Check(db.Model.FindEntityType(typeof(CustomerCreditNote))!.GetIndexes().Any(index=>index.IsUnique&&index.Properties.Any(property=>property.Name==nameof(CustomerCreditNote.RequestKey))),
@@ -2369,6 +2352,9 @@ var razorRouteFailures = new List<string>();
 var retiredRazorTargets = RetiredPresentationRouteCatalog.All
     .Select(route => $"{route.Controller}:{route.Action}")
     .ToHashSet(StringComparer.OrdinalIgnoreCase);
+var retiredRazorControllers = RetiredPresentationRouteCatalog.All
+    .Select(route => route.Controller)
+    .ToHashSet(StringComparer.OrdinalIgnoreCase);
 foreach (var viewPath in Directory.EnumerateFiles(webRoot, "*.cshtml", SearchOption.AllDirectories)
              .Where(path => !Path.GetFileName(path).StartsWith('_')))
 {
@@ -2387,7 +2373,8 @@ foreach (var viewPath in Directory.EnumerateFiles(webRoot, "*.cshtml", SearchOpt
         var controllerName = controllerMatch.Success ? controllerMatch.Groups[1].Value : defaultController;
         if (controllerName.Contains('@')) continue;
         var actionName = actionMatch.Groups[1].Value;
-        var targetsRetiredRedirect = retiredRazorTargets.Contains($"{controllerName}:{actionName}");
+        var targetsRetiredRedirect = retiredRazorTargets.Contains($"{controllerName}:{actionName}") ||
+                                     retiredRazorControllers.Contains(controllerName);
         if ((!webControllers.TryGetValue(controllerName, out var controllerType) ||
              !controllerType.GetMethods(BindingFlags.Instance | BindingFlags.Public)
                  .Any(method => method.Name.Equals(actionName, StringComparison.OrdinalIgnoreCase))) &&
@@ -2469,6 +2456,40 @@ var expectedRetiredPresentationRoutes = new Dictionary<string, (string Route, st
     ["PurchaseDocumentReversals:Index"] = ("/purchases/reversals", "PurchaseDocumentReversals.View", [], null),
     ["PurchaseDocumentReversals:Details"] = ("/purchases/reversals/{id}", "PurchaseDocumentReversals.View", [], null),
     ["PurchaseDocumentReversals:Create"] = ("/purchases/reversals/new", "PurchaseDocumentReversals.Create", [], null),
+    ["Branches:Index"] = ("/products/catalog-masters", "Administration.Access", [], null),
+    ["Branches:Create"] = ("/products/catalog-masters", "Administration.Access", [], null),
+    ["PaymentMethods:Index"] = ("/products/catalog-masters", "Administration.Access", [], null),
+    ["PaymentMethods:Create"] = ("/products/catalog-masters", "Administration.Access", [], null),
+    ["TaxRates:Index"] = ("/products/catalog-masters", "Administration.Access", [], null),
+    ["TaxRates:Create"] = ("/products/catalog-masters", "Administration.Access", [], null),
+    ["Products:Index"] = ("/products", "Products.View", [], null),
+    ["Products:Create"] = ("/products/new", "Products.Create", [], null),
+    ["Products:Edit"] = ("/products/{id}/edit", "Products.Edit", [], null),
+    ["CustomerCreditNotes:Index"] = ("/sales/credit-notes", "CustomerCreditNotes.View", [], null),
+    ["CustomerCreditNotes:Details"] = ("/sales/credit-notes/{id}", "CustomerCreditNotes.View", [], null),
+    ["CustomerCreditNotes:Create"] = ("/sales/credit-notes/new?customerInvoiceId={customerInvoiceId}", "CustomerCreditNotes.Create", [], "customerInvoiceId"),
+    ["CustomerReturnReceipts:Index"] = ("/sales/return-receipts", "CustomerReturnReceipts.View", [], null),
+    ["CustomerReturnReceipts:Details"] = ("/sales/return-receipts/{id}", "CustomerReturnReceipts.View", [], null),
+    ["CustomerReturnReceipts:Create"] = ("/sales/return-receipts/new?customerReturnRequestId={customerReturnRequestId}", "CustomerReturnReceipts.Create", [], "customerReturnRequestId"),
+    ["LandedCosts:Index"] = ("/purchases/landed-costs", "LandedCosts.View", [], null),
+    ["LandedCosts:Details"] = ("/purchases/landed-costs/{id}", "LandedCosts.View", [], null),
+    ["LandedCosts:Create"] = ("/purchases/landed-costs/new?goodsReceiptId={goodsReceiptId}", "LandedCosts.Create", [], "goodsReceiptId"),
+    ["PurchaseAgreements:Index"] = ("/purchases/agreements", "PurchaseAgreements.View", [], null),
+    ["PurchaseAgreements:Details"] = ("/purchases/agreements/{id}", "PurchaseAgreements.View", [], null),
+    ["PurchaseAgreements:Create"] = ("/purchases/agreements/new?sourcingEventId={sourcingEventId}", "PurchaseAgreements.Create", [], "sourcingEventId"),
+    ["PurchaseAnalytics:Index"] = ("/purchases/analytics", "PurchaseAnalytics.View", [], null),
+    ["PurchaseOrders:Index"] = ("/purchases/orders", "PurchaseOrders.View", [], null),
+    ["PurchaseOrders:Details"] = ("/purchases/orders/{id}", "PurchaseOrders.View", [], null),
+    ["PurchaseReturns:Index"] = ("/purchases/legacy-returns", "PurchaseReturns.View", [], null),
+    ["PurchaseReturns:Details"] = ("/purchases/legacy-returns/{id}", "PurchaseReturns.View", [], null),
+    ["PurchaseReturns:Create"] = ("/purchases/legacy/{purchaseId}/return", "PurchaseReturns.Create", [], "purchaseId"),
+    ["PurchaseTemplates:Index"] = ("/purchases/templates", "PurchaseTemplates.View", [], null),
+    ["SalesReturns:Index"] = ("/sales/legacy-returns", "SalesReturns.View", [], null),
+    ["SalesReturns:Details"] = ("/sales/legacy-returns/{id}", "SalesReturns.View", [], null),
+    ["SalesReturns:Create"] = ("/sales/legacy/{saleId}/return", "SalesReturns.Create", [], "saleId"),
+    ["SupplierCommunications:Details"] = ("/purchases/communications/{id}", "SupplierCommunications.View", [], null),
+    ["SupplierQuotations:Create"] = ("/purchases/sourcing/{sourcingEventId}/quotation", "SupplierQuotations.Create", [], "sourcingEventId"),
+    ["SupplierQuotations:Comparison"] = ("/purchases/sourcing/{sourcingEventId}/comparison", "SupplierQuotations.View", [], "sourcingEventId"),
     ["Public:Index"] = ("/welcome", null, ["/"], null),
     ["Public:Pricing"] = ("/pricing", null, ["/pricing"], null)
 };
@@ -2480,7 +2501,6 @@ Check(
         route.RequiredPermission == expected.Permission &&
         (route.LegacyPatterns ?? []).SequenceEqual(expected.Patterns) &&
         route.PositiveIntegerQueryParameter == expected.PositiveIntegerQueryParameter &&
-        !PresentationCutoverRouteCatalog.All.ContainsKey($"{route.Controller}:{route.Action}") &&
         !Directory.EnumerateFiles(Path.Combine(webRoot, "Controllers"), $"{route.Controller}Controller.cs", SearchOption.AllDirectories).Any() &&
         !File.Exists(Path.Combine(webRoot, "Views", route.Controller, $"{route.Action}.cshtml"))) &&
     RetiredPresentationRouteCatalog.BuildTarget(
@@ -3768,20 +3788,6 @@ Check(outboxEvidence.Status==SupplierOutboxStatus.Delivered&&outboxEvidence.Atte
 Check(db.Model.FindEntityType(typeof(SupplierIntegrationCredential))!.FindProperty("TenantId") is{IsNullable:false}&&db.Model.FindEntityType(typeof(SupplierPortalAccess))!.FindProperty("TenantId") is{IsNullable:false}&&db.Model.FindEntityType(typeof(SupplierExternalSubmission))!.FindProperty("TenantId") is{IsNullable:false}&&db.Model.FindEntityType(typeof(SupplierIntegrationOutbox))!.FindProperty("TenantId") is{IsNullable:false},"Supplier portal, API, idempotency and outbox evidence must remain tenant owned");
 var ublService=new SupplierUblService();var orderXml=ublService.CreatePurchaseOrder(dropshipOrder,"Supplier A");var invoiceUbl=ublService.ParseInvoice("<Invoice xmlns=\"urn:oasis:names:specification:ubl:schema:xsd:Invoice-2\" xmlns:cbc=\"urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2\" xmlns:cac=\"urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2\"><cbc:ID>INV-UBL-1</cbc:ID><cbc:IssueDate>2026-10-14</cbc:IssueDate><cbc:DocumentCurrencyCode>JOD</cbc:DocumentCurrencyCode><cac:OrderReference><cbc:ID>PO-DIRECT-1</cbc:ID></cac:OrderReference><cac:LegalMonetaryTotal><cbc:PayableAmount currencyID=\"JOD\">25.00</cbc:PayableAmount></cac:LegalMonetaryTotal></Invoice>");var confirmationUbl=ublService.ParseOrderConfirmation("<OrderResponse xmlns=\"urn:oasis:names:specification:ubl:schema:xsd:OrderResponse-2\" xmlns:cbc=\"urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2\" xmlns:cac=\"urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2\"><cbc:ID>CONF-1</cbc:ID><cac:OrderReference><cbc:ID>PO-DIRECT-1</cbc:ID></cac:OrderReference><cac:PromisedDeliveryPeriod><cbc:EndDate>2026-10-20</cbc:EndDate></cac:PromisedDeliveryPeriod></OrderResponse>");
 Check(orderXml.Contains("UBLVersionID")&&invoiceUbl.InvoiceNumber=="INV-UBL-1"&&invoiceUbl.PayableAmount==25m&&confirmationUbl.ConfirmationReference=="CONF-1"&&confirmationUbl.ConfirmedDeliveryDate==new DateOnly(2026,10,20),"UBL exchange must generate purchase orders and safely parse invoice and order-confirmation evidence");
-var purchaseOrderController = typeof(PurchaseOrdersController);
-Check(purchaseOrderController.GetMethod(nameof(PurchaseOrdersController.CloseRemaining))!
-          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
-      $"{PermissionAuthorizeAttribute.PolicyPrefix}PurchaseOrders.Close" &&
-      purchaseOrderController.GetMethod(nameof(PurchaseOrdersController.Reopen))!
-          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
-      $"{PermissionAuthorizeAttribute.PolicyPrefix}PurchaseOrders.Reopen" &&
-      purchaseOrderController.GetMethod(nameof(PurchaseOrdersController.ConfigureDropship))!
-          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
-      $"{PermissionAuthorizeAttribute.PolicyPrefix}PurchaseOrders.ConfigureFulfillment" &&
-      purchaseOrderController.GetMethod(nameof(PurchaseOrdersController.RecordDirectDelivery))!
-          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
-      $"{PermissionAuthorizeAttribute.PolicyPrefix}PurchaseOrders.RecordDirectDelivery",
-    "Purchase order closure, reopen, fulfillment setup and delivery evidence must use separate server-side permissions");
 var agreement = new PurchaseAgreement("AGR-000001", 301, 501, 5, 1,
     DateOnly.FromDateTime(DateTime.Today), DateOnly.FromDateTime(DateTime.Today.AddMonths(6)),
     "jod", "30 days", "buyer");
@@ -3818,25 +3824,6 @@ Check(db.Model.FindEntityType(typeof(PurchaseAgreement))!.FindProperty(nameof(Pu
 Check(DocumentSequence.CreateDefault(DocumentNumberType.PurchaseAgreement).Preview(DateTime.Today).StartsWith("AGR-") &&
       DocumentSequence.CreateDefault(DocumentNumberType.PurchaseTemplate).Preview(DateTime.Today).StartsWith("PTM-"),
     "Purchase agreements and templates must use independent centralized document sequences");
-var agreementController = typeof(PurchaseAgreementsController);
-Check(agreementController.GetMethod(nameof(PurchaseAgreementsController.Index))!
-          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
-      $"{PermissionAuthorizeAttribute.PolicyPrefix}PurchaseAgreements.View" &&
-      agreementController.GetMethod(nameof(PurchaseAgreementsController.Activate))!
-          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
-      $"{PermissionAuthorizeAttribute.PolicyPrefix}PurchaseAgreements.Activate" &&
-      agreementController.GetMethod(nameof(PurchaseAgreementsController.Release))!
-          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
-      $"{PermissionAuthorizeAttribute.PolicyPrefix}PurchaseAgreements.Release",
-    "Purchase agreement visibility, activation and releases must use separate server-side permissions");
-var templateController = typeof(PurchaseTemplatesController);
-Check(templateController.GetMethod(nameof(PurchaseTemplatesController.Index))!
-          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
-      $"{PermissionAuthorizeAttribute.PolicyPrefix}PurchaseTemplates.View" &&
-      templateController.GetMethod(nameof(PurchaseTemplatesController.Generate))!
-          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
-      $"{PermissionAuthorizeAttribute.PolicyPrefix}PurchaseTemplates.Generate",
-    "Purchase template visibility and request generation must use separate server-side permissions");
 var goodsReceipt = new GoodsReceipt("GRN-000001", 1, 1, DateOnly.FromDateTime(DateTime.Today), "Partial delivery", "receiver");
 goodsReceipt.AddLine(new GoodsReceiptLine(1, 10, 2, 1m, 1m, 11.25m, "P-10", "Coffee beans", "kg", "LOT-1", null, null, null));
 goodsReceipt.Post("receiver");
@@ -3907,14 +3894,6 @@ foreach (var type in new[] { typeof(LandedCost), typeof(LandedCostComponent), ty
         $"{type.Name} must be tenant owned");
 Check(DocumentSequence.CreateDefault(DocumentNumberType.LandedCost).Preview(DateTime.Today).StartsWith("LDC-"),
     "Landed costs must use an independent centralized document sequence");
-var landedController = typeof(LandedCostsController);
-Check(landedController.GetMethod(nameof(LandedCostsController.Index))!
-          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
-      $"{PermissionAuthorizeAttribute.PolicyPrefix}LandedCosts.View" &&
-      landedController.GetMethod(nameof(LandedCostsController.Create), [typeof(CreateLandedCostDto)])!
-          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
-      $"{PermissionAuthorizeAttribute.PolicyPrefix}LandedCosts.Create",
-    "Landed cost visibility and posting must use separate server-side permissions");
 var receiptMovement = StockMovement.PostGoodsReceipt(1, 1, 10, 1, 1m, "receiver", "GRN-000001");
 Check(receiptMovement.Type == StockMovementType.ReceiptIn && receiptMovement.Status == StockMovementStatus.Posted &&
       receiptMovement.SourceDocumentType == "GoodsReceipt" && receiptMovement.SourceDocumentId == 1,
@@ -4044,7 +4023,7 @@ Check(vendorBillController.GetMethod(nameof(VendorBillsController.Index))!
       vendorBillController.GetMethod(nameof(VendorBillsController.Post))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == $"{PermissionAuthorizeAttribute.PolicyPrefix}VendorBills.Post" &&
       vendorBillController.GetMethod(nameof(VendorBillsController.Cancel))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == $"{PermissionAuthorizeAttribute.PolicyPrefix}VendorBills.Cancel",
     "Vendor bill visibility, entry, approval, posting and match override must use separate server-side permissions");
-var communicationController=typeof(SupplierCommunicationsController);Check(communicationController.GetMethod(nameof(SupplierCommunicationsController.Prepare))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy==$"{PermissionAuthorizeAttribute.PolicyPrefix}SupplierCommunications.Prepare"&&communicationController.GetMethod(nameof(SupplierCommunicationsController.RecordActivity))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy==$"{PermissionAuthorizeAttribute.PolicyPrefix}SupplierCommunications.RecordActivity"&&vendorBillController.GetMethod(nameof(VendorBillsController.ReviewExtraction))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy==$"{PermissionAuthorizeAttribute.PolicyPrefix}VendorBills.ReviewExtraction","Supplier communication and extraction review must use distinct server-side permissions");
+Check(vendorBillController.GetMethod(nameof(VendorBillsController.ReviewExtraction))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy==$"{PermissionAuthorizeAttribute.PolicyPrefix}VendorBills.ReviewExtraction","Extraction review must retain its distinct server-side permission");
 var integrationsController=typeof(SupplierIntegrationsController);var apiController=typeof(SupplierIntegrationApiController);var portalController=typeof(SupplierPortalController);
 Check(integrationsController.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy==$"{PermissionAuthorizeAttribute.PolicyPrefix}SupplierIntegrations.View"&&integrationsController.GetMethod(nameof(SupplierIntegrationsController.CreateCredential))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy==$"{PermissionAuthorizeAttribute.PolicyPrefix}SupplierIntegrations.Manage"&&integrationsController.GetMethod(nameof(SupplierIntegrationsController.QueuePurchaseOrder))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy==$"{PermissionAuthorizeAttribute.PolicyPrefix}SupplierIntegrations.Queue","Supplier integration administration and outbound queueing must use distinct internal permissions");
 Check(apiController.GetCustomAttribute<ApiControllerAttribute>() is not null&&apiController.GetCustomAttribute<AllowAnonymousAttribute>() is not null&&apiController.GetCustomAttribute<IgnoreAntiforgeryTokenAttribute>() is not null&&portalController.GetCustomAttribute<AllowAnonymousAttribute>() is not null,"Supplier API and portal must expose explicit anonymous boundaries while internal administration remains permission protected");
@@ -4073,16 +4052,6 @@ Check(sourcingController.GetMethod(nameof(PurchaseSourcingController.Index))!
 Check(sourcingCreateAction.GetParameters().Single(x => x.ParameterType == typeof(CreatePurchaseSourcingDto))
           .GetCustomAttribute<BindAttribute>()?.Prefix == "Form",
     "Purchase sourcing submission must bind the nested Form fields posted by the create page");
-var supplierQuotationCreateAction = typeof(SupplierQuotationsController)
-    .GetMethod(nameof(SupplierQuotationsController.Create), [typeof(CreateSupplierQuotationDto)])!;
-Check(supplierQuotationCreateAction.GetParameters().Single().GetCustomAttribute<BindAttribute>()?.Prefix == "Form",
-    "Supplier quotation submission must bind the nested Form fields posted by the create page");
-var supplierQuotationAwardAction = typeof(SupplierQuotationsController)
-    .GetMethod(nameof(SupplierQuotationsController.Award), [typeof(CreatePurchaseQuotationAwardDto)])!;
-Check(supplierQuotationAwardAction.GetParameters().Single().GetCustomAttribute<BindAttribute>()?.Prefix == "Form" &&
-      supplierQuotationAwardAction.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
-      $"{PermissionAuthorizeAttribute.PolicyPrefix}SupplierQuotations.Award",
-    "Line-level quotation awards must bind nested allocations and enforce the dedicated server-side permission");
 var currencySettingsAction = typeof(SettingsController).GetMethod(nameof(SettingsController.Currencies), [typeof(SaveCurrencyExchangeRateDto)])!;
 Check(currencySettingsAction.GetParameters().Single().GetCustomAttribute<BindAttribute>()?.Prefix == "Form",
     "Currency-rate submission must bind the nested Form fields posted by the settings page");
@@ -4541,11 +4510,6 @@ Check(purchaseReconciliation.InventoryExceptionCount == 0 &&
       purchaseReconciliation.InventoryIsReconciled &&
       purchaseReconciliation.Inventory.Single().InventoryAccountDisplay == "1200 — Inventory",
     "Purchase reconciliation must compare rounded warehouse value with its assigned ledger account");
-var purchaseAnalyticsController = typeof(PurchaseAnalyticsController);
-Check(purchaseAnalyticsController.GetMethod(nameof(PurchaseAnalyticsController.Index))!
-          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
-      $"{PermissionAuthorizeAttribute.PolicyPrefix}PurchaseAnalytics.View",
-    "Purchase analytics must require its dedicated server-side view permission");
 var originalCulture = CultureInfo.CurrentCulture;
 try
 {

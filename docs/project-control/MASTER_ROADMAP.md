@@ -434,3 +434,8 @@
 - Passed clean Release, 1,883 security/accounting checks, 242 Angular tests, 137 templates, 78 destinations, 47/47 routes,
   production budgets and authenticated Edge acceptance 15/15.
 - Proposed next slice: UX-017 bank-statement reconciliation foundation; owner approval required.
+
+## MOD-031C — Fifteen-controller commercial retirement — COMPLETE 2026-11-14
+
+- Retired the approved catalog/product/purchase/sales MVC presentation cohort with Angular/API authority preserved.
+- Active inventory is 30 MVC surfaces, 214 actions, 100 Razor rows and 93 views.

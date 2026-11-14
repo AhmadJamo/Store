@@ -363,11 +363,11 @@ Adds `SalesApprovalRule` and sequential step configuration plus immutable order 
 
 ## SAL-100D customer credit notes
 
-Adds the tenant-owned `CustomerCreditNote` aggregate and lines, repository, DTOs and `CustomerCreditNoteService`. Posting starts only from Posted customer-return receipts, caps each quantity by the exact invoice line, delivery allocation and still-uncredited receipt quantity, and uses a tenant-unique request key to make retries idempotent. It debits frozen sales revenue/output tax and credits frozen receivables through `JournalPostingService`; invoice and payment balances subtract posted credits. It does not mutate stock, tracking, movements or cash. `CustomerCreditNotesController`, three Razor screens, two permissions and migration 130 expose the controlled flow.
+Adds the tenant-owned `CustomerCreditNote` aggregate and lines, repository, DTOs and `CustomerCreditNoteService`. Posting starts only from Posted customer-return receipts, caps each quantity by the exact invoice line, delivery allocation and still-uncredited receipt quantity, and uses a tenant-unique request key to make retries idempotent. It debits frozen sales revenue/output tax and credits frozen receivables through `JournalPostingService`; invoice and payment balances subtract posted credits. It does not mutate stock, tracking, movements or cash. `CustomerCreditNotesApiController`, Angular, two permissions and migration 130 expose the controlled flow.
 
 ## SAL-100C customer return disposition posting
 
-Extends the receipt aggregate with Posted audit evidence; `CustomerReturnReceiptService` coordinates stock, location, tracking, movement, transaction and journal authorities. `CustomerReturnReceiptsController` and Details expose a dedicated permission and immutable result evidence. Migration 129 is additive; regression and disposable SQL scenarios cover the domain/authorization and full Restock path respectively.
+Extends the receipt aggregate with Posted audit evidence; `CustomerReturnReceiptService` coordinates stock, location, tracking, movement, transaction and journal authorities. `CustomerReturnReceiptsApiController` and Angular Details expose dedicated permissions and immutable result evidence. Migration 129 is additive; regression and disposable SQL scenarios cover the domain/authorization and full Restock path respectively.
 
 ## SAL-100A customer return authorization
 
@@ -717,8 +717,8 @@ workspace, persistent-tab/unsaved-form behavior and generated-journal evidence l
 | `Controllers/Api/V1/PurchaseDocumentReversalsApiController.cs`, Angular purchase-document-reversals feature | permission-protected reversal confirmation, history and audit detail; MVC retired in MOD-031B | PUR-180 reversal service. |
 | `Controllers/Api/V1/SupplierPaymentsApiController.cs`, Angular supplier-payments feature | permission-protected allocation, posting and immutable detail; MVC retired in MOD-030Z | PUR-100 payment service. |
 | `Controllers/Purchases/{PurchaseAgreements,PurchaseTemplates}Controller.cs`, matching views | permission-split agreement creation/activation/release and repeat-template creation/generation | PUR-120 services. |
-| `Controllers/Purchases/LandedCostsController.cs`, `Views/LandedCosts/*` | permission-split landed-cost history, allocation capture and immutable detail | PUR-130 service. |
-| `Controllers/Purchases/PurchaseAnalyticsController.cs`, `Views/PurchaseAnalytics/Index.cshtml` | permission-protected responsive purchasing dashboard with KPI sources, trends, drill-through exceptions, buyer workload and final lifecycle acceptance | PUR-140/PUR-280 analytics service. |
+| `Controllers/Api/V1/LandedCostsApiController.cs`, Angular landed-cost feature | permission-split landed-cost history, allocation capture and immutable detail | PUR-130 service. |
+| `Controllers/Api/V1/PurchaseAnalyticsApiController.cs`, Angular analytics feature | permission-protected responsive purchasing dashboard with KPI sources, trends, drill-through exceptions, buyer workload and final lifecycle acceptance | PUR-140/PUR-280 analytics service. |
 | `Controllers/Api/V1/PurchaseAccountingReconciliationApiController.cs`, Angular reconciliation route | permission-protected read-only Inventory/GL and GRNI/GL reconciliation with responsive evidence cards and setup/source links | PUR-160 reconciliation service; legacy MVC Index is retired by MOD-030H. |
 | `Views/Settings/PurchaseMatching.cshtml` | administration screen for quantity and price tolerance percentages | PUR-090 settings service. |
 | `Views/Settings/WorkflowCatalog.cshtml` | responsive bilingual 62-step catalog grouped into seven ERP modules and phases, with module navigation, step owner, reviewer, control principle, completion evidence and authorized destination | `WorkflowCatalogService`; Administration access. |

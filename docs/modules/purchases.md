@@ -1,4 +1,8 @@
 # Purchases
+
+`MOD-031C` retires the LandedCosts, PurchaseAgreements, PurchaseAnalytics, PurchaseOrders, PurchaseReturns,
+PurchaseTemplates, SupplierCommunications and SupplierQuotations MVC/Razor presentation. Angular/API remains authoritative;
+posting, fulfillment, sourcing, permissions, antiforgery and UnitOfWork behavior are unchanged.
 > Status: PROCURE-TO-PAY THROUGH PUR-280 IMPLEMENTED; NEW LEGACY DIRECT PURCHASE CREATION RETIRED | Last reviewed: 2026-11-12
 
 UX-002 preserves Purchase Request list status/search context and adds an opt-in memory-only create draft containing

@@ -1,4 +1,7 @@
 # Suppliers
+
+`MOD-031C` retires SupplierCommunications MVC/Razor presentation; authenticated Angular/API commands and attachment
+download remain authoritative and retain their separate permissions.
 > Status: IMPLEMENTED | Last reviewed: 2026-10-12
 
 ## Purpose and flow

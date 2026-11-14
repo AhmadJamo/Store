@@ -2387,3 +2387,6 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
   78 destinations, 47/47 routes and 337,191/358,400 plus 81,877/81,920 bundle budgets passed. Authenticated Microsoft Edge
   acceptance passed 15/15. No scheduler, automatic posting, closing entry or posted-journal mutation was added. UX-017
   bank-statement reconciliation is proposed pending owner approval.
+- 2026-11-14: Completed MOD-031C. Retired 15 commercial MVC/Razor presentation controllers, preserved Angular/API and
+  Application/domain authority, and added 34 protected legacy reads. Release passed with zero warnings/errors, 1,638
+  regression checks, 242/242 Angular tests and bundle/browser gates. Inventory is 30 MVC surfaces, 214 actions and 93 views.

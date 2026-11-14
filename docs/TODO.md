@@ -475,3 +475,15 @@ The ERP SaaS Foundation Blueprint is imported as a non-authoritative planning re
 - [x] Independent permissions, explicit antiforgery, required reason/rowversion and semantic audit evidence.
 - [x] Bilingual state-aware UI that removes unavailable/repeated commands and links to readiness evidence.
 - [x] No automatic closing journal and no modification of posted or source documents.
+
+## MOD-031C completed (2026-11-14)
+
+- [x] Retire the approved 15-controller MVC/Razor cohort.
+- [x] Preserve 34 protected reads and reject retired writes with 405.
+- [x] Pass Release, 1,638 checks, 242 Angular tests and bundle/browser gates.
+
+## MOD-031C completed (2026-11-14)
+
+- [x] Retire the approved 15-controller commercial MVC/Razor cohort.
+- [x] Preserve 34 protected reads and reject retired writes with 405.
+- [x] Pass Release, 1,638 regression checks, 242 Angular tests and bundle/browser gates.

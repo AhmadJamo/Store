@@ -1,5 +1,8 @@
 # Sales
 
+`MOD-031C` retires CustomerCreditNotes, CustomerReturnReceipts and SalesReturns MVC/Razor presentation. Angular/API keeps
+the same Application-owned posting, inventory disposition, accounting, authorization and antiforgery boundaries.
+
 `MOD-030Z` physically retires the CustomerPayments and SalesDeliveries MVC presentation controllers and their six Razor
 views. Their protected legacy GET/HEAD entry points navigate to the established Angular list/create/detail workspaces,
 including positive source-document validation. Legacy mutations are never redirected or replayed; payment allocation,
