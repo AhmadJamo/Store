@@ -146,3 +146,13 @@ GoodsReceiptReturns, PurchaseServiceAcceptances and SupplierCreditNotes form one
 maps one MVC list/create/details flow to one Angular feature and authenticated API over the same Application service.
 All three old Create POSTs are retired rather than replayed. Positive source identifiers are validated before redirect,
 and API permissions, antiforgery and transaction/posting authority remain unchanged.
+
+## First ten-controller cohort — MOD-030Z
+
+After the owner approved grouping subsequent work into cohorts of up to ten controllers, SupplierPayments,
+CustomerPayments, PurchaseReplenishment, ProductAttributes, ProductStocks, SalesDeliveries, ProductTemplates,
+Replenishment, Suppliers and InventoryScanning were retired as one bounded presentation cohort. The cohort removes only
+MVC controllers, Razor views and their active cutover registrations; the authenticated Angular APIs continue to delegate
+to the existing Application services. The retired-route catalog preserves the 21 protected GET/HEAD entry points,
+validates positive identifiers before Angular navigation and never redirects or replays legacy mutations. This cohort
+does not authorize identity, platform, subscription or session-boundary retirement.

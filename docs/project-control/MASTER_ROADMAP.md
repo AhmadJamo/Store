@@ -77,7 +77,7 @@
 - `MOD-030X` — COMPLETE 2026-11-14: تقاعدت GoodsReceiptReturns وPurchaseServiceAcceptances وSupplierCreditNotes
   كدفعة واحدة؛ حُذفت 3 Controllers و9 Views وبقيت API/Angular/services وقواعد posting.
 - `MOD-030Y` — COMPLETE 2026-11-14: ثُبتت أول دفعة من عشرة Controllers بعد استبعاد حدود الهوية والجلسات والمنصة.
-- `MOD-030Z` — APPROVED: تنفيذ تقاعد Controllers العشرة المسماة في NEXT_TASK ككومت واحد.
+- `MOD-030Z` — COMPLETE 2026-11-14: تقاعدت Controllers العشرة المسماة مع 21 View وبقيت APIs/services والقواعد.
 - `UX-001` — COMPLETE 2026-11-04: تدقيق واجهة Angular، خطة تحديث مستمرة، مجموعات تنقل مهنية بصلاحيات،
   breadcrumbs ثنائية اللغة وحفظ آمن لتفضيل فتح المجموعات دون تغيير الأعمال.
 - `UX-002` — COMPLETE 2026-11-05: عقد typed لسياق URL وذاكرة workspace المعزولة ومسودات آمنة مؤقتة،

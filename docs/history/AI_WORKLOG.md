@@ -1,5 +1,10 @@
 # AI Work Log
 
+- 2026-11-14: Completed `MOD-030Z`, retiring the ten controllers selected by MOD-030Y plus 21 user-facing Razor views.
+  Protected legacy reads now resolve to Angular; APIs, Application services, permissions, antiforgery and accounting/
+  inventory authority remain. Release passed cleanly with 1,725 regression checks, 242/242 Angular tests and bundle/browser
+  gates. Active inventory is 55 controllers, 324 actions, 170 Razor files and 152 views.
+
 - 2026-11-14: Completed `MOD-030Y`, a non-destructive audit selecting the first ten-controller retirement cohort:
   SupplierPayments, CustomerPayments, PurchaseReplenishment, ProductAttributes, ProductStocks, SalesDeliveries,
   ProductTemplates, Replenishment, Suppliers and InventoryScanning. Each has Angular/API parity over its existing

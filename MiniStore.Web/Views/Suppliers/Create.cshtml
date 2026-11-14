@@ -1,9 +1,0 @@
-@model MiniStore.Application.DTOs.Suppliers.CreateSupplierDto
-@inject Microsoft.Extensions.Localization.IStringLocalizer<MiniStore.Web.SharedResource> Localizer
-@{ ViewData["Title"] = Localizer["Create supplier"]; }
-<div class="d-flex justify-content-between align-items-start mb-4"><div><h1 class="h2">@Localizer["Create supplier"]</h1><p class="text-muted mb-0">@Localizer["Build the supplier profile and choose its products in one place."]</p></div><a asp-action="Index" class="btn btn-outline-secondary">@Localizer["Back to suppliers"]</a></div>
-<form asp-action="Create" method="post">
-    <partial name="_FormFields" model="Model" />
-    <div class="d-flex gap-2 mt-4"><button class="btn btn-success">@Localizer["Save supplier"]</button><a asp-action="Index" class="btn btn-secondary">@Localizer["Cancel"]</a></div>
-</form>
-@section Scripts { <partial name="_SupplierFormScripts" /> }

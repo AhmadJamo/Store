@@ -194,3 +194,8 @@ Controller و385 Action و200 ملف Razor. الدفعات التالية ستج
 تقاعدت GoodsReceiptReturns وPurchaseServiceAcceptances وSupplierCreditNotes معًا بعد إثبات تطابق list/create/details
 والصلاحيات والتحقق والخدمات. حُذفت 3 Controllers و9 Views، وتحولت GET/HEAD القديمة إلى Angular، وأصبحت Create POSTs
 القديمة 405. بقيت APIs وApplication services وقواعد posting دون تغيير. الجرد الحالي 65/373/191.
+
+## MOD-030Z — أول دفعة من عشرة Controllers
+
+تقاعدت دفعة MOD-030Y كاملة في تنفيذ واحد. حُذفت عشرة Controllers و21 View، ونقلت القراءات القديمة إلى Angular مع
+بقاء API والخدمات والصلاحيات وantiforgery وقواعد الأعمال. أصبح الجرد 55 Controller و324 Action و170 Razor.

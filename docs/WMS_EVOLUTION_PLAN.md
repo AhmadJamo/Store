@@ -725,8 +725,8 @@ MiniStore.Application/Dtos/Catalog/ProductAttributes/*
 MiniStore.Application/Services/Catalog/ProductAttributeService.cs
 MiniStore.Infrastructure/Repositories/Catalog/ProductAttributeRepository.cs
 MiniStore.Infrastructure/Persistence/Configurations/Catalog/ProductAttribute*.cs
-MiniStore.Web/Controllers/Catalog/ProductAttributesController.cs
-MiniStore.Web/Views/ProductAttributes/*
+MiniStore.Web/Controllers/Api/V1/ProductAttributesApiController.cs
+MiniStore Front-End/src/app/features/products/product-attribute*
 docs/decisions/<date>-product-logistics-and-variant-model.md
 ```
 

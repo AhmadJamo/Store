@@ -1,4 +1,9 @@
 # Inventory and stock movements
+
+`MOD-030Z` physically retires the ProductStocks, Replenishment and InventoryScanning MVC presentation controllers and
+their five user-facing Razor views (plus the former Razor page-model companions). Protected legacy GET/HEAD entry points
+navigate to the established Angular workspaces. Stock adjustment, replenishment and scanning mutations remain
+permissioned, antiforgery-protected API/Application operations and are never replayed from legacy MVC URLs.
 > Status: IMPLEMENTED WITH APPROVED WMS EVOLUTION | Last reviewed: 2026-11-12
 
 Inventory quantity DTOs use culture-invariant decimal range limits and value conversion. Arabic requests therefore reach ordinary model validation rather than throwing while parsing limits such as `0.000001`.

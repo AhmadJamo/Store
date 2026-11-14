@@ -1,4 +1,9 @@
 # Sales
+
+`MOD-030Z` physically retires the CustomerPayments and SalesDeliveries MVC presentation controllers and their six Razor
+views. Their protected legacy GET/HEAD entry points navigate to the established Angular list/create/detail workspaces,
+including positive source-document validation. Legacy mutations are never redirected or replayed; payment allocation,
+delivery lifecycle, permissions, antiforgery and Application-owned business rules remain unchanged.
 UX-006 adds display-only Draft/Confirmed/Cancelled progress and bilingual guidance to Sales Order details. Pending approval
 uses the existing server-returned approval status, while reservation, delivery and invoicing guidance references existing
 progress contracts. The command zone now uses the shared workflow footer without changing permission or mutation logic.

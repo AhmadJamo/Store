@@ -574,9 +574,9 @@ MiniStore.Web/Controllers/Customers/CustomerProfilesController.cs
 MiniStore.Web/Controllers/Pricing/PriceListsController.cs
 MiniStore.Web/Controllers/Sales/SalesQuotationsController.cs
 MiniStore.Web/Controllers/Sales/SalesOrdersController.cs
-MiniStore.Web/Controllers/Inventory/SalesDeliveriesController.cs
+MiniStore.Web/Controllers/Api/V1/SalesDeliveriesApiController.cs
 MiniStore.Web/Controllers/Invoicing/CustomerInvoicesController.cs
-MiniStore.Web/Controllers/Payments/CustomerPaymentsController.cs
+MiniStore.Web/Controllers/Api/V1/CustomerPaymentsApiController.cs
 MiniStore.Web/Views/<matching controller>/*
 
 tests/SalesSqlIntegration/SalesSqlIntegration.csproj

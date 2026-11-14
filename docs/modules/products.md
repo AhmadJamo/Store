@@ -1,4 +1,9 @@
 # Products and recipes
+
+`MOD-030Z` physically retires the ProductAttributes and ProductTemplates MVC presentation controllers and their three
+Razor views. Protected legacy GET/HEAD entry points navigate to the established Angular workspaces, with positive product
+identity required for attribute values. Attribute/template mutations remain in their authenticated APIs and Application
+services; legacy MVC mutations are never redirected or replayed.
 > Status: IMPLEMENTED | Last reviewed: 2026-11-05
 
 ## Angular migration foundation (2026-10-25)

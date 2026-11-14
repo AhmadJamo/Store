@@ -1021,7 +1021,10 @@ static async Task RunLiveCutoverAsync(
             "InventoryInsights" or "InventoryReconciliation" or "StockMovements" or
             "JournalEntries" or "PurchaseAccountingReconciliation" or "AuditEvents" or "AnalyticsCenter" or "Recipes" or
             "ProductCategories" or "SalesApprovalRules" or "PurchaseApprovalRules" or
-            "GoodsReceiptReturns" or "PurchaseServiceAcceptances" or "SupplierCreditNotes";
+            "GoodsReceiptReturns" or "PurchaseServiceAcceptances" or "SupplierCreditNotes" or
+            "SupplierPayments" or "CustomerPayments" or "PurchaseReplenishment" or "ProductAttributes" or
+            "ProductStocks" or "SalesDeliveries" or "ProductTemplates" or "Replenishment" or "Suppliers" or
+            "InventoryScanning";
         var expectsAngular = physicallyRetired ||
                              options.CutoverMode == "angular" ||
                              options.CutoverMode == "pilot" &&

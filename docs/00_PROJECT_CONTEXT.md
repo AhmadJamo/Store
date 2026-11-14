@@ -86,6 +86,9 @@ controllers, 373 actions and 191 Razor files.
 `MOD-030Y` then audited and named the first ten-controller cohort without runtime mutation. It deliberately excludes
 authentication, subscription, user and Platform session boundaries. Exact execution scope is recorded in NEXT_TASK as
 MOD-030Z; active inventory remains 65 controllers, 373 actions and 191 Razor files until that cohort passes its gates.
+`MOD-030Z` then completed that exact ten-controller cohort. Twenty-one presentation GET actions and 21 user-facing views
+were retired while APIs and Application authority remained unchanged. Active inventory is now 55 MVC controllers, 324
+actions and 170 Razor files.
 
 UX-009 adds permission-aware Purchasing, Sales and Accounting hubs with complete operational-route discovery. UX-010
 projects the tenant chart of accounts as an expandable hierarchy and adds a permission-protected, repository-paged journal

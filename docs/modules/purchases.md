@@ -24,6 +24,11 @@ progress contracts. Purchase Order commands now use the shared workflow footer w
 
 The implemented workflow described below is a direct supplier invoice and inventory receipt, not a Purchase Order lifecycle. The approved additive evolution, compatibility rules and ordered delivery slices are documented in `docs/PURCHASE_MANAGEMENT_EVOLUTION_PLAN.md`. Existing Purchase and PurchaseReturn history will remain valid and will not be fabricated into new procurement documents.
 
+`MOD-030Z` physically retires the SupplierPayments and PurchaseReplenishment MVC presentation controllers and their
+four user-facing Razor views. Their protected legacy GET/HEAD entry points now navigate to the established Angular
+workspaces; legacy mutations are never redirected or replayed. Payment posting, replenishment calculation, permissions,
+antiforgery, Application services, inventory and accounting behavior are unchanged.
+
 PUR-005 context ownership and accounting gates are accepted in `docs/PURCHASE_ARCHITECTURE_ALIGNMENT.md`: Supplier remains the current counterparty, Purchasing owns requests/sourcing/orders, Inventory owns receipt stock effects, and Accounting/AP owns bills, payables and payments. These are target boundaries, not implemented new documents.
 
 PUR-010 adds tenant-safe supplier/product purchasing information with purchase unit, supplier code/description, minimum quantity, order multiple, base-currency price, validity, lead time, priority, preferred/active state and rowversion. It excludes prepared-to-order products and enforces purchase-unit compatibility with the product stock unit. Supplier/product assignment is created from either master-data form and is bidirectionally synchronized through this one relationship. The bilingual purchasing-data screen then shows only the selected supplier's assigned active products, lets the user edit several terms together and saves selected rows atomically. Existing rows retain rowversion checks, units are limited to the product stock dimension, and active-state commands remain separate. View/manage permissions remain distinct and the operation has no stock or general-ledger effect. Migration `AddSupplierPurchasingData` is applied to `AHMAD/MiniStoreDb`.

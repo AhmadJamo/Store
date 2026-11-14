@@ -122,18 +122,13 @@ var stockCutoverResolver = new PresentationCutoverResolver(Options.Create(
         AngularBasePath = "/app",
         Surfaces = new Dictionary<string, PresentationCutoverMode>(StringComparer.OrdinalIgnoreCase)
         {
-            ["StockTransactions"] = PresentationCutoverMode.AngularDefault,
-            ["ProductStocks"] = PresentationCutoverMode.AngularDefault
+            ["StockTransactions"] = PresentationCutoverMode.AngularDefault
         }
     }));
 Check(stockCutoverResolver.Resolve(
         cutoverContext.Request, "StockTransactions", "Index",
         new Microsoft.AspNetCore.Routing.RouteValueDictionary()) == "/app/inventory/transactions?page=2",
     "Stock transaction cutover must preserve query strings on the Angular ledger route");
-Check(stockCutoverResolver.Resolve(
-        cutoverContext.Request, "ProductStocks", "Edit",
-        new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = 7 }) == "/app/inventory/stocks/7/edit?page=2",
-    "Product Stock edit GET must preserve the identifier in the Angular stock workspace");
 var adjustmentCutoverResolver = new PresentationCutoverResolver(Options.Create(
     new PresentationCutoverOptions
     {
@@ -193,8 +188,7 @@ var warehouseOperationsCutoverResolver = new PresentationCutoverResolver(Options
         {
             ["WarehouseLocations"] = PresentationCutoverMode.AngularDefault,
             ["UnassignedStock"] = PresentationCutoverMode.AngularDefault,
-            ["LocationMovements"] = PresentationCutoverMode.AngularDefault,
-            ["InventoryScanning"] = PresentationCutoverMode.AngularDefault
+            ["LocationMovements"] = PresentationCutoverMode.AngularDefault
         }
     }));
 Check(warehouseOperationsCutoverResolver.Resolve(
@@ -203,13 +197,10 @@ Check(warehouseOperationsCutoverResolver.Resolve(
       warehouseOperationsCutoverResolver.Resolve(
         cutoverContext.Request, "UnassignedStock", "Index",
         new Microsoft.AspNetCore.Routing.RouteValueDictionary()) == "/app/inventory/putaway?page=2" &&
-      warehouseOperationsCutoverResolver.Resolve(
-        cutoverContext.Request, "LocationMovements", "Index",
-        new Microsoft.AspNetCore.Routing.RouteValueDictionary()) == "/app/inventory/location-movements?page=2" &&
-      warehouseOperationsCutoverResolver.Resolve(
-        cutoverContext.Request, "InventoryScanning", "Index",
-        new Microsoft.AspNetCore.Routing.RouteValueDictionary()) == "/app/inventory/scanning?page=2",
-    "Warehouse operations cutover must preserve query strings on all four exact Angular routes");
+       warehouseOperationsCutoverResolver.Resolve(
+         cutoverContext.Request, "LocationMovements", "Index",
+         new Microsoft.AspNetCore.Routing.RouteValueDictionary()) == "/app/inventory/location-movements?page=2",
+    "Warehouse operations cutover must preserve query strings on the retained exact Angular routes");
 Check(warehouseOperationsCutoverResolver.Resolve(
         cutoverContext.Request, "WarehouseLocations", "Edit",
         new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = 5 }) is null &&
@@ -217,23 +208,6 @@ Check(warehouseOperationsCutoverResolver.Resolve(
         cutoverContext.Request, "LocationMovements", "Move",
         new Microsoft.AspNetCore.Routing.RouteValueDictionary()) is null,
     "Unsupported warehouse-location deep links and mutations must remain on MVC");
-var replenishmentCutoverResolver = new PresentationCutoverResolver(Options.Create(
-    new PresentationCutoverOptions
-    {
-        AngularBasePath = "/app",
-        Surfaces = new Dictionary<string, PresentationCutoverMode>(StringComparer.OrdinalIgnoreCase)
-        {
-            ["Replenishment"] = PresentationCutoverMode.AngularDefault
-        }
-    }));
-Check(replenishmentCutoverResolver.Resolve(
-        cutoverContext.Request, "Replenishment", "Index",
-        new Microsoft.AspNetCore.Routing.RouteValueDictionary()) == "/app/inventory/replenishment?page=2",
-    "Inventory Replenishment cutover must preserve query strings on its dedicated Angular route");
-Check(replenishmentCutoverResolver.Resolve(
-        cutoverContext.Request, "Replenishment", "Save",
-        new Microsoft.AspNetCore.Routing.RouteValueDictionary()) is null,
-    "Inventory Replenishment mutations must stay outside the presentation cutover catalog");
 var catalogMastersCutoverResolver = new PresentationCutoverResolver(Options.Create(
     new PresentationCutoverOptions
     {
@@ -254,35 +228,6 @@ Check(new[] { "Branches", "PaymentMethods", "TaxRates" }.All(surface =>
         catalogMastersCutoverResolver.Resolve(cutoverContext.Request, surface, "Create",
             new Microsoft.AspNetCore.Routing.RouteValueDictionary()) is null),
     "Catalog-master create actions must stay outside the presentation cutover catalog");
-var productDefinitionsCutoverResolver = new PresentationCutoverResolver(Options.Create(
-    new PresentationCutoverOptions
-    {
-        AngularBasePath = "/app",
-        Surfaces = new Dictionary<string, PresentationCutoverMode>(StringComparer.OrdinalIgnoreCase)
-        {
-            ["ProductAttributes"] = PresentationCutoverMode.AngularDefault
-        }
-    }));
-Check(productDefinitionsCutoverResolver.Resolve(cutoverContext.Request, "ProductAttributes", "Index",
-          new Microsoft.AspNetCore.Routing.RouteValueDictionary()) == "/app/products/attributes?page=2" &&
-      productDefinitionsCutoverResolver.Resolve(cutoverContext.Request, "ProductAttributes", "Values",
-          new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["productId"] = 17 }) ==
-      "/app/products/17/attributes?page=2",
-    "Product catalog-definition GET cutover must preserve query strings and the positive product identifier");
-Check(new long[] { -1, 0 }.All(productId =>
-          productDefinitionsCutoverResolver.Resolve(cutoverContext.Request, "ProductAttributes", "Values",
-              new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["productId"] = productId }) is null) &&
-      productDefinitionsCutoverResolver.Resolve(cutoverContext.Request, "ProductAttributes", "Values",
-          new Microsoft.AspNetCore.Routing.RouteValueDictionary()) is null,
-    "Product attribute Values cutover must reject missing, zero and negative product identifiers");
-cutoverContext.Request.QueryString = new Microsoft.AspNetCore.Http.QueryString("?productId=17&tab=values");
-Check(productDefinitionsCutoverResolver.Resolve(cutoverContext.Request, "ProductAttributes", "Values",
-        new Microsoft.AspNetCore.Routing.RouteValueDictionary()) == "/app/products/17/attributes?tab=values",
-    "Product attribute Values cutover must consume the query-bound product identifier and preserve other query values");
-cutoverContext.Request.QueryString = new Microsoft.AspNetCore.Http.QueryString("?page=2");
-Check(productDefinitionsCutoverResolver.Resolve(cutoverContext.Request, "ProductAttributes", "SetActive",
-          new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = 1 }) is null,
-    "Product catalog-definition mutations must stay outside the presentation cutover catalog");
 var warehousesCutoverResolver = new PresentationCutoverResolver(Options.Create(
     new PresentationCutoverOptions
     {
@@ -327,21 +272,6 @@ Check(new long[] { -1, 0 }.All(id => identityAdministrationCutoverResolver.Resol
       identityAdministrationCutoverResolver.Resolve(cutoverContext.Request, "Roles", "Delete",
           new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = 17 }) is null,
     "Role cutover must reject unsafe identifiers and keep mutations outside presentation cutover");
-var productWorkflowCutoverResolver = new PresentationCutoverResolver(Options.Create(
-    new PresentationCutoverOptions
-    {
-        AngularBasePath = "/app",
-        Surfaces = new Dictionary<string, PresentationCutoverMode>(StringComparer.OrdinalIgnoreCase)
-        {
-            ["ProductTemplates"] = PresentationCutoverMode.AngularDefault
-        }
-    }));
-Check(productWorkflowCutoverResolver.Resolve(cutoverContext.Request, "ProductTemplates", "Index",
-          new Microsoft.AspNetCore.Routing.RouteValueDictionary()) == "/app/products/templates?page=2",
-    "Product template GET cutover must resolve its exact Angular route");
-Check(productWorkflowCutoverResolver.Resolve(cutoverContext.Request, "ProductTemplates", "Generate",
-          new Microsoft.AspNetCore.Routing.RouteValueDictionary()) is null,
-    "Product template mutations must stay outside presentation cutover");
 var purchaseAnalyticsCutoverResolver = new PresentationCutoverResolver(Options.Create(
     new PresentationCutoverOptions
     {
@@ -356,26 +286,6 @@ Check(purchaseAnalyticsCutoverResolver.Resolve(cutoverContext.Request, "Purchase
       purchaseAnalyticsCutoverResolver.Resolve(cutoverContext.Request, "PurchaseAnalytics", "Export",
           new Microsoft.AspNetCore.Routing.RouteValueDictionary()) is null,
     "Purchase analytics cutover must resolve only the exact read-only Index route");
-var purchaseReplenishmentCutoverResolver = new PresentationCutoverResolver(Options.Create(
-    new PresentationCutoverOptions
-    {
-        AngularBasePath = "/app",
-        Surfaces = new Dictionary<string, PresentationCutoverMode>(StringComparer.OrdinalIgnoreCase)
-        {
-            ["PurchaseReplenishment"] = PresentationCutoverMode.AngularDefault
-        }
-    }));
-Check(purchaseReplenishmentCutoverResolver.Resolve(cutoverContext.Request,
-          "PurchaseReplenishment", "Index",
-          new Microsoft.AspNetCore.Routing.RouteValueDictionary()) ==
-      "/app/purchases/replenishment?page=2" &&
-      purchaseReplenishmentCutoverResolver.Resolve(cutoverContext.Request,
-          "PurchaseReplenishment", "SaveSettings",
-          new Microsoft.AspNetCore.Routing.RouteValueDictionary()) is null &&
-      purchaseReplenishmentCutoverResolver.Resolve(cutoverContext.Request,
-          "PurchaseReplenishment", "RunNow",
-          new Microsoft.AspNetCore.Routing.RouteValueDictionary()) is null,
-    "Purchase replenishment cutover must keep settings and manual-run mutations outside presentation cutover");
 var purchaseTemplatesCutoverResolver = new PresentationCutoverResolver(Options.Create(
     new PresentationCutoverOptions
     {
@@ -987,43 +897,6 @@ Check(new long[] { -1, 0 }.All(id =>
               "SalesOrders", action,
               new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = 17 }) is null),
     "Sales-order cutover must reject unsafe IDs and keep lifecycle, approval and reservation mutations outside cutover");
-var salesDeliveryCutoverResolver = new PresentationCutoverResolver(Options.Create(
-    new PresentationCutoverOptions
-    {
-        AngularBasePath = "/app",
-        Surfaces = new Dictionary<string, PresentationCutoverMode>(StringComparer.OrdinalIgnoreCase)
-        {
-            ["SalesDeliveries"] = PresentationCutoverMode.AngularDefault
-        }
-    }));
-cutoverContext.Request.QueryString =
-    new Microsoft.AspNetCore.Http.QueryString("?search=cutover");
-Check(salesDeliveryCutoverResolver.Resolve(cutoverContext.Request,
-          "SalesDeliveries", "Index", new Microsoft.AspNetCore.Routing.RouteValueDictionary()) ==
-      "/app/sales/deliveries?search=cutover" &&
-      salesDeliveryCutoverResolver.Resolve(cutoverContext.Request,
-          "SalesDeliveries", "Details",
-          new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = 17 }) ==
-      "/app/sales/deliveries/17?search=cutover",
-    "Sales-delivery cutover must resolve list and positive-ID details routes");
-cutoverContext.Request.QueryString =
-    new Microsoft.AspNetCore.Http.QueryString("?salesOrderId=19&source=cutover");
-Check(salesDeliveryCutoverResolver.Resolve(cutoverContext.Request,
-          "SalesDeliveries", "Create", new Microsoft.AspNetCore.Routing.RouteValueDictionary()) ==
-      "/app/sales/deliveries/new?salesOrderId=19&source=cutover",
-    "Sales-delivery cutover must validate and consume the source sales-order identifier");
-cutoverContext.Request.QueryString = new Microsoft.AspNetCore.Http.QueryString("?salesOrderId=0");
-Check(new long[] { -1, 0 }.All(id =>
-          salesDeliveryCutoverResolver.Resolve(cutoverContext.Request,
-              "SalesDeliveries", "Details",
-              new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = id }) is null) &&
-      salesDeliveryCutoverResolver.Resolve(cutoverContext.Request,
-          "SalesDeliveries", "Create", new Microsoft.AspNetCore.Routing.RouteValueDictionary()) is null &&
-      new[] { "Post", "Cancel" }.All(action =>
-          salesDeliveryCutoverResolver.Resolve(cutoverContext.Request,
-              "SalesDeliveries", action,
-              new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = 17 }) is null),
-    "Sales-delivery cutover must reject unsafe IDs and keep post/cancel mutations outside cutover");
 var customerInvoiceCutoverResolver = new PresentationCutoverResolver(Options.Create(
     new PresentationCutoverOptions
     {
@@ -1061,42 +934,6 @@ Check(new long[] { -1, 0 }.All(id =>
               "CustomerInvoices", action,
               new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = 17 }) is null),
     "Customer-invoice cutover must reject unsafe IDs and keep lifecycle/accounting mutations outside cutover");
-var customerPaymentCutoverResolver = new PresentationCutoverResolver(Options.Create(
-    new PresentationCutoverOptions
-    {
-        AngularBasePath = "/app",
-        Surfaces = new Dictionary<string, PresentationCutoverMode>(StringComparer.OrdinalIgnoreCase)
-        {
-            ["CustomerPayments"] = PresentationCutoverMode.AngularDefault
-        }
-    }));
-cutoverContext.Request.QueryString =
-    new Microsoft.AspNetCore.Http.QueryString("?search=cutover");
-Check(customerPaymentCutoverResolver.Resolve(cutoverContext.Request,
-          "CustomerPayments", "Index", new Microsoft.AspNetCore.Routing.RouteValueDictionary()) ==
-      "/app/sales/payments?search=cutover" &&
-      customerPaymentCutoverResolver.Resolve(cutoverContext.Request,
-          "CustomerPayments", "Details",
-          new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = 17 }) ==
-      "/app/sales/payments/17?search=cutover",
-    "Customer-payment cutover must resolve list and positive-ID details routes");
-cutoverContext.Request.QueryString =
-    new Microsoft.AspNetCore.Http.QueryString("?customerInvoiceId=19&source=cutover");
-Check(customerPaymentCutoverResolver.Resolve(cutoverContext.Request,
-          "CustomerPayments", "Create", new Microsoft.AspNetCore.Routing.RouteValueDictionary()) ==
-      "/app/sales/payments/new?customerInvoiceId=19&source=cutover",
-    "Customer-payment cutover must validate and consume the source invoice identifier");
-cutoverContext.Request.QueryString = new Microsoft.AspNetCore.Http.QueryString("?customerInvoiceId=0");
-Check(new long[] { -1, 0 }.All(id =>
-          customerPaymentCutoverResolver.Resolve(cutoverContext.Request,
-              "CustomerPayments", "Details",
-              new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = id }) is null) &&
-      customerPaymentCutoverResolver.Resolve(cutoverContext.Request,
-          "CustomerPayments", "Create", new Microsoft.AspNetCore.Routing.RouteValueDictionary()) is null &&
-      customerPaymentCutoverResolver.Resolve(cutoverContext.Request,
-          "CustomerPayments", "Reverse",
-          new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = 17 }) is null,
-    "Customer-payment cutover must reject unsafe IDs and keep create/reverse accounting mutations outside cutover");
 var customerReturnRequestCutoverResolver = new PresentationCutoverResolver(Options.Create(
     new PresentationCutoverOptions
     {
@@ -1308,37 +1145,6 @@ Check(accountsCutoverResolver.Resolve(cutoverContext.Request,
       accountsCutoverResolver.Resolve(cutoverContext.Request,
           "Accounts", "Create", new Microsoft.AspNetCore.Routing.RouteValueDictionary()) is null,
     "Accounts cutover must resolve the tree while keeping account creation outside presentation cutover");
-var supplierPaymentsCutoverResolver = new PresentationCutoverResolver(Options.Create(
-    new PresentationCutoverOptions
-    {
-        AngularBasePath = "/app",
-        Surfaces = new Dictionary<string, PresentationCutoverMode>(StringComparer.OrdinalIgnoreCase)
-        {
-            ["SupplierPayments"] = PresentationCutoverMode.AngularDefault
-        }
-    }));
-cutoverContext.Request.QueryString = new Microsoft.AspNetCore.Http.QueryString("?search=cutover");
-Check(supplierPaymentsCutoverResolver.Resolve(cutoverContext.Request,
-          "SupplierPayments", "Index", new Microsoft.AspNetCore.Routing.RouteValueDictionary()) ==
-      "/app/purchases/payments?search=cutover" &&
-      supplierPaymentsCutoverResolver.Resolve(cutoverContext.Request,
-          "SupplierPayments", "Details", new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = 23 }) ==
-      "/app/purchases/payments/23?search=cutover",
-    "Supplier-payment cutover must preserve filters and resolve positive details");
-Check(new long[] { -1, 0 }.All(id => supplierPaymentsCutoverResolver.Resolve(cutoverContext.Request,
-          "SupplierPayments", "Details", new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = id }) is null),
-    "Supplier-payment cutover must reject unsafe detail identifiers");
-cutoverContext.Request.QueryString = new Microsoft.AspNetCore.Http.QueryString("?vendorBillId=31&source=cutover");
-Check(supplierPaymentsCutoverResolver.Resolve(cutoverContext.Request,
-          "SupplierPayments", "Create", new Microsoft.AspNetCore.Routing.RouteValueDictionary()) ==
-      "/app/purchases/payments/new?vendorBillId=31&source=cutover",
-    "Supplier-payment cutover must preserve a positive source bill and other query values");
-Check(new long[] { -1, 0 }.All(id =>
-    {
-        cutoverContext.Request.QueryString = new Microsoft.AspNetCore.Http.QueryString($"?vendorBillId={id}");
-        return supplierPaymentsCutoverResolver.Resolve(cutoverContext.Request,
-            "SupplierPayments", "Create", new Microsoft.AspNetCore.Routing.RouteValueDictionary()) is null;
-    }), "Supplier-payment cutover must reject unsafe source-bill identifiers");
 var subscriptionCutoverResolver = new PresentationCutoverResolver(Options.Create(
     new PresentationCutoverOptions
     {
@@ -2162,7 +1968,7 @@ foreach (var admin in new[] { false, true })
         "Tenant Admin session projection must include every protected administration permission");
 }
 
-foreach (var controller in new[] { typeof(RolesController), typeof(ProductsController), typeof(WarehousesController), typeof(SuppliersController), typeof(ProductStocksController) })
+foreach (var controller in new[] { typeof(RolesController), typeof(ProductsController), typeof(WarehousesController) })
 {
     var action = controller.GetMethod("Delete")!;
     Check(action.GetCustomAttribute<HttpPostAttribute>() != null, $"Delete must require POST: {controller.Name}");
@@ -2366,16 +2172,6 @@ foreach(var type in new[]{typeof(SalesApprovalRule),typeof(SalesApprovalRuleStep
     Check(TenantIsolationModel.TenantOwnedTypes.Contains(type)&&db.Model.FindEntityType(type)!.FindProperty("TenantId") is{IsNullable:false},$"{type.Name} must be tenant owned");
 Check(PermissionDefinitions.All.Count(x=>x.Name.StartsWith("SalesDeliveries.",StringComparison.Ordinal))==4,
     "Sales deliveries must separate view, preparation, posting and cancellation permissions");
-var salesDeliveryController=typeof(SalesDeliveriesController);
-Check(salesDeliveryController.GetMethod(nameof(SalesDeliveriesController.Index))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:SalesDeliveries.View"&&
-      salesDeliveryController.GetMethod(nameof(SalesDeliveriesController.Details))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:SalesDeliveries.View"&&
-      salesDeliveryController.GetMethods().Single(x=>x.Name==nameof(SalesDeliveriesController.Create)&&x.GetCustomAttribute<HttpPostAttribute>() is not null).GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:SalesDeliveries.Create"&&
-      salesDeliveryController.GetMethod(nameof(SalesDeliveriesController.Post))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:SalesDeliveries.Post"&&
-      salesDeliveryController.GetMethod(nameof(SalesDeliveriesController.Cancel))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:SalesDeliveries.Cancel",
-    "Sales delivery endpoints must enforce dedicated server-side permissions");
-Check(salesDeliveryController.GetMethods().Where(x=>x.GetCustomAttribute<HttpPostAttribute>() is not null)
-      .All(x=>x.GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null),
-    "Every sales delivery mutation must require antiforgery validation");
 var salesDelivery=new SalesDelivery("DEL-000001",1,1,1,new DateOnly(2026,10,20),null,"picker");
 var salesDeliveryLine=new SalesDeliveryLine(1,1,1,1,null,2m,"P-1","Product",null);
 salesDelivery.AddLine(salesDeliveryLine);salesDeliveryLine.RecordPostedCost(3m,6m);salesDelivery.Post("poster");
@@ -2407,11 +2203,6 @@ Check(customerInvoiceController.GetMethods().Where(x=>x.GetCustomAttribute<HttpP
     "Every customer invoice mutation must require antiforgery validation");
 Check(PermissionDefinitions.All.Count(x=>x.Name.StartsWith("CustomerPayments.",StringComparison.Ordinal))==3,
     "Customer payments must separate visibility, posting and reversal permissions");
-var customerPaymentController=typeof(CustomerPaymentsController);
-Check(customerPaymentController.GetMethod(nameof(CustomerPaymentsController.Index))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:CustomerPayments.View"&&
-      customerPaymentController.GetMethods().Single(x=>x.Name==nameof(CustomerPaymentsController.Create)&&x.GetCustomAttribute<HttpPostAttribute>() is not null).GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:CustomerPayments.Create"&&
-      customerPaymentController.GetMethod(nameof(CustomerPaymentsController.Reverse))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:CustomerPayments.Reverse",
-    "Customer payment endpoints must enforce dedicated server-side permissions");
 Check(PermissionDefinitions.All.Count(x=>x.Name.StartsWith("CustomerReturnRequests.",StringComparison.Ordinal))==6,
     "Customer return requests must separate view, creation, submission, approval, rejection and cancellation permissions");
 var customerReturnController=typeof(CustomerReturnRequestsController);
@@ -2820,6 +2611,27 @@ var expectedRetiredPresentationRoutes = new Dictionary<string, (string Route, st
     ["SupplierCreditNotes:Index"] = ("/purchases/credit-notes", "SupplierCreditNotes.View", [], null),
     ["SupplierCreditNotes:Details"] = ("/purchases/credit-notes/{id}", "SupplierCreditNotes.View", [], null),
     ["SupplierCreditNotes:Create"] = ("/purchases/credit-notes/new?vendorBillId={vendorBillId}", "SupplierCreditNotes.Create", [], "vendorBillId"),
+    ["SupplierPayments:Index"] = ("/purchases/payments", "SupplierPayments.View", [], null),
+    ["SupplierPayments:Details"] = ("/purchases/payments/{id}", "SupplierPayments.View", [], null),
+    ["SupplierPayments:Create"] = ("/purchases/payments/new", "SupplierPayments.Create", [], null),
+    ["CustomerPayments:Index"] = ("/sales/payments", "CustomerPayments.View", [], null),
+    ["CustomerPayments:Details"] = ("/sales/payments/{id}", "CustomerPayments.View", [], null),
+    ["CustomerPayments:Create"] = ("/sales/payments/new?customerInvoiceId={customerInvoiceId}", "CustomerPayments.Create", [], "customerInvoiceId"),
+    ["PurchaseReplenishment:Index"] = ("/purchases/replenishment", "PurchaseReplenishment.View", [], null),
+    ["ProductAttributes:Index"] = ("/products/attributes", "Products.View", [], null),
+    ["ProductAttributes:Values"] = ("/products/{productId}/attributes", "Products.Edit", [], "productId"),
+    ["ProductStocks:Index"] = ("/inventory/stocks", "ProductStock.View", [], null),
+    ["ProductStocks:Create"] = ("/inventory/stocks/new", "ProductStock.Create", [], null),
+    ["ProductStocks:Edit"] = ("/inventory/stocks/{id}/edit", "ProductStock.Edit", [], null),
+    ["SalesDeliveries:Index"] = ("/sales/deliveries", "SalesDeliveries.View", [], null),
+    ["SalesDeliveries:Details"] = ("/sales/deliveries/{id}", "SalesDeliveries.View", [], null),
+    ["SalesDeliveries:Create"] = ("/sales/deliveries/new?salesOrderId={salesOrderId}", "SalesDeliveries.Create", [], "salesOrderId"),
+    ["ProductTemplates:Index"] = ("/products/templates", "Products.View", [], null),
+    ["Replenishment:Index"] = ("/inventory/replenishment", "Inventory.Replenishment.View", [], null),
+    ["Suppliers:Index"] = ("/suppliers", "Suppliers.View", [], null),
+    ["Suppliers:Create"] = ("/suppliers/new", "Suppliers.Create", [], null),
+    ["Suppliers:Edit"] = ("/suppliers/{id}/edit", "Suppliers.Edit", [], null),
+    ["InventoryScanning:Index"] = ("/inventory/scanning", "InventoryScanning.View", [], null),
     ["Public:Index"] = ("/welcome", null, ["/"], null),
     ["Public:Pricing"] = ("/pricing", null, ["/pricing"], null)
 };
@@ -3629,13 +3441,6 @@ Check(replenishmentRule.MinimumQuantity == 5m && replenishmentRule.MaximumQuanti
     "Replenishment rules must preserve destination thresholds, lead time and preferred source");
 CheckArgumentThrows(() => new ReplenishmentRule(1, 2, null, 10m, 5m, 1m, 0),
     "Replenishment maximum must not be lower than minimum");
-var replenishmentIndex = typeof(ReplenishmentController).GetMethod(nameof(ReplenishmentController.Index))!;
-var replenishmentSave = typeof(ReplenishmentController).GetMethod(nameof(ReplenishmentController.Save))!;
-Check(replenishmentIndex.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
-      $"{PermissionAuthorizeAttribute.PolicyPrefix}Inventory.Replenishment.View" &&
-      replenishmentSave.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
-      $"{PermissionAuthorizeAttribute.PolicyPrefix}Inventory.Replenishment.Manage",
-    "Replenishment viewing and rule management must use separate permissions");
 var forecastRow = new MiniStore.Application.DTOs.Inventory.Replenishment.ReplenishmentRowDto
 {
     OnHand = 10m, Reserved = 4m, Available = 6m,
@@ -3645,20 +3450,6 @@ var forecastRow = new MiniStore.Application.DTOs.Inventory.Replenishment.Repleni
 Check(forecastRow.ProjectedOnHand == 11m && forecastRow.ProjectedAvailable == 11m &&
       !forecastRow.NeedsReplenishment,
     "Replenishment forecast must add approved incoming while avoiding a second deduction of reserved outgoing");
-var replenishmentDraft = typeof(ReplenishmentController).GetMethod(nameof(ReplenishmentController.CreateTransferDraft))!;
-var replenishmentDraftPolicies = replenishmentDraft.GetCustomAttributes<PermissionAuthorizeAttribute>()
-    .Select(x => x.Policy).ToHashSet();
-Check(replenishmentDraftPolicies.SetEquals([
-        $"{PermissionAuthorizeAttribute.PolicyPrefix}Inventory.Replenishment.Manage",
-        $"{PermissionAuthorizeAttribute.PolicyPrefix}StockTransfers.Create"]),
-    "Creating a replenishment transfer draft must require both replenishment management and transfer creation permissions");
-var replenishmentPurchaseDraft = typeof(ReplenishmentController).GetMethod(nameof(ReplenishmentController.CreatePurchaseRequestDraft))!;
-var replenishmentPurchaseDraftPolicies = replenishmentPurchaseDraft.GetCustomAttributes<PermissionAuthorizeAttribute>()
-    .Select(x => x.Policy).ToHashSet();
-Check(replenishmentPurchaseDraftPolicies.SetEquals([
-        $"{PermissionAuthorizeAttribute.PolicyPrefix}Inventory.Replenishment.Manage",
-        $"{PermissionAuthorizeAttribute.PolicyPrefix}PurchaseRequests.Create"]),
-    "Creating replenishment purchase demand must require both replenishment management and purchase-request creation permissions");
 var replenishmentApi = typeof(ReplenishmentApiController);
 Check(replenishmentApi.GetCustomAttribute<RouteAttribute>()?.Template == "api/v1/replenishment" &&
       replenishmentApi.GetMethod(nameof(ReplenishmentApiController.Get))!
@@ -3699,10 +3490,6 @@ Check(InventoryActivityClassifier.Classify(null, DateTime.UtcNow.AddDays(-40), D
 Check(InventoryActivityClassifier.Classify(DateTime.UtcNow.AddDays(-90), DateTime.UtcNow.AddDays(-120), DateTime.UtcNow, 30, 90) ==
       MiniStore.Application.DTOs.Inventory.Insights.InventoryActivityState.Dead,
     "Dead-stock classification must include the configured threshold boundary");
-var scanningIndex = typeof(InventoryScanningController).GetMethod(nameof(InventoryScanningController.Index))!;
-Check(scanningIndex.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
-      $"{PermissionAuthorizeAttribute.PolicyPrefix}InventoryScanning.View",
-    "Inventory scan lookup must require its dedicated view permission");
 Check(InventoryScanResolver.Normalize("  ab-123 ") == "AB-123" &&
       InventoryScanResolver.ResolveCount("AB-123", 1) ==
       MiniStore.Application.DTOs.Inventory.Scanning.InventoryScanStatus.Resolved,
@@ -3710,37 +3497,16 @@ Check(InventoryScanResolver.Normalize("  ab-123 ") == "AB-123" &&
 Check(InventoryScanResolver.ResolveCount("DUPLICATE", 2) ==
       MiniStore.Application.DTOs.Inventory.Scanning.InventoryScanStatus.Ambiguous,
     "Inventory scans must reject ambiguous identifiers instead of choosing silently");
-var scanningPutaway = typeof(InventoryScanningController).GetMethod(nameof(InventoryScanningController.Putaway))!;
-var scanningPutawayPolicies = scanningPutaway.GetCustomAttributes<PermissionAuthorizeAttribute>()
-    .Select(x => x.Policy).ToHashSet();
-Check(scanningPutawayPolicies.SetEquals([
-        $"{PermissionAuthorizeAttribute.PolicyPrefix}InventoryScanning.View",
-        $"{PermissionAuthorizeAttribute.PolicyPrefix}ProductStock.Edit"]),
-    "Scanned putaway must require scan visibility and stock edit permission");
 var scanRequestKey = InventoryScanResolver.NewPutawayIdempotencyKey();
 Check(InventoryScanResolver.ValidatePutawayIdempotencyKey(scanRequestKey) == scanRequestKey,
     "Scanned putaway must use a strongly scoped retry key");
 CheckArgumentThrows(() => InventoryScanResolver.ValidatePutawayIdempotencyKey("TRANSFER:1:1"),
     "Scanned putaway must reject an idempotency key from another workflow");
-var scanningRelocation = typeof(InventoryScanningController).GetMethod(nameof(InventoryScanningController.Relocate))!;
-var scanningRelocationPolicies = scanningRelocation.GetCustomAttributes<PermissionAuthorizeAttribute>()
-    .Select(x => x.Policy).ToHashSet();
-Check(scanningRelocationPolicies.SetEquals([
-        $"{PermissionAuthorizeAttribute.PolicyPrefix}InventoryScanning.View",
-        $"{PermissionAuthorizeAttribute.PolicyPrefix}LocationMovements.Create"]),
-    "Scanned relocation must require scan visibility and location movement permission");
 var scanRelocationKey = InventoryScanResolver.NewRelocationIdempotencyKey();
 Check(InventoryScanResolver.ValidateRelocationIdempotencyKey(scanRelocationKey) == scanRelocationKey,
     "Scanned relocation must use a strongly scoped retry key");
 CheckArgumentThrows(() => InventoryScanResolver.ValidateRelocationIdempotencyKey(scanRequestKey),
     "Scanned relocation must reject a putaway retry key");
-var scanningCount = typeof(InventoryScanningController).GetMethod(nameof(InventoryScanningController.Count))!;
-var scanningCountPolicies = scanningCount.GetCustomAttributes<PermissionAuthorizeAttribute>()
-    .Select(x => x.Policy).ToHashSet();
-Check(scanningCountPolicies.SetEquals([
-        $"{PermissionAuthorizeAttribute.PolicyPrefix}InventoryScanning.View",
-        $"{PermissionAuthorizeAttribute.PolicyPrefix}InventoryAdjustments.Count"]),
-    "Scanned counting must require scan visibility and inventory count permission");
 var scanningApi = typeof(InventoryScanningApiController);
 Check(scanningApi.GetCustomAttribute<RouteAttribute>()?.Template == "api/v1/inventory-scanning" &&
       scanningApi.GetMethod(nameof(InventoryScanningApiController.Resolve))!
@@ -4518,14 +4284,6 @@ CheckThrows(() => supplierPayment.AddLine(new SupplierPaymentLine(3, 1m, "VB-000
     "Posted supplier payments must be immutable");
 Check(DocumentSequence.CreateDefault(DocumentNumberType.SupplierPayment).Preview(DateTime.Today).StartsWith("SPY-"),
     "Supplier payments must use an independent centralized document sequence");
-var supplierPaymentController = typeof(SupplierPaymentsController);
-Check(supplierPaymentController.GetMethod(nameof(SupplierPaymentsController.Index))!
-          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
-      $"{PermissionAuthorizeAttribute.PolicyPrefix}SupplierPayments.View" &&
-      supplierPaymentController.GetMethod(nameof(SupplierPaymentsController.Create), [typeof(CreateSupplierPaymentDto)])!
-          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
-      $"{PermissionAuthorizeAttribute.PolicyPrefix}SupplierPayments.Create",
-    "Supplier payment visibility and posting must use separate server-side permissions");
 var sourcingController = typeof(PurchaseSourcingController);
 var sourcingCreateAction = sourcingController.GetMethods().Single(x =>
     x.Name == nameof(PurchaseSourcingController.Create) && x.GetCustomAttribute<HttpPostAttribute>() is not null);
@@ -5086,14 +4844,6 @@ Check(ReplenishmentDemandCalculator.IsActivePurchaseRequest(PurchaseRequestStatu
       ReplenishmentDemandCalculator.IsActiveSourcing(PurchaseSourcingStatus.Closed, true) &&
       !ReplenishmentDemandCalculator.IsActiveSourcing(PurchaseSourcingStatus.Closed, false),
     "Replenishment deduplication must follow demand through requests, sourcing and active purchase orders without blocking future cycles");
-var replenishmentController = typeof(PurchaseReplenishmentController);
-Check(replenishmentController.GetMethod(nameof(PurchaseReplenishmentController.Index))!
-          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
-      $"{PermissionAuthorizeAttribute.PolicyPrefix}PurchaseReplenishment.View" &&
-      replenishmentController.GetMethod(nameof(PurchaseReplenishmentController.RunNow))!
-          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
-      $"{PermissionAuthorizeAttribute.PolicyPrefix}PurchaseReplenishment.Run",
-    "Automated replenishment pages and execution must enforce dedicated server-side permissions");
 var scheduledRunIndex = db.Model.FindEntityType(typeof(ReplenishmentRun))!.GetIndexes()
     .Single(x => x.Properties.Select(p => p.Name).SequenceEqual(["TenantId", nameof(ReplenishmentRun.ScheduledForUtc)]));
 Check(scheduledRunIndex.IsUnique,

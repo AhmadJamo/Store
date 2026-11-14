@@ -215,3 +215,10 @@ controllers and nine Razor views were removed. Exact protected list/create/detai
 Create POSTs return 405. Authenticated APIs, antiforgery, Application services and accounting/inventory authority remain.
 Release passed cleanly with 1,803 regression checks, 242/242 Angular tests and bundle/browser gates. Inventory is now 65
 controllers, 373 actions and 191 Razor files.
+
+## MOD-030Z ten-controller retirement — completed 2026-11-14
+
+The exact MOD-030Y cohort retired ten MVC controllers and 21 user-facing views together. Protected legacy reads resolve
+to Angular; old mutations are not redirected or replayed. APIs, Application services, permissions, antiforgery and domain
+authority remain. Release passed with 1,725 regression checks, 242/242 Angular tests and bundle/browser gates. Inventory is
+55 controllers, 324 actions and 170 Razor files.

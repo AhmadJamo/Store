@@ -30,3 +30,8 @@ opens the protected latest record without replacing the submitted row version.
 
 MOD-030B makes the allowlisted Supplier list/create/edit GET routes AngularDefault after hosted acceptance and a successful
 MVC rollback rehearsal. Mutations, authorization, Application rules and the existing Razor rollback path are unchanged.
+
+MOD-030Z physically retires the Suppliers MVC presentation controller, its three user-facing Razor views, two partials
+and three page-model companions. Protected list/create/edit GET/HEAD links now navigate to the established Angular
+workspace. Supplier create/edit authority remains in the authenticated API and existing Application services; legacy MVC
+mutations are never redirected or replayed.

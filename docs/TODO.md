@@ -376,6 +376,7 @@ The ERP SaaS Foundation Blueprint is imported as a non-authoritative planning re
   SupplierCreditNotes. Nine protected reads now resolve to Angular and the three retired Create POSTs return 405.
 - MOD-030Y completed the non-destructive audit and named the first ten-controller cohort. MOD-030Z is approved to execute
   exactly those ten surfaces together; identity, subscription and Platform boundaries remain excluded.
+- MOD-030Z completed the first ten-controller retirement as one cohort; APIs/services and accounting/inventory authority remain.
 - UX-016 recurring-journal templates and controlled runs is complete with Draft-only manual execution. UX-017 bank-statement
   reconciliation is proposed and requires owner approval before adding statement import and matching records.
 - UX-009 navigation completeness is complete: 72 registered destinations and 41/41 operational routes are covered through

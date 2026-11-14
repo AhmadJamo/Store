@@ -9,16 +9,16 @@ Physical MVC retirement must follow feature-sized, reversible cohorts. A Razor v
 
 ## Reconciliation
 
-- MVC controllers: 65.
-- MVC actions classified: 373 of 373.
-- Angular-default presentation actions eligible for cohort review: 117.
-- Retained MVC mutation actions: 215.
+- MVC controllers: 55.
+- MVC actions classified: 324 of 324.
+- Angular-default presentation actions eligible for cohort review: 96.
+- Retained MVC mutation actions: 187.
 - Retained download/generated-file actions: 8.
 - Retained compatibility, ambiguous-verb, session or non-cutover actions: 33.
-- Razor files discovered: 191; shared infrastructure files: 11.
+- Razor files discovered: 168; shared infrastructure files: 11.
 - Presentation-only pilot surfaces: 0, including 0 anonymous public boundary.
-- Mixed-controller surfaces blocked from early view deletion: 45.
-- Physically retired presentation actions with legacy redirects: 26 across 17 surfaces.
+- Mixed-controller surfaces blocked from early view deletion: 35.
+- Physically retired presentation actions with legacy redirects: 47 across 27 surfaces.
 
 The exact action and Razor paths remain in `MVC_MIGRATION_REGISTRY.md`; this file adds retirement dependency classification and cohort gates without duplicating that source inventory.
 
@@ -34,36 +34,57 @@ The exact action and Razor paths remain in `MVC_MIGRATION_REGISTRY.md`; this fil
 
 ## Completed physical retirement cohorts
 
-MOD-030G physically retired five read-only inventory surfaces. MOD-030H retired `JournalEntries.Details` and `PurchaseAccountingReconciliation.Index`. MOD-030J retired the two anonymous `Public` actions. MOD-030L retired tenant `AuditEvents.Index` and its MVC export. MOD-030O retired `AnalyticsCenter.Index/Create` and the legacy MVC workspace POST. MOD-030Q retired `Recipes.Index/Edit` and the legacy recipe-save POST. MOD-030S retired `ProductCategories.Index` and its legacy create/status POSTs. MOD-030U retired `SalesApprovalRules.Index` and its legacy create/status POSTs. MOD-030W retired `PurchaseApprovalRules.Index` and its legacy create/status POSTs. MOD-030X then retired the GoodsReceiptReturns, PurchaseServiceAcceptances and SupplierCreditNotes list/create/details MVC flows as one purchasing cohort. Their controller actions, Razor views and reversible cutover entries are gone; protected GET/HEAD routes retain permission policies, while exact `/` and `/pricing` redirects are anonymous. Mapped redirects preserve queries; retired POST/download actions are not redirected.
+Physical retirement cohorts through MOD-030X removed the initial inventory, accounting, public, analytics, recipe, catalog and approval-rule presentations. MOD-030Z then retired SupplierPayments, CustomerPayments, PurchaseReplenishment, ProductAttributes, ProductStocks, SalesDeliveries, ProductTemplates, Replenishment, Suppliers and InventoryScanning as one ten-controller cohort. Their controller actions, Razor views and reversible cutover entries are gone; protected GET/HEAD routes retain permission policies, while exact `/` and `/pricing` redirects are anonymous. Mapped redirects preserve queries; retired POST/download actions are not redirected.
 
 | Retired MVC surface | Angular destination | Required permission |
 |---|---|---|
 | AnalyticsCenter | /analytics | AnalyticsCenter.View |
 | AnalyticsCenter | /analytics/builder | AnalyticsCenter.Customize |
 | AuditEvents | /audit-events | AuditEvents.View |
-| GoodsReceiptReturns | /purchases/receipt-returns/new?goodsReceiptId={goodsReceiptId} | GoodsReceiptReturns.Create |
-| GoodsReceiptReturns | /purchases/receipt-returns/{id} | GoodsReceiptReturns.View |
+| CustomerPayments | /sales/payments | CustomerPayments.View |
+| CustomerPayments | /sales/payments/new?customerInvoiceId={customerInvoiceId} | CustomerPayments.Create |
+| CustomerPayments | /sales/payments/{id} | CustomerPayments.View |
 | GoodsReceiptReturns | /purchases/receipt-returns | GoodsReceiptReturns.View |
+| GoodsReceiptReturns | /purchases/receipt-returns/{id} | GoodsReceiptReturns.View |
+| GoodsReceiptReturns | /purchases/receipt-returns/new?goodsReceiptId={goodsReceiptId} | GoodsReceiptReturns.Create |
 | InventoryBalances | /inventory/availability | InventoryBalances.View |
 | InventoryInsights | /inventory/insights | InventoryInsights.View |
 | InventoryReconciliation | /inventory/reconciliation | InventoryReconciliation.View |
 | InventoryReservations | /inventory/reservations | InventoryReservations.View |
+| InventoryScanning | /inventory/scanning | InventoryScanning.View |
 | JournalEntries | /accounting/journal-entries/{id} | JournalEntries.View |
+| ProductAttributes | /products/attributes | Products.View |
+| ProductAttributes | /products/{productId}/attributes | Products.Edit |
 | ProductCategories | /products/categories | Products.View |
+| ProductStocks | /inventory/stocks/new | ProductStock.Create |
+| ProductStocks | /inventory/stocks/{id}/edit | ProductStock.Edit |
+| ProductStocks | /inventory/stocks | ProductStock.View |
+| ProductTemplates | /products/templates | Products.View |
 | Public | /welcome | Anonymous |
 | Public | /pricing | Anonymous |
 | PurchaseAccountingReconciliation | /purchases/accounting-reconciliation | PurchaseAccountingReconciliation.View |
 | PurchaseApprovalRules | /purchases/approval-rules | PurchaseApprovalRules.View |
-| PurchaseServiceAcceptances | /purchases/service-acceptances | PurchaseServiceAcceptances.View |
-| PurchaseServiceAcceptances | /purchases/service-acceptances/{id} | PurchaseServiceAcceptances.View |
+| PurchaseReplenishment | /purchases/replenishment | PurchaseReplenishment.View |
 | PurchaseServiceAcceptances | /purchases/service-acceptances/new?purchaseOrderId={purchaseOrderId} | PurchaseServiceAcceptances.Create |
+| PurchaseServiceAcceptances | /purchases/service-acceptances/{id} | PurchaseServiceAcceptances.View |
+| PurchaseServiceAcceptances | /purchases/service-acceptances | PurchaseServiceAcceptances.View |
 | Recipes | /products/recipes | Products.View |
 | Recipes | /products/recipes/{productId} | Products.Edit |
+| Replenishment | /inventory/replenishment | Inventory.Replenishment.View |
 | SalesApprovalRules | /sales/approval-rules | SalesApprovalRules.View |
+| SalesDeliveries | /sales/deliveries/new?salesOrderId={salesOrderId} | SalesDeliveries.Create |
+| SalesDeliveries | /sales/deliveries | SalesDeliveries.View |
+| SalesDeliveries | /sales/deliveries/{id} | SalesDeliveries.View |
 | StockMovements | /inventory/location-movements | StockMovements.View |
+| SupplierCreditNotes | /purchases/credit-notes/new?vendorBillId={vendorBillId} | SupplierCreditNotes.Create |
 | SupplierCreditNotes | /purchases/credit-notes | SupplierCreditNotes.View |
 | SupplierCreditNotes | /purchases/credit-notes/{id} | SupplierCreditNotes.View |
-| SupplierCreditNotes | /purchases/credit-notes/new?vendorBillId={vendorBillId} | SupplierCreditNotes.Create |
+| SupplierPayments | /purchases/payments/new | SupplierPayments.Create |
+| SupplierPayments | /purchases/payments/{id} | SupplierPayments.View |
+| SupplierPayments | /purchases/payments | SupplierPayments.View |
+| Suppliers | /suppliers | Suppliers.View |
+| Suppliers | /suppliers/new | Suppliers.Create |
+| Suppliers | /suppliers/{id}/edit | Suppliers.Edit |
 
 ## Surface inventory
 
@@ -75,7 +96,6 @@ MOD-030G physically retired five read-only inventory surfaces. MOD-030H retired 
 | CompanyOnboarding | 1 | 2 | 0 | 0 | 1 | R2 - mixed controller; retain views until commands/downloads retire |
 | CustomerCreditNotes | 0 | 1 | 0 | 0 | 3 | R3 - retained MVC boundary; API/session decision required |
 | CustomerInvoices | 3 | 5 | 0 | 0 | 3 | R2 - mixed controller; retain views until commands/downloads retire |
-| CustomerPayments | 3 | 2 | 0 | 0 | 3 | R2 - mixed controller; retain views until commands/downloads retire |
 | CustomerReturnReceipts | 0 | 1 | 0 | 2 | 3 | R3 - retained MVC boundary; API/session decision required |
 | CustomerReturnRequests | 3 | 5 | 0 | 0 | 3 | R2 - mixed controller; retain views until commands/downloads retire |
 | Customers | 4 | 10 | 0 | 0 | 5 | R2 - mixed controller; retain views until commands/downloads retire |
@@ -84,7 +104,6 @@ MOD-030G physically retired five read-only inventory surfaces. MOD-030H retired 
 | GoodsReceipts | 4 | 6 | 0 | 0 | 4 | R2 - mixed controller; retain views until commands/downloads retire |
 | Home | 0 | 0 | 0 | 1 | 1 | R3 - retained MVC boundary; API/session decision required |
 | InventoryAdjustments | 3 | 5 | 0 | 0 | 3 | R2 - mixed controller; retain views until commands/downloads retire |
-| InventoryScanning | 1 | 3 | 0 | 0 | 1 | R2 - mixed controller; retain views until commands/downloads retire |
 | InventoryTracking | 1 | 6 | 0 | 0 | 1 | R2 - mixed controller; retain views until commands/downloads retire |
 | LandedCosts | 0 | 1 | 0 | 0 | 3 | R3 - retained MVC boundary; API/session decision required |
 | Language | 0 | 0 | 0 | 1 | 0 | R4 - permanent compatibility review |
@@ -94,24 +113,18 @@ MOD-030G physically retired five read-only inventory surfaces. MOD-030H retired 
 | Platform/PlatformAccount | 1 | 2 | 0 | 0 | 1 | R2 - mixed controller; retain views until commands/downloads retire |
 | Platform/PlatformAuditEvents | 1 | 0 | 1 | 0 | 1 | R2 - mixed controller; retain views until commands/downloads retire |
 | Platform/PlatformAuditRetention | 1 | 4 | 0 | 0 | 1 | R2 - mixed controller; retain views until commands/downloads retire |
-| ProductAttributes | 2 | 3 | 0 | 0 | 2 | R2 - mixed controller; retain views until commands/downloads retire |
 | Products | 2 | 3 | 0 | 1 | 4 | R2 - mixed controller; retain views until commands/downloads retire |
-| ProductStocks | 3 | 3 | 0 | 0 | 3 | R2 - mixed controller; retain views until commands/downloads retire |
-| ProductTemplates | 1 | 4 | 0 | 0 | 1 | R2 - mixed controller; retain views until commands/downloads retire |
 | PurchaseAgreements | 0 | 4 | 0 | 0 | 3 | R3 - retained MVC boundary; API/session decision required |
 | PurchaseAnalytics | 0 | 0 | 0 | 1 | 1 | R3 - retained MVC boundary; API/session decision required |
 | PurchaseDocumentReversals | 2 | 1 | 0 | 1 | 3 | R2 - mixed controller; retain views until commands/downloads retire |
 | PurchaseOrders | 0 | 10 | 0 | 1 | 2 | R3 - retained MVC boundary; API/session decision required |
-| PurchaseReplenishment | 1 | 2 | 0 | 0 | 1 | R2 - mixed controller; retain views until commands/downloads retire |
 | PurchaseRequests | 1 | 5 | 0 | 0 | 3 | R2 - mixed controller; retain views until commands/downloads retire |
 | PurchaseReturns | 0 | 1 | 0 | 3 | 3 | R3 - retained MVC boundary; API/session decision required |
 | Purchases | 2 | 2 | 0 | 1 | 3 | R2 - mixed controller; retain views until commands/downloads retire |
 | PurchaseSourcing | 3 | 2 | 1 | 2 | 5 | R2 - mixed controller; retain views until commands/downloads retire |
 | PurchaseTemplates | 0 | 3 | 0 | 0 | 1 | R3 - retained MVC boundary; API/session decision required |
-| Replenishment | 1 | 4 | 0 | 0 | 1 | R2 - mixed controller; retain views until commands/downloads retire |
 | Roles | 3 | 3 | 0 | 0 | 4 | R2 - mixed controller; retain views until commands/downloads retire |
 | Sales | 1 | 2 | 0 | 3 | 4 | R2 - mixed controller; retain views until commands/downloads retire |
-| SalesDeliveries | 3 | 3 | 0 | 0 | 3 | R2 - mixed controller; retain views until commands/downloads retire |
 | SalesOrders | 3 | 7 | 0 | 0 | 3 | R2 - mixed controller; retain views until commands/downloads retire |
 | SalesPriceLists | 1 | 5 | 0 | 0 | 1 | R2 - mixed controller; retain views until commands/downloads retire |
 | SalesQuotations | 3 | 6 | 1 | 0 | 3 | R2 - mixed controller; retain views until commands/downloads retire |
@@ -123,11 +136,9 @@ MOD-030G physically retired five read-only inventory surfaces. MOD-030H retired 
 | Subscription | 1 | 1 | 0 | 0 | 2 | R2 - mixed controller; retain views until commands/downloads retire |
 | SupplierCommunications | 0 | 2 | 0 | 0 | 1 | R3 - retained MVC boundary; API/session decision required |
 | SupplierIntegrations | 0 | 6 | 1 | 0 | 4 | R3 - retained MVC boundary; API/session decision required |
-| SupplierPayments | 3 | 1 | 0 | 0 | 3 | R2 - mixed controller; retain views until commands/downloads retire |
 | SupplierPortal | 0 | 3 | 0 | 1 | 2 | R3 - retained MVC boundary; API/session decision required |
 | SupplierPurchasing | 4 | 8 | 2 | 0 | 5 | R2 - mixed controller; retain views until commands/downloads retire |
 | SupplierQuotations | 0 | 2 | 0 | 0 | 2 | R3 - retained MVC boundary; API/session decision required |
-| Suppliers | 3 | 3 | 0 | 0 | 5 | R2 - mixed controller; retain views until commands/downloads retire |
 | TaxRates | 0 | 1 | 0 | 2 | 2 | R3 - retained MVC boundary; API/session decision required |
 | UnassignedStock | 1 | 3 | 0 | 0 | 1 | R2 - mixed controller; retain views until commands/downloads retire |
 | Users | 2 | 1 | 0 | 0 | 2 | R2 - mixed controller; retain views until commands/downloads retire |
@@ -146,46 +157,36 @@ This is a dependency-count signal, not deletion approval. Score = mutations × 3
 | 3 | StockTransactions | 5 | 2 | 1 | 0 | 0 | 2 |
 | 4 | Subscription | 5 | 1 | 1 | 0 | 0 | 2 |
 | 5 | Users | 5 | 2 | 1 | 0 | 0 | 2 |
-| 6 | SupplierPayments | 6 | 3 | 1 | 0 | 0 | 3 |
-| 7 | CompanyOnboarding | 7 | 1 | 2 | 0 | 0 | 1 |
-| 8 | Platform/PlatformAccount | 7 | 1 | 2 | 0 | 0 | 1 |
-| 9 | PurchaseReplenishment | 7 | 1 | 2 | 0 | 0 | 1 |
-| 10 | CustomerPayments | 9 | 3 | 2 | 0 | 0 | 3 |
-| 11 | PurchaseDocumentReversals | 10 | 2 | 1 | 0 | 1 | 3 |
-| 12 | InventoryScanning | 10 | 1 | 3 | 0 | 0 | 1 |
-| 13 | UnassignedStock | 10 | 1 | 3 | 0 | 0 | 1 |
-| 14 | ProductAttributes | 11 | 2 | 3 | 0 | 0 | 2 |
-| 15 | Account | 12 | 3 | 3 | 0 | 0 | 3 |
-| 16 | ProductStocks | 12 | 3 | 3 | 0 | 0 | 3 |
-| 17 | SalesDeliveries | 12 | 3 | 3 | 0 | 0 | 3 |
-| 18 | Purchases | 13 | 2 | 2 | 0 | 1 | 3 |
-| 19 | Roles | 13 | 3 | 3 | 0 | 0 | 4 |
-| 20 | Platform/PlatformAuditRetention | 13 | 1 | 4 | 0 | 0 | 1 |
-| 21 | ProductTemplates | 13 | 1 | 4 | 0 | 0 | 1 |
-| 22 | Replenishment | 13 | 1 | 4 | 0 | 0 | 1 |
-| 23 | Suppliers | 14 | 3 | 3 | 0 | 0 | 5 |
-| 24 | SalesQuotationTemplates | 15 | 3 | 4 | 0 | 0 | 3 |
-| 25 | DocumentDesigns | 16 | 3 | 4 | 0 | 0 | 4 |
-| 26 | SalesPriceLists | 16 | 1 | 5 | 0 | 0 | 1 |
-| 27 | WarehouseLocations | 17 | 1 | 2 | 0 | 2 | 3 |
-| 28 | Products | 17 | 2 | 3 | 0 | 1 | 4 |
-| 29 | CustomerInvoices | 18 | 3 | 5 | 0 | 0 | 3 |
-| 30 | CustomerReturnRequests | 18 | 3 | 5 | 0 | 0 | 3 |
-| 31 | InventoryAdjustments | 18 | 3 | 5 | 0 | 0 | 3 |
-| 32 | PurchaseRequests | 18 | 1 | 5 | 0 | 0 | 3 |
-| 33 | Platform/Platform | 19 | 7 | 4 | 0 | 0 | 7 |
-| 34 | InventoryTracking | 19 | 1 | 6 | 0 | 0 | 1 |
-| 35 | Warehouses | 20 | 1 | 3 | 0 | 2 | 3 |
-| 36 | PurchaseSourcing | 21 | 3 | 2 | 1 | 2 | 5 |
-| 37 | Sales | 22 | 1 | 2 | 0 | 3 | 4 |
-| 38 | GoodsReceipts | 22 | 4 | 6 | 0 | 0 | 4 |
-| 39 | SalesQuotations | 23 | 3 | 6 | 1 | 0 | 3 |
-| 40 | SalesOrders | 24 | 3 | 7 | 0 | 0 | 3 |
-| 41 | VendorBills | 26 | 3 | 7 | 1 | 0 | 3 |
-| 42 | StockTransfers | 28 | 4 | 8 | 0 | 0 | 4 |
-| 43 | SupplierPurchasing | 33 | 4 | 8 | 2 | 0 | 5 |
-| 44 | Customers | 35 | 4 | 10 | 0 | 0 | 5 |
-| 45 | Settings | 73 | 17 | 18 | 1 | 0 | 17 |
+| 6 | CompanyOnboarding | 7 | 1 | 2 | 0 | 0 | 1 |
+| 7 | Platform/PlatformAccount | 7 | 1 | 2 | 0 | 0 | 1 |
+| 8 | PurchaseDocumentReversals | 10 | 2 | 1 | 0 | 1 | 3 |
+| 9 | UnassignedStock | 10 | 1 | 3 | 0 | 0 | 1 |
+| 10 | Account | 12 | 3 | 3 | 0 | 0 | 3 |
+| 11 | Purchases | 13 | 2 | 2 | 0 | 1 | 3 |
+| 12 | Roles | 13 | 3 | 3 | 0 | 0 | 4 |
+| 13 | Platform/PlatformAuditRetention | 13 | 1 | 4 | 0 | 0 | 1 |
+| 14 | SalesQuotationTemplates | 15 | 3 | 4 | 0 | 0 | 3 |
+| 15 | DocumentDesigns | 16 | 3 | 4 | 0 | 0 | 4 |
+| 16 | SalesPriceLists | 16 | 1 | 5 | 0 | 0 | 1 |
+| 17 | WarehouseLocations | 17 | 1 | 2 | 0 | 2 | 3 |
+| 18 | Products | 17 | 2 | 3 | 0 | 1 | 4 |
+| 19 | CustomerInvoices | 18 | 3 | 5 | 0 | 0 | 3 |
+| 20 | CustomerReturnRequests | 18 | 3 | 5 | 0 | 0 | 3 |
+| 21 | InventoryAdjustments | 18 | 3 | 5 | 0 | 0 | 3 |
+| 22 | PurchaseRequests | 18 | 1 | 5 | 0 | 0 | 3 |
+| 23 | Platform/Platform | 19 | 7 | 4 | 0 | 0 | 7 |
+| 24 | InventoryTracking | 19 | 1 | 6 | 0 | 0 | 1 |
+| 25 | Warehouses | 20 | 1 | 3 | 0 | 2 | 3 |
+| 26 | PurchaseSourcing | 21 | 3 | 2 | 1 | 2 | 5 |
+| 27 | Sales | 22 | 1 | 2 | 0 | 3 | 4 |
+| 28 | GoodsReceipts | 22 | 4 | 6 | 0 | 0 | 4 |
+| 29 | SalesQuotations | 23 | 3 | 6 | 1 | 0 | 3 |
+| 30 | SalesOrders | 24 | 3 | 7 | 0 | 0 | 3 |
+| 31 | VendorBills | 26 | 3 | 7 | 1 | 0 | 3 |
+| 32 | StockTransfers | 28 | 4 | 8 | 0 | 0 | 4 |
+| 33 | SupplierPurchasing | 33 | 4 | 8 | 2 | 0 | 5 |
+| 34 | Customers | 35 | 4 | 10 | 0 | 0 | 5 |
+| 35 | Settings | 73 | 17 | 18 | 1 | 0 | 17 |
 
 ## Retained action dependencies
 
@@ -206,8 +207,6 @@ This is a dependency-count signal, not deletion approval. Score = mutations × 3
 | CustomerInvoices | Create | POST | Retain - MVC mutation | MiniStore.Web/Controllers/Sales/CustomerInvoicesController.cs |
 | CustomerInvoices | Post | POST | Retain - MVC mutation | MiniStore.Web/Controllers/Sales/CustomerInvoicesController.cs |
 | CustomerInvoices | Reverse | POST | Retain - MVC mutation | MiniStore.Web/Controllers/Sales/CustomerInvoicesController.cs |
-| CustomerPayments | Create | POST | Retain - MVC mutation | MiniStore.Web/Controllers/Sales/CustomerPaymentsController.cs |
-| CustomerPayments | Reverse | POST | Retain - MVC mutation | MiniStore.Web/Controllers/Sales/CustomerPaymentsController.cs |
 | CustomerReturnReceipts | RedirectToAction | GET | Retain - non-cutover route or session boundary | MiniStore.Web/Controllers/Sales/CustomerReturnReceiptsController.cs |
 | CustomerReturnReceipts | RedirectToAction | GET, POST | Retain - MVC mutation | MiniStore.Web/Controllers/Sales/CustomerReturnReceiptsController.cs |
 | CustomerReturnReceipts | View | GET | Retain - non-cutover route or session boundary | MiniStore.Web/Controllers/Sales/CustomerReturnReceiptsController.cs |
@@ -243,9 +242,6 @@ This is a dependency-count signal, not deletion approval. Score = mutations × 3
 | InventoryAdjustments | Count | POST | Retain - MVC mutation | MiniStore.Web/Controllers/Inventory/InventoryAdjustmentsController.cs |
 | InventoryAdjustments | Create | POST | Retain - MVC mutation | MiniStore.Web/Controllers/Inventory/InventoryAdjustmentsController.cs |
 | InventoryAdjustments | Post | POST | Retain - MVC mutation | MiniStore.Web/Controllers/Inventory/InventoryAdjustmentsController.cs |
-| InventoryScanning | Count | POST | Retain - MVC mutation | MiniStore.Web/Controllers/Inventory/InventoryScanningController.cs |
-| InventoryScanning | Putaway | POST | Retain - MVC mutation | MiniStore.Web/Controllers/Inventory/InventoryScanningController.cs |
-| InventoryScanning | Relocate | POST | Retain - MVC mutation | MiniStore.Web/Controllers/Inventory/InventoryScanningController.cs |
 | InventoryTracking | CloseRecall | POST | Retain - MVC mutation | MiniStore.Web/Controllers/Inventory/InventoryTrackingController.cs |
 | InventoryTracking | CreateRecall | POST | Retain - MVC mutation | MiniStore.Web/Controllers/Inventory/InventoryTrackingController.cs |
 | InventoryTracking | Open | GET, POST | Retain - MVC mutation | MiniStore.Web/Controllers/Inventory/InventoryTrackingController.cs |
@@ -269,20 +265,10 @@ This is a dependency-count signal, not deletion approval. Score = mutations × 3
 | Platform/PlatformAuditRetention | CreateHold | POST | Retain - MVC mutation | MiniStore.Web/Areas/Platform/Controllers/PlatformAuditRetentionController.cs |
 | Platform/PlatformAuditRetention | ReleaseHold | POST | Retain - MVC mutation | MiniStore.Web/Areas/Platform/Controllers/PlatformAuditRetentionController.cs |
 | Platform/PlatformAuditRetention | Run | POST | Retain - MVC mutation | MiniStore.Web/Areas/Platform/Controllers/PlatformAuditRetentionController.cs |
-| ProductAttributes | Create | POST | Retain - MVC mutation | MiniStore.Web/Controllers/Catalog/ProductAttributesController.cs |
-| ProductAttributes | SetActive | POST | Retain - MVC mutation | MiniStore.Web/Controllers/Catalog/ProductAttributesController.cs |
-| ProductAttributes | Values | POST | Retain - MVC mutation | MiniStore.Web/Controllers/Catalog/ProductAttributesController.cs |
 | Products | Create | POST | Retain - MVC mutation | MiniStore.Web/Controllers/Catalog/ProductsController.cs |
 | Products | Delete | POST | Retain - MVC mutation | MiniStore.Web/Controllers/Catalog/ProductsController.cs |
 | Products | Edit | POST | Retain - MVC mutation | MiniStore.Web/Controllers/Catalog/ProductsController.cs |
 | Products | Index | ANY | Retain - ambiguous verb or session routing | MiniStore.Web/Controllers/Catalog/ProductsController.cs |
-| ProductStocks | Create | POST | Retain - MVC mutation | MiniStore.Web/Controllers/Inventory/ProductStocksController.cs |
-| ProductStocks | Delete | POST | Retain - MVC mutation | MiniStore.Web/Controllers/Inventory/ProductStocksController.cs |
-| ProductStocks | Edit | POST | Retain - MVC mutation | MiniStore.Web/Controllers/Inventory/ProductStocksController.cs |
-| ProductTemplates | Assign | POST | Retain - MVC mutation | MiniStore.Web/Controllers/Catalog/ProductTemplatesController.cs |
-| ProductTemplates | Create | POST | Retain - MVC mutation | MiniStore.Web/Controllers/Catalog/ProductTemplatesController.cs |
-| ProductTemplates | Generate | POST | Retain - MVC mutation | MiniStore.Web/Controllers/Catalog/ProductTemplatesController.cs |
-| ProductTemplates | Preview | POST | Retain - MVC mutation | MiniStore.Web/Controllers/Catalog/ProductTemplatesController.cs |
 | PurchaseAgreements | RedirectToAction | GET, POST | Retain - MVC mutation | MiniStore.Web/Controllers/Purchases/PurchaseAgreementsController.cs |
 | PurchaseAgreements | RedirectToAction | GET, POST | Retain - MVC mutation | MiniStore.Web/Controllers/Purchases/PurchaseAgreementsController.cs |
 | PurchaseAgreements | RedirectToAction | GET, POST | Retain - MVC mutation | MiniStore.Web/Controllers/Purchases/PurchaseAgreementsController.cs |
@@ -301,8 +287,6 @@ This is a dependency-count signal, not deletion approval. Score = mutations × 3
 | PurchaseOrders | RedirectToAction | GET, POST | Retain - MVC mutation | MiniStore.Web/Controllers/Purchases/PurchaseOrdersController.cs |
 | PurchaseOrders | RedirectToAction | GET, POST | Retain - MVC mutation | MiniStore.Web/Controllers/Purchases/PurchaseOrdersController.cs |
 | PurchaseOrders | View | GET | Retain - non-cutover route or session boundary | MiniStore.Web/Controllers/Purchases/PurchaseOrdersController.cs |
-| PurchaseReplenishment | RunNow | POST | Retain - MVC mutation | MiniStore.Web/Controllers/Purchases/PurchaseReplenishmentController.cs |
-| PurchaseReplenishment | SaveSettings | POST | Retain - MVC mutation | MiniStore.Web/Controllers/Purchases/PurchaseReplenishmentController.cs |
 | PurchaseRequests | RedirectToAction | GET, POST | Retain - MVC mutation | MiniStore.Web/Controllers/Purchases/PurchaseRequestsController.cs |
 | PurchaseRequests | RedirectToAction | GET, POST | Retain - MVC mutation | MiniStore.Web/Controllers/Purchases/PurchaseRequestsController.cs |
 | PurchaseRequests | RedirectToAction | GET, POST | Retain - MVC mutation | MiniStore.Web/Controllers/Purchases/PurchaseRequestsController.cs |
@@ -323,10 +307,6 @@ This is a dependency-count signal, not deletion approval. Score = mutations × 3
 | PurchaseTemplates | RedirectToAction | GET, POST | Retain - MVC mutation | MiniStore.Web/Controllers/Purchases/PurchaseTemplatesController.cs |
 | PurchaseTemplates | RedirectToAction | GET, POST | Retain - MVC mutation | MiniStore.Web/Controllers/Purchases/PurchaseTemplatesController.cs |
 | PurchaseTemplates | RedirectToAction | GET, POST | Retain - MVC mutation | MiniStore.Web/Controllers/Purchases/PurchaseTemplatesController.cs |
-| Replenishment | CreatePurchaseRequestDraft | POST | Retain - MVC mutation | MiniStore.Web/Controllers/Inventory/ReplenishmentController.cs |
-| Replenishment | CreateTransferDraft | GET, POST | Retain - MVC mutation | MiniStore.Web/Controllers/Inventory/ReplenishmentController.cs |
-| Replenishment | Save | GET, POST | Retain - MVC mutation | MiniStore.Web/Controllers/Inventory/ReplenishmentController.cs |
-| Replenishment | SetActive | GET, POST | Retain - MVC mutation | MiniStore.Web/Controllers/Inventory/ReplenishmentController.cs |
 | Roles | Create | POST | Retain - MVC mutation | MiniStore.Web/Controllers/Security/RolesController.cs |
 | Roles | Delete | POST | Retain - MVC mutation | MiniStore.Web/Controllers/Security/RolesController.cs |
 | Roles | Edit | POST | Retain - MVC mutation | MiniStore.Web/Controllers/Security/RolesController.cs |
@@ -335,9 +315,6 @@ This is a dependency-count signal, not deletion approval. Score = mutations × 3
 | Sales | Details | ANY | Retain - ambiguous verb or session routing | MiniStore.Web/Controllers/Sales/SalesController.cs |
 | Sales | Index | ANY | Retain - ambiguous verb or session routing | MiniStore.Web/Controllers/Sales/SalesController.cs |
 | Sales | Post | POST | Retain - MVC mutation | MiniStore.Web/Controllers/Sales/SalesController.cs |
-| SalesDeliveries | Cancel | POST | Retain - MVC mutation | MiniStore.Web/Controllers/Sales/SalesDeliveriesController.cs |
-| SalesDeliveries | Create | POST | Retain - MVC mutation | MiniStore.Web/Controllers/Sales/SalesDeliveriesController.cs |
-| SalesDeliveries | Post | POST | Retain - MVC mutation | MiniStore.Web/Controllers/Sales/SalesDeliveriesController.cs |
 | SalesOrders | ApproveException | POST | Retain - MVC mutation | MiniStore.Web/Controllers/Sales/SalesOrdersController.cs |
 | SalesOrders | Cancel | POST | Retain - MVC mutation | MiniStore.Web/Controllers/Sales/SalesOrdersController.cs |
 | SalesOrders | Confirm | POST | Retain - MVC mutation | MiniStore.Web/Controllers/Sales/SalesOrdersController.cs |
@@ -403,7 +380,6 @@ This is a dependency-count signal, not deletion approval. Score = mutations × 3
 | SupplierIntegrations | RedirectToDocument | POST | Retain - MVC mutation | MiniStore.Web/Controllers/Purchases/SupplierIntegrationsController.cs |
 | SupplierIntegrations | View | GET, POST | Retain - MVC mutation | MiniStore.Web/Controllers/Purchases/SupplierIntegrationsController.cs |
 | SupplierIntegrations | View | POST | Retain - MVC mutation | MiniStore.Web/Controllers/Purchases/SupplierIntegrationsController.cs |
-| SupplierPayments | Create | POST | Retain - MVC mutation | MiniStore.Web/Controllers/Purchases/SupplierPaymentsController.cs |
 | SupplierPortal | RecordDenied | GET | Retain - non-cutover route or session boundary | MiniStore.Web/Controllers/Purchases/SupplierPortalController.cs |
 | SupplierPortal | RecordDenied | POST | Retain - MVC mutation | MiniStore.Web/Controllers/Purchases/SupplierPortalController.cs |
 | SupplierPortal | RecordDenied | POST | Retain - MVC mutation | MiniStore.Web/Controllers/Purchases/SupplierPortalController.cs |
@@ -420,9 +396,6 @@ This is a dependency-count signal, not deletion approval. Score = mutations × 3
 | SupplierPurchasing | SetActive | POST | Retain - MVC mutation | MiniStore.Web/Controllers/Purchases/SupplierPurchasingController.cs |
 | SupplierQuotations | RedirectToAction | GET, POST | Retain - MVC mutation | MiniStore.Web/Controllers/Purchases/SupplierQuotationsController.cs |
 | SupplierQuotations | RedirectToAction | GET, POST | Retain - MVC mutation | MiniStore.Web/Controllers/Purchases/SupplierQuotationsController.cs |
-| Suppliers | Create | POST | Retain - MVC mutation | MiniStore.Web/Controllers/Suppliers/SuppliersController.cs |
-| Suppliers | Delete | POST | Retain - MVC mutation | MiniStore.Web/Controllers/Suppliers/SuppliersController.cs |
-| Suppliers | Edit | POST | Retain - MVC mutation | MiniStore.Web/Controllers/Suppliers/SuppliersController.cs |
 | TaxRates | Create | GET | Retain - non-cutover route or session boundary | MiniStore.Web/Controllers/Accounting/TaxRatesController.cs |
 | TaxRates | Create | GET, POST | Retain - MVC mutation | MiniStore.Web/Controllers/Accounting/TaxRatesController.cs |
 | TaxRates | Index | ANY | Retain - ambiguous verb or session routing | MiniStore.Web/Controllers/Accounting/TaxRatesController.cs |
@@ -459,4 +432,4 @@ This is a dependency-count signal, not deletion approval. Score = mutations × 3
 
 ## Current outcome
 
-MOD-030F inventory and the separately approved retirement cohorts through MOD-030X are complete. Twenty-six MVC presentation GET actions across seventeen surfaces and twenty-six Razor views are physically retired. Public exact `/` and `/pricing` routes are anonymous; other retired GET/HEAD routes retain their original permission policies and preserve queries. Retired MVC POST/download actions, including the three MOD-030X Create POSTs, are not redirected; Angular continues through authenticated, permission-protected and antiforgery-protected APIs. No additional R2/R3/R4 deletion is approved.
+Retirement cohorts through MOD-030Z are complete. Forty-seven MVC presentation GET actions across twenty-seven surfaces and forty-seven Razor views are physically retired. Public exact `/` and `/pricing` routes are anonymous; other retired GET/HEAD routes retain their original permission policies and preserve queries. Retired MVC POST/download actions are not redirected or replayed; Angular continues through authenticated, permission-protected and antiforgery-protected APIs. No additional deletion is approved outside the next named ten-controller audit.

@@ -551,3 +551,11 @@ largest underrepresented modules; production deployment readiness and physical M
 - Verified each has Angular and authenticated API coverage over the same Application service and permission boundaries.
 - Excluded Account, Subscription, Users and Platform controllers because identity/session/platform evidence needs a separate cohort.
 - No runtime file, schema or operational data changed; physical execution is recorded as MOD-030Z.
+
+## MOD-030Z — first ten-controller retirement — COMPLETED 2026-11-14
+
+- Retired the ten controllers named by MOD-030Y and removed their 21 user-facing Razor views plus related page-model/partial files.
+- Protected legacy GET/HEAD routes now resolve to the exact Angular list/create/detail/edit workspaces.
+- Retained authenticated APIs, Application services, permissions, antiforgery and all accounting/inventory/domain authority.
+- Release passed cleanly with 1,725 regression checks, 242/242 Angular tests and bundle/browser gates.
+- Active inventory is 55 MVC controllers, 324 actions, 170 Razor files and 152 user-facing views.

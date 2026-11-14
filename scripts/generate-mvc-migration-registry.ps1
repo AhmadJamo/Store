@@ -26,7 +26,6 @@ Branches|/products/catalog-masters
 CompanyOnboarding|/onboarding
 CustomerCreditNotes|/sales/credit-notes
 CustomerInvoices|/sales/invoices
-CustomerPayments|/sales/payments
 CustomerReturnReceipts|/sales/return-receipts
 CustomerReturnRequests|/sales/return-requests
 Customers|/customers
@@ -35,29 +34,22 @@ DocumentDesigns|/settings/document-designs
 GoodsReceipts|/purchases/receipts
 Home|/
 InventoryAdjustments|/inventory/adjustments
-InventoryScanning|/inventory/scanning
 InventoryTracking|/inventory/tracking
 LandedCosts|/purchases/landed-costs
 LocationMovements|/inventory/location-movements
 PaymentMethods|/products/catalog-masters
-ProductAttributes|/products/attributes
 Products|/products
-ProductStocks|/inventory/stocks
-ProductTemplates|/products/templates
 PurchaseAgreements|/purchases/agreements
 PurchaseAnalytics|/purchases/analytics
 PurchaseDocumentReversals|/purchases/reversals
 PurchaseOrders|/purchases/orders
-PurchaseReplenishment|/purchases/replenishment
 PurchaseRequests|/purchases/requests
 PurchaseReturns|/purchases/legacy-returns
 Purchases|/purchases/legacy
 PurchaseSourcing|/purchases/sourcing
 PurchaseTemplates|/purchases/templates
-Replenishment|/inventory/replenishment
 Roles|/roles
 Sales|/sales/legacy
-SalesDeliveries|/sales/deliveries
 SalesOrders|/sales/orders
 SalesPriceLists|/sales/pricing
 SalesQuotations|/sales/quotations
@@ -69,11 +61,9 @@ StockTransfers|/inventory/transfers
 Subscription|/subscription
 SupplierCommunications|/purchases/communications/prepare
 SupplierIntegrations|/purchases/integrations
-SupplierPayments|/purchases/payments
 SupplierPortal|/supplier-portal/:token
 SupplierPurchasing|/purchases/supplier-terms
 SupplierQuotations|/purchases/sourcing
-Suppliers|/suppliers
 TaxRates|/products/catalog-masters
 UnassignedStock|/inventory/putaway
 Users|/users
@@ -118,7 +108,9 @@ $retiredRows = [regex]::Matches(
 $retiredSurfaces = @($retiredRows.Surface | Sort-Object -Unique)
 foreach ($row in $retiredRows) {
     $angularLookupRoute = ($row.AngularRoute -split '\?', 2)[0] -replace '\{([^}]+)\}', ':$1'
-    if (-not $angularRoutes.Contains($angularLookupRoute)) {
+    $canonicalLookupRoute = $angularLookupRoute -replace ':[^/]+', ':param'
+    $hasAngularRoute = $angularRoutes | Where-Object { ($_ -replace ':[^/]+', ':param') -eq $canonicalLookupRoute }
+    if (-not $hasAngularRoute) {
         throw "Retired MVC surface '$($row.Surface)' targets missing Angular route '$($row.AngularRoute)'."
     }
     if ($surfaceRoutes.ContainsKey($row.Surface)) {
@@ -496,7 +488,7 @@ $retirementLines.Add('| R4 | Declared mutation-only compatibility surface. | Pre
 $retirementLines.Add('')
 $retirementLines.Add('## Completed physical retirement cohorts')
 $retirementLines.Add('')
-$retirementLines.Add('MOD-030G physically retired five read-only inventory surfaces. MOD-030H retired `JournalEntries.Details` and `PurchaseAccountingReconciliation.Index`. MOD-030J retired the two anonymous `Public` actions. MOD-030L retired tenant `AuditEvents.Index` and its MVC export. MOD-030O retired `AnalyticsCenter.Index/Create` and the legacy MVC workspace POST. MOD-030Q retired `Recipes.Index/Edit` and the legacy recipe-save POST. MOD-030S retired `ProductCategories.Index` and its legacy create/status POSTs. MOD-030U retired `SalesApprovalRules.Index` and its legacy create/status POSTs. MOD-030W retired `PurchaseApprovalRules.Index` and its legacy create/status POSTs. MOD-030X then retired the GoodsReceiptReturns, PurchaseServiceAcceptances and SupplierCreditNotes list/create/details MVC flows as one purchasing cohort. Their controller actions, Razor views and reversible cutover entries are gone; protected GET/HEAD routes retain permission policies, while exact `/` and `/pricing` redirects are anonymous. Mapped redirects preserve queries; retired POST/download actions are not redirected.')
+$retirementLines.Add('Physical retirement cohorts through MOD-030X removed the initial inventory, accounting, public, analytics, recipe, catalog and approval-rule presentations. MOD-030Z then retired SupplierPayments, CustomerPayments, PurchaseReplenishment, ProductAttributes, ProductStocks, SalesDeliveries, ProductTemplates, Replenishment, Suppliers and InventoryScanning as one ten-controller cohort. Their controller actions, Razor views and reversible cutover entries are gone; protected GET/HEAD routes retain permission policies, while exact `/` and `/pricing` redirects are anonymous. Mapped redirects preserve queries; retired POST/download actions are not redirected.')
 $retirementLines.Add('')
 $retirementLines.Add('| Retired MVC surface | Angular destination | Required permission |')
 $retirementLines.Add('|---|---|---|')
@@ -554,7 +546,7 @@ $retirementLines.Add('6. Run Release, regression, generated-inventory, Angular a
 $retirementLines.Add('')
 $retirementLines.Add('## Current outcome')
 $retirementLines.Add('')
-$retirementLines.Add('MOD-030F inventory and the separately approved retirement cohorts through MOD-030X are complete. Twenty-six MVC presentation GET actions across seventeen surfaces and twenty-six Razor views are physically retired. Public exact `/` and `/pricing` routes are anonymous; other retired GET/HEAD routes retain their original permission policies and preserve queries. Retired MVC POST/download actions, including the three MOD-030X Create POSTs, are not redirected; Angular continues through authenticated, permission-protected and antiforgery-protected APIs. No additional R2/R3/R4 deletion is approved.')
+$retirementLines.Add('Retirement cohorts through MOD-030Z are complete. Forty-seven MVC presentation GET actions across twenty-seven surfaces and forty-seven Razor views are physically retired. Public exact `/` and `/pricing` routes are anonymous; other retired GET/HEAD routes retain their original permission policies and preserve queries. Retired MVC POST/download actions are not redirected or replayed; Angular continues through authenticated, permission-protected and antiforgery-protected APIs. No additional deletion is approved outside the next named ten-controller audit.')
 
 New-Item -ItemType Directory -Force -Path (Split-Path -Parent $retirementOutput) | Out-Null
 $retirementLines | Set-Content -Path $retirementOutput -Encoding utf8
