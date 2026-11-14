@@ -9,16 +9,16 @@ Physical MVC retirement must follow feature-sized, reversible cohorts. A Razor v
 
 ## Reconciliation
 
-- MVC controllers: 15.
-- MVC actions classified: 91 of 91.
-- Angular-default presentation actions eligible for cohort review: 37.
-- Retained MVC mutation actions: 47.
+- MVC controllers: 13.
+- MVC actions classified: 82 of 82.
+- Angular-default presentation actions eligible for cohort review: 32.
+- Retained MVC mutation actions: 43.
 - Retained download/generated-file actions: 3.
 - Retained compatibility, ambiguous-verb, session or non-cutover actions: 4.
-- Razor files discovered: 58; shared infrastructure files: 11.
+- Razor files discovered: 52; shared infrastructure files: 11.
 - Presentation-only pilot surfaces: 0, including 0 anonymous public boundary.
-- Mixed-controller surfaces blocked from early view deletion: 10.
-- Physically retired presentation actions with legacy redirects: 153 across 67 surfaces.
+- Mixed-controller surfaces blocked from early view deletion: 8.
+- Physically retired presentation actions with legacy redirects: 158 across 69 surfaces.
 
 The exact action and Razor paths remain in `MVC_MIGRATION_REGISTRY.md`; this file adds retirement dependency classification and cohort gates without duplicating that source inventory.
 
@@ -93,9 +93,9 @@ Physical retirement cohorts through MOD-030Z removed the initial inventory, acco
 | ProductAttributes | /products/attributes | Products.View |
 | ProductAttributes | /products/{productId}/attributes | Products.Edit |
 | ProductCategories | /products/categories | Products.View |
+| Products | /products | Products.View |
 | Products | /products/new | Products.Create |
 | Products | /products/{id}/edit | Products.Edit |
-| Products | /products | Products.View |
 | ProductStocks | /inventory/stocks | ProductStock.View |
 | ProductStocks | /inventory/stocks/new | ProductStock.Create |
 | ProductStocks | /inventory/stocks/{id}/edit | ProductStock.Edit |
@@ -114,79 +114,84 @@ Physical retirement cohorts through MOD-030Z removed the initial inventory, acco
 | PurchaseOrders | /purchases/orders | PurchaseOrders.View |
 | PurchaseOrders | /purchases/orders/{id} | PurchaseOrders.View |
 | PurchaseReplenishment | /purchases/replenishment | PurchaseReplenishment.View |
-| PurchaseRequests | /purchases/requests | PurchaseRequests.View |
 | PurchaseRequests | /purchases/requests/new | PurchaseRequests.Create |
+| PurchaseRequests | /purchases/requests | PurchaseRequests.View |
 | PurchaseRequests | /purchases/requests/{id} | PurchaseRequests.View |
 | PurchaseReturns | /purchases/legacy/{purchaseId}/return | PurchaseReturns.Create |
-| PurchaseReturns | /purchases/legacy-returns | PurchaseReturns.View |
 | PurchaseReturns | /purchases/legacy-returns/{id} | PurchaseReturns.View |
+| PurchaseReturns | /purchases/legacy-returns | PurchaseReturns.View |
 | Purchases | /purchases/legacy | Purchases.View |
 | Purchases | /purchases/legacy | Purchases.Create |
 | Purchases | /purchases/legacy/{id} | Purchases.View |
-| PurchaseServiceAcceptances | /purchases/service-acceptances/new?purchaseOrderId={purchaseOrderId} | PurchaseServiceAcceptances.Create |
 | PurchaseServiceAcceptances | /purchases/service-acceptances/{id} | PurchaseServiceAcceptances.View |
 | PurchaseServiceAcceptances | /purchases/service-acceptances | PurchaseServiceAcceptances.View |
-| PurchaseSourcing | /purchases/sourcing/{id}/print | PurchaseSourcing.View |
-| PurchaseSourcing | /purchases/sourcing/{id} | PurchaseSourcing.View |
-| PurchaseSourcing | /purchases/sourcing/new | PurchaseSourcing.CreateDirect |
-| PurchaseSourcing | /purchases/sourcing/new?purchaseRequestId={purchaseRequestId} | PurchaseSourcing.Create |
+| PurchaseServiceAcceptances | /purchases/service-acceptances/new?purchaseOrderId={purchaseOrderId} | PurchaseServiceAcceptances.Create |
 | PurchaseSourcing | /purchases/sourcing | PurchaseSourcing.View |
+| PurchaseSourcing | /purchases/sourcing/new | PurchaseSourcing.CreateDirect |
+| PurchaseSourcing | /purchases/sourcing/{id} | PurchaseSourcing.View |
+| PurchaseSourcing | /purchases/sourcing/{id}/print | PurchaseSourcing.View |
+| PurchaseSourcing | /purchases/sourcing/new?purchaseRequestId={purchaseRequestId} | PurchaseSourcing.Create |
 | PurchaseTemplates | /purchases/templates | PurchaseTemplates.View |
 | Recipes | /products/recipes | Products.View |
 | Recipes | /products/recipes/{productId} | Products.Edit |
 | Replenishment | /inventory/replenishment | Inventory.Replenishment.View |
+| Roles | /roles/new | Roles.Create |
+| Roles | /roles | Roles.View |
+| Roles | /roles/{id}/edit | Roles.Edit |
 | Sales | /sales/pos | Sales.Create |
 | Sales | /sales/legacy | Sales.View |
 | Sales | /sales/legacy/new | Sales.Create |
 | Sales | /sales/legacy/{id} | Sales.View |
 | SalesApprovalRules | /sales/approval-rules | SalesApprovalRules.View |
-| SalesDeliveries | /sales/deliveries | SalesDeliveries.View |
 | SalesDeliveries | /sales/deliveries/{id} | SalesDeliveries.View |
 | SalesDeliveries | /sales/deliveries/new?salesOrderId={salesOrderId} | SalesDeliveries.Create |
-| SalesOrders | /sales/orders/{id}/reservations | SalesOrders.View |
+| SalesDeliveries | /sales/deliveries | SalesDeliveries.View |
 | SalesOrders | /sales/orders/{id} | SalesOrders.View |
 | SalesOrders | /sales/orders | SalesOrders.View |
+| SalesOrders | /sales/orders/{id}/reservations | SalesOrders.View |
 | SalesPriceLists | /sales/pricing | SalesPricing.View |
-| SalesQuotations | /sales/quotations/new | SalesQuotations.Create |
 | SalesQuotations | /sales/quotations | SalesQuotations.View |
+| SalesQuotations | /sales/quotations/new | SalesQuotations.Create |
 | SalesQuotations | /sales/quotations/{id} | SalesQuotations.View |
+| SalesQuotationTemplates | /sales/quotation-templates | SalesQuotationTemplates.View |
 | SalesQuotationTemplates | /sales/quotation-templates/new | SalesQuotationTemplates.Manage |
 | SalesQuotationTemplates | /sales/quotation-templates/{id} | SalesQuotationTemplates.View |
-| SalesQuotationTemplates | /sales/quotation-templates | SalesQuotationTemplates.View |
 | SalesReturns | /sales/legacy/{saleId}/return | SalesReturns.Create |
 | SalesReturns | /sales/legacy-returns/{id} | SalesReturns.View |
 | SalesReturns | /sales/legacy-returns | SalesReturns.View |
 | StockMovements | /inventory/location-movements | StockMovements.View |
-| StockTransactions | /inventory/stocks/adjustment | StockTransactions.Create |
 | StockTransactions | /inventory/transactions | StockTransactions.View |
+| StockTransactions | /inventory/stocks/adjustment | StockTransactions.Create |
 | StockTransfers | /inventory/transfers | StockTransfers.View |
-| StockTransfers | /inventory/transfers/new | StockTransfers.Create |
 | StockTransfers | /inventory/transfers/{id}/edit | StockTransfers.Edit |
+| StockTransfers | /inventory/transfers/new | StockTransfers.Create |
 | StockTransfers | /inventory/transfers/{id} | StockTransfers.View |
 | SupplierCommunications | /purchases/communications/{id} | SupplierCommunications.View |
-| SupplierCreditNotes | /purchases/credit-notes/{id} | SupplierCreditNotes.View |
 | SupplierCreditNotes | /purchases/credit-notes/new?vendorBillId={vendorBillId} | SupplierCreditNotes.Create |
+| SupplierCreditNotes | /purchases/credit-notes/{id} | SupplierCreditNotes.View |
 | SupplierCreditNotes | /purchases/credit-notes | SupplierCreditNotes.View |
+| SupplierPayments | /purchases/payments | SupplierPayments.View |
 | SupplierPayments | /purchases/payments/{id} | SupplierPayments.View |
 | SupplierPayments | /purchases/payments/new | SupplierPayments.Create |
-| SupplierPayments | /purchases/payments | SupplierPayments.View |
 | SupplierPurchasing | /purchases/supplier-terms/{id}/history | Purchases.SupplierTerms.View |
 | SupplierPurchasing | /purchases/supplier-terms/{id}/price-breaks | Purchases.SupplierTerms.View |
 | SupplierPurchasing | /purchases/supplier-terms | Purchases.SupplierTerms.View |
 | SupplierPurchasing | /purchases/supplier-terms/exceptions | Purchases.SupplierTerms.View |
 | SupplierQuotations | /purchases/sourcing/{sourcingEventId}/quotation | SupplierQuotations.Create |
 | SupplierQuotations | /purchases/sourcing/{sourcingEventId}/comparison | SupplierQuotations.View |
+| Suppliers | /suppliers/new | Suppliers.Create |
 | Suppliers | /suppliers | Suppliers.View |
 | Suppliers | /suppliers/{id}/edit | Suppliers.Edit |
-| Suppliers | /suppliers/new | Suppliers.Create |
 | TaxRates | /products/catalog-masters | Administration.Access |
 | TaxRates | /products/catalog-masters | Administration.Access |
 | UnassignedStock | /inventory/putaway | ProductStock.View |
-| VendorBills | /purchases/bills | VendorBills.View |
+| Users | /users | Users.View |
+| Users | /users/new | Users.Create |
 | VendorBills | /purchases/bills/new?purchaseOrderId={purchaseOrderId} | VendorBills.Create |
+| VendorBills | /purchases/bills | VendorBills.View |
 | VendorBills | /purchases/bills/{id} | VendorBills.View |
-| WarehouseLocations | /inventory/locations | Warehouses.Create |
 | WarehouseLocations | /inventory/locations | Warehouses.View |
+| WarehouseLocations | /inventory/locations | Warehouses.Create |
 | WarehouseLocations | /inventory/locations | Warehouses.Edit |
 | Warehouses | /warehouses | Warehouses.Create |
 | Warehouses | /warehouses | Warehouses.View |
@@ -205,12 +210,10 @@ Physical retirement cohorts through MOD-030Z removed the initial inventory, acco
 | Platform/PlatformAccount | 1 | 2 | 0 | 0 | 1 | R2 - mixed controller; retain views until commands/downloads retire |
 | Platform/PlatformAuditEvents | 1 | 0 | 1 | 0 | 1 | R2 - mixed controller; retain views until commands/downloads retire |
 | Platform/PlatformAuditRetention | 1 | 4 | 0 | 0 | 1 | R2 - mixed controller; retain views until commands/downloads retire |
-| Roles | 3 | 3 | 0 | 0 | 4 | R2 - mixed controller; retain views until commands/downloads retire |
 | Settings | 17 | 18 | 1 | 0 | 17 | R2 - mixed controller; retain views until commands/downloads retire |
 | Subscription | 1 | 1 | 0 | 0 | 2 | R2 - mixed controller; retain views until commands/downloads retire |
 | SupplierIntegrations | 0 | 6 | 1 | 0 | 4 | R3 - retained MVC boundary; API/session decision required |
 | SupplierPortal | 0 | 3 | 0 | 1 | 2 | R3 - retained MVC boundary; API/session decision required |
-| Users | 2 | 1 | 0 | 0 | 2 | R2 - mixed controller; retain views until commands/downloads retire |
 
 ## R2 prioritization signals
 
@@ -220,14 +223,12 @@ This is a dependency-count signal, not deletion approval. Score = mutations × 3
 |---:|---|---:|---:|---:|---:|---:|---:|
 | 1 | Platform/PlatformAuditEvents | 3 | 1 | 0 | 1 | 0 | 1 |
 | 2 | Subscription | 5 | 1 | 1 | 0 | 0 | 2 |
-| 3 | Users | 5 | 2 | 1 | 0 | 0 | 2 |
-| 4 | CompanyOnboarding | 7 | 1 | 2 | 0 | 0 | 1 |
-| 5 | Platform/PlatformAccount | 7 | 1 | 2 | 0 | 0 | 1 |
-| 6 | Account | 12 | 3 | 3 | 0 | 0 | 3 |
-| 7 | Roles | 13 | 3 | 3 | 0 | 0 | 4 |
-| 8 | Platform/PlatformAuditRetention | 13 | 1 | 4 | 0 | 0 | 1 |
-| 9 | Platform/Platform | 19 | 7 | 4 | 0 | 0 | 7 |
-| 10 | Settings | 73 | 17 | 18 | 1 | 0 | 17 |
+| 3 | CompanyOnboarding | 7 | 1 | 2 | 0 | 0 | 1 |
+| 4 | Platform/PlatformAccount | 7 | 1 | 2 | 0 | 0 | 1 |
+| 5 | Account | 12 | 3 | 3 | 0 | 0 | 3 |
+| 6 | Platform/PlatformAuditRetention | 13 | 1 | 4 | 0 | 0 | 1 |
+| 7 | Platform/Platform | 19 | 7 | 4 | 0 | 0 | 7 |
+| 8 | Settings | 73 | 17 | 18 | 1 | 0 | 17 |
 
 ## Retained action dependencies
 
@@ -252,9 +253,6 @@ This is a dependency-count signal, not deletion approval. Score = mutations × 3
 | Platform/PlatformAuditRetention | CreateHold | POST | Retain - MVC mutation | MiniStore.Web/Areas/Platform/Controllers/PlatformAuditRetentionController.cs |
 | Platform/PlatformAuditRetention | ReleaseHold | POST | Retain - MVC mutation | MiniStore.Web/Areas/Platform/Controllers/PlatformAuditRetentionController.cs |
 | Platform/PlatformAuditRetention | Run | POST | Retain - MVC mutation | MiniStore.Web/Areas/Platform/Controllers/PlatformAuditRetentionController.cs |
-| Roles | Create | POST | Retain - MVC mutation | MiniStore.Web/Controllers/Security/RolesController.cs |
-| Roles | Delete | POST | Retain - MVC mutation | MiniStore.Web/Controllers/Security/RolesController.cs |
-| Roles | Edit | POST | Retain - MVC mutation | MiniStore.Web/Controllers/Security/RolesController.cs |
 | Settings | Accounting | POST | Retain - MVC mutation | MiniStore.Web/Controllers/Settings/SettingsController.cs |
 | Settings | BranchSalesAccounts | POST | Retain - MVC mutation | MiniStore.Web/Controllers/Settings/SettingsController.cs |
 | Settings | ChangeFiscalPeriodStatus | POST | Retain - MVC mutation | MiniStore.Web/Controllers/Settings/SettingsController.cs |
@@ -286,7 +284,6 @@ This is a dependency-count signal, not deletion approval. Score = mutations × 3
 | SupplierPortal | RecordDenied | POST | Retain - MVC mutation | MiniStore.Web/Controllers/Purchases/SupplierPortalController.cs |
 | SupplierPortal | RecordDenied | POST | Retain - MVC mutation | MiniStore.Web/Controllers/Purchases/SupplierPortalController.cs |
 | SupplierPortal | RecordDenied | POST | Retain - MVC mutation | MiniStore.Web/Controllers/Purchases/SupplierPortalController.cs |
-| Users | Create | POST | Retain - MVC mutation | MiniStore.Web/Controllers/Security/UsersController.cs |
 
 ## Mandatory batch checklist
 

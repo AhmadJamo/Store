@@ -1,10 +1,10 @@
 # المهمة التالية الوحيدة / Next Task
 
-## MOD-031E — تدقيق الحدود النهائية المتبقية
+## MOD-031F — إثبات الحدود التشغيلية المتبقية دون حذف
 
-> الحالة: APPROVED FOR NON-DESTRUCTIVE AUDIT
+> الحالة: APPROVED FOR NON-DESTRUCTIVE VERIFICATION
 
-دقّق الأسطح الـ15 المتبقية: Account, CompanyOnboarding, Dashboard, Home, Roles, Settings, Subscription,
-SupplierIntegrations, SupplierPortal, Users, Language وPlatform/Platform وPlatformAccount وPlatformAuditEvents
-وPlatformAuditRetention. افصل حدود الهوية والجلسة والمنصة العامة والتنزيلات وPOST-only. لا تحذف قبل إثبات مسار
-بديل آمن لكل حد؛ يجوز تقسيم التنفيذ وإبقاء الحدود التي يجب ألا تتقاعد.
+تحقق حيًا ووثّق الحدود الـ13 المصنفة المتبقية: Account, CompanyOnboarding, Dashboard, Home, Settings,
+Subscription, SupplierIntegrations, SupplierPortal, Language وPlatform/Platform وPlatformAccount
+وPlatformAuditEvents وPlatformAuditRetention. هذه ليست أسطح عرض قابلة للحذف المباشر: افصل الجلسة والهوية
+والمنصة العامة والتنزيلات وPOST-only، ولا تحذف أي حد إلا ضمن مهمة مستقلة مع بديل آمن واختبار جلسة مناسب.

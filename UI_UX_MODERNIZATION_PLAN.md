@@ -593,6 +593,16 @@ largest underrepresented modules; production deployment readiness and physical M
 - Inventory is now 15 MVC surfaces, 91 actions, 50 Razor rows and 45 views.
 - Release passed with zero warnings/errors, 1,605 checks, 242/242 Angular tests and bundle/browser gates.
 
+## MOD-031E — final presentation-boundary audit — COMPLETED 2026-11-14
+
+- Retired the Users and Roles MVC controllers and 11 Razor/page-model/partial artifacts after proving complete Angular/API parity.
+- Added five permission-protected compatibility reads for list/create/edit; retired POST mutations are not redirected.
+- The generated registry now reports 0 remaining ordinary presentation surfaces, 13 classified operational boundaries,
+  82 MVC actions, 44 Razor control rows and 40 views.
+- Account/session, onboarding, Settings download, Subscription, Supplier Portal, Language POST and Platform boundaries remain
+  intentionally present pending separate live-session or public-token evidence; they are not modernization omissions.
+- Release passed with zero warnings/errors, 1,601 regression checks, 242/242 Angular tests and bundle/browser gates.
+
 ## MOD-031C — fifteen-controller commercial retirement — COMPLETED 2026-11-14
 
 - Retired 15 MVC controllers spanning catalog masters, products, purchasing and sales returns/credits.

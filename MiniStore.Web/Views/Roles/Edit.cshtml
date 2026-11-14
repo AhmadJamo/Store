@@ -1,4 +1,0 @@
-@using System.Globalization
-@model MiniStore.Application.DTOs.Security.TenantRoleEditDto
-@{ var ar = CultureInfo.CurrentUICulture.Name.StartsWith("ar"); ViewData["Title"] = ar ? "تعديل الدور" : "Edit role"; }
-<div class="container-fluid py-3"><div class="mb-4"><h2>@ViewData["Title"]</h2><p class="text-muted">@(ar ? "عدّل اسم الدور ووصفه وصلاحياته داخل الشركة الحالية." : "Update the role name, description and permissions inside the active company.")</p></div><partial name="_Form" model="Model" /></div>

@@ -860,3 +860,9 @@ continues through authenticated Angular APIs and existing Application services; 
 - `MiniStore Front-End/src/app/features/purchases/purchase-request*`: bilingual typed Purchase Request list/create/details workspace,
   dynamic named lines, lifecycle actions, history, dirty recovery and external responsive SCSS.
 - `docs/modernization/PHASE_23_PURCHASING.md`: purchasing Angular migration slices, evidence and next gate.
+### MOD-031E presentation boundary (2026-11-14)
+
+Users and Roles now exist only as Angular feature pages plus versioned API controllers; their MVC controllers and Razor
+artifacts are removed and protected legacy reads are mapped by `RetiredPresentationRouteCatalog`. The generated registry
+contains zero remaining ordinary presentation surfaces. The 13 remaining classified MVC boundaries are intentional runtime
+composition for identity/session, onboarding, settings/downloads, subscription, supplier portal, language POST and Platform.

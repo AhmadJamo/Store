@@ -444,3 +444,11 @@
 
 - Retired the approved 15-surface operational cohort with Angular/API authority preserved.
 - Active inventory is 15 MVC surfaces, 91 actions, 50 Razor rows and 45 views.
+
+## MOD-031E — Final presentation-boundary audit — COMPLETE 2026-11-14
+
+- Retired Users and Roles MVC/Razor presentation after proving complete Angular/API parity and operation permissions.
+- Added five protected legacy GET/HEAD routes; legacy mutations remain non-redirected and return 405.
+- Generated inventory now reports zero remaining ordinary presentation surfaces. Thirteen classified runtime boundaries remain
+  for identity/session, onboarding, settings downloads, supplier/public portal, language POST and Platform administration.
+- Release, 1,601 regression checks, 242 Angular tests, accessibility, consistency, bundle and browser gates passed.

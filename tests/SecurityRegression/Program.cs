@@ -1740,10 +1740,6 @@ Check(tenantRoleAssignmentForeignKey.Properties.Select(property => property.Name
       tenantRoleAssignmentForeignKey.PrincipalKey.Properties.Select(property => property.Name).SequenceEqual(
         new[] { nameof(TenantRole.Id), nameof(TenantRole.TenantId) }),
     "The database relationship must prevent assigning a role owned by another company");
-Check(!typeof(RolesController).GetFields(BindingFlags.Instance | BindingFlags.NonPublic)
-        .Any(field => field.FieldType == typeof(AppDbContext) ||
-                      field.FieldType.IsGenericType && field.FieldType.GetGenericTypeDefinition() == typeof(RoleManager<>)),
-    "RolesController must use the Application service instead of EF or Identity role storage");
 foreach (var admin in new[] { false, true })
 {
     using var users = new StubUsers(db, admin);
@@ -1771,9 +1767,6 @@ foreach (var admin in new[] { false, true })
         "Tenant Admin session projection must include every protected administration permission");
 }
 
-var roleDeleteAction = typeof(RolesController).GetMethod("Delete")!;
-Check(roleDeleteAction.GetCustomAttribute<HttpPostAttribute>() != null, "Role deletion must require POST");
-Check(roleDeleteAction.GetCustomAttribute<HttpGetAttribute>() == null, "Role deletion must reject GET");
 Check(typeof(AccountController).GetMethods().Single(m => m.Name == "Login" && m.GetCustomAttribute<HttpPostAttribute>() != null)
     .GetCustomAttribute<Microsoft.AspNetCore.RateLimiting.EnableRateLimitingAttribute>()?.PolicyName == "login", "Login rate limiter missing");
 Check(typeof(AccountController).GetMethods().Single(m => m.Name == "Register" && m.GetCustomAttribute<HttpPostAttribute>() != null)
@@ -2431,6 +2424,11 @@ var expectedRetiredPresentationRoutes = new Dictionary<string, (string Route, st
     ["CustomerReturnRequests:Index"] = ("/sales/return-requests", "CustomerReturnRequests.View", [], null),
     ["CustomerReturnRequests:Create"] = ("/sales/return-requests/new?salesDeliveryId={salesDeliveryId}", "CustomerReturnRequests.Create", [], "salesDeliveryId"),
     ["CustomerReturnRequests:Details"] = ("/sales/return-requests/{id}", "CustomerReturnRequests.View", [], null),
+    ["Users:Index"] = ("/users", "Users.View", [], null),
+    ["Users:Create"] = ("/users/new", "Users.Create", [], null),
+    ["Roles:Index"] = ("/roles", "Roles.View", [], null),
+    ["Roles:Create"] = ("/roles/new", "Roles.Create", [], null),
+    ["Roles:Edit"] = ("/roles/{id}/edit", "Roles.Edit", [], null),
     ["Public:Index"] = ("/welcome", null, ["/"], null),
     ["Public:Pricing"] = ("/pricing", null, ["/pricing"], null)
 };
@@ -4581,10 +4579,6 @@ Check(usersApi.GetMethod(nameof(UsersApiController.GetAll))!
       usersApi.GetMethod(nameof(UsersApiController.Create))!
           .GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null,
     "Tenant user API must preserve operation permissions and antiforgery");
-var usersMvcDependencies = typeof(AccountController).Assembly.GetType("MiniStore.Web.Controllers.UsersController")!
-    .GetConstructors().Single().GetParameters().Select(parameter => parameter.ParameterType).ToArray();
-Check(usersMvcDependencies.SequenceEqual([typeof(ITenantUserAdministrationService)]),
-    "MVC user administration must use the shared application contract instead of Identity or repositories directly");
 var rolesApi = typeof(RolesApiController);
 Check(rolesApi.GetCustomAttribute<ApiControllerAttribute>() is not null &&
       rolesApi.GetCustomAttribute<AuthorizeAttribute>() is not null &&

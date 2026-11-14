@@ -24,12 +24,10 @@ Account|/login,/register,/access-denied
 CompanyOnboarding|/onboarding
 Dashboard|/
 Home|/
-Roles|/roles
 Settings|/settings
 Subscription|/subscription
 SupplierIntegrations|/purchases/integrations
 SupplierPortal|/supplier-portal/:token
-Users|/users
 Platform/Platform|/platform-control,/platform-management
 Platform/PlatformAccount|/platform-login
 Platform/PlatformAuditEvents|/platform-audit

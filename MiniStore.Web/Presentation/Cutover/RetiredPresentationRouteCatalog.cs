@@ -182,6 +182,11 @@ public static class RetiredPresentationRouteCatalog
         new("CustomerReturnRequests", "/sales/return-requests", "CustomerReturnRequests.View"),
         new("CustomerReturnRequests", "/sales/return-requests/new?salesDeliveryId={salesDeliveryId}", "CustomerReturnRequests.Create", "Create", PositiveIntegerQueryParameter: "salesDeliveryId"),
         new("CustomerReturnRequests", "/sales/return-requests/{id}", "CustomerReturnRequests.View", "Details"),
+        new("Users", "/users", "Users.View"),
+        new("Users", "/users/new", "Users.Create", "Create"),
+        new("Roles", "/roles", "Roles.View"),
+        new("Roles", "/roles/new", "Roles.Create", "Create"),
+        new("Roles", "/roles/{id}/edit", "Roles.Edit", "Edit"),
         new("Public", "/welcome", null, "Index", ["/"]),
         new("Public", "/pricing", null, "Pricing", ["/pricing"])
     ];

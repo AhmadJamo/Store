@@ -2393,3 +2393,6 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
 - 2026-11-14: Completed MOD-031D. Retired 15 operational MVC/Razor surfaces, added 47 protected legacy reads and kept
   downloads API-only. Release passed with zero warnings/errors, 1,605 checks and 242/242 Angular tests. Inventory is
   15 MVC surfaces, 91 actions, 50 Razor rows and 45 views.
+- 2026-11-14: Completed MOD-031E. Retired Users and Roles MVC/Razor presentation after Angular/API parity proof and added
+  five permission-preserving legacy reads. Generated inventory reports zero ordinary presentation surfaces and 13 retained
+  operational boundaries. Release passed cleanly with 1,601 checks, 242/242 Angular tests and bundle/browser gates.
