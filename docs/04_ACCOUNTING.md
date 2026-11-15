@@ -237,3 +237,5 @@ Explicit allocation rows support partial many-to-many reconciliation without cha
 # Close integration and controlled bank adjustments (UX-017D, 2026-11-15)
 
 Close readiness counts and totals statement amounts not covered by active allocations through the requested close date; any remainder is `Blocked`. Fees require a statement outflow and Expense counterpart. Interest inflows require Revenue and outflows require Expense. Transfers require another configured bank ledger account. The explicit adjustment uses the statement transaction date, current rowversion and remaining amount, then posts a balanced entry through `JournalPostingService` and allocates its bank line atomically. The official fiscal-period check remains authoritative and suggestions never post automatically.
+
+ERP-001 changes bank-account setup presentation only: eligible linked ledgers are active Asset accounts shown by code/name and revalidated in the Application service. It creates no journal and changes no balance or schema.

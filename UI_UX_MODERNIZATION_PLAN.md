@@ -590,6 +590,13 @@ largest underrepresented modules; production deployment readiness and physical M
 - Adjustment account options are exposed only under `BankStatements.Adjust`. Suggestions still never create or post journals automatically.
 - Release and Angular builds passed, together with 243/243 Angular tests and 1,609 security checks.
 
+## ERP-001 — enterprise gap audit and named bank-ledger selector — IMPLEMENTED 2026-11-15
+
+- Audited branch, transfer, POS cash, shared UX, error, accounting and test boundaries against actual source.
+- Recorded the evidence matrix and risk-ordered vertical-slice backlog in `docs/modernization/ENTERPRISE_ERP_GAP_ANALYSIS_2026-11-15.md`.
+- Replaced manual ledger-account ID entry in bank-account setup with permission-scoped active Asset options by code/name.
+- Added server-side active Asset validation and focused Angular/application/security coverage without schema, journal or inventory mutation.
+
 ## MOD-031C — fifteen-controller commercial retirement — COMPLETED 2026-11-14
 
 - Retired 15 MVC controllers and 39 Razor/page-model/partial files.

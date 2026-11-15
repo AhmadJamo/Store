@@ -491,3 +491,9 @@
 - Explicit fee, interest and transfer commands use the official journal gateway, fiscal-period check, stable source identity and one atomic journal/allocation transaction.
 - Independent permission, antiforgery, tenant re-resolution, rowversion, semantic audit and named account options are enforced.
 - Release, Angular build, 243 Angular tests and 1,609 security checks passed. UX-017 is complete.
+
+## ERP-001 — Enterprise gap audit and named bank-ledger selector — IMPLEMENTED 2026-11-15
+
+- Audited actual branch, transfer, POS cash, shared UX, accounting/security and test boundaries.
+- Replaced the manual bank ledger ID with permission-scoped named active-Asset options and server revalidation.
+- No schema, journal, stock or posted evidence changed. ERP-002 is proposed as a separate branch/access-policy slice.

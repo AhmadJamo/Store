@@ -7,6 +7,13 @@
 - Angular unit tests passed: 243/243 across 117 files.
 - Security and inventory regression passed: 1,609 checks.
 
+## ERP-001 verification — 2026-11-15
+
+- Release build passed with zero warnings and errors.
+- Angular tests passed: 244/244 across 117 files, preserving reconciliation coverage and adding named bank-ledger selection/request payload coverage.
+- Security/application regression passed: 1,612 checks, including endpoint permission, active Asset projection and server rejection of a non-Asset selection.
+- Angular production and UI/UX consistency builds passed. The existing 204.70 kB shared-chunk warning remains unchanged.
+
 > Status: FOCUSED REGRESSION EXECUTABLE IMPLEMENTED
 > Source of truth: `tests/SecurityRegression` and build output
 > Last reviewed: 2026-11-14

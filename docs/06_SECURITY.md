@@ -372,3 +372,5 @@ it, change an existing journal or bypass the fiscal-period check used by the pos
 Bank-statement evidence and allocations are tenant-filtered. Match/Unmatch are antiforgery protected, independently authorized, rowversion checked and semantically audited. Server checks posted status, linked GL account, direction and both remaining balances; Angular visibility is never authorization authority.
 
 UX-017D keeps adjustment account discovery and mutation behind `BankStatements.Adjust`. The server re-resolves tenant-filtered statement, bank and counterpart accounts, validates type/date/remaining amount/rowversion, and executes journal posting plus allocation inside the existing UnitOfWork. `Accounting.BankStatementAdjustmentPosted` records allowlisted evidence. Client filtering and idempotency keys are convenience and replay protection, not authorization or accounting authority.
+
+ERP-001 removes client-entered ledger IDs from bank setup. Its option endpoint requires `BankStatements.Import` and returns tenant-filtered active Asset accounts; `CreateAccountAsync` independently rejects missing, inactive or non-Asset selections.

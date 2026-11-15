@@ -5496,6 +5496,33 @@ CheckArgumentThrows(() => new RecurringJournalTemplate("Broken", "Out of balance
         [new RecurringJournalTemplateLine(101, 10m, 0m), new RecurringJournalTemplateLine(202, 0m, 9m)]),
     "Recurring-journal templates must reject unbalanced lines");
 
+var bankStatementsApi = typeof(BankStatementsApiController);
+var bankAccountOptionsAction = bankStatementsApi.GetMethod(nameof(BankStatementsApiController.BankAccountOptions))!;
+Check(bankAccountOptionsAction.GetCustomAttribute<HttpGetAttribute>()?.Template == "bank-account-options" &&
+      bankAccountOptionsAction.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
+      $"{PermissionAuthorizeAttribute.PolicyPrefix}BankStatements.Import",
+    "Bank ledger options must be read-only and protected by the bank-import permission");
+var assetAccount = new Account("1100", "Cash at bank", AccountType.Asset);
+var liabilityAccount = new Account("2100", "Payable", AccountType.Liability);
+var bankStatementOptionsService = new MiniStore.Application.Services.Accounting.BankStatementService(
+    new StubBankStatementRepository(), new StubAccountRepository([assetAccount, liabilityAccount]), null!);
+var bankLedgerOptions = await bankStatementOptionsService.GetBankAccountOptionsAsync();
+Check(bankLedgerOptions.Items.Count == 1 && bankLedgerOptions.Items[0].Display == "1100 — Cash at bank",
+    "Bank ledger options must expose named active asset accounts only");
+var rejectedNonAssetBankAccount = false;
+try
+{
+    await bankStatementOptionsService.CreateAccountAsync(new CreateBankAccountDto
+    {
+        Name = "Invalid bank", MaskedIdentifier = "****0000", CurrencyCode = "JOD", AccountId = 2
+    });
+}
+catch (ArgumentException)
+{
+    rejectedNonAssetBankAccount = true;
+}
+Check(rejectedNonAssetBankAccount, "Bank-account creation must reject non-asset ledger accounts on the server");
+
 Console.WriteLine($"Passed {count} security and inventory regression checks.");
 
 static FiscalPeriodService CreateFiscalPeriodService(IFiscalPeriodRepository repository, IUnitOfWork unitOfWork) =>
@@ -5666,6 +5693,24 @@ sealed class StubBranchRepository : IBranchRepository
     public Task<List<Branch>> GetAllAsync() => Task.FromResult(new List<Branch>());
     public Task<Branch?> GetByIdAsync(int id) => Task.FromResult<Branch?>(null);
     public Task AddAsync(Branch branch) => Task.CompletedTask;
+    public Task SaveChangesAsync() => Task.CompletedTask;
+}
+sealed class StubAccountRepository(IReadOnlyList<Account> items) : IAccountRepository
+{
+    public Task<List<Account>> GetAllAsync() => Task.FromResult(items.ToList());
+    public Task<Account?> GetByIdAsync(int id) => Task.FromResult(items.ElementAtOrDefault(id - 1));
+    public Task AddAsync(Account account) => Task.CompletedTask;
+    public Task SaveChangesAsync() => Task.CompletedTask;
+}
+sealed class StubBankStatementRepository : MiniStore.Domain.Interfaces.Accounting.IBankStatementRepository
+{
+    public Task<List<BankAccount>> GetAccountsAsync() => Task.FromResult(new List<BankAccount>());
+    public Task<BankAccount?> GetAccountAsync(int id) => Task.FromResult<BankAccount?>(null);
+    public Task<bool> ImportExistsAsync(int bankAccountId,string hash) => Task.FromResult(false);
+    public Task<bool> LineExistsAsync(int bankAccountId,string fingerprint) => Task.FromResult(false);
+    public Task AddAccountAsync(BankAccount account) => Task.CompletedTask;
+    public Task AddImportAsync(BankStatementImport import) => Task.CompletedTask;
+    public Task<List<BankStatementImport>> GetImportsAsync() => Task.FromResult(new List<BankStatementImport>());
     public Task SaveChangesAsync() => Task.CompletedTask;
 }
 sealed class StubWarehouseRepository : IWarehouseRepository

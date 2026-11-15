@@ -1,5 +1,7 @@
 # AI Work Log
 
+- 2026-11-15: Implemented ERP-001 after a source-backed enterprise gap audit. Bank-account setup now uses named active Asset ledger options under `BankStatements.Import`, with server-side account-type validation and focused Angular/application/security coverage. No schema, journal or inventory behavior changed.
+
 - 2026-11-15: Completed UX-017D. Unreconciled bank amounts now block close readiness; explicit fee, interest and bank-transfer commands post through the official journal/fiscal-period gateway and allocate atomically under an independent permission and semantic audit event. Release and Angular builds, 243/243 Angular tests and 1,609 security checks passed.
 
 - 2026-11-15: Completed UX-017C controlled partial bank reconciliation with allocation limits, same-account/direction posted candidates, atomic Match, reasoned Unmatch, rowversion, semantic audit, independent permissions and Angular workflow. Release, Angular build, 243 Angular tests and 1,609 security checks passed.

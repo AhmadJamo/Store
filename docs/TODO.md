@@ -1,5 +1,6 @@
 # Project TODO
 # UX-017D completed (2026-11-15): close readiness and controlled fee/interest/transfer adjustments are implemented; no further UX-017 slice is pending.
+# ERP-001 implemented (2026-11-15): enterprise gap audit plus named active-Asset selection for bank setup. ERP-002 branch/access-policy audit is proposed, not yet authorized.
 > Source of truth: Current repository scan  
 > Last reviewed: 2026-11-07
 

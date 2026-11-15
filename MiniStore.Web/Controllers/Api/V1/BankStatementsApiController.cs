@@ -10,6 +10,7 @@ public sealed class BankStatementsApiController(BankStatementService service,Ban
  [HttpGet("lines/{lineId:int}/candidates"),PermissionAuthorize("BankStatements.View")] public Task<BankStatementCandidatesDto> Candidates(int lineId)=>service.GetCandidatesAsync(lineId);
  [HttpGet("lines/{lineId:int}/reconciliation"),PermissionAuthorize("BankStatements.View")] public Task<BankReconciliationStateDto> Reconciliation(int lineId)=>reconciliation.GetStateAsync(lineId);
  [HttpGet("adjustment-accounts"),PermissionAuthorize("BankStatements.Adjust")] public Task<BankAdjustmentAccountsDto> AdjustmentAccounts()=>service.GetAdjustmentAccountsAsync();
+ [HttpGet("bank-account-options"),PermissionAuthorize("BankStatements.Import")] public Task<BankLedgerAccountOptionsDto> BankAccountOptions()=>service.GetBankAccountOptionsAsync();
  [HttpPost("matches"),ValidateAntiForgeryToken,PermissionAuthorize("BankStatements.Match")] public async Task<IActionResult> Match(MatchBankStatementDto dto){await reconciliation.MatchAsync(dto);return NoContent();}
  [HttpPost("matches/unmatch"),ValidateAntiForgeryToken,PermissionAuthorize("BankStatements.Unmatch")] public async Task<IActionResult> Unmatch(UnmatchBankStatementDto dto){await reconciliation.UnmatchAsync(dto);return NoContent();}
  [HttpPost("adjustments"),ValidateAntiForgeryToken,PermissionAuthorize("BankStatements.Adjust")] public Task<BankAdjustmentResultDto> Adjust(CreateBankAdjustmentDto dto)=>adjustments.CreateAsync(dto);

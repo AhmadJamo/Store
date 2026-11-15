@@ -5,6 +5,8 @@
 
 UX-017 is complete through UX-017D: immutable bank-statement evidence, controlled partial matching, unreconciled close-readiness blocking and explicit fee/interest/transfer posting operate through tenant-scoped services, the official journal/fiscal-period gateway and one cohesive Angular workspace. Suggestions never auto-post.
 
+ERP-001 records a source-backed enterprise gap analysis. Current branch functionality is an accounting/access dimension rather than a complete branch workspace or user scope; inter-branch receipt and POS cash sessions are not implemented. The first safe Phase-1 slice replaces manual bank-ledger ID entry with permission-scoped named active-Asset options and server revalidation.
+
 The Angular UI/UX modernization program under `UI_UX_MODERNIZATION_PLAN.md` is complete for its approved presentation
 scope through UX-015:
 the permission-aware shell uses persistent collapsible business groups, active-route expansion and bilingual

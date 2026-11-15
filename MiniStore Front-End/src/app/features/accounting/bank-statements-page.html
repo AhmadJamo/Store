@@ -5,7 +5,7 @@
     <section class="card">
       <h2>Bank accounts · الحسابات البنكية</h2>
       @if (session.can('BankStatements.Import')) {
-        <div class="grid"><input [(ngModel)]="name" placeholder="Name / الاسم"><input [(ngModel)]="maskedIdentifier" placeholder="Masked identifier / معرف مخفي"><input [(ngModel)]="currencyCode" placeholder="Currency"><input [(ngModel)]="accountId" type="number" placeholder="Ledger account ID"><button (click)="create()">Add / إضافة</button></div>
+        <div class="grid"><input [(ngModel)]="name" placeholder="Name / الاسم"><input [(ngModel)]="maskedIdentifier" placeholder="Masked identifier / معرف مخفي"><input [(ngModel)]="currencyCode" placeholder="Currency"><select [(ngModel)]="accountId"><option [ngValue]="0">Select asset ledger account / اختر حساب أصل</option>@for (a of bankLedgerOptions(); track a.id) { <option [ngValue]="a.id">{{ a.display }}</option> }</select><button [disabled]="!name.trim() || !maskedIdentifier.trim() || currencyCode.trim().length !== 3 || !accountId" (click)="create()">Add / إضافة</button></div>
       }
       <ul>@for (a of page.accounts; track a.id) { <li>{{ a.name }} · {{ a.maskedIdentifier }} · {{ a.currencyCode }}</li> }</ul>
     </section>
