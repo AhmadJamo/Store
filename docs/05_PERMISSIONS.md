@@ -309,3 +309,4 @@ convenience only; controller authorization and server lifecycle checks are autho
 - `BankStatements.View` protects evidence, candidates, allocation state and accounting-hub discovery.
 - `BankStatements.Import` independently protects bank-account creation and bounded CSV import.
 - `BankStatements.Match` and `BankStatements.Unmatch` independently protect explicit allocation and reasoned reversal; neither grants journal posting or adjustment creation.
+- `BankStatements.Adjust` independently protects adjustment-account discovery and the antiforgery-protected fee/interest/transfer command. It does not grant import, generic journal posting, unmatching or accounting administration.

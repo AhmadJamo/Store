@@ -106,6 +106,7 @@ public static class BusinessServicesExtensions
         services.AddScoped<PaymentMethodService>();
         services.AddScoped<BankStatementService>();
         services.AddScoped<BankReconciliationService>();
+        services.AddScoped<BankAdjustmentService>();
         services.AddScoped<IDocumentSequenceRepository, DocumentSequenceRepository>();
         services.AddScoped<DocumentNumberService>();
         services.AddScoped<IGeneralSettingsRepository, GeneralSettingsRepository>();

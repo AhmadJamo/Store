@@ -1,5 +1,7 @@
 # AI Work Log
 
+- 2026-11-15: Completed UX-017D. Unreconciled bank amounts now block close readiness; explicit fee, interest and bank-transfer commands post through the official journal/fiscal-period gateway and allocate atomically under an independent permission and semantic audit event. Release and Angular builds, 243/243 Angular tests and 1,609 security checks passed.
+
 - 2026-11-15: Completed UX-017C controlled partial bank reconciliation with allocation limits, same-account/direction posted candidates, atomic Match, reasoned Unmatch, rowversion, semantic audit, independent permissions and Angular workflow. Release, Angular build, 243 Angular tests and 1,609 security checks passed.
 
 - 2026-11-15: Started UX-017C. Added the reconciliation-allocation persistence boundary, remaining-balance calculation and statement-line over-allocation guard. Release build passed; matching commands are not exposed yet.

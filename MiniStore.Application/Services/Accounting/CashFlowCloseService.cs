@@ -2,6 +2,7 @@ using MiniStore.Application.Dtos.Accounting;
 using MiniStore.Application.DTOs.Inventory.Reconciliation;
 using MiniStore.Domain.Entities;
 using MiniStore.Domain.Interfaces;
+using MiniStore.Domain.Interfaces.Accounting;
 
 namespace MiniStore.Application.Services;
 
@@ -18,6 +19,7 @@ public sealed class CashFlowCloseService(
     FinancialReportService financialReports,
     AgingReportService agingReports,
     InventoryReconciliationService inventoryReconciliation,
+    IBankReconciliationRepository bankReconciliation,
     IGeneralSettingsRepository generalSettings) : IPeriodCloseReadinessService
 {
     public async Task<CashFlowClosePageDto> GetAsync(CashFlowCloseQueryDto query,
@@ -54,6 +56,7 @@ public sealed class CashFlowCloseService(
         var arDifference = Round(aging.Receivables.Reconciliation.Sum(row => Math.Abs(row.Difference)));
         var apDifference = Round(aging.Payables.Reconciliation.Sum(row => Math.Abs(row.Difference)));
         var periodIssueCount = targetPeriod is null || targetPeriod.Status == FiscalPeriodStatus.Closed ? 1 : 0;
+        var bankUnreconciled = await bankReconciliation.GetUnreconciledSummaryAsync(toDate);
 
         var checks = new List<CloseReadinessCheckDto>
         {
@@ -65,6 +68,7 @@ public sealed class CashFlowCloseService(
             Check("Payables", apDifference == 0 ? "Ready" : "Blocked", aging.Payables.Reconciliation.Count(row => row.Difference != 0), apDifference, $"/accounting/aging?asOfDate={toDate:yyyy-MM-dd}&view=payables"),
             Check("Inventory", inventory.ExceptionCount == 0 ? "Ready" : "Blocked", inventory.ExceptionCount, 0, "/inventory/reconciliation?exceptionsOnly=true"),
             Check("DraftJournals", draftCount == 0 ? "Ready" : "Blocked", draftCount, 0, $"/accounting/journal-entries?toDate={toDate:yyyy-MM-dd}&status=Draft"),
+            Check("BankReconciliation", bankUnreconciled.Count == 0 ? "Ready" : "Blocked", bankUnreconciled.Count, bankUnreconciled.Amount, "/accounting/bank-statements"),
             Check("FiscalPeriod", periodIssueCount == 0 ? "Ready" : "Blocked", periodIssueCount, 0, "/settings/fiscal-periods")
         };
         var currency = (await generalSettings.GetAsync())?.Currency ?? "JOD";

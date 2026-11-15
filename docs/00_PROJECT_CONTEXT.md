@@ -3,6 +3,8 @@
 > Source of truth: Code  
 > Last reviewed: 2026-11-14
 
+UX-017 is complete through UX-017D: immutable bank-statement evidence, controlled partial matching, unreconciled close-readiness blocking and explicit fee/interest/transfer posting operate through tenant-scoped services, the official journal/fiscal-period gateway and one cohesive Angular workspace. Suggestions never auto-post.
+
 The Angular UI/UX modernization program under `UI_UX_MODERNIZATION_PLAN.md` is complete for its approved presentation
 scope through UX-015:
 the permission-aware shell uses persistent collapsible business groups, active-route expansion and bilingual

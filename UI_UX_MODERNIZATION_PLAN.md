@@ -582,6 +582,14 @@ largest underrepresented modules; production deployment readiness and physical M
 - Added posted same-account/same-direction journal-line candidates, atomic partial Match, reasoned Unmatch, rowversion, semantic audit, independent permissions and a cohesive Angular workflow.
 - Release, Angular build, 243 Angular tests and 1,609 security checks passed.
 
+## UX-017D — close integration and controlled bank adjustments — COMPLETED 2026-11-15
+
+- Period-close readiness now blocks on every statement line with an unreconciled amount through the server-authored close checklist.
+- Added an explicit, independently permissioned command for bank fees, interest and bank-to-bank transfers. It posts only through `JournalPostingService`, therefore retaining fiscal-period, numbering and balanced-entry authority.
+- The command validates rowversion, remaining amount, transaction date, active named counterpart and adjustment-specific account type; journal creation, allocation and semantic audit evidence commit atomically.
+- Adjustment account options are exposed only under `BankStatements.Adjust`. Suggestions still never create or post journals automatically.
+- Release and Angular builds passed, together with 243/243 Angular tests and 1,609 security checks.
+
 ## MOD-031C — fifteen-controller commercial retirement — COMPLETED 2026-11-14
 
 - Retired 15 MVC controllers and 39 Razor/page-model/partial files.

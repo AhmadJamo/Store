@@ -483,4 +483,11 @@
 
 - Added tenant bank identities, immutable bounded-CSV evidence and duplicate fingerprints without retaining raw files.
 - Added explicit partial allocations to posted same-account/same-direction journal lines, effective rowversion, atomic Match/Unmatch, semantic audit and Angular workflow.
-- No reconciliation operation creates, edits, posts or reverses a journal. UX-017D remains close-readiness and separately controlled adjustments.
+- UX-017C itself creates no journal; UX-017D below separately completes close-readiness and controlled adjustments.
+
+## UX-017D — Close integration and controlled bank adjustments — COMPLETE 2026-11-15
+
+- Unreconciled statement amounts are server-authored blocking close-readiness evidence.
+- Explicit fee, interest and transfer commands use the official journal gateway, fiscal-period check, stable source identity and one atomic journal/allocation transaction.
+- Independent permission, antiforgery, tenant re-resolution, rowversion, semantic audit and named account options are enforced.
+- Release, Angular build, 243 Angular tests and 1,609 security checks passed. UX-017 is complete.

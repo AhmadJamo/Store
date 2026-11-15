@@ -1,5 +1,5 @@
 # Project TODO
-# UX-017C completed (2026-11-15): controlled partial bank matching; UX-017D close-readiness and controlled adjustments remain pending.
+# UX-017D completed (2026-11-15): close readiness and controlled fee/interest/transfer adjustments are implemented; no further UX-017 slice is pending.
 > Source of truth: Current repository scan  
 > Last reviewed: 2026-11-07
 

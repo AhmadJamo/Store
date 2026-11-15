@@ -1,4 +1,12 @@
 # Testing
+
+## UX-017D verification — 2026-11-15
+
+- Release build passed with zero warnings and zero errors.
+- Angular production build passed; the existing 204.70 kB initial shared-chunk budget warning remains unchanged.
+- Angular unit tests passed: 243/243 across 117 files.
+- Security and inventory regression passed: 1,609 checks.
+
 > Status: FOCUSED REGRESSION EXECUTABLE IMPLEMENTED
 > Source of truth: `tests/SecurityRegression` and build output
 > Last reviewed: 2026-11-14

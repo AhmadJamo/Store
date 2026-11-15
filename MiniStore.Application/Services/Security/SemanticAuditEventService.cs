@@ -15,6 +15,7 @@ public static class SemanticAuditEventTypes
     public const string RecurringJournalDraftGenerated = "Accounting.RecurringJournalDraftGenerated";
     public const string BankStatementMatched = "Accounting.BankStatementMatched";
     public const string BankStatementUnmatched = "Accounting.BankStatementUnmatched";
+    public const string BankStatementAdjustmentPosted = "Accounting.BankStatementAdjustmentPosted";
     public const string GeneralSettingsChanged = "Configuration.GeneralSettingsChanged";
     public const string DiscountSettingsChanged = "Configuration.DiscountSettingsChanged";
     public const string InventorySettingsChanged = "Configuration.InventorySettingsChanged";

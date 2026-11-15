@@ -3,6 +3,7 @@
 
 UX-017B adds `BankStatementService`, `BankStatementsApiController`, tenant-scoped bank evidence entities and the cohesive Angular `features/accounting/bank-statements-page` workspace. CSV evidence is immutable and fingerprinted; matching is intentionally absent. See ADR `2026-11-14-bank-statement-evidence-foundation.md`.
 UX-017C adds `BankReconciliationService`, allocation persistence, posted journal-line candidates, Match/Unmatch API commands and the permission-aware Angular reconciliation workflow. See ADR `2026-11-15-controlled-partial-bank-reconciliation.md`.
+UX-017D adds `BankAdjustmentService`, the `BankStatements.Adjust` API boundary, unreconciled close-readiness aggregation and the fee/interest/transfer form inside the same cohesive Angular bank-statements page. See ADR `2026-11-15-controlled-bank-adjustments-and-close-readiness.md`.
 
 UX-017B adds `BankStatementService`, `BankStatementsApiController`, tenant-scoped bank evidence entities and the cohesive Angular `features/accounting/bank-statements-page` workspace. CSV evidence is immutable and fingerprinted; matching is intentionally absent. See ADR `2026-11-14-bank-statement-evidence-foundation.md`.
 

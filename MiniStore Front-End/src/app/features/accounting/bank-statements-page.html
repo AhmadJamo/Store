@@ -28,6 +28,19 @@
             <label>Amount / المبلغ <input type="number" min="0.01" [max]="s.remaining" step="0.01" [(ngModel)]="matchAmount"></label>
             <table><thead><tr><th>Entry</th><th>Date</th><th>Description</th><th>Amount</th><th></th></tr></thead><tbody>@for (c of candidates(); track c.journalEntryLineId) { <tr><td><a [href]="'/accounting/journal-entries/' + c.journalEntryId">{{ c.entryNumber }}</a></td><td>{{ c.date | date:'mediumDate' }}</td><td>{{ c.description || '—' }}</td><td>{{ (c.debit || c.credit) | number:'1.2-2' }}</td><td><button [disabled]="saving() || matchAmount <= 0 || matchAmount > s.remaining" (click)="match(c)">Match / مطابقة</button></td></tr> }</tbody></table>
           }
+          @if (session.can('BankStatements.Adjust') && s.remaining > 0) {
+            <div class="adjustment">
+              <h3>Controlled bank adjustment · تعديل بنكي مضبوط</h3>
+              <p>Create only an explicit fee, interest or transfer journal for this statement line. / أنشئ فقط قيد رسوم أو فوائد أو تحويل صريح لهذا السطر.</p>
+              <div class="grid">
+                <label>Type / النوع<select [(ngModel)]="adjustmentType" (ngModelChange)="counterpartAccountId=0"><option [ngValue]="1">Fee / رسوم</option><option [ngValue]="2">Interest / فوائد</option><option [ngValue]="3">Transfer / تحويل</option></select></label>
+                <label>Counterpart account / الحساب المقابل<select [(ngModel)]="counterpartAccountId"><option [ngValue]="0">Select by name / اختر بالاسم</option>@for (a of adjustmentAccounts(l); track a.id) { <option [ngValue]="a.id">{{ a.display }}</option> }</select></label>
+                <label>Amount / المبلغ<input type="number" min="0.01" [max]="s.remaining" step="0.01" [(ngModel)]="adjustmentAmount"></label>
+                <label>Description / الوصف<input maxlength="250" [(ngModel)]="adjustmentDescription"></label>
+              </div>
+              <button [disabled]="saving() || !counterpartAccountId || adjustmentAmount <= 0 || adjustmentAmount > s.remaining || !adjustmentDescription.trim()" (click)="adjust()">Post and reconcile / ترحيل وتسوية</button>
+            </div>
+          }
         }
       </section>
     }

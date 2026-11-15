@@ -233,3 +233,7 @@ Tenant-scoped bank accounts now link to ledger accounts. CSV imports retain immu
 # Controlled partial bank reconciliation (UX-017C, 2026-11-15)
 
 Explicit allocation rows support partial many-to-many reconciliation without changing imported evidence or journals. Only posted journal lines on the linked bank GL account and matching debit/credit direction are eligible. Active sums cannot exceed either side. Match and reasoned Unmatch use rowversion, UnitOfWork, independent permissions, antiforgery and semantic audit. See `modernization/UI_UX_BANK_RECONCILIATION.md`.
+
+# Close integration and controlled bank adjustments (UX-017D, 2026-11-15)
+
+Close readiness counts and totals statement amounts not covered by active allocations through the requested close date; any remainder is `Blocked`. Fees require a statement outflow and Expense counterpart. Interest inflows require Revenue and outflows require Expense. Transfers require another configured bank ledger account. The explicit adjustment uses the statement transaction date, current rowversion and remaining amount, then posts a balanced entry through `JournalPostingService` and allocates its bank line atomically. The official fiscal-period check remains authoritative and suggestions never post automatically.
