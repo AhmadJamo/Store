@@ -320,6 +320,10 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'branches',
+        loadComponent: () => import('./features/branches/branches-page').then((module) => module.BranchesPageComponent),
+      },
+      {
         path: 'settings/accounting',
         canDeactivate: [(component) => component.canDeactivate()],
         loadComponent: () =>

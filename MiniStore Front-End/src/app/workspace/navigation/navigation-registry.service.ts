@@ -72,6 +72,7 @@ const navigationItems: readonly NavigationItem[] = [
     icon: '⚙',
     requiredPermission: 'Administration.Access',
   },
+  { id: 'branches', route: '/branches', labelKey: 'branchesTitle', icon: '⌂', requiredPermission: 'Administration.Access' },
   {
     id: 'users',
     route: '/users',

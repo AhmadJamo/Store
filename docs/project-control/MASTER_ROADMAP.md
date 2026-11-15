@@ -497,3 +497,12 @@
 - Audited actual branch, transfer, POS cash, shared UX, accounting/security and test boundaries.
 - Replaced the manual bank ledger ID with permission-scoped named active-Asset options and server revalidation.
 - No schema, journal, stock or posted evidence changed. ERP-002 is proposed as a separate branch/access-policy slice.
+
+## ERP-002 — Branch scope and access-policy foundation — COMPLETE 2026-11-15
+
+- Defined tenant, branch, business-activity and future user-grant boundaries in an accepted ADR.
+- Added an authenticated, Administration.Access read-only Branches workspace over Application/repository projections.
+- Shows current branch, warehouse-operation and POS-terminal configuration without presenting those records as user authorization.
+- Deliberately omitted a branch switcher, user grants, schema mutation, inter-branch transfer and accounting mutation.
+- Release, 245 Angular tests, 1,613 security checks, production build and EF model-consistency verification passed.
+- Proposed ERP-003 as the server-side user branch-grant and request-context foundation.

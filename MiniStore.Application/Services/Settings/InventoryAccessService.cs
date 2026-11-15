@@ -10,6 +10,46 @@ public class InventoryAccessService(
     IWarehouseRepository warehouseRepository,
     IUnitOfWork unitOfWork)
 {
+    public async Task<BranchWorkspaceDto> GetBranchWorkspaceAsync()
+    {
+        var branches = await branchRepository.GetAllAsync();
+        var warehouses = await warehouseRepository.GetAllAsync();
+        var accesses = await accessRepository.GetBranchAccessesAsync();
+        var terminals = await accessRepository.GetPosTerminalsAsync();
+        var warehouseNames = warehouses.ToDictionary(x => x.Id, x => x.Name);
+
+        return new BranchWorkspaceDto
+        {
+            Branches = branches.OrderBy(x => x.Code).Select(branch => new BranchWorkspaceRowDto
+            {
+                Id = branch.Id,
+                Code = branch.Code,
+                Name = branch.Name,
+                IsActive = branch.IsActive,
+                Warehouses = accesses.Where(x => x.BranchId == branch.Id)
+                    .OrderBy(x => x.Priority).ThenBy(x => x.WarehouseId)
+                    .Select(x => new BranchWorkspaceWarehouseDto
+                    {
+                        Id = x.WarehouseId,
+                        Name = warehouseNames[x.WarehouseId],
+                        IsDefaultForPos = x.IsDefaultForPos,
+                        AllowPosSales = x.AllowPosSales,
+                        AllowPurchases = x.AllowPurchases,
+                        AllowTransferOut = x.AllowTransferOut,
+                        AllowTransferIn = x.AllowTransferIn
+                    }).ToList(),
+                PosTerminals = terminals.Where(x => x.BranchId == branch.Id)
+                    .OrderBy(x => x.Name).Select(x => new BranchWorkspaceTerminalDto
+                    {
+                        Id = x.Id,
+                        Name = x.Name,
+                        DefaultWarehouseName = warehouseNames[x.DefaultWarehouseId],
+                        IsActive = x.IsActive
+                    }).ToList()
+            }).ToList()
+        };
+    }
+
     public async Task<InventoryAccessSettingsDto> GetPageAsync()
     {
         var branches = await branchRepository.GetAllAsync();

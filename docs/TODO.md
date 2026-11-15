@@ -1,6 +1,7 @@
 # Project TODO
+# ERP-002 completed (2026-11-15): branch context policy and read-only workspace are implemented. ERP-003 user branch grants and server request context are proposed; no branch switcher is authorized yet.
 # UX-017D completed (2026-11-15): close readiness and controlled fee/interest/transfer adjustments are implemented; no further UX-017 slice is pending.
-# ERP-001 implemented (2026-11-15): enterprise gap audit plus named active-Asset selection for bank setup. ERP-002 branch/access-policy audit is proposed, not yet authorized.
+# ERP-001 implemented (2026-11-15): enterprise gap audit plus named active-Asset selection for bank setup.
 > Source of truth: Current repository scan  
 > Last reviewed: 2026-11-07
 
@@ -508,3 +509,11 @@ The ERP SaaS Foundation Blueprint is imported as a non-authoritative planning re
 - [ ] UX-017A audit bank-statement reconciliation readiness without schema or runtime mutation.
 - [x] UX-017A audited bank reconciliation and defined an allocation-based staged design without runtime mutation.
 - [ ] UX-017B implement immutable bank-account/statement CSV evidence and read-only candidates only.
+
+## ERP enterprise expansion (2026-11-15)
+
+- [x] ERP-001 complete source-backed enterprise gap audit and replace manual bank ledger IDs with named choices.
+- [x] ERP-002 define branch context policy and add a read-only current-configuration workspace.
+- [ ] ERP-003 add tenant-owned user branch grants and server-authoritative optional branch request context.
+- [ ] After ERP-003, add a permitted-branch switcher without using client state as authorization.
+- [ ] Keep business activities, inter-branch dispatch/receipt and POS cash sessions as separate vertical slices.

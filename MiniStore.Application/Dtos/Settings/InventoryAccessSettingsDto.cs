@@ -8,6 +8,40 @@ public class InventoryAccessSettingsDto
     public List<PosTerminalAccessDto> PosTerminals { get; set; } = [];
 }
 
+public sealed class BranchWorkspaceDto
+{
+    public List<BranchWorkspaceRowDto> Branches { get; set; } = [];
+}
+
+public sealed class BranchWorkspaceRowDto
+{
+    public int Id { get; set; }
+    public string Code { get; set; } = string.Empty;
+    public string Name { get; set; } = string.Empty;
+    public bool IsActive { get; set; }
+    public List<BranchWorkspaceWarehouseDto> Warehouses { get; set; } = [];
+    public List<BranchWorkspaceTerminalDto> PosTerminals { get; set; } = [];
+}
+
+public sealed class BranchWorkspaceWarehouseDto
+{
+    public int Id { get; set; }
+    public string Name { get; set; } = string.Empty;
+    public bool IsDefaultForPos { get; set; }
+    public bool AllowPosSales { get; set; }
+    public bool AllowPurchases { get; set; }
+    public bool AllowTransferOut { get; set; }
+    public bool AllowTransferIn { get; set; }
+}
+
+public sealed class BranchWorkspaceTerminalDto
+{
+    public int Id { get; set; }
+    public string Name { get; set; } = string.Empty;
+    public string DefaultWarehouseName { get; set; } = string.Empty;
+    public bool IsActive { get; set; }
+}
+
 public class InventoryAccessBranchDto
 {
     public int Id { get; set; }

@@ -1,5 +1,7 @@
 # AI Work Log
 
+- 2026-11-15: Completed ERP-002 Branch Scope and Access Policy. Accepted the tenant/branch/activity/grant ADR and added a cohesive read-only /branches Angular workspace backed by an authenticated Administration.Access API and existing tenant-filtered branch, warehouse-operation and POS-terminal repositories. No schema, selector, user grant, stock, journal or business mutation was added. Release passed cleanly, Angular passed 245/245 tests, SecurityRegression passed 1,613 checks, production build passed with the existing 204.70 KB warning, and EF reported no pending model changes. Advanced the gate to proposed ERP-003 server-side user branch grants and request context.
+
 - 2026-11-15: Implemented ERP-001 after a source-backed enterprise gap audit. Bank-account setup now uses named active Asset ledger options under `BankStatements.Import`, with server-side account-type validation and focused Angular/application/security coverage. No schema, journal or inventory behavior changed.
 
 - 2026-11-15: Completed UX-017D. Unreconciled bank amounts now block close readiness; explicit fee, interest and bank-transfer commands post through the official journal/fiscal-period gateway and allocate atomically under an independent permission and semantic audit event. Release and Angular builds, 243/243 Angular tests and 1,609 security checks passed.

@@ -65,3 +65,7 @@ MOD-030D commits the proven Settings GET pages to `AngularDefault` after an auth
 passed 15/15 hosted checks, 29 exact Angular route probes and the same 29-route process-local MVC rollback. The binary
 OrganizationLogo response, every mutation and every unknown action remain outside the GET cutover catalog. Razor views
 and controllers remain available as the rollback path until a separately approved retirement cohort removes them.
+
+## Branch workspace (ERP-002, 2026-11-15)
+
+GET /api/v1/branches composes tenant-filtered branch, branch-warehouse operation and POS-terminal records through InventoryAccessService into DTOs for a read-only Angular /branches workspace. The route requires Administration.Access; it performs no EF access in the controller and exposes no entity. Warehouse rules describe operations and are not user-to-branch authorization. No branch selector, business-activity model, schema change or mutation was added.

@@ -612,6 +612,14 @@ largest underrepresented modules; production deployment readiness and physical M
 - Inventory is 30 MVC surfaces, 214 actions, 100 Razor rows and 93 views.
 - Release passed with zero warnings/errors, 1,638 regression checks, 242/242 Angular tests and bundle/browser gates.
 
+## ERP-002 — Branch workspace and context policy — COMPLETED 2026-11-15
+
+- Added one cohesive /branches Angular feature instead of fragmenting branch, warehouse and POS summaries.
+- Added bilingual responsive branch cards, operational counts and links to existing inventory-access and branch-account settings.
+- The page is read-only and permission-filtered; it does not store a selected branch or mistake browser state for authorization.
+- Preserved persistent workspace navigation and reused shared recovery and page-header patterns.
+- The accepted ADR reserves user branch grants and server request context for ERP-003 before any branch switcher.
+
 ## MOD-031D — fifteen-surface operational retirement — COMPLETED 2026-11-14
 
 - Retired 15 operational MVC controllers and 48 user-facing Razor views plus supporting page models/partials.

@@ -1,5 +1,13 @@
 # Testing
 
+## ERP-002 branch-workspace evidence — 2026-11-15
+
+- Release solution build passed with zero warnings and zero errors.
+- Angular passed 245/245 tests across 118 files, including the exact read-only /api/v1/branches contract.
+- SecurityRegression passed 1,613 checks, including authentication plus Administration.Access on the branch endpoint.
+- Production Angular build passed; the pre-existing initial-chunk warning remains 204.70 KB against 180 KB.
+- EF reports no pending model changes because ERP-002 adds no schema.
+
 ## UX-017D verification — 2026-11-15
 
 - Release build passed with zero warnings and zero errors.
@@ -173,3 +181,11 @@ Cafe recipe, product-catalog and managed-unit coverage validates conversion, cla
 - Static accessibility passed 67 templates and the external-SCSS policy passed.
 - Production build passed at 303,702/358,400 initial bytes and 81,296/81,920 largest lazy bytes.
 - Live adjustment list/create routes returned 200; anonymous list/create-form API calls returned 401.
+
+## ERP-002 branch-workspace evidence (2026-11-15)
+
+- Release solution build passed with zero warnings and zero errors.
+- Angular passed 245/245 tests across 118 files, including the exact read-only /api/v1/branches contract.
+- SecurityRegression passed 1,613 checks, including authentication plus Administration.Access on the branch endpoint.
+- Production Angular build passed; the pre-existing initial-chunk warning remains 204.70 KB against 180 KB.
+- EF reports no pending model changes because ERP-002 adds no schema.

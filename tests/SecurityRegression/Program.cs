@@ -5523,6 +5523,14 @@ catch (ArgumentException)
 }
 Check(rejectedNonAssetBankAccount, "Bank-account creation must reject non-asset ledger accounts on the server");
 
+var branchesApi = typeof(MiniStore.Web.Controllers.Api.V1.Branches.BranchesApiController);
+Check(branchesApi.GetCustomAttribute<ApiControllerAttribute>() is not null &&
+      branchesApi.GetCustomAttribute<AuthorizeAttribute>() is not null &&
+      branchesApi.GetMethod(nameof(MiniStore.Web.Controllers.Api.V1.Branches.BranchesApiController.Get))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
+          $"{PermissionAuthorizeAttribute.PolicyPrefix}Administration.Access",
+    "Branch workspace must remain authenticated and administration-permission protected");
+
 Console.WriteLine($"Passed {count} security and inventory regression checks.");
 
 static FiscalPeriodService CreateFiscalPeriodService(IFiscalPeriodRepository repository, IUnitOfWork unitOfWork) =>

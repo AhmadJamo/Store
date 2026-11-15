@@ -311,3 +311,8 @@ convenience only; controller authorization and server lifecycle checks are autho
 - The ERP-001 `bank-account-options` read also requires `BankStatements.Import`; ordinary View users do not receive account-setup options.
 - `BankStatements.Match` and `BankStatements.Unmatch` independently protect explicit allocation and reasoned reversal; neither grants journal posting or adjustment creation.
 - `BankStatements.Adjust` independently protects adjustment-account discovery and the antiforgery-protected fee/interest/transfer command. It does not grant import, generic journal posting, unmatching or accounting administration.
+
+## ERP-002 branch workspace permission
+
+- Administration.Access protects both navigation discovery and GET /api/v1/branches.
+- This permission exposes tenant-wide branch configuration to administrators only. Branch-to-warehouse and POS configuration is not a user branch grant. ERP-003 must add explicit server-side grants before non-administrative branch discovery or selected-branch context.

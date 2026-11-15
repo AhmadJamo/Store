@@ -1,4 +1,7 @@
 # Codebase map
+
+ERP-002 adds a read-only branch workspace DTO graph to InventoryAccessSettingsDto.cs, tenant-filtered composition in InventoryAccessService, an authenticated administration-only BranchesApiController, and the cohesive Angular features/branches workspace with a typed API test. The tenant/branch/activity/grant boundary is recorded in docs/decisions/2026-11-15-branch-context-and-access-policy.md.
+
 ## Angular modernization foundation
 
 UX-017B adds `BankStatementService`, `BankStatementsApiController`, tenant-scoped bank evidence entities and the cohesive Angular `features/accounting/bank-statements-page` workspace. CSV evidence is immutable and fingerprinted; matching is intentionally absent. See ADR `2026-11-14-bank-statement-evidence-foundation.md`.
@@ -886,3 +889,11 @@ UX-017A records the bank-reconciliation dependency boundary in
 `docs/modernization/UX_017_BANK_RECONCILIATION_READINESS_AUDIT.md`. Current reusable authority is
 `PaymentMethod.AccountId`, `CashFlowCloseService`, `IJournalEntryRepository`, customer/supplier payment external references,
 fiscal periods and controlled journals. No bank-account, statement/import or reconciliation-allocation source files exist yet.
+
+### ERP-002 branch workspace (2026-11-15)
+
+- MiniStore.Application/Dtos/Settings/InventoryAccessSettingsDto.cs: read-only branch workspace DTO graph.
+- MiniStore.Application/Services/Settings/InventoryAccessService.cs: tenant-filtered branch/warehouse/POS projection.
+- MiniStore.Web/Controllers/Api/V1/Branches/BranchesApiController.cs: authenticated administration-only GET API.
+- MiniStore Front-End/src/app/features/branches/: cohesive bilingual branch workspace, typed client and API test.
+- docs/decisions/2026-11-15-branch-context-and-access-policy.md: tenant/branch/activity/grant/context boundary.
