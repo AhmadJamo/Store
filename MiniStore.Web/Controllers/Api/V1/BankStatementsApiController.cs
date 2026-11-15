@@ -1,5 +1,15 @@
-using Microsoft.AspNetCore.Mvc; using MiniStore.Application.Dtos.Accounting; using MiniStore.Application.Services.Accounting; using MiniStore.Web.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using MiniStore.Application.Dtos.Accounting;
+using MiniStore.Application.Services.Accounting;
+using MiniStore.Web.Authorization;
 namespace MiniStore.Web.Controllers.Api.V1;
 [ApiController, Route("api/v1/bank-statements")]
-public sealed class BankStatementsApiController(BankStatementService service):ControllerBase
-{ [HttpGet,PermissionAuthorize("BankStatements.View")] public Task<BankStatementWorkspaceDto> Get()=>service.GetAsync(); [HttpGet("lines/{lineId:int}/candidates"),PermissionAuthorize("BankStatements.View")] public Task<BankStatementCandidatesDto> Candidates(int lineId)=>service.GetCandidatesAsync(lineId); [HttpPost("accounts"),ValidateAntiForgeryToken,PermissionAuthorize("BankStatements.Import")] public Task<BankStatementWorkspaceDto> CreateAccount(CreateBankAccountDto dto)=>service.CreateAccountAsync(dto); [HttpPost("imports"),ValidateAntiForgeryToken,PermissionAuthorize("BankStatements.Import")] public async Task<BankStatementWorkspaceDto> Import([FromForm]int bankAccountId,[FromForm]IFormFile file){if(file is null)throw new ArgumentException("Choose a CSV file.");await using var s=file.OpenReadStream();using var ms=new MemoryStream();await s.CopyToAsync(ms);return await service.ImportAsync(bankAccountId,file.FileName,ms.ToArray());} }
+public sealed class BankStatementsApiController(BankStatementService service,BankReconciliationService reconciliation):ControllerBase
+{
+ [HttpGet,PermissionAuthorize("BankStatements.View")] public Task<BankStatementWorkspaceDto> Get()=>service.GetAsync();
+ [HttpGet("lines/{lineId:int}/candidates"),PermissionAuthorize("BankStatements.View")] public Task<BankStatementCandidatesDto> Candidates(int lineId)=>service.GetCandidatesAsync(lineId);
+ [HttpPost("matches"),ValidateAntiForgeryToken,PermissionAuthorize("BankStatements.Match")] public async Task<IActionResult> Match(MatchBankStatementDto dto){await reconciliation.MatchAsync(dto);return NoContent();}
+ [HttpPost("matches/unmatch"),ValidateAntiForgeryToken,PermissionAuthorize("BankStatements.Unmatch")] public async Task<IActionResult> Unmatch(UnmatchBankStatementDto dto){await reconciliation.UnmatchAsync(dto);return NoContent();}
+ [HttpPost("accounts"),ValidateAntiForgeryToken,PermissionAuthorize("BankStatements.Import")] public Task<BankStatementWorkspaceDto> CreateAccount(CreateBankAccountDto dto)=>service.CreateAccountAsync(dto);
+ [HttpPost("imports"),ValidateAntiForgeryToken,PermissionAuthorize("BankStatements.Import")] public async Task<BankStatementWorkspaceDto> Import([FromForm]int bankAccountId,[FromForm]IFormFile file){if(file is null)throw new ArgumentException("Choose a CSV file.");await using var s=file.OpenReadStream();using var ms=new MemoryStream();await s.CopyToAsync(ms);return await service.ImportAsync(bankAccountId,file.FileName,ms.ToArray());}
+}

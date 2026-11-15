@@ -7,3 +7,5 @@ public sealed record BankStatementImportDto(int Id,int BankAccountId,string File
 public sealed record BankStatementWorkspaceDto(IReadOnlyList<BankAccountDto> Accounts,IReadOnlyList<BankStatementImportDto> Imports);
 public sealed record BankStatementCandidateDto(int Id,string EntryNumber,DateTime Date,string? Description,decimal Debit,decimal Credit);
 public sealed record BankStatementCandidatesDto(int StatementLineId,IReadOnlyList<BankStatementCandidateDto> Items);
+public sealed class MatchBankStatementDto { public int StatementLineId {get;set;} public int JournalEntryLineId {get;set;} public decimal Amount {get;set;} public byte[] StatementLineRowVersion {get;set;}=[]; }
+public sealed class UnmatchBankStatementDto { public int AllocationId {get;set;} public string Reason {get;set;}=""; public byte[] RowVersion {get;set;}=[]; }
