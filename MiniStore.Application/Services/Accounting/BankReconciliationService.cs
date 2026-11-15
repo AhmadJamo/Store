@@ -1,0 +1,4 @@
+using MiniStore.Domain.Entities; using MiniStore.Domain.Interfaces.Accounting;
+namespace MiniStore.Application.Services.Accounting;
+public sealed class BankReconciliationService(IBankReconciliationRepository repository)
+{ public async Task<decimal> GetStatementRemainingAsync(int lineId){var line=await repository.GetStatementLineAsync(lineId)??throw new ArgumentException("Statement line was not found.");var allocated=await repository.GetActiveStatementAllocationAsync(lineId);return Math.Max(0m,(line.Debit+line.Credit)-allocated);} public async Task EnsureStatementCapacityAsync(int lineId,decimal amount){if(amount<=0)throw new ArgumentException("Match amount must be positive.");if(amount>await GetStatementRemainingAsync(lineId))throw new InvalidOperationException("Match amount exceeds the remaining statement-line amount.");} }

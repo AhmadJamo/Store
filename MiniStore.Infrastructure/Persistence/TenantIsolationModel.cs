@@ -29,7 +29,7 @@ public static class TenantIsolationModel
         typeof(Branch), typeof(Account), typeof(JournalEntry), typeof(JournalEntryLine), typeof(FiscalPeriod), typeof(RecurringJournalTemplate), typeof(RecurringJournalTemplateLine),
         typeof(Customer), typeof(CustomerContact), typeof(CustomerAddress), typeof(TaxRate), typeof(PosTerminal), typeof(PosTerminalProduct),
         typeof(PosTerminalWarehouse), typeof(PosTerminalSettings), typeof(BranchWarehouseAccess),
-        typeof(AccountingSettings), typeof(InventorySettings), typeof(PaymentMethod), typeof(BankAccount), typeof(BankStatementImport), typeof(BankStatementLine),
+        typeof(AccountingSettings), typeof(InventorySettings), typeof(PaymentMethod), typeof(BankAccount), typeof(BankStatementImport), typeof(BankStatementLine), typeof(BankReconciliationAllocation),
         typeof(StorageLocation), typeof(ProductLocationStock), typeof(LocationMovement), typeof(StockMovement), typeof(InventoryBalance),
         typeof(InventoryReservation), typeof(InventoryReservationLine), typeof(InventoryAdjustment), typeof(InventoryAdjustmentLine),
         typeof(InventoryTrackingBalance), typeof(InventoryTrackingTransaction), typeof(InventoryRecall), typeof(InventoryRecallCommunication), typeof(PutawayRule), typeof(ReplenishmentRule),

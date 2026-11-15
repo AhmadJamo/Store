@@ -576,6 +576,10 @@ largest underrepresented modules; production deployment readiness and physical M
 - Added `BankStatements.View` / `BankStatements.Import`, a CSRF-protected API and one cohesive bilingual Angular workspace.
 - Matching, unmatching, adjustments, posting and close-readiness remain UX-017C/D work.
 
+## UX-017C — controlled partial matching — IN PROGRESS 2026-11-15
+
+- Added allocation persistence, remaining-balance calculations and a statement-line capacity guard.
+
 ## MOD-031C — fifteen-controller commercial retirement — COMPLETED 2026-11-14
 
 - Retired 15 MVC controllers and 39 Razor/page-model/partial files.

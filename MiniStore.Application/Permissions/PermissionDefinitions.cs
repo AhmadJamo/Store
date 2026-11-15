@@ -237,6 +237,8 @@ public static class PermissionDefinitions
         new("JournalEntries.View", "View Journal Entries", "Accounting"),
         new("BankStatements.View", "View Bank Statements", "Accounting"),
         new("BankStatements.Import", "Import Bank Statements", "Accounting"),
+        new("BankStatements.Match", "Match Bank Statement Lines", "Accounting"),
+        new("BankStatements.Unmatch", "Unmatch Bank Statement Lines", "Accounting"),
         new("ManualJournals.View", "View Manual Journals", "Accounting"),
         new("ManualJournals.Create", "Create Manual Journal Drafts", "Accounting"),
         new("ManualJournals.Post", "Post Manual Journals", "Accounting"),

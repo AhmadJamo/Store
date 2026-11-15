@@ -222,6 +222,7 @@ public class AppDbContext
     public DbSet<BankAccount> BankAccounts => Set<BankAccount>();
     public DbSet<BankStatementImport> BankStatementImports => Set<BankStatementImport>();
     public DbSet<BankStatementLine> BankStatementLines => Set<BankStatementLine>();
+    public DbSet<BankReconciliationAllocation> BankReconciliationAllocations => Set<BankReconciliationAllocation>();
     public DbSet<StorageLocation> StorageLocations => Set<StorageLocation>();
     public DbSet<ProductLocationStock> ProductLocationStocks => Set<ProductLocationStock>();
 

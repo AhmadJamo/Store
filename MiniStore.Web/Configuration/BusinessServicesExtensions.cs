@@ -102,8 +102,10 @@ public static class BusinessServicesExtensions
         services.AddScoped<RecurringJournalService>();
         services.AddScoped<IPaymentMethodRepository, PaymentMethodRepository>();
         services.AddScoped<IBankStatementRepository, BankStatementRepository>();
+        services.AddScoped<IBankReconciliationRepository, BankReconciliationRepository>();
         services.AddScoped<PaymentMethodService>();
         services.AddScoped<BankStatementService>();
+        services.AddScoped<BankReconciliationService>();
         services.AddScoped<IDocumentSequenceRepository, DocumentSequenceRepository>();
         services.AddScoped<DocumentNumberService>();
         services.AddScoped<IGeneralSettingsRepository, GeneralSettingsRepository>();
