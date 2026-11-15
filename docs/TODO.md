@@ -1,5 +1,5 @@
 # Project TODO
-# UX-017B completed (2026-11-14): bank statement evidence foundation; UX-017C controlled matching remains pending.
+# UX-017C completed (2026-11-15): controlled partial bank matching; UX-017D close-readiness and controlled adjustments remain pending.
 > Source of truth: Current repository scan  
 > Last reviewed: 2026-11-07
 

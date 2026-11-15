@@ -1,5 +1,7 @@
 # AI Work Log
 
+- 2026-11-15: Completed UX-017C controlled partial bank reconciliation with allocation limits, same-account/direction posted candidates, atomic Match, reasoned Unmatch, rowversion, semantic audit, independent permissions and Angular workflow. Release, Angular build, 243 Angular tests and 1,609 security checks passed.
+
 - 2026-11-15: Started UX-017C. Added the reconciliation-allocation persistence boundary, remaining-balance calculation and statement-line over-allocation guard. Release build passed; matching commands are not exposed yet.
 
 - 2026-11-14: Completed UX-017B bank-statement evidence foundation: tenant bank accounts, bounded immutable CSV evidence, SHA-256 duplicate protection, permissions, API, EF migration and Angular workspace. Matching and posting remain intentionally out of scope.

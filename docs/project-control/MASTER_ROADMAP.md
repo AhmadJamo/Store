@@ -478,3 +478,9 @@
 - Confirmed there is no bank-account, statement, line, import fingerprint or reconciliation-allocation model today.
 - Rejected a PaymentMethod flag and one-to-one matched design because they cannot represent partial many-to-many clearing.
 - Approved UX-017B as immutable CSV statement evidence and read-only candidates only; matching and adjustments remain later slices.
+
+## UX-017B/C — Bank evidence and controlled partial matching — COMPLETE 2026-11-15
+
+- Added tenant bank identities, immutable bounded-CSV evidence and duplicate fingerprints without retaining raw files.
+- Added explicit partial allocations to posted same-account/same-direction journal lines, effective rowversion, atomic Match/Unmatch, semantic audit and Angular workflow.
+- No reconciliation operation creates, edits, posts or reverses a journal. UX-017D remains close-readiness and separately controlled adjustments.

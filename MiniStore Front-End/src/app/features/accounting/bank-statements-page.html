@@ -1,2 +1,35 @@
-<main class="bank-statements"><app-page-header eyebrow="Accounting · المحاسبة" title="Bank statement evidence · دليل كشف البنك" description="CSV evidence is immutable. Matching, adjustments and posting are not available in this phase. / دليل CSV غير قابل للتعديل؛ المطابقة والقيود ليست ضمن هذه المرحلة." />
-@if(error()){<p class="error">{{error()}}</p>} @if(page();as page){<section class="card"><h2>Bank accounts · الحسابات البنكية</h2><div class="grid"><input [(ngModel)]="name" placeholder="Name / الاسم"><input [(ngModel)]="maskedIdentifier" placeholder="Masked identifier / معرف مخفي"><input [(ngModel)]="currencyCode" placeholder="Currency"><input [(ngModel)]="accountId" type="number" placeholder="Ledger account ID"><button (click)="create()">Add bank account / إضافة</button></div><ul>@for(a of page.accounts;track a.id){<li>{{a.name}} · {{a.maskedIdentifier}} · {{a.currencyCode}}</li>}</ul></section><section class="card"><h2>Import CSV · استيراد CSV</h2><p>Required: TransactionDate, Description, Reference, Debit, Credit. Optional: ValueDate.</p><select [(ngModel)]="bankAccountId"><option [ngValue]="0">Select bank account / اختر الحساب</option>@for(a of page.accounts;track a.id){<option [ngValue]="a.id">{{a.name}}</option>}</select><input type="file" accept=".csv,text/csv" (change)="choose($event)"><button [disabled]="!bankAccountId||!file" (click)="import()">Import / استيراد</button></section><section class="card"><h2>Imports · دفعات الاستيراد</h2><table><thead><tr><th>File</th><th>Imported</th><th>Lines</th><th></th></tr></thead><tbody>@for(i of page.imports;track i.id){<tr><td>{{i.fileName}}</td><td>{{i.importedAtUtc|date:'medium'}}</td><td>{{i.lineCount}}</td><td><button (click)="open(i)">View evidence / عرض</button></td></tr>}</tbody></table></section>@if(selected();as i){<section class="card"><h2>{{i.fileName}}</h2><table><thead><tr><th>Date</th><th>Reference</th><th>Description</th><th>Debit</th><th>Credit</th></tr></thead><tbody>@for(l of i.lines;track l.id){<tr><td>{{l.transactionDate|date:'mediumDate'}}</td><td>{{l.reference}}</td><td>{{l.description}}</td><td>{{l.debit|number:'1.2-2'}}</td><td>{{l.credit|number:'1.2-2'}}</td></tr>}</tbody></table></section>}}</main>
+<main class="bank-statements">
+  <app-page-header eyebrow="Accounting · المحاسبة" title="Bank reconciliation · التسوية البنكية" description="Import immutable evidence, then explicitly allocate it to posted journal lines. / استورد الدليل ثم طابقه صراحة مع سطور القيود المرحلة." />
+  @if (error()) { <p class="error">{{ error() }}</p> }
+  @if (page(); as page) {
+    <section class="card">
+      <h2>Bank accounts · الحسابات البنكية</h2>
+      @if (session.can('BankStatements.Import')) {
+        <div class="grid"><input [(ngModel)]="name" placeholder="Name / الاسم"><input [(ngModel)]="maskedIdentifier" placeholder="Masked identifier / معرف مخفي"><input [(ngModel)]="currencyCode" placeholder="Currency"><input [(ngModel)]="accountId" type="number" placeholder="Ledger account ID"><button (click)="create()">Add / إضافة</button></div>
+      }
+      <ul>@for (a of page.accounts; track a.id) { <li>{{ a.name }} · {{ a.maskedIdentifier }} · {{ a.currencyCode }}</li> }</ul>
+    </section>
+    @if (session.can('BankStatements.Import')) {
+      <section class="card"><h2>Import CSV · استيراد CSV</h2><p>TransactionDate, Description, Reference, Debit, Credit; ValueDate optional.</p><select [(ngModel)]="bankAccountId"><option [ngValue]="0">Select bank account / اختر الحساب</option>@for (a of page.accounts; track a.id) { <option [ngValue]="a.id">{{ a.name }}</option> }</select><input type="file" accept=".csv,text/csv" (change)="choose($event)"><button [disabled]="!bankAccountId || !file" (click)="import()">Import / استيراد</button></section>
+    }
+    <section class="card"><h2>Imports · دفعات الاستيراد</h2><table><thead><tr><th>File</th><th>Imported</th><th>Lines</th><th></th></tr></thead><tbody>@for (i of page.imports; track i.id) { <tr><td>{{ i.fileName }}</td><td>{{ i.importedAtUtc | date:'medium' }}</td><td>{{ i.lineCount }}</td><td><button (click)="open(i)">View / عرض</button></td></tr> }</tbody></table></section>
+    @if (selected(); as i) {
+      <section class="card"><h2>{{ i.fileName }}</h2><table><thead><tr><th>Date</th><th>Reference</th><th>Description</th><th>Debit</th><th>Credit</th><th></th></tr></thead><tbody>@for (l of i.lines; track l.id) { <tr><td>{{ l.transactionDate | date:'mediumDate' }}</td><td>{{ l.reference }}</td><td>{{ l.description }}</td><td>{{ l.debit | number:'1.2-2' }}</td><td>{{ l.credit | number:'1.2-2' }}</td><td><button (click)="inspect(l)">Reconcile / تسوية</button></td></tr> }</tbody></table></section>
+    }
+    @if (line(); as l) {
+      <section class="card">
+        <h2>{{ l.reference }} · Reconciliation / المطابقة</h2>
+        @if (state(); as s) {
+          <p><strong>Remaining / المتبقي: {{ s.remaining | number:'1.2-2' }}</strong></p>
+          @if (s.allocations.length) {
+            <table><thead><tr><th>Journal line</th><th>Amount</th><th>Status</th><th></th></tr></thead><tbody>@for (a of s.allocations; track a.id) { <tr><td>{{ a.journalEntryLineId }}</td><td>{{ a.amount | number:'1.2-2' }}</td><td>{{ a.isActive ? 'Active / فعالة' : 'Unmatched / مفكوكة' }}</td><td>@if (a.isActive && session.can('BankStatements.Unmatch')) { <button [disabled]="saving()" (click)="unmatch(a)">Unmatch / فك</button> }</td></tr> }</tbody></table>
+          }
+          @if (session.can('BankStatements.Match') && s.remaining > 0) {
+            <label>Amount / المبلغ <input type="number" min="0.01" [max]="s.remaining" step="0.01" [(ngModel)]="matchAmount"></label>
+            <table><thead><tr><th>Entry</th><th>Date</th><th>Description</th><th>Amount</th><th></th></tr></thead><tbody>@for (c of candidates(); track c.journalEntryLineId) { <tr><td><a [href]="'/accounting/journal-entries/' + c.journalEntryId">{{ c.entryNumber }}</a></td><td>{{ c.date | date:'mediumDate' }}</td><td>{{ c.description || '—' }}</td><td>{{ (c.debit || c.credit) | number:'1.2-2' }}</td><td><button [disabled]="saving() || matchAmount <= 0 || matchAmount > s.remaining" (click)="match(c)">Match / مطابقة</button></td></tr> }</tbody></table>
+          }
+        }
+      </section>
+    }
+  }
+</main>

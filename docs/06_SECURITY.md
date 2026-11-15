@@ -368,3 +368,5 @@ relationships. Every create/update/state/run mutation is antiforgery protected; 
 rowversion, and runs use a normalized GUID key for idempotency. `Accounting.RecurringJournalTemplateChanged` and
 `Accounting.RecurringJournalDraftGenerated` store only allowlisted evidence. The run path can create a Draft but cannot post
 it, change an existing journal or bypass the fiscal-period check used by the posting gateway.
+
+Bank-statement evidence and allocations are tenant-filtered. Match/Unmatch are antiforgery protected, independently authorized, rowversion checked and semantically audited. Server checks posted status, linked GL account, direction and both remaining balances; Angular visibility is never authorization authority.

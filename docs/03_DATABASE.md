@@ -267,3 +267,7 @@ Migration `20261106230309_AddRecurringJournalTemplates` is migration 138. It cre
 `RecurringJournalTemplates` and `RecurringJournalTemplateLines`, rowversion concurrency, effective/next/last-run evidence,
 and tenant-composite account, branch, warehouse and template relationships. It creates no templates or journals during
 migration. It is applied to local Demo, and EF reports no pending model changes.
+
+## UX-017 bank reconciliation schema (2026-11-15)
+
+Migrations `20261114185330_AddBankStatementEvidenceFoundation`, `20261114235957_AddBankReconciliationAllocations`, `20261115002011_AddBankStatementLineRowVersion` and `20261115004331_AddBankReconciliationTouchStamp` add tenant-owned bank identities, immutable import evidence, allocation history and effective concurrency. The touch stamp changes only reconciliation metadata so the imported financial evidence remains immutable while rowversion detects stale commands. Raw CSV files are not stored; foreign keys restrict deletion of accounting evidence.

@@ -229,3 +229,7 @@ deferred. See `modernization/UX_017_BANK_RECONCILIATION_READINESS_AUDIT.md`.
 # Bank statement evidence foundation (UX-017B, 2026-11-14)
 
 Tenant-scoped bank accounts now link to ledger accounts. CSV imports retain immutable normalized transaction evidence and SHA-256 duplicate fingerprints without storing raw statements. `BankStatements.View` and `BankStatements.Import` protect the boundary. Matching, adjustments, journal creation and close-readiness remain deferred.
+
+# Controlled partial bank reconciliation (UX-017C, 2026-11-15)
+
+Explicit allocation rows support partial many-to-many reconciliation without changing imported evidence or journals. Only posted journal lines on the linked bank GL account and matching debit/credit direction are eligible. Active sums cannot exceed either side. Match and reasoned Unmatch use rowversion, UnitOfWork, independent permissions, antiforgery and semantic audit. See `modernization/UI_UX_BANK_RECONCILIATION.md`.

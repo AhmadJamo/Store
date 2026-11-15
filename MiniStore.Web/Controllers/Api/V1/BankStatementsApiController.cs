@@ -8,6 +8,7 @@ public sealed class BankStatementsApiController(BankStatementService service,Ban
 {
  [HttpGet,PermissionAuthorize("BankStatements.View")] public Task<BankStatementWorkspaceDto> Get()=>service.GetAsync();
  [HttpGet("lines/{lineId:int}/candidates"),PermissionAuthorize("BankStatements.View")] public Task<BankStatementCandidatesDto> Candidates(int lineId)=>service.GetCandidatesAsync(lineId);
+ [HttpGet("lines/{lineId:int}/reconciliation"),PermissionAuthorize("BankStatements.View")] public Task<BankReconciliationStateDto> Reconciliation(int lineId)=>reconciliation.GetStateAsync(lineId);
  [HttpPost("matches"),ValidateAntiForgeryToken,PermissionAuthorize("BankStatements.Match")] public async Task<IActionResult> Match(MatchBankStatementDto dto){await reconciliation.MatchAsync(dto);return NoContent();}
  [HttpPost("matches/unmatch"),ValidateAntiForgeryToken,PermissionAuthorize("BankStatements.Unmatch")] public async Task<IActionResult> Unmatch(UnmatchBankStatementDto dto){await reconciliation.UnmatchAsync(dto);return NoContent();}
  [HttpPost("accounts"),ValidateAntiForgeryToken,PermissionAuthorize("BankStatements.Import")] public Task<BankStatementWorkspaceDto> CreateAccount(CreateBankAccountDto dto)=>service.CreateAccountAsync(dto);

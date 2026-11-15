@@ -303,3 +303,9 @@ convenience only; controller authorization and server lifecycle checks are autho
 - `RecurringJournals.Manage` independently protects create, update, pause and reactivate commands.
 - `RecurringJournals.Run` independently protects Draft generation. It does not grant posting, reversal, journal-directory
   access or accounting administration. Posting still requires the existing manual-journal posting permission.
+
+## UX-017 bank-reconciliation permissions
+
+- `BankStatements.View` protects evidence, candidates, allocation state and accounting-hub discovery.
+- `BankStatements.Import` independently protects bank-account creation and bounded CSV import.
+- `BankStatements.Match` and `BankStatements.Unmatch` independently protect explicit allocation and reasoned reversal; neither grants journal posting or adjustment creation.

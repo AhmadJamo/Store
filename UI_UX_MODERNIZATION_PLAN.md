@@ -576,9 +576,11 @@ largest underrepresented modules; production deployment readiness and physical M
 - Added `BankStatements.View` / `BankStatements.Import`, a CSRF-protected API and one cohesive bilingual Angular workspace.
 - Matching, unmatching, adjustments, posting and close-readiness remain UX-017C/D work.
 
-## UX-017C — controlled partial matching — IN PROGRESS 2026-11-15
+## UX-017C — controlled partial matching — COMPLETED 2026-11-15
 
 - Added allocation persistence, remaining-balance calculations and a statement-line capacity guard.
+- Added posted same-account/same-direction journal-line candidates, atomic partial Match, reasoned Unmatch, rowversion, semantic audit, independent permissions and a cohesive Angular workflow.
+- Release, Angular build, 243 Angular tests and 1,609 security checks passed.
 
 ## MOD-031C — fifteen-controller commercial retirement — COMPLETED 2026-11-14
 
