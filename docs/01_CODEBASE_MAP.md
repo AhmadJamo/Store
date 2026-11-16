@@ -906,3 +906,11 @@ fiscal periods and controlled journals. No bank-account, statement/import or rec
 - MiniStore Front-End/src/app/app.config.ts: initializes branch choices after the authenticated session and before routed pages.
 - MiniStore Front-End/src/app/shell/layout/app-shell.*: global switcher, dirty-tab protection and context reload.
 - MiniStore Front-End/src/app/features/branches/branches-page.ts: active-branch evidence and permission-aware operational links.
+
+### ERP-005/006 staged inter-branch receipts (2026-11-16)
+
+- StockTransfer and StockTransferItem: dispatch/partial-receipt/exception/received state plus received/short/damaged evidence.
+- StockTransferService: branch-authorized dispatch and atomic accepted-quantity receipt through existing inventory, reservation, tracking and movement authorities.
+- StockTransfersApiController: independently permissioned, antiforgery-protected dispatch and receive commands.
+- Angular stock-transfers feature: bilingual in-transit progress, receipt allocation and discrepancy evidence.
+- Migration 20261116012206_AddErp005006InterBranchReceipts: three decimal evidence columns.

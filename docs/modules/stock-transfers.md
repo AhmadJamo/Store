@@ -1,4 +1,10 @@
 # Stock transfers
+## ERP-005/006 staged inter-branch lifecycle
+
+The current workflow is Draft → Submitted → Approved → InTransit → PartiallyReceived/ReceiptException → Received. Dispatch requires the active source branch, a different assigned destination branch, AllowTransferOut and StockTransfers.Dispatch. Receipt requires the active destination branch, AllowTransferIn and StockTransfers.Receive.
+
+Approved quantity remains reserved while in transit. Each receipt atomically consumes only the accepted reservation quantity and moves that quantity through the existing ProductStock, location, valuation, StockTransaction and tracking authorities. Repeated receipts cannot exceed the remaining quantity. Short and damaged values are replaceable current evidence against the outstanding amount; they keep ReceiptException open and never post an automatic loss or journal. Historic Posted/Cancelled records retain their legacy behavior.
+
 > Status: IMPLEMENTED | Last reviewed: 2026-11-05
 
 UX-002 preserves Stock Transfer list search/status context and adds an opt-in memory-only create draft for warehouse,

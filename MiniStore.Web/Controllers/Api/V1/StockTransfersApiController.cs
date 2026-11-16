@@ -98,9 +98,20 @@ public sealed class StockTransfersApiController(
     public Task<IActionResult> ReturnToDraft(int id) =>
         Command(() => transfers.ReturnToDraftAsync(id, currentUser.UserId));
 
-    [HttpPost("{id:int}/post"), ValidateAntiForgeryToken, PermissionAuthorize("StockTransfers.Post")]
+    [HttpPost("{id:int}/post"), ValidateAntiForgeryToken, PermissionAuthorize("StockTransfers.Dispatch")]
     public Task<IActionResult> Post(int id) =>
         Command(() => transfers.PostAsync(id, currentUser.UserId));
+
+    [HttpPost("{id:int}/dispatch"), ValidateAntiForgeryToken, PermissionAuthorize("StockTransfers.Dispatch")]
+    public Task<IActionResult> Dispatch(int id) =>
+        Command(() => transfers.PostAsync(id, currentUser.UserId));
+
+    [HttpPost("{id:int}/receive"), ValidateAntiForgeryToken, PermissionAuthorize("StockTransfers.Receive")]
+    public Task<IActionResult> Receive(int id, ReceiveStockTransferDto input) =>
+        Command(() => transfers.ReceiveAsync(id, currentUser.UserId,
+            input.Lines.Select(x => new ReceiveStockTransferLineCommand(
+                x.StockTransferItemId, x.ReceivedQuantity, x.ShortQuantity,
+                x.DamagedQuantity, x.DestinationLocationId, x.TrackingAllocations)).ToList()));
 
     [HttpPost("{id:int}/cancel"), ValidateAntiForgeryToken, PermissionAuthorize("StockTransfers.Cancel")]
     public Task<IActionResult> Cancel(int id, StockTransferReasonDto input) =>

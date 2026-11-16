@@ -15,6 +15,9 @@ public class StockTransferItemConfiguration
         builder.Property(x => x.Quantity)
             .HasPrecision(18, 3)
             .IsRequired();
+        builder.Property(x => x.ReceivedQuantity).HasPrecision(18, 3).IsRequired();
+        builder.Property(x => x.ReportedShortQuantity).HasPrecision(18, 3).IsRequired();
+        builder.Property(x => x.ReportedDamagedQuantity).HasPrecision(18, 3).IsRequired();
 
         builder.Property(x => x.TrackingAllocations)
             .HasMaxLength(2000);

@@ -239,3 +239,7 @@ Explicit allocation rows support partial many-to-many reconciliation without cha
 Close readiness counts and totals statement amounts not covered by active allocations through the requested close date; any remainder is `Blocked`. Fees require a statement outflow and Expense counterpart. Interest inflows require Revenue and outflows require Expense. Transfers require another configured bank ledger account. The explicit adjustment uses the statement transaction date, current rowversion and remaining amount, then posts a balanced entry through `JournalPostingService` and allocates its bank line atomically. The official fiscal-period check remains authoritative and suggestions never post automatically.
 
 ERP-001 changes bank-account setup presentation only: eligible linked ledgers are active Asset accounts shown by code/name and revalidated in the Application service. It creates no journal and changes no balance or schema.
+
+# Inter-branch transfer discrepancies (ERP-005/006, 2026-11-16)
+
+Partial receipt, reported shortage and reported damage are operational inventory evidence only. The receipt workflow moves accepted stock at the preserved cost and does not automatically recognize a loss, expense, payable or journal entry for a discrepancy. Accounting recognition remains deferred until an authorized discrepancy-resolution policy defines ownership, evidence and posting rules.

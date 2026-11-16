@@ -85,7 +85,7 @@ export class StockTransfersPageComponent {
   private readonly context = inject(PageContextService);
   private readonly listContextSchema = {
     defaults: { search: '', status: 0 },
-    fields: { search: pageContextFields.text(), status: pageContextFields.integer(0, 6) },
+    fields: { search: pageContextFields.text(), status: pageContextFields.integer(0, 10) },
   };
 
   protected readonly id = Number(this.route.snapshot.paramMap.get('id') || 0);
@@ -110,6 +110,7 @@ export class StockTransfersPageComponent {
   protected readonly problem = signal('');
   protected readonly success = signal('');
   protected readonly saving = signal(false);
+  protected readonly receiptDraft = signal<Record<number, { receivedQuantity:number; shortQuantity:number; damagedQuantity:number }>>({});
   protected readonly search = new FormControl('', { nonNullable: true });
   protected readonly status = new FormControl<number | null>(null);
   protected readonly form = new FormGroup({
@@ -157,6 +158,10 @@ export class StockTransfersPageComponent {
       4: 'rejected',
       5: 'posted',
       6: 'cancelled',
+      7: 'inTransit',
+      8: 'partiallyReceived',
+      9: 'receiptException',
+      10: 'received',
     } as Record<number, StockTransferMessageKey>)[status] ?? 'draft');
   }
 
@@ -165,7 +170,8 @@ export class StockTransfersPageComponent {
       this.i18n.text('draft'),
       this.i18n.text('submitted'),
       this.i18n.text('approved'),
-      this.i18n.text('posted'),
+      this.i18n.text('inTransit'),
+      this.i18n.text('received'),
     ];
     if (status === 4) return [
       { label: primary[0], state: 'complete' },
@@ -176,7 +182,7 @@ export class StockTransfersPageComponent {
       ...primary.map(label => ({ label, state: 'complete' as const })),
       { label: this.i18n.text('cancelled'), state: 'stopped' },
     ];
-    const current = ({ 1: 0, 2: 1, 3: 2, 5: 3 } as Record<number, number>)[status] ?? 0;
+    const current = ({ 1: 0, 2: 1, 3: 2, 7: 3, 8: 3, 9: 3, 10: 4, 5: 4 } as Record<number, number>)[status] ?? 0;
     return primary.map((label, index) => ({
       label,
       state: index < current ? 'complete' : index === current ? 'current' : 'upcoming',
@@ -186,7 +192,8 @@ export class StockTransfersPageComponent {
   protected workflowGuidance(status: number): string {
     return this.i18n.text(({
       1: 'nextSubmit', 2: 'nextApprove', 3: 'nextPost', 4: 'rejectedGuidance',
-      5: 'postedGuidance', 6: 'cancelledGuidance',
+      5: 'postedGuidance', 6: 'cancelledGuidance', 7: 'inTransitGuidance',
+      8: 'partialGuidance', 9: 'exceptionGuidance', 10: 'receivedGuidance',
     } as Record<number, StockTransferMessageKey>)[status] ?? 'nextSubmit');
   }
 
@@ -288,7 +295,27 @@ export class StockTransfersPageComponent {
   protected submit(): void { this.execute(() => this.api.submit(this.id)); }
   protected approve(): void { this.execute(() => this.api.approve(this.id)); }
   protected returnToDraft(): void { this.execute(() => this.api.returnToDraft(this.id)); }
-  protected post(): void { this.execute(() => this.api.post(this.id)); }
+  protected post(): void { this.execute(() => this.api.dispatch(this.id)); }
+  protected receiptValue(itemId:number, field:'receivedQuantity'|'shortQuantity'|'damagedQuantity'):number {
+    return this.receiptDraft()[itemId]?.[field] ?? 0;
+  }
+  protected setReceiptValue(itemId:number, field:'receivedQuantity'|'shortQuantity'|'damagedQuantity', value:string):void {
+    const current=this.receiptDraft()[itemId] ?? {receivedQuantity:0,shortQuantity:0,damagedQuantity:0};
+    this.receiptDraft.update(state=>({...state,[itemId]:{...current,[field]:Math.max(0,Number(value)||0)}}));
+  }
+  protected receive():void {
+    const transfer=this.details(); if(!transfer)return;
+    const lines=transfer.items.map(item=>({
+      stockTransferItemId:item.id,
+      ...this.receiptDraft()[item.id],
+      receivedQuantity:this.receiptValue(item.id,'receivedQuantity'),
+      shortQuantity:this.receiptValue(item.id,'shortQuantity'),
+      damagedQuantity:this.receiptValue(item.id,'damagedQuantity'),
+      destinationLocationId:item.destinationLocationId,
+    })).filter(x=>x.receivedQuantity>0||x.shortQuantity>0||x.damagedQuantity>0);
+    if(!lines.length){this.problem.set(this.i18n.text('correctFields'));return;}
+    this.execute(()=>this.api.receive(this.id,lines));
+  }
 
   protected reject(): void {
     const reason = globalThis.prompt(this.i18n.text('reasonPrompt'))?.trim();

@@ -384,3 +384,7 @@ ERP-002 keeps branch discovery authenticated and protected by Administration.Acc
 ## ERP-004 branch-selector boundary
 
 The Angular selector cannot invent branch authority. It accepts only active IDs returned by the protected branch API, scopes persistence to tenant and user, removes stale choices and never attaches the branch header to external URLs. The existing server middleware remains authoritative and returns localized 400/403 responses for invalid or unauthorized context.
+## ERP-005/006 inter-branch boundary
+
+Dispatch and receipt are independently authorized. The service requires a verified branch context matching the source for dispatch and destination for receipt, re-resolves both warehouses, rejects same-branch dispatch and enforces the configured transfer-out/in flags. Client quantities never establish authority and every accepted quantity is bounded by the remaining transfer and active reservation.
+

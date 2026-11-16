@@ -58,7 +58,22 @@ public sealed class InventoryReservationService(
 
         await ReserveAsync(InventoryReservationSourceType.StockTransfer, transfer.Id, transfer.TransferNumber,
             userId, transfer.Items.Select(item => new Allocation(item.ProductId, transfer.FromWarehouseId,
-                item.SourceLocationId, item.Quantity)));
+                item.SourceLocationId, item.Quantity, item.Id)));
+    }
+
+    public async Task ConsumeTransferAsync(
+        int transferId,
+        IReadOnlyDictionary<int, decimal> quantities,
+        string userId)
+    {
+        var reservation = await reservations.GetBySourceAsync(InventoryReservationSourceType.StockTransfer, transferId)
+            ?? throw new InvalidOperationException("The active transfer reservation was not found.");
+        var allocations = reservation.Lines
+            .Where(x => x.SourceLineId.HasValue && quantities.TryGetValue(x.SourceLineId.Value, out var value) && value > 0)
+            .ToDictionary(x => x.Id, x => quantities[x.SourceLineId!.Value]);
+        if (allocations.Count != quantities.Count)
+            throw new InvalidOperationException("The transfer receipt does not match its active reservation.");
+        await ConsumeAsync(reservation, allocations, userId);
     }
 
     public async Task ConsumeTransferAsync(int transferId, string userId)

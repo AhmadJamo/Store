@@ -3068,7 +3068,9 @@ var stockTransferPolicies = new Dictionary<string, string>
     [nameof(StockTransfersApiController.Approve)] = "StockTransfers.Approve",
     [nameof(StockTransfersApiController.Reject)] = "StockTransfers.Reject",
     [nameof(StockTransfersApiController.ReturnToDraft)] = "StockTransfers.Edit",
-    [nameof(StockTransfersApiController.Post)] = "StockTransfers.Post",
+    [nameof(StockTransfersApiController.Post)] = "StockTransfers.Dispatch",
+    [nameof(StockTransfersApiController.Dispatch)] = "StockTransfers.Dispatch",
+    [nameof(StockTransfersApiController.Receive)] = "StockTransfers.Receive",
     [nameof(StockTransfersApiController.Cancel)] = "StockTransfers.Cancel"
 };
 Check(stockTransferPolicies.All(expected =>
@@ -5546,6 +5548,45 @@ Check(TenantIsolationModel.TenantOwnedTypes.Contains(typeof(TenantUserBranchGran
     "User branch grants must remain tenant-owned and query-filtered");
 Check(MiniStore.Web.Middleware.BranchContextMiddleware.HeaderName == "X-MiniStore-Branch-Id",
     "Verified branch request context must retain one explicit allowlisted header");
+
+var transferApi = typeof(StockTransfersApiController);
+Check(transferApi.GetMethod(nameof(StockTransfersApiController.Dispatch))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
+          $"{PermissionAuthorizeAttribute.PolicyPrefix}StockTransfers.Dispatch" &&
+      transferApi.GetMethod(nameof(StockTransfersApiController.Receive))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
+          $"{PermissionAuthorizeAttribute.PolicyPrefix}StockTransfers.Receive",
+    "Transfer dispatch and receipt must retain independent permissions");
+Check(transferApi.GetMethod(nameof(StockTransfersApiController.Dispatch))!
+          .GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null &&
+      transferApi.GetMethod(nameof(StockTransfersApiController.Receive))!
+          .GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null,
+    "Transfer dispatch and receipt mutations must retain antiforgery");
+Check(PermissionDefinitions.All.Any(x => x.Name == "StockTransfers.Dispatch") &&
+      PermissionDefinitions.All.Any(x => x.Name == "StockTransfers.Receive"),
+    "Transfer dispatch and receipt permissions must remain independently defined");
+
+var receiptTransfer = new StockTransfer("TR-RECEIPT", 1, 2, "creator");
+var receiptItem = new StockTransferItem(1, 10m);
+receiptTransfer.AddItem(receiptItem);
+receiptTransfer.Submit("creator");
+receiptTransfer.Approve("approver");
+receiptTransfer.Dispatch("dispatcher");
+receiptItem.RecordReceipt(4m, 0m, 0m);
+receiptTransfer.RecordReceipt("receiver");
+Check(receiptTransfer.Status == StockTransferStatus.PartiallyReceived &&
+      receiptItem.ReceivedQuantity == 4m && receiptItem.RemainingQuantity == 6m,
+    "A partial transfer receipt must retain the exact outstanding quantity");
+receiptItem.RecordReceipt(0m, 1m, 0.5m);
+receiptTransfer.RecordReceipt("receiver");
+Check(receiptTransfer.Status == StockTransferStatus.ReceiptException &&
+      receiptItem.ReportedShortQuantity == 1m && receiptItem.ReportedDamagedQuantity == 0.5m,
+    "Transfer shortage and damage must remain explicit open receipt evidence");
+receiptItem.RecordReceipt(6m, 0m, 0m);
+receiptTransfer.RecordReceipt("receiver");
+Check(receiptTransfer.Status == StockTransferStatus.Received &&
+      receiptItem.RemainingQuantity == 0m,
+    "A transfer must complete only after every ordered quantity is received");
 
 Console.WriteLine($"Passed {count} security and inventory regression checks.");
 

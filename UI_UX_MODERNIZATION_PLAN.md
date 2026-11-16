@@ -692,3 +692,10 @@ largest underrepresented modules; production deployment readiness and physical M
 - Added 34 protected legacy GET/HEAD routes; writes return 405 and supplier attachment downloads remain API-only.
 - Inventory is 30 MVC surfaces, 214 actions, 100 Razor rows and 93 views.
 - Release passed with zero warnings/errors, 1,638 regression checks, 242/242 Angular tests and bundle/browser gates.
+## ERP-005/006 — Staged transfer receipt workspace — COMPLETE 2026-11-16
+
+- Replaced the one-click new-transfer presentation with explicit dispatch and destination receipt actions.
+- Added bilingual partial receipt inputs, remaining quantities and visible shortage/damage evidence in the cohesive Stock Transfers feature.
+- Retained server authority for permissions, branch context, quantities, valuation, tracking, locations and reservation consumption.
+- Verified 249 Angular tests, production build, Release, 1,625 security checks, EF consistency and UI/UX consistency.
+

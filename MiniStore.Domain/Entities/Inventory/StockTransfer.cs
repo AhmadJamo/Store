@@ -280,6 +280,32 @@ public class StockTransfer
         PostedAt = DateTime.UtcNow;
     }
 
+    public void Dispatch(string userId)
+    {
+        EnsureUser(userId);
+        if (Status != StockTransferStatus.Approved)
+            throw new InvalidOperationException("Only approved transfers can be dispatched.");
+        ChangeStatus(StockTransferStatus.InTransit, StockTransferHistoryAction.Dispatched, userId);
+        PostedByUserId = userId;
+        PostedAt = DateTime.UtcNow;
+    }
+
+    public void RecordReceipt(string userId)
+    {
+        EnsureUser(userId);
+        if (Status is not (StockTransferStatus.InTransit or StockTransferStatus.PartiallyReceived or StockTransferStatus.ReceiptException))
+            throw new InvalidOperationException("Only dispatched transfers can be received.");
+        var received = Items.All(x => x.ReceivedQuantity == x.Quantity);
+        var hasException = Items.Any(x => x.ReportedShortQuantity > 0 || x.ReportedDamagedQuantity > 0);
+        var next = received ? StockTransferStatus.Received
+            : hasException ? StockTransferStatus.ReceiptException
+            : StockTransferStatus.PartiallyReceived;
+        var action = received ? StockTransferHistoryAction.Received
+            : hasException ? StockTransferHistoryAction.ReceiptExceptionReported
+            : StockTransferHistoryAction.PartiallyReceived;
+        ChangeStatus(next, action, userId);
+    }
+
     public void Cancel(
         string userId,
         string reason)

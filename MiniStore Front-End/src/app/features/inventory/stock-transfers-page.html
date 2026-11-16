@@ -79,7 +79,7 @@
     @if (problem()) { <div class="ui-alert danger" role="alert">{{ problem() }}</div> }
     @if (success()) { <div class="ui-alert success" role="status">{{ success() }}</div> }
     <app-summary-strip [label]="i18n.text('title')" [items]="[
-      { label: i18n.text('status'), value: statusName(transfer.status), tone: transfer.status === 5 ? 'success' : (transfer.status === 6 ? 'danger' : 'warning') },
+      { label: i18n.text('status'), value: statusName(transfer.status), tone: (transfer.status === 5 || transfer.status === 10) ? 'success' : (transfer.status === 6 || transfer.status === 9 ? 'danger' : 'warning') },
       { label: i18n.text('sourceWarehouse'), value: transfer.fromWarehouseName },
       { label: i18n.text('destinationWarehouse'), value: transfer.toWarehouseName },
       { label: i18n.text('createdBy'), value: transfer.createdByUserName, detail: (transfer.createdAt | date:'dd/MM/yyyy HH:mm') || '' }
@@ -91,12 +91,26 @@
       @if (transfer.status === 2 && session.can('StockTransfers.Approve')) { <button class="ui-button primary" (click)="approve()" [disabled]="saving()">{{ i18n.text('approve') }}</button> }
       @if (transfer.status === 2 && session.can('StockTransfers.Reject')) { <button class="ui-button danger" (click)="reject()" [disabled]="saving()">{{ i18n.text('reject') }}</button> }
       @if (transfer.status === 4 && session.can('StockTransfers.Edit')) { <button class="ui-button secondary" (click)="returnToDraft()" [disabled]="saving()">{{ i18n.text('returnToDraft') }}</button> }
-      @if (transfer.status === 3 && session.can('StockTransfers.Post')) { <button class="ui-button primary" (click)="post()" [disabled]="saving()">{{ i18n.text('post') }}</button> }
+      @if (transfer.status === 3 && session.can('StockTransfers.Dispatch')) { <button class="ui-button primary" (click)="post()" [disabled]="saving()">{{ i18n.text('post') }}</button> }
       @if (transfer.status === 5 && session.can('StockTransfers.Cancel')) { <button class="ui-button danger" (click)="cancel()" [disabled]="saving()">{{ i18n.text('cancel') }}</button> }
     </app-workflow-footer>
+    @if ((transfer.status === 7 || transfer.status === 8 || transfer.status === 9) && session.can('StockTransfers.Receive')) {
+      <app-detail-section [title]="i18n.text('receiptEvidence')">
+        <div class="receipt-grid">
+          @for (item of transfer.items; track item.id) {
+            <fieldset><legend>{{ item.productName }} — {{ i18n.text('remainingQuantity') }}: {{ item.remainingQuantity | number:'1.0-3' }}</legend>
+              <label>{{ i18n.text('receivedQuantity') }}<input type="number" min="0" [max]="item.remainingQuantity" step="0.001" [value]="receiptValue(item.id,'receivedQuantity')" (input)="setReceiptValue(item.id,'receivedQuantity',$any($event.target).value)" /></label>
+              <label>{{ i18n.text('shortQuantity') }}<input type="number" min="0" [max]="item.remainingQuantity" step="0.001" [value]="receiptValue(item.id,'shortQuantity')" (input)="setReceiptValue(item.id,'shortQuantity',$any($event.target).value)" /></label>
+              <label>{{ i18n.text('damagedQuantity') }}<input type="number" min="0" [max]="item.remainingQuantity" step="0.001" [value]="receiptValue(item.id,'damagedQuantity')" (input)="setReceiptValue(item.id,'damagedQuantity',$any($event.target).value)" /></label>
+            </fieldset>
+          }
+        </div>
+        <button class="ui-button primary" type="button" (click)="receive()" [disabled]="saving()">{{ i18n.text('receive') }}</button>
+      </app-detail-section>
+    }
     <app-detail-section [title]="i18n.text('items')"><app-data-table [label]="i18n.text('items')">
-      <table><thead><tr><th>{{ i18n.text('product') }}</th><th>{{ i18n.text('barcode') }}</th><th>{{ i18n.text('quantity') }}</th><th>{{ i18n.text('sourceLocation') }}</th><th>{{ i18n.text('destinationLocation') }}</th><th>{{ i18n.text('tracking') }}</th></tr></thead>
-      <tbody>@for (item of transfer.items; track item.id) { <tr><td>{{ item.productName }}</td><td>{{ item.barcode || '—' }}</td><td>{{ item.quantity | number:'1.0-3' }}</td><td>{{ item.sourceLocationCode }}</td><td>{{ item.destinationLocationCode }}</td><td><pre>{{ item.trackingAllocations || '—' }}</pre></td></tr> }</tbody></table>
+      <table><thead><tr><th>{{ i18n.text('product') }}</th><th>{{ i18n.text('quantity') }}</th><th>{{ i18n.text('receivedQuantity') }}</th><th>{{ i18n.text('remainingQuantity') }}</th><th>{{ i18n.text('shortQuantity') }}</th><th>{{ i18n.text('damagedQuantity') }}</th><th>{{ i18n.text('destinationLocation') }}</th></tr></thead>
+      <tbody>@for (item of transfer.items; track item.id) { <tr><td>{{ item.productName }}</td><td>{{ item.quantity | number:'1.0-3' }}</td><td>{{ item.receivedQuantity | number:'1.0-3' }}</td><td>{{ item.remainingQuantity | number:'1.0-3' }}</td><td>{{ item.reportedShortQuantity | number:'1.0-3' }}</td><td>{{ item.reportedDamagedQuantity | number:'1.0-3' }}</td><td>{{ item.destinationLocationCode }}</td></tr> }</tbody></table>
     </app-data-table></app-detail-section>
     <app-detail-section [title]="i18n.text('history')">
     @if (!transfer.history.length) { <p>{{ i18n.text('noHistory') }}</p> }
@@ -109,7 +123,7 @@
     <form (ngSubmit)="applyFilters()">
       <app-filter-bar [label]="i18n.text('search')">
         <label>{{ i18n.text('search') }}<input [formControl]="search" [placeholder]="i18n.text('searchPlaceholder')" /></label>
-        <label>{{ i18n.text('status') }}<select [formControl]="status"><option [ngValue]="null">{{ i18n.text('allStatuses') }}</option>@for (value of [1,2,3,4,5,6]; track value) { <option [ngValue]="value">{{ statusName(value) }}</option> }</select></label>
+        <label>{{ i18n.text('status') }}<select [formControl]="status"><option [ngValue]="null">{{ i18n.text('allStatuses') }}</option>@for (value of [1,2,3,4,5,6,7,8,9,10]; track value) { <option [ngValue]="value">{{ statusName(value) }}</option> }</select></label>
         <button filter-actions class="ui-button secondary">{{ i18n.text('apply') }}</button>
       </app-filter-bar>
     </form>

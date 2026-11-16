@@ -44,8 +44,12 @@ describe('StockTransferApiService', () => {
     expect(http.expectOne('/api/v1/stock-transfers/4/approve').request.method).toBe('POST');
     api.returnToDraft(4).subscribe();
     expect(http.expectOne('/api/v1/stock-transfers/4/return-to-draft').request.method).toBe('POST');
-    api.post(4).subscribe();
-    expect(http.expectOne('/api/v1/stock-transfers/4/post').request.method).toBe('POST');
+    api.dispatch(4).subscribe();
+    expect(http.expectOne('/api/v1/stock-transfers/4/dispatch').request.method).toBe('POST');
+    api.receive(4, [{ stockTransferItemId: 8, receivedQuantity: 2, shortQuantity: 1, damagedQuantity: 0 }]).subscribe();
+    const receipt = http.expectOne('/api/v1/stock-transfers/4/receive');
+    expect(receipt.request.method).toBe('POST');
+    expect(receipt.request.body.lines[0].stockTransferItemId).toBe(8);
     api.reject(4, 'Damaged').subscribe();
     expect(http.expectOne('/api/v1/stock-transfers/4/reject').request.body.reason).toBe('Damaged');
     api.cancel(4, 'Reverse').subscribe();

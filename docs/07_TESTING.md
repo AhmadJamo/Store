@@ -204,3 +204,11 @@ Cafe recipe, product-catalog and managed-unit coverage validates conversion, cla
 - Angular production build passed; the existing 204.70 kB shared-chunk warning is unchanged.
 - Release build passed with zero warnings/errors.
 - SecurityRegression passed 1,619 checks; UI/UX consistency passed for 121 feature pages and 80 navigation items.
+## ERP-005/006 verification (2026-11-16)
+
+- Release build passed with zero warnings/errors.
+- Angular passed 249 tests across 120 files and the production build passed with the unchanged shared-chunk warning.
+- SecurityRegression passed 1,625 checks, including independent dispatch/receive permissions, antiforgery, partial receipt, discrepancy and completion invariants.
+- EF reports no pending model changes; migrations ERP-003 and 20261116012206 were applied successfully to the local development database.
+- UI/UX consistency passed for 121 feature pages and 80 navigation items.
+

@@ -100,6 +100,10 @@ public sealed class StockTransferPageService(
                     ? Name(locationNames, item.DestinationLocationId.Value, "Legacy / unassigned")
                     : "Legacy / unassigned",
                 TrackingAllocations = item.TrackingAllocations
+                ,ReceivedQuantity = item.ReceivedQuantity
+                ,RemainingQuantity = item.RemainingQuantity
+                ,ReportedShortQuantity = item.ReportedShortQuantity
+                ,ReportedDamagedQuantity = item.ReportedDamagedQuantity
             };
         }).ToList();
 

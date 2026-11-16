@@ -1,4 +1,4 @@
-export type StockTransferStatus = 1 | 2 | 3 | 4 | 5 | 6;
+export type StockTransferStatus = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10;
 
 export interface StockTransferRow {
   id: number;
@@ -25,6 +25,19 @@ export interface StockTransferItem {
   destinationLocationId?: number;
   sourceLocationCode: string;
   destinationLocationCode: string;
+  trackingAllocations?: string;
+  receivedQuantity: number;
+  remainingQuantity: number;
+  reportedShortQuantity: number;
+  reportedDamagedQuantity: number;
+}
+
+export interface StockTransferReceiptLineInput {
+  stockTransferItemId: number;
+  receivedQuantity: number;
+  shortQuantity: number;
+  damagedQuantity: number;
+  destinationLocationId?: number | null;
   trackingAllocations?: string;
 }
 

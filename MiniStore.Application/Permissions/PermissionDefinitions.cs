@@ -293,6 +293,9 @@ public static class PermissionDefinitions
             "Post Stock Transfer",
             "Stock Transfers"),
 
+          new("StockTransfers.Dispatch", "Dispatch Stock Transfer", "Stock Transfers"),
+          new("StockTransfers.Receive", "Receive Stock Transfer", "Stock Transfers"),
+
         new(
             "StockTransfers.Cancel",
             "Cancel Stock Transfer",

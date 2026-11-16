@@ -183,3 +183,7 @@ posting remain Domain/Application responsibilities.
 ## ERP-004 client branch context
 
 Angular initializes branch context only after the authenticated session and a successful permission-scoped branch response. Browser storage is namespaced by tenant and user, contains only a numeric branch ID and is reconciled against active server-returned choices before use. The interceptor sends the selected ID only to internal API URLs. It never establishes authorization: the Web middleware independently revalidates membership, grant and active branch on every request.
+
+## ERP-005/006 staged inter-branch transfers
+
+An approved inter-branch transfer is dispatched by the source branch and received independently by the destination branch. Dispatch reserves authority without prematurely recognizing destination stock. Each receipt moves only the accepted quantity, consumes the matching reservation quantity, preserves valuation and tracking, and retains shortage or damage as explicit operational evidence. Discrepancies do not create inventory losses or accounting entries automatically; a later controlled workflow must resolve them. See `decisions/2026-11-16-staged-inter-branch-transfer-receipts.md`.

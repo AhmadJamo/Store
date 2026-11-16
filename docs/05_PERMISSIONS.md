@@ -323,3 +323,10 @@ convenience only; controller authorization and server lifecycle checks are autho
 
 - Administration.Access protects both navigation discovery and GET /api/v1/branches.
 - This permission exposes tenant-wide branch configuration to administrators only. Branch-to-warehouse and POS configuration is not a user branch grant. ERP-003 must add explicit server-side grants before non-administrative branch discovery or selected-branch context.
+## ERP-005/006 transfer operations
+
+- StockTransfers.Dispatch: source-branch dispatch after approval.
+- StockTransfers.Receive: destination-branch partial/full receipt and discrepancy evidence.
+
+Both mutations require antiforgery and server-side branch/warehouse revalidation. The former StockTransfers.Post permission does not authorize the new dispatch route.
+

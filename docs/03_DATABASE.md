@@ -274,3 +274,7 @@ migration. It is applied to local Demo, and EF reports no pending model changes.
 ## UX-017 bank reconciliation schema (2026-11-15)
 
 Migrations `20261114185330_AddBankStatementEvidenceFoundation`, `20261114235957_AddBankReconciliationAllocations`, `20261115002011_AddBankStatementLineRowVersion` and `20261115004331_AddBankReconciliationTouchStamp` add tenant-owned bank identities, immutable import evidence, allocation history and effective concurrency. The touch stamp changes only reconciliation metadata so the imported financial evidence remains immutable while rowversion detects stale commands. Raw CSV files are not stored; foreign keys restrict deletion of accounting evidence.
+## ERP-005/006 transfer receipt evidence
+
+Migration 20261116012206_AddErp005006InterBranchReceipts adds non-null decimal(18,3) ReceivedQuantity, ReportedShortQuantity and ReportedDamagedQuantity to StockTransferItems with zero defaults for historic rows. Statuses remain numeric enum values in StockTransfers; no receipt deletes or accounting tables are introduced.
+

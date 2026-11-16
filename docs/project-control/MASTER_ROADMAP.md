@@ -527,3 +527,14 @@
 - No business permission, query rule, inventory movement, cash session, schema or accounting behavior changed.
 - Release, 249 Angular tests, 1,619 security checks, production build and UI/UX consistency passed.
 - ERP plan remains ten slices total: ERP-001..004 complete, six remain.
+
+## ERP-005/006 — Inter-branch dispatch, partial receipt and discrepancies — COMPLETE 2026-11-16
+
+- Split approved transfer dispatch from destination receipt with InTransit, PartiallyReceived, ReceiptException and Received states.
+- Enforced verified source/destination branch context, distinct assigned branches and warehouse AllowTransferOut/AllowTransferIn.
+- Added independent StockTransfers.Dispatch and StockTransfers.Receive permissions with antiforgery.
+- Each receipt moves only accepted quantity, consumes the matching reservation and preserves valuation/tracking/location rules.
+- Short and damaged quantities remain explicit open evidence; no automatic loss, journal or discrepancy write-off is created.
+- Migration 20261116012206 was applied after safely restoring and reapplying ERP-003.
+- Release, 249 Angular tests, 1,625 security checks, production build, EF consistency and UI/UX consistency passed.
+- ERP plan remains ten slices total: ERP-001..006 complete, four remain.

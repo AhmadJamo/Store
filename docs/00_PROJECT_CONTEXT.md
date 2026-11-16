@@ -1,4 +1,5 @@
 # MiniStore project context
+> ERP-005 and ERP-006 completed together 2026-11-16: approved inter-branch transfers now dispatch into an explicit in-transit lifecycle and support repeated partial destination receipts with open shortage/damage evidence. Source/destination branch context, warehouse policy, independent permissions, reservation consumption, valuation, tracking and locations remain server-authoritative. ERP plan has 10 slices; 6 are complete and 4 remain.
 > ERP-004 completed 2026-11-16: the Angular shell restores only a server-permitted active branch in tenant/user-scoped storage, sends it only to internal APIs, protects dirty tabs during switching and exposes permission-aware operational links for the active branch. ERP plan has 10 slices; 4 are complete and 6 remain.
 > ERP-003 completed 2026-11-16: user branch grants are tenant-owned, Branches.View and Branches.ManageAccess are independent, ordinary branch reads are grant-scoped, and X-MiniStore-Branch-Id is accepted only after server validation. ERP plan has 10 slices; 3 are complete and 7 remain.
 > Status: PARTIALLY IMPLEMENTED  

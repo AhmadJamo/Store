@@ -7,5 +7,9 @@ public enum StockTransferStatus
     Approved = 3,
     Rejected = 4,
     Posted = 5,
-    Cancelled = 6
+    Cancelled = 6,
+    InTransit = 7,
+    PartiallyReceived = 8,
+    ReceiptException = 9,
+    Received = 10
 }

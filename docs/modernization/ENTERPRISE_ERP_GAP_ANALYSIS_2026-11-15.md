@@ -36,8 +36,8 @@ MiniStore is already an Angular-presented modular monolith with strong tenant is
 | 2 | ERP-002 branch-domain and access-policy audit/ADR with read-only Branches workspace | High | High | Low mutation risk | Critical | Medium | Legal-company and activity decisions |
 | 3 | ERP-003 user branch grants plus backend branch context | Very high | High | Medium | Critical | High | ERP-002 |
 | 4 | ERP-004 permitted-branch switcher and branch workspace/dashboard using permission-scoped existing modules — COMPLETE | High | High | Low | High | Medium | ERP-003 |
-| 5 | ERP-005 inter-branch dispatch and destination receipt foundation | Very high | High | Critical | High | Very high | ERP-003, transfer ADR |
-| 6 | ERP-006 partial receipts, discrepancies and allocation | Very high | High | Critical | High | Very high | ERP-005 |
+| 5 | ERP-005 inter-branch dispatch and destination receipt foundation — COMPLETE | Very high | High | Critical | High | Very high | ERP-003, transfer ADR |
+| 6 | ERP-006 partial receipts, discrepancies and allocation — COMPLETE | Very high | High | Critical | High | Very high | ERP-005 |
 | 7 | ERP-007 POS cash-session policy ADR and domain foundation | Very high | High | Critical | Critical | High | Branch/POS scope |
 | 8 | ERP-008 POS open/movements/blind close/approval | Very high | Very high | Critical | Critical | Very high | ERP-007 |
 | 9 | ERP-009 touch POS usability and profile-specific presentation | High | Very high | Medium | Medium | High | ERP-008 and hosted audit |

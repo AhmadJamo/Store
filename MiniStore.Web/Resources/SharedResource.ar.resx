@@ -4744,4 +4744,24 @@
   <data name="Recurring journal template version is invalid." xml:space="preserve"><value>نسخة قالب القيد الدوري غير صالحة.</value></data>
   <data name="Recurring journal template was modified by another user. Reload and try again." xml:space="preserve"><value>عدّل مستخدم آخر قالب القيد الدوري. أعد التحميل ثم حاول مرة أخرى.</value></data>
   <data name="A valid recurring journal run key is required." xml:space="preserve"><value>يلزم مفتاح تشغيل صالح للقيد الدوري.</value></data>
+  <data name="Receipt lines must be unique and cannot be empty." xml:space="preserve"><value>يجب أن تكون سطور الاستلام فريدة وألا تكون فارغة.</value></data>
+  <data name="Receipt line does not belong to this transfer." xml:space="preserve"><value>سطر الاستلام لا ينتمي إلى هذا التحويل.</value></data>
+  <data name="Source stock record was not found." xml:space="preserve"><value>لم يتم العثور على رصيد مخزون المصدر.</value></data>
+  <data name="Insufficient source stock for this receipt." xml:space="preserve"><value>مخزون المصدر غير كافٍ لهذا الاستلام.</value></data>
+  <data name="Source location stock was not found." xml:space="preserve"><value>لم يتم العثور على مخزون موقع المصدر.</value></data>
+  <data name="Insufficient unassigned source stock for this receipt." xml:space="preserve"><value>المخزون غير المعيّن في المصدر غير كافٍ لهذا الاستلام.</value></data>
+  <data name="Receipt quantity exceeds destination location capacity." xml:space="preserve"><value>تتجاوز كمية الاستلام سعة موقع الوجهة.</value></data>
+  <data name="Inter-branch transfer warehouses must belong to branches." xml:space="preserve"><value>يجب أن تنتمي مستودعات التحويل بين الفروع إلى فروع.</value></data>
+  <data name="Select the source branch before dispatching this transfer." xml:space="preserve"><value>اختر فرع المصدر قبل إرسال هذا التحويل.</value></data>
+  <data name="Select the destination branch before receiving this transfer." xml:space="preserve"><value>اختر فرع الوجهة قبل استلام هذا التحويل.</value></data>
+  <data name="The source warehouse does not allow transfer dispatch." xml:space="preserve"><value>مستودع المصدر لا يسمح بإرسال التحويلات.</value></data>
+  <data name="The destination warehouse does not allow transfer receipt." xml:space="preserve"><value>مستودع الوجهة لا يسمح باستلام التحويلات.</value></data>
+  <data name="Only approved transfers can be dispatched." xml:space="preserve"><value>يمكن إرسال التحويلات المعتمدة فقط.</value></data>
+  <data name="Only dispatched transfers can be received." xml:space="preserve"><value>يمكن استلام التحويلات المرسلة فقط.</value></data>
+  <data name="Receipt quantities cannot be negative." xml:space="preserve"><value>لا يمكن أن تكون كميات الاستلام سالبة.</value></data>
+  <data name="At least one receipt or discrepancy quantity is required." xml:space="preserve"><value>يلزم إدخال كمية استلام أو فرق واحد على الأقل.</value></data>
+  <data name="Received quantity cannot exceed the remaining transfer quantity." xml:space="preserve"><value>لا يمكن أن تتجاوز الكمية المستلمة الكمية المتبقية في التحويل.</value></data>
+  <data name="Reported discrepancy cannot exceed the outstanding transfer quantity." xml:space="preserve"><value>لا يمكن أن يتجاوز الفرق المبلغ عنه الكمية المعلقة في التحويل.</value></data>
+  <data name="The transfer receipt does not match its active reservation." xml:space="preserve"><value>لا يطابق استلام التحويل حجز المخزون النشط.</value></data>
+  <data name="Dispatch requires two different assigned branches." xml:space="preserve"><value>يتطلب الإرسال فرعين مختلفين معيّنين للمستودعين.</value></data>
 </root>

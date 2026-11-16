@@ -7,5 +7,9 @@ public enum StockTransferHistoryAction
     Rejected = 3,
     ReturnedToDraft = 4,
     Posted = 5,
-    Cancelled = 6
+    Cancelled = 6,
+    Dispatched = 7,
+    PartiallyReceived = 8,
+    ReceiptExceptionReported = 9,
+    Received = 10
 }

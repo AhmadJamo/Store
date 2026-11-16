@@ -5,6 +5,7 @@ import {
   StockTransferFormPage,
   StockTransferInput,
   StockTransferRow,
+  StockTransferReceiptLineInput,
   StockTransferStatus,
 } from './stock-transfer.models';
 
@@ -44,7 +45,10 @@ export class StockTransferApiService {
   submit(id: number) { return this.command(id, 'submit'); }
   approve(id: number) { return this.command(id, 'approve'); }
   returnToDraft(id: number) { return this.command(id, 'return-to-draft'); }
-  post(id: number) { return this.command(id, 'post'); }
+  dispatch(id: number) { return this.command(id, 'dispatch'); }
+  receive(id: number, lines: StockTransferReceiptLineInput[]) {
+    return this.http.post<void>(this.baseUrl + '/' + id + '/receive', { lines });
+  }
   reject(id: number, reason: string) { return this.command(id, 'reject', { reason }); }
   cancel(id: number, reason: string) { return this.command(id, 'cancel', { reason }); }
 

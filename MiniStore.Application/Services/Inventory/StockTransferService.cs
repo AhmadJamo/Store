@@ -18,6 +18,8 @@ public class StockTransferService : IStockTransferService
     private readonly StockMovementService _stockMovementService;
     private readonly InventoryReservationService _inventoryReservationService;
     private readonly InventoryTrackingService _inventoryTrackingService;
+    private readonly IInventoryAccessRepository _inventoryAccessRepository;
+    private readonly IBranchContext _branchContext;
 
     public StockTransferService(
         IStockTransferRepository stockTransferRepository,
@@ -31,7 +33,9 @@ public class StockTransferService : IStockTransferService
         IProductLocationStockRepository productLocationStockRepository,
         StockMovementService stockMovementService,
         InventoryReservationService inventoryReservationService,
-        InventoryTrackingService inventoryTrackingService)
+        InventoryTrackingService inventoryTrackingService,
+        IInventoryAccessRepository inventoryAccessRepository,
+        IBranchContext branchContext)
     {
         _stockTransferRepository = stockTransferRepository;
         _documentNumbers = documentNumbers;
@@ -45,6 +49,8 @@ public class StockTransferService : IStockTransferService
         _stockMovementService = stockMovementService;
         _inventoryReservationService = inventoryReservationService;
         _inventoryTrackingService = inventoryTrackingService;
+        _inventoryAccessRepository = inventoryAccessRepository;
+        _branchContext = branchContext;
     }
 
     public async Task<List<StockTransfer>> GetAllAsync(
@@ -513,171 +519,153 @@ public class StockTransferService : IStockTransferService
         int id,
         string userId)
     {
-        var transfer =
-            await _stockTransferRepository.GetByIdAsync(id);
-
-        if (transfer == null)
-            throw new InvalidOperationException(
-                "Stock transfer not found.");
-
-        var fromWarehouse = await _warehouseRepository.GetByIdAsync(transfer.FromWarehouseId)
+        var transfer = await _stockTransferRepository.GetByIdAsync(id)
+            ?? throw new InvalidOperationException("Stock transfer not found.");
+        var source = await _warehouseRepository.GetByIdAsync(transfer.FromWarehouseId)
             ?? throw new InvalidOperationException("Source warehouse not found.");
-        var toWarehouse = await _warehouseRepository.GetByIdAsync(transfer.ToWarehouseId)
+        var destination = await _warehouseRepository.GetByIdAsync(transfer.ToWarehouseId)
             ?? throw new InvalidOperationException("Destination warehouse not found.");
-
-        foreach (var item in transfer.Items)
+        if (!source.BranchId.HasValue || !destination.BranchId.HasValue ||
+            source.BranchId == destination.BranchId)
+            throw new InvalidOperationException("Dispatch requires two different assigned branches.");
+        await RequireBranchOperationAsync(source, transferOut: true);
+        await _unitOfWork.ExecuteInTransactionAsync(() =>
         {
-            await ValidateLocationsAsync(
-                item.SourceLocationId,
-                item.DestinationLocationId,
-                fromWarehouse,
-                toWarehouse);
+            transfer.Dispatch(userId);
+            return Task.CompletedTask;
+        });
+    }
+
+    public async Task ReceiveAsync(
+        int id,
+        string userId,
+        IReadOnlyList<ReceiveStockTransferLineCommand> lines)
+    {
+        var transfer = await _stockTransferRepository.GetByIdAsync(id)
+            ?? throw new InvalidOperationException("Stock transfer not found.");
+        if (lines.Count == 0 || lines.GroupBy(x => x.StockTransferItemId).Any(x => x.Count() > 1))
+            throw new ArgumentException("Receipt lines must be unique and cannot be empty.");
+        var sourceWarehouse = await _warehouseRepository.GetByIdAsync(transfer.FromWarehouseId)
+            ?? throw new InvalidOperationException("Source warehouse not found.");
+        var destinationWarehouse = await _warehouseRepository.GetByIdAsync(transfer.ToWarehouseId)
+            ?? throw new InvalidOperationException("Destination warehouse not found.");
+        await RequireBranchOperationAsync(destinationWarehouse, transferOut: false);
+
+        await _unitOfWork.ExecuteInTransactionAsync(async () =>
+        {
+            foreach (var line in lines)
+            {
+                var item = transfer.Items.SingleOrDefault(x => x.Id == line.StockTransferItemId)
+                    ?? throw new InvalidOperationException("Receipt line does not belong to this transfer.");
+                var destinationLocationId = line.DestinationLocationId ?? item.DestinationLocationId;
+                await ValidateLocationsAsync(item.SourceLocationId, destinationLocationId,
+                    sourceWarehouse, destinationWarehouse);
+                if (line.ReceivedQuantity > 0)
+                {
+                    await MoveReceivedQuantityAsync(
+                        transfer, item, line.ReceivedQuantity, destinationLocationId,
+                        line.TrackingAllocations, userId, destinationWarehouse);
+                }
+                item.RecordReceipt(line.ReceivedQuantity, line.ShortQuantity, line.DamagedQuantity);
+            }
+            transfer.RecordReceipt(userId);
+            if (transfer.Status == StockTransferStatus.Received)
+                await _stockMovementService.PostTransferAsync(transfer, userId);
+        });
+    }
+
+    private async Task MoveReceivedQuantityAsync(
+        StockTransfer transfer,
+        StockTransferItem item,
+        decimal quantity,
+        int? destinationLocationId,
+        string? trackingAllocations,
+        string userId,
+        Warehouse destinationWarehouse)
+    {
+        var product = await _productRepository.GetByIdAsync(item.ProductId)
+            ?? throw new InvalidOperationException("Transfer product was not found.");
+        var sourceStock = await _productStockRepository.GetByProductAndWarehouseAsync(
+            item.ProductId, transfer.FromWarehouseId)
+            ?? throw new InvalidOperationException("Source stock record was not found.");
+        if (sourceStock.Quantity < quantity)
+            throw new InvalidOperationException("Insufficient source stock for this receipt.");
+        if (item.SourceLocationId.HasValue)
+        {
+            var sourceLocationStock = await _productLocationStockRepository.GetAsync(
+                item.ProductId, item.SourceLocationId.Value)
+                ?? throw new InvalidOperationException("Source location stock was not found.");
+            sourceLocationStock.RemoveQuantity(quantity);
+        }
+        else
+        {
+            var assigned = (await _productLocationStockRepository.GetAllAsync())
+                .Where(x => x.ProductId == item.ProductId && x.WarehouseId == transfer.FromWarehouseId)
+                .Sum(x => x.Quantity);
+            if (sourceStock.Quantity - assigned < quantity)
+                throw new InvalidOperationException("Insufficient unassigned source stock for this receipt.");
         }
 
-        await _unitOfWork.ExecuteInTransactionAsync(
-            async () =>
+        await _inventoryReservationService.ConsumeTransferAsync(
+            transfer.Id, new Dictionary<int, decimal> { [item.Id] = quantity }, userId);
+        var destinationStock = await _productStockRepository.GetByProductAndWarehouseAsync(
+            item.ProductId, transfer.ToWarehouseId);
+        if (destinationStock is null)
+        {
+            destinationStock = new ProductStock(item.ProductId, transfer.ToWarehouseId);
+            await _productStockRepository.AddAsync(destinationStock);
+        }
+        var sourceCost = sourceStock.RemoveQuantity(quantity);
+        var destinationCost = destinationStock.Receive(quantity, sourceCost.UnitCost);
+
+        if (destinationLocationId.HasValue)
+        {
+            var location = await _storageLocationRepository.GetByIdAsync(destinationLocationId.Value)
+                ?? throw new InvalidOperationException("Destination location was not found.");
+            var locationStock = await _productLocationStockRepository.GetAsync(
+                item.ProductId, destinationLocationId.Value);
+            if (locationStock is null)
             {
-                await _inventoryReservationService.ReserveTransferAsync(transfer, userId);
-                await _inventoryReservationService.ConsumeTransferAsync(transfer.Id, userId);
-                foreach (var item in transfer.Items)
-                {
-                    var trackedProduct = await _productRepository.GetByIdAsync(item.ProductId)
-                        ?? throw new InvalidOperationException("Transfer product was not found.");
-                    var sourceStock =
-                        await _productStockRepository
-                            .GetByProductAndWarehouseAsync(
-                                item.ProductId,
-                                transfer.FromWarehouseId);
+                locationStock = new ProductLocationStock(
+                    item.ProductId, transfer.ToWarehouseId, destinationLocationId.Value);
+                await _productLocationStockRepository.AddAsync(locationStock);
+            }
+            if (destinationWarehouse.EnforceLocationCapacity && location.MaximumQuantity.HasValue)
+            {
+                var current = (await _productLocationStockRepository.GetAllAsync())
+                    .Where(x => x.StorageLocationId == location.Id).Sum(x => x.Quantity);
+                if (current + quantity > location.MaximumQuantity.Value)
+                    throw new InvalidOperationException("Receipt quantity exceeds destination location capacity.");
+            }
+            locationStock.AddQuantity(quantity);
+        }
 
-                    if (sourceStock == null)
-                    {
-                        throw new InvalidOperationException(
-                            $"No stock record exists for product ID {item.ProductId} in the source warehouse.");
-                    }
+        await _stockTransactionRepository.AddAsync(new StockTransaction(
+            item.ProductId, transfer.FromWarehouseId, -quantity,
+            StockTransactionType.TransferOut, transfer.TransferNumber, sourceCost));
+        await _stockTransactionRepository.AddAsync(new StockTransaction(
+            item.ProductId, transfer.ToWarehouseId, quantity,
+            StockTransactionType.TransferIn, transfer.TransferNumber, destinationCost));
+        await _inventoryTrackingService.TransferAsync(
+            product, transfer.FromWarehouseId, transfer.ToWarehouseId,
+            item.SourceLocationId, destinationLocationId, quantity,
+            transfer.TransferNumber, userId, trackingAllocations);
+    }
 
-                    if (sourceStock.Quantity < item.Quantity)
-                    {
-                        throw new InvalidOperationException(
-                            $"Insufficient stock for product ID {item.ProductId}.");
-                    }
-
-                    if (item.SourceLocationId.HasValue)
-                    {
-                        var sourceLocationStock =
-                            await _productLocationStockRepository.GetAsync(
-                                item.ProductId,
-                                item.SourceLocationId.Value)
-                            ?? throw new InvalidOperationException(
-                                $"No stock exists for product ID {item.ProductId} in the selected source location.");
-
-                        sourceLocationStock.RemoveQuantity(item.Quantity);
-                    }
-                    else
-                    {
-                        var locationStocks =
-                            await _productLocationStockRepository.GetAllAsync();
-                        var assignedQuantity = locationStocks
-                            .Where(stock =>
-                                stock.ProductId == item.ProductId &&
-                                stock.WarehouseId == transfer.FromWarehouseId)
-                            .Sum(stock => stock.Quantity);
-
-                        if (sourceStock.Quantity - assignedQuantity < item.Quantity)
-                        {
-                            throw new InvalidOperationException(
-                                $"Insufficient unassigned stock for product ID {item.ProductId}. Select its exact source location.");
-                        }
-                    }
-
-                    var destinationStock =
-                        await _productStockRepository
-                            .GetByProductAndWarehouseAsync(
-                                item.ProductId,
-                                transfer.ToWarehouseId);
-
-                    if (destinationStock == null)
-                    {
-                        destinationStock =
-                            new ProductStock(
-                                item.ProductId,
-                                transfer.ToWarehouseId);
-
-                        await _productStockRepository.AddAsync(
-                            destinationStock);
-                    }
-
-                    var sourceCostMovement = sourceStock.RemoveQuantity(item.Quantity);
-                    var destinationCostMovement = destinationStock.Receive(
-                        item.Quantity,
-                        sourceCostMovement.UnitCost);
-
-                    if (item.DestinationLocationId.HasValue)
-                    {
-                        var destinationLocation = await _storageLocationRepository
-                            .GetByIdAsync(item.DestinationLocationId.Value)
-                            ?? throw new InvalidOperationException(
-                                "Destination location was not found.");
-                        var destinationLocationStock =
-                            await _productLocationStockRepository.GetAsync(
-                                item.ProductId,
-                                item.DestinationLocationId.Value);
-
-                        if (destinationLocationStock is null)
-                        {
-                            destinationLocationStock = new ProductLocationStock(
-                                item.ProductId,
-                                transfer.ToWarehouseId,
-                                item.DestinationLocationId.Value);
-
-                            await _productLocationStockRepository.AddAsync(
-                                destinationLocationStock);
-                        }
-
-                        if (toWarehouse.EnforceLocationCapacity &&
-                            destinationLocation.MaximumQuantity.HasValue)
-                        {
-                            var allLocationStocks = await _productLocationStockRepository.GetAllAsync();
-                            var currentLocationQuantity = allLocationStocks
-                                .Where(stock => stock.StorageLocationId == destinationLocation.Id)
-                                .Sum(stock => stock.Quantity);
-                            if (currentLocationQuantity + item.Quantity >
-                                destinationLocation.MaximumQuantity.Value)
-                            {
-                                throw new InvalidOperationException(
-                                    "Transfer quantity exceeds the destination location capacity.");
-                            }
-                        }
-
-                        destinationLocationStock.AddQuantity(item.Quantity);
-                    }
-
-                    await _stockTransactionRepository.AddAsync(
-                        new StockTransaction(
-                            item.ProductId,
-                            transfer.FromWarehouseId,
-                            -item.Quantity,
-                            StockTransactionType.TransferOut,
-                            transfer.TransferNumber,
-                            sourceCostMovement));
-
-                    await _stockTransactionRepository.AddAsync(
-                        new StockTransaction(
-                            item.ProductId,
-                            transfer.ToWarehouseId,
-                            item.Quantity,
-                            StockTransactionType.TransferIn,
-                            transfer.TransferNumber,
-                            destinationCostMovement));
-
-                    await _inventoryTrackingService.TransferAsync(trackedProduct,
-                        transfer.FromWarehouseId, transfer.ToWarehouseId,
-                        item.SourceLocationId, item.DestinationLocationId,
-                        item.Quantity, transfer.TransferNumber, userId, item.TrackingAllocations);
-                }
-
-                await _stockMovementService.PostTransferAsync(transfer, userId);
-                transfer.Post(userId);
-            });
+    private async Task RequireBranchOperationAsync(Warehouse warehouse, bool transferOut)
+    {
+        if (!warehouse.BranchId.HasValue)
+            throw new InvalidOperationException("Inter-branch transfer warehouses must belong to branches.");
+        if (_branchContext.BranchId != warehouse.BranchId)
+            throw new InvalidOperationException(transferOut
+                ? "Select the source branch before dispatching this transfer."
+                : "Select the destination branch before receiving this transfer.");
+        var access = await _inventoryAccessRepository.GetBranchAccessAsync(
+            warehouse.BranchId.Value, warehouse.Id);
+        if (access is null || (transferOut ? !access.AllowTransferOut : !access.AllowTransferIn))
+            throw new InvalidOperationException(transferOut
+                ? "The source warehouse does not allow transfer dispatch."
+                : "The destination warehouse does not allow transfer receipt.");
     }
 
     public async Task CancelAsync(

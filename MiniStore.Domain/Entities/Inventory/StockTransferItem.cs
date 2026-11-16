@@ -12,6 +12,10 @@ public class StockTransferItem
     public int? SourceLocationId { get; private set; }
     public int? DestinationLocationId { get; private set; }
     public string? TrackingAllocations { get; private set; }
+    public decimal ReceivedQuantity { get; private set; }
+    public decimal ReportedShortQuantity { get; private set; }
+    public decimal ReportedDamagedQuantity { get; private set; }
+    public decimal RemainingQuantity => Quantity - ReceivedQuantity;
 
     private StockTransferItem()
     {
@@ -60,5 +64,20 @@ public class StockTransferItem
         if (normalized?.Length > 2000)
             throw new ArgumentException("Tracking allocations cannot exceed 2000 characters.");
         TrackingAllocations = normalized;
+    }
+
+    public void RecordReceipt(decimal receivedQuantity, decimal shortQuantity, decimal damagedQuantity)
+    {
+        if (receivedQuantity < 0 || shortQuantity < 0 || damagedQuantity < 0)
+            throw new ArgumentException("Receipt quantities cannot be negative.");
+        if (receivedQuantity <= 0 && shortQuantity <= 0 && damagedQuantity <= 0)
+            throw new ArgumentException("At least one receipt or discrepancy quantity is required.");
+        if (receivedQuantity > RemainingQuantity)
+            throw new InvalidOperationException("Received quantity cannot exceed the remaining transfer quantity.");
+        if (shortQuantity + damagedQuantity > RemainingQuantity - receivedQuantity)
+            throw new InvalidOperationException("Reported discrepancy cannot exceed the outstanding transfer quantity.");
+        ReceivedQuantity += receivedQuantity;
+        ReportedShortQuantity = shortQuantity;
+        ReportedDamagedQuantity = damagedQuantity;
     }
 }

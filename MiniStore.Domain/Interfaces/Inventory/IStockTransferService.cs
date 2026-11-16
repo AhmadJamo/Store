@@ -40,8 +40,15 @@ public interface IStockTransferService
         int id,
         string userId);
 
+    Task ReceiveAsync(int id, string userId,
+        IReadOnlyList<ReceiveStockTransferLineCommand> lines);
+
     Task CancelAsync(
         int id,
         string userId,
         string reason);
 }
+
+public sealed record ReceiveStockTransferLineCommand(
+    int StockTransferItemId, decimal ReceivedQuantity, decimal ShortQuantity,
+    decimal DamagedQuantity, int? DestinationLocationId, string? TrackingAllocations);
