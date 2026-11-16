@@ -227,3 +227,7 @@ Web Release passed with zero warnings/errors; 1,645 security checks and 250/250 
 ## ERP-009 verification — 2026-11-16
 
 Release passed with zero warnings/errors, 1,649 regression checks passed, 250/250 Angular tests passed and production build passed with the existing initial-chunk warning. Authenticated Microsoft Edge acceptance is pending: the Windows automation kernel exited on an ACL helper error before a browser window could be selected; no visual acceptance is claimed.
+
+## Browser-session capture hardening — 2026-11-16
+
+The Edge acceptance capture now saves storage state only after `/api/v1/session` returns success. A presentation redirect away from MVC login no longer produces a false authenticated fixture. The project builds cleanly; the ERP-009 interactive attempt timed out without login, so hosted acceptance remains open.

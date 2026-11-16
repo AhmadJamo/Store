@@ -77,7 +77,9 @@ static async Task CaptureAuthenticatedStateAsync(Arguments options)
     var deadline = DateTimeOffset.UtcNow.AddSeconds(options.CaptureTimeoutSeconds);
     while (DateTimeOffset.UtcNow < deadline)
     {
-        if (!page.Url.Contains("/Account/Login", StringComparison.OrdinalIgnoreCase))
+        var sessionResponse = await context.APIRequest.GetAsync(
+            $"{options.ApiUrl!.TrimEnd('/')}/api/v1/session");
+        if (sessionResponse.Ok)
         {
             await context.StorageStateAsync(new BrowserContextStorageStateOptions { Path = statePath });
             Console.WriteLine($"Authenticated browser state captured at {statePath}.");

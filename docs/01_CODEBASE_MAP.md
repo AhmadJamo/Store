@@ -929,3 +929,5 @@ The lifecycle is in `PosCashManagement.cs`; persistence uses `IPosCashRepository
 ## ERP-009 POS presentation
 
 Terminal-profile presentation remains cohesive in `features/sales/legacy-sales-page.ts`, `.html`, `.scss` and its feature localization service. No new component, API, schema or business service was introduced. Static drift gates live in `tests/SecurityRegression/Program.cs`.
+
+Browser acceptance session capture in `tests/AngularBrowserAcceptance/Program.cs` validates the authenticated session API before persisting temporary Playwright state.
