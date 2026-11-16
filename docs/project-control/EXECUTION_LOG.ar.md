@@ -27,3 +27,11 @@
 - UX: اختبار Angular يثبت بقاء الصف وإظهار التفاصيل عند 409؛ لا إعادة تصميم غير لازمة.
 - التحقق: Release 0/0، SQL integration Passed، Angular 251/251، SecurityRegression 1,650.
 - التالي: TASK-REC-003.
+## 2026-11-17 — TASK-REC-003
+
+- أضيف مولّد source-backed لمصفوفة route/function بدل الجرد اليدوي القابل للتقادم.
+- الجرد: 196 route شاشة، 182 بدليل مباشر عابر للطبقات، 0 P1، و7 P2 للتفويض العام/الخاص.
+- Accounting: 11 route؛ Sales: 37؛ Inventory: 22؛ لا P1 في الوحدات الثلاث.
+- بوابة التحقق تعيد التوليد وتفشل عند endpoint بلا Controller/authorization أو عند غياب الوحدات الحرجة.
+- لا runtime/schema change في هذه المهمة.
+- التالي: TASK-REC-004.

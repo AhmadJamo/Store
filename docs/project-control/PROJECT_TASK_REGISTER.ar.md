@@ -5,8 +5,8 @@
 | TASK-REC-000 | التدقيق التأسيسي ومركز التحكم V3.0 | Cross-cutting | V3.0 + كود | P0 | Completed | — |
 | TASK-REC-001 | إدارة الفروع من صفحة الفروع | Branches | V3.0 + فجوة مثبتة | P0 | Completed | REC-000 |
 | TASK-REC-002 | إثبات سلامة حذف المستودع وUX الإنشاء | Warehouses | تدقيق كود | P0 | Completed | REC-000 |
-| TASK-REC-003 | جرد 196 مسارًا ووظائفها عبر الطبقات | All | V3.0 | P0 | Planned | REC-000 |
-| TASK-REC-004 | اتساق ProblemDetails وتصنيف business conflict | Cross-cutting | تدقيق كود | P0 | Planned | REC-003 |
+| TASK-REC-003 | جرد 196 مسارًا ووظائفها عبر الطبقات | All | V3.0 | P0 | Completed | REC-000 |
+| TASK-REC-004 | اتساق ProblemDetails وتصنيف business conflict | Cross-cutting | تدقيق كود | P0 | Ready | REC-003 |
 | TASK-POS-001 | تدقيق فجوات POS مقابل V3.0 | POS | V3.0 | P1 | Planned | REC-001..004 |
 | TASK-POS-002 | قرار معمارية Offline | POS | V3.0 | P3 | Deferred | POS-001 + ADR |
 | TASK-REP-001 | تدقيق semantic reporting coverage | Reporting | V3.0 | P4 | Planned | REC-003 |
@@ -34,3 +34,9 @@
 - اختبار قاعدة حقيقية: المستودع المرتبط بـ ProductStock/StockTransaction بقي مع بياناته، بينما حُذف مستودع غير مستخدم.
 - UX: شاشة `/warehouses` كانت تحتوي أصلًا create/edit وربط الفرع والحساب بصلاحيات مستقلة؛ لم تُعد كتابتها. أضيف اختبار يثبت بقاء الصف ورسالة الخطأ عند رفض الحذف.
 - التحقق: Release clean، SQL integration passed، Angular 251/251، SecurityRegression 1,650.
+## TASK-REC-003
+
+- المخرج: `ROUTE_FUNCTION_COVERAGE.ar.md` مولد من الكود ويربط 196 مسار شاشة بالمكوّن وعقود API والـController وخدمة Application والصلاحيات واختبار Angular.
+- النتيجة: 0 فجوات P1 في الربط؛ 182 مسارًا بدليل عابر للطبقات مباشر، وحدود عامة/عرضية معروفة، و7 حالات P2 ذات تفويض authenticated أو API-specific تحتاج مراجعة يدوية مستقلة.
+- الوحدات الحرجة: Accounting (11)، Sales (37)، Inventory (22) دون P1.
+- البوابة: `Test-RouteFunctionCoverage.ps1` تعيد التوليد وتفشل عند أي P1 أو غياب وحدة حرجة.

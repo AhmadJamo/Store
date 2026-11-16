@@ -557,3 +557,6 @@ ERP-007 completed 2026-11-16: accepted POS cash-session ADR and tenant/branch/te
 - [x] REC-002: linked-warehouse delete safety verified; superseded by the detailed completion entry below.
 - [x] REC-002: prove linked-warehouse delete safety on migrated SQL, return localized HTTP 409, preserve Angular row/context, and confirm existing create/edit/branch-account UX (2026-11-17).
 - [ ] REC-003: classify all Angular routes by controller/API, Application service, permission and verification evidence.
+- [x] REC-003: generate cross-layer evidence for all 196 Angular screen routes and enforce zero unresolved P1 wiring for Accounting, Sales and Inventory (2026-11-17).
+- [ ] REC-003 follow-up: manually review the seven authenticated/API-specific P2 authorization boundaries recorded in the route matrix.
+- [ ] REC-004: normalize Internal API ProblemDetails and business-conflict classification without changing domain rules.

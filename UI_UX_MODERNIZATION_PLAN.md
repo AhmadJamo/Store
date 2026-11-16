@@ -744,3 +744,10 @@ ERP expansion roadmap: 10/10 planned phases complete. Future work is backlog-dri
 - SQL integration proves referenced warehouse/stock preservation and successful deletion of an unused warehouse.
 - Verification: Release clean, InventorySqlIntegration passed, Angular 251/251, SecurityRegression 1,650.
 - Next phase: REC-003 cross-layer route/function inventory, beginning with Accounting, Sales and Inventory.
+## V3 REC-003 — Cross-layer route/function inventory — COMPLETED 2026-11-17
+
+- Added a source-generated matrix for 196 unique Angular screen routes, including component, API contract, Controller, Application service, permission evidence and adjacent Angular test.
+- Added a repeatable gate that rejects unresolved P1 wiring and requires Accounting, Sales and Inventory coverage.
+- Results: 0 unresolved P1; 7 P2 manual authorization reviews; Accounting 11 routes, Sales 37, Inventory 22.
+- Visibility is not treated as functional completion; the matrix explicitly separates wiring evidence from business-rule and browser evidence.
+- Next phase: REC-004 ProblemDetails and business-conflict normalization.

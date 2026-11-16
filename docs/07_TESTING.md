@@ -253,3 +253,6 @@ Release build passed with zero warnings/errors; security/inventory regression pa
 - InventorySqlIntegration passed against a temporary migrated SQL database: referenced Warehouse and ProductStock remained; an unused Warehouse was removed.
 - Angular passed 251/251 tests; the warehouse page retains a rejected row and renders API detail.
 - SecurityRegression passed 1,650 checks; independent warehouse permissions and antiforgery remain covered.
+## REC-003 route/function inventory — 2026-11-17
+
+`pwsh scripts/Test-RouteFunctionCoverage.ps1` passed with 196 unique screen routes, zero unresolved P1 wiring gaps and seven P2 manual authorization reviews. Accounting, Sales and Inventory are mandatory gate inputs. The generator is deterministic and updates the project-control matrix from source; business-rule and browser verification remain separate evidence.

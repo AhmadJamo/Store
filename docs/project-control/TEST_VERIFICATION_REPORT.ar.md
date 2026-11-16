@@ -39,3 +39,14 @@
 | SecurityRegression | Passed — 1,650 checks |
 
 اختبار SQL استخدم migrations والعلاقات الحقيقية، وليس mock. لا يوجد تغيير schema أو migration في هذه المرحلة.
+## TASK-REC-003 — 2026-11-17
+
+| البوابة | النتيجة |
+|---|---|
+| Route/function generator | Passed — 196 routes |
+| P1 unresolved wiring | 0 |
+| P2 manual authorization review | 7 |
+| Critical modules | Accounting, Sales, Inventory present with 0 P1 |
+| `Test-RouteFunctionCoverage.ps1` | Passed |
+
+هذه بوابة wiring/evidence وليست بديلًا عن اختبارات قواعد العمل أو E2E لكل عملية.

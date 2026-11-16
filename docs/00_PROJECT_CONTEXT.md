@@ -206,3 +206,6 @@ The historical ERP 10/10 roadmap is complete, but it is not a declaration that t
 ## REC-002 warehouse delete safety — 2026-11-17
 
 Warehouse create/edit and named branch/account selection were already complete. REC-002 closes the verified delete-error gap: relational constraints remain authoritative, the infrastructure repository translates a referenced-warehouse FK rejection into a stable business conflict, and the API returns localized ProblemDetails with HTTP 409. SQL integration proves referenced inventory survives and an unused warehouse remains deletable. The active gate is REC-003 route/function coverage.
+## REC-003 cross-layer route inventory — 2026-11-17
+
+The executable route/function inventory covers 196 unique Angular screen routes and maps component-local API contracts to controllers, Application services, permission evidence and adjacent Angular tests. No unresolved P1 wiring gap remains; seven P2 routes use authenticated or API-specific authorization and remain explicitly queued for manual security review. Accounting (11), Sales (37) and Inventory (22) are all present with zero P1. REC-004 is the active gate.
