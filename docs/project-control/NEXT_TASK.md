@@ -1,5 +1,7 @@
 # المهمة التالية الوحيدة / Next Task
 
-> الحالة: NO APPROVED IMPLEMENTATION TASK
+## TASK-REC-001 — إدارة الفروع من صفحة الفروع
 
-اكتملت مراحل توسعة ERP المخططة 10/10 بتاريخ 2026-11-16. المهمة التالية يجب اختيارها من الـ backlog وتوثيق نطاقها ومخاطرها ومعايير قبولها هنا قبل أي تغيير جديد. لا توجد الآن خطوة تنفيذية معتمدة ضمن السلسلة الحالية.
+> الحالة: APPROVED BY V3.0 — READY
+
+نفّذ lifecycle آمنًا ضمن نموذج Branch الحالي: إنشاء وتعديل وتفعيل/تعطيل من `/branches` بصلاحيات مستقلة وProblemDetails محلية واختبارات. لا تضف legal entity/address/timezone قبل ADR ونموذج بيانات معتمد. حدّث Recovery Plan وTask Register وExecution Log وBug Register فور اكتمال المهمة.
