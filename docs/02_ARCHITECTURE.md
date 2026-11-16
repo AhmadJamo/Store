@@ -1,5 +1,9 @@
 # Architecture
 
+## ERP-003 branch context boundary
+
+Tenant remains the company isolation boundary. User branch grants are tenant-owned data-scope records, separate from role permissions and warehouse operating rules. A request may provide X-MiniStore-Branch-Id, but BranchContextMiddleware publishes IBranchContext only after active-branch and current-user grant validation. Existing services do not silently inherit branch filtering; each future branch-sensitive workflow must explicitly consume the verified context.
+
 ## Incremental Angular API boundary (2026-10-24)
 
 During migration, `MiniStore.Web` remains the composition and same-origin host for both MVC and the versioned internal `/api/v1` surface. API controllers use explicit Application DTOs/services; repositories and EF Core are not exposed to presentation. The existing Identity cookie, tenant middleware and permission authority remain authoritative. Angular owns presentation state only, bootstraps its server session and CSRF token centrally, and treats returned permissions as display guidance while every server endpoint reauthorizes independently. OpenAPI is authenticated and filtered to internal v1 paths. See `modernization/PHASE_02_API_FOUNDATION.md` and the same-origin modernization ADR.

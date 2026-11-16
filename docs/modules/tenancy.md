@@ -1,4 +1,7 @@
 # Tenancy and SaaS foundation
+## ERP-003 branch isolation
+
+TenantUserBranchGrant is a tenant-owned, query-filtered record with a composite Branch/Tenant relationship. Ordinary users see only explicitly granted branches, while the protected tenant Admin role can manage access through its existing code-owned permission authority. Optional request branch context is validated against current membership and grants on every request carrying the branch header.
 > Status: PARTIALLY IMPLEMENTED  
 > Source of truth: tenancy entities, AppDbContext and tenant session middleware  
 > Last reviewed: 2026-10-29

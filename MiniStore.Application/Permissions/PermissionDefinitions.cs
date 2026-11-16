@@ -307,6 +307,9 @@ public static class PermissionDefinitions
         new("Users.Edit", "Edit User", "Users"),
         new("Users.Delete", "Delete User", "Users"),
 
+        new("Branches.View", "View Assigned Branches", "Branches"),
+        new("Branches.ManageAccess", "Manage User Branch Access", "Branches"),
+
         // ==========================================
         // Roles
         // ==========================================

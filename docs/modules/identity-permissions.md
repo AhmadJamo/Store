@@ -1,4 +1,7 @@
 # Identity and permissions
+## ERP-003 branch data scope
+
+Branches.View permits discovery of assigned branches only. Branches.ManageAccess independently permits reading and replacing a company member's branch grants; the PUT remains antiforgery protected. Grant replacement validates active membership and tenant-owned branch IDs, runs inside UnitOfWork and records Security.TenantUserBranchGrantsChanged. Role permission and branch grant are both required for ordinary use; neither warehouse configuration nor Angular visibility grants access.
 > Status: IMPLEMENTED WITH FOLLOW-UPS | Last reviewed: 2026-10-26
 
 ASP.NET Core Identity owns login credentials. Company authorization uses `TenantRole`, `TenantRolePermission` and `TenantUserRole`; startup and onboarding create Admin/WarehouseManager/Sales/Accountant independently for every tenant. Admin is protected and receives the current permission catalogue. Custom roles may reuse a name in different companies and hold different permissions. User/role screens show only the active company's data and are bilingual.

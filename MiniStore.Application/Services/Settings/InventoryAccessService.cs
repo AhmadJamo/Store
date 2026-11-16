@@ -8,11 +8,14 @@ public class InventoryAccessService(
     IInventoryAccessRepository accessRepository,
     IBranchRepository branchRepository,
     IWarehouseRepository warehouseRepository,
+    BranchAccessService branchAccess,
     IUnitOfWork unitOfWork)
 {
     public async Task<BranchWorkspaceDto> GetBranchWorkspaceAsync()
     {
-        var branches = await branchRepository.GetAllAsync();
+        var allowedBranchIds = await branchAccess.GetAccessibleBranchIdsAsync();
+        var branches = (await branchRepository.GetAllAsync())
+            .Where(x => allowedBranchIds.Contains(x.Id)).ToList();
         var warehouses = await warehouseRepository.GetAllAsync();
         var accesses = await accessRepository.GetBranchAccessesAsync();
         var terminals = await accessRepository.GetPosTerminalsAsync();

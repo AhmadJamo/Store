@@ -25,6 +25,7 @@ public class AppDbContext
     public DbSet<Tenant> Tenants => Set<Tenant>();
     public DbSet<TenantMembership> TenantMemberships => Set<TenantMembership>();
     public DbSet<TenantUserRole> TenantUserRoles => Set<TenantUserRole>();
+    public DbSet<TenantUserBranchGrant> TenantUserBranchGrants => Set<TenantUserBranchGrant>();
     public DbSet<TenantRole> TenantRoles => Set<TenantRole>();
     public DbSet<TenantRolePermission> TenantRolePermissions => Set<TenantRolePermission>();
     public DbSet<Plan> Plans => Set<Plan>();

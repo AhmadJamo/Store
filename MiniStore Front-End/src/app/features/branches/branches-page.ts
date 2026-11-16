@@ -3,10 +3,11 @@ import { RouterLink } from '@angular/router';
 import { ApiErrorService } from '../../core/api/api-error.service';
 import { NormalizedApiProblem } from '../../core/api/api.models';
 import { LocalizationService } from '../../core/localization/localization.service';
+import { ApiSessionService } from '../../core/api/api-session.service';
 import { ApiRecoveryComponent } from '../../shared/ui/api-recovery/api-recovery';
 import { FeedbackStateComponent } from '../../shared/ui/feedback-state/feedback-state';
 import { PageHeaderComponent } from '../../shared/ui/page-header/page-header';
-import { BranchesApiService, BranchSummary } from './branches-api.service';
+import { BranchAccessManagement, BranchesApiService, BranchSummary } from './branches-api.service';
 
 @Component({
   selector: 'app-branches-page',
@@ -41,24 +42,56 @@ import { BranchesApiService, BranchSummary } from './branches-api.service';
             </article>
           }
         </div>
-        <footer><a class="ui-button secondary" routerLink="/settings/inventory-access">{{ i18n.text('manageInventoryAccess') }}</a><a class="ui-button secondary" routerLink="/settings/branch-sales-accounts">{{ i18n.text('branchSalesAccounts') }}</a></footer>
+        @if (management(); as page) {
+          <section class="access-card">
+            <h2>{{ i18n.text('branchAccessManagement') }}</h2>
+            <p class="muted">{{ i18n.text('branchAccessManagementDescription') }}</p>
+            <label class="ui-field"><span>{{ i18n.text('user') }}</span>
+              <select [value]="selectedUserId()" (change)="selectUser($event)">
+                <option value="">{{ i18n.text('selectOption') }}</option>
+                @for (user of page.users; track user.id) { <option [value]="user.id">{{ user.displayName }}@if(user.email){ — {{ user.email }} }</option> }
+              </select>
+            </label>
+            @if (selectedUserId()) {
+              <div class="grant-grid">
+                @for (branch of page.branches; track branch.id) {
+                  <label class="grant-row"><input type="checkbox" [checked]="selectedBranchIds().has(branch.id)" (change)="toggleBranch(branch.id, $event)" /><span><strong>{{ branch.code }}</strong> — {{ branch.name }}</span></label>
+                }
+              </div>
+              <button class="ui-button primary" type="button" [disabled]="savingAccess()" (click)="saveAccess()">{{ savingAccess() ? i18n.text('saving') : i18n.text('saveBranchAccess') }}</button>
+            }
+          </section>
+        }
+        @if (session.can('Administration.Access')) { <footer><a class="ui-button secondary" routerLink="/settings/inventory-access">{{ i18n.text('manageInventoryAccess') }}</a><a class="ui-button secondary" routerLink="/settings/branch-sales-accounts">{{ i18n.text('branchSalesAccounts') }}</a></footer> }
       }
     </section>`,
   styles: [`
     .branches-page{display:grid;gap:1rem}.summary{display:grid;grid-template-columns:repeat(3,minmax(5rem,auto) 1fr);gap:.5rem 1rem;align-items:baseline;padding:1rem;border:1px solid var(--ui-border);border-radius:var(--ui-radius);background:var(--ui-surface)}
-    .summary strong{font-size:1.5rem}.branch-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(19rem,1fr));gap:1rem}.branch-card{border:1px solid var(--ui-border);border-radius:var(--ui-radius);background:var(--ui-surface);padding:1rem;display:grid;gap:1rem}.branch-card header,.row,footer{display:flex;justify-content:space-between;gap:1rem;align-items:center}.branch-card h2,.branch-card h3{margin:.15rem 0}.branch-card h3{font-size:1rem}.status,.chips span{border-radius:999px;padding:.2rem .55rem;background:var(--ui-success-soft)}.status.inactive,.chips span:not(.on){background:var(--ui-muted-surface);color:var(--ui-muted)}.chips{display:flex;flex-wrap:wrap;gap:.35rem;margin-block:.45rem}.row span,.muted{color:var(--ui-muted);font-size:.85rem}footer{justify-content:flex-start;flex-wrap:wrap}@media(max-width:700px){.summary{grid-template-columns:auto 1fr}}
+    .summary strong{font-size:1.5rem}.branch-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(19rem,1fr));gap:1rem}.branch-card,.access-card{border:1px solid var(--ui-border);border-radius:var(--ui-radius);background:var(--ui-surface);padding:1rem;display:grid;gap:1rem}.branch-card header,.row,footer{display:flex;justify-content:space-between;gap:1rem;align-items:center}.branch-card h2,.branch-card h3,.access-card h2{margin:.15rem 0}.branch-card h3{font-size:1rem}.status,.chips span{border-radius:999px;padding:.2rem .55rem;background:var(--ui-success-soft)}.status.inactive,.chips span:not(.on){background:var(--ui-muted-surface);color:var(--ui-muted)}.chips{display:flex;flex-wrap:wrap;gap:.35rem;margin-block:.45rem}.row span,.muted{color:var(--ui-muted);font-size:.85rem}.grant-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(16rem,1fr));gap:.5rem}.grant-row{display:flex;gap:.55rem;align-items:center;padding:.65rem;border:1px solid var(--ui-border);border-radius:var(--ui-radius)}footer{justify-content:flex-start;flex-wrap:wrap}@media(max-width:700px){.summary{grid-template-columns:auto 1fr}}
   `],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BranchesPageComponent {
   protected readonly i18n = inject(LocalizationService);
+  protected readonly session = inject(ApiSessionService);
   private readonly api = inject(BranchesApiService);
   private readonly errors = inject(ApiErrorService);
   protected readonly loading = signal(true);
   protected readonly problem = signal<NormalizedApiProblem | null>(null);
   protected readonly branches = signal<BranchSummary[]>([]);
+  protected readonly management = signal<BranchAccessManagement | null>(null);
+  protected readonly selectedUserId = signal('');
+  protected readonly selectedBranchIds = signal(new Set<number>());
+  protected readonly savingAccess = signal(false);
   constructor() { this.load(); }
-  protected load(): void { this.loading.set(true); this.problem.set(null); this.api.getWorkspace().subscribe({ next: page => { this.branches.set(page.branches); this.loading.set(false); }, error: error => { this.problem.set(this.errors.normalize(error)); this.loading.set(false); } }); }
+  protected load(): void {
+    this.loading.set(true); this.problem.set(null);
+    this.api.getWorkspace().subscribe({ next: page => { this.branches.set(page.branches); this.loading.set(false); }, error: error => { this.problem.set(this.errors.normalize(error)); this.loading.set(false); } });
+    if (this.session.can('Branches.ManageAccess')) this.api.getAccessManagement().subscribe({ next: page => this.management.set(page), error: error => this.problem.set(this.errors.normalize(error)) });
+  }
+  protected selectUser(event: Event): void { const id = (event.target as HTMLSelectElement).value; this.selectedUserId.set(id); this.selectedBranchIds.set(new Set(this.management()?.users.find(x => x.id === id)?.branchIds ?? [])); }
+  protected toggleBranch(branchId: number, event: Event): void { const next = new Set(this.selectedBranchIds()); (event.target as HTMLInputElement).checked ? next.add(branchId) : next.delete(branchId); this.selectedBranchIds.set(next); }
+  protected saveAccess(): void { const userId = this.selectedUserId(); if (!userId || this.savingAccess()) return; this.savingAccess.set(true); this.problem.set(null); this.api.replaceUserGrants(userId, [...this.selectedBranchIds()]).subscribe({ next: page => { this.management.set(page); this.savingAccess.set(false); }, error: error => { this.problem.set(this.errors.normalize(error)); this.savingAccess.set(false); } }); }
   protected warehouseCount(): number { return this.branches().reduce((total, branch) => total + branch.warehouses.length, 0); }
   protected terminalCount(): number { return this.branches().reduce((total, branch) => total + branch.posTerminals.length, 0); }
 }

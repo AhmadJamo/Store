@@ -1,5 +1,13 @@
 # Testing
 
+## ERP-003 branch-access evidence — 2026-11-16
+
+- Release build passed with zero warnings/errors and Angular production build passed with the existing 204.70 KB warning.
+- Angular passed 245/245 tests across 118 files, including workspace and grant-management API verbs/payloads.
+- SecurityRegression passed 1,619 checks. It rejected the initial non-composite grant/branch relationship, then passed after (BranchId, TenantId) enforcement.
+- The local database accepted migration 20261116002333_AddErp003TenantUserBranchScope and EF reports no pending model changes.
+- UI/UX consistency inventory remains required in the final gate.
+
 ## ERP-002 branch-workspace evidence — 2026-11-15
 
 - Release solution build passed with zero warnings and zero errors.

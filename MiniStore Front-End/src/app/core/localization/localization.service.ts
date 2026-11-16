@@ -7,6 +7,7 @@ export type { UiLocale } from './ui-culture-state.service';
 
 const messages = {
   'ar-JO': {
+    branchAccessManagement: 'صلاحيات المستخدمين على الفروع', branchAccessManagementDescription: 'حدد الفروع التي يستطيع المستخدم عرضها واستخدامها. إعدادات المستودعات لا تمنح هذه الصلاحية.', branchAccessUser: 'المستخدم',
     branchesTitle: 'الفروع', branchesDescription: 'نظرة تشغيلية موحدة على الفروع والمستودعات المرتبطة ونقاط البيع الحالية.', branchWorkspaceNoBranches: 'لا توجد فروع', branchWorkspaceNoBranchesDescription: 'أنشئ بيانات الفرع الأساسية من إعدادات البيانات الرئيسية.', linkedWarehouses: 'المستودعات المرتبطة', noLinkedWarehouses: 'لا توجد مستودعات مرتبطة بهذا الفرع.', posTerminals: 'نقاط البيع', branchWorkspaceNoPosTerminals: 'لا توجد نقاط بيع مرتبطة بهذا الفرع.', defaultForPos: 'افتراضي لنقطة البيع', branchWorkspacePurchases: 'مشتريات', branchWorkspaceTransferOut: 'تحويل صادر', branchWorkspaceTransferIn: 'تحويل وارد', manageInventoryAccess: 'إدارة ربط المخزون',
     stockTransfers: 'تحويلات المخزون',
     inventoryScanning: 'المسح التشغيلي',
@@ -125,6 +126,7 @@ const messages = {
     refreshPlans: 'خطط تحديث التحليلات', refreshPlansDescription: 'هذه فواصل تحديث محفوظة لمساحات التحليل وليست إرسال تقارير تلقائيًا.', noRefreshPlans: 'لا توجد خطط تحديث محفوظة.', deliveryNotEnabled: 'الإرسال الآلي غير مفعّل',
   },
   'en-US': {
+    branchAccessManagement: 'User branch access', branchAccessManagementDescription: 'Choose the branches this user may view and use. Warehouse settings do not grant this access.', branchAccessUser: 'User',
     branchesTitle: 'Branches', branchesDescription: 'A unified operational view of branches, linked warehouses, and current POS terminals.', branchWorkspaceNoBranches: 'No branches', branchWorkspaceNoBranchesDescription: 'Create the core branch data from master-data settings.', linkedWarehouses: 'Linked warehouses', noLinkedWarehouses: 'No warehouses are linked to this branch.', posTerminals: 'POS terminals', branchWorkspaceNoPosTerminals: 'No POS terminals are linked to this branch.', defaultForPos: 'POS default', branchWorkspacePurchases: 'Purchases', branchWorkspaceTransferOut: 'Transfer out', branchWorkspaceTransferIn: 'Transfer in', manageInventoryAccess: 'Manage inventory access',
     stockTransfers: 'Stock transfers',
     inventoryScanning: 'Inventory scanning',

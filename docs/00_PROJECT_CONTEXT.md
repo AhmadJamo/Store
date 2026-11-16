@@ -1,4 +1,5 @@
 # MiniStore project context
+> ERP-003 completed 2026-11-16: user branch grants are tenant-owned, Branches.View and Branches.ManageAccess are independent, ordinary branch reads are grant-scoped, and X-MiniStore-Branch-Id is accepted only after server validation. ERP plan has 10 slices; 3 are complete and 7 remain.
 > Status: PARTIALLY IMPLEMENTED  
 > Source of truth: Code  
 > Last reviewed: 2026-11-14

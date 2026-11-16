@@ -9,6 +9,7 @@ public static class SemanticAuditEventTypes
     public const string TenantRolePermissionsChanged = "Security.TenantRolePermissionsChanged";
     public const string TenantRoleDeleted = "Security.TenantRoleDeleted";
     public const string TenantUserCreated = "Security.TenantUserCreated";
+    public const string TenantUserBranchGrantsChanged = "Security.TenantUserBranchGrantsChanged";
     public const string AccountingSettingsChanged = "Configuration.AccountingSettingsChanged";
     public const string FiscalPeriodStatusChanged = "Accounting.FiscalPeriodStatusChanged";
     public const string RecurringJournalTemplateChanged = "Accounting.RecurringJournalTemplateChanged";

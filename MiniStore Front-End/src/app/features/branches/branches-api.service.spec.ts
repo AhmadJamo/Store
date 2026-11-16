@@ -12,6 +12,12 @@ describe('BranchesApiService', () => {
     const request = http.expectOne('/api/v1/branches');
     expect(request.request.method).toBe('GET');
     request.flush({ branches: [{ id: 1, code: 'MAIN', name: 'Main', isActive: true, warehouses: [], posTerminals: [] }] });
+    service.getAccessManagement().subscribe();
+    expect(http.expectOne('/api/v1/branches/access-management').request.method).toBe('GET');
+    service.replaceUserGrants('user-1', [1, 2]).subscribe();
+    const update = http.expectOne('/api/v1/branches/access-management');
+    expect(update.request.method).toBe('PUT');
+    expect(update.request.body).toEqual({ userId: 'user-1', branchIds: [1, 2] });
     http.verify();
   });
 });

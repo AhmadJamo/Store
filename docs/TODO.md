@@ -1,4 +1,5 @@
 # Project TODO
+# ERP-003 completed (2026-11-16): granular branch permissions, tenant-owned user grants and verified optional request context are implemented. ERP-004 switcher/workspace is proposed. ERP plan: 10 total, 3 complete, 7 remaining.
 # ERP-002 completed (2026-11-15): branch context policy and read-only workspace are implemented. ERP-003 user branch grants and server request context are proposed; no branch switcher is authorized yet.
 # UX-017D completed (2026-11-15): close readiness and controlled fee/interest/transfer adjustments are implemented; no further UX-017 slice is pending.
 # ERP-001 implemented (2026-11-15): enterprise gap audit plus named active-Asset selection for bank setup.

@@ -506,3 +506,13 @@
 - Deliberately omitted a branch switcher, user grants, schema mutation, inter-branch transfer and accounting mutation.
 - Release, 245 Angular tests, 1,613 security checks, production build and EF model-consistency verification passed.
 - Proposed ERP-003 as the server-side user branch-grant and request-context foundation.
+
+## ERP-003 — Server-authoritative user branch grants and request context — COMPLETE 2026-11-16
+
+- Added tenant-owned user/branch grants with a composite branch/tenant foreign key and active-member validation.
+- Split Branches.View from Branches.ManageAccess; grant replacement is CSRF protected and semantically audited.
+- Ordinary branch reads return only explicitly granted branches. Tenant Admin behavior remains explicit through the existing protected role authority.
+- Added optional X-MiniStore-Branch-Id middleware validation and publishes only verified values through IBranchContext.
+- Added cohesive bilingual grant administration to the Branches workspace; no client branch switcher or business-operation filtering was introduced.
+- Migration applied locally; Release, 245 Angular tests, 1,619 security checks and EF model consistency passed.
+- ERP plan remains ten slices total: ERP-001..003 complete, seven remain.

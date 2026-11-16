@@ -1,5 +1,7 @@
 # Codebase map
 
+ERP-003 adds TenantUserBranchGrant, IBranchAccessRepository/BranchAccessRepository, BranchAccessService, the composite-tenant EF configuration and migration, granular branch permissions, CSRF-protected grant APIs, BranchContextMiddleware/IBranchContext and cohesive Angular grant administration. See ADR 2026-11-16-server-authoritative-branch-access.md.
+
 ERP-002 adds a read-only branch workspace DTO graph to InventoryAccessSettingsDto.cs, tenant-filtered composition in InventoryAccessService, an authenticated administration-only BranchesApiController, and the cohesive Angular features/branches workspace with a typed API test. The tenant/branch/activity/grant boundary is recorded in docs/decisions/2026-11-15-branch-context-and-access-policy.md.
 
 ## Angular modernization foundation

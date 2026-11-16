@@ -620,6 +620,14 @@ largest underrepresented modules; production deployment readiness and physical M
 - Preserved persistent workspace navigation and reused shared recovery and page-header patterns.
 - The accepted ADR reserves user branch grants and server request context for ERP-003 before any branch switcher.
 
+## ERP-003 — Granular branch access and verified context — COMPLETED 2026-11-16
+
+- Replaced Administration.Access on the Branches destination with independent Branches.View and Branches.ManageAccess permissions.
+- Added grant administration inside the cohesive Branches page without splitting it into element-level components.
+- Ordinary users receive only granted branch cards; management controls render only with the independent permission.
+- Added verified request context but deliberately deferred a visible branch switcher to ERP-004.
+- Preserved reusable recovery, workspace navigation, bilingual RTL/LTR layout and server authorization authority.
+
 ## MOD-031D — fifteen-surface operational retirement — COMPLETED 2026-11-14
 
 - Retired 15 operational MVC controllers and 48 user-facing Razor views plus supporting page models/partials.

@@ -59,6 +59,7 @@ public static class WebApplicationExtensions
         app.UseMiddleware<TenantSessionMiddleware>();
         app.UseMiddleware<SubscriptionAccessMiddleware>();
         app.UseRequestLocalization();
+        app.UseMiddleware<BranchContextMiddleware>();
         app.UseAuthorization();
         app.MapStaticAssets();
         app.MapHealthChecks("/health/live", new HealthCheckOptions

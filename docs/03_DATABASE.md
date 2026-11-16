@@ -1,4 +1,7 @@
 # Database
+## ERP-003 tenant user branch grants
+
+Migration 20261116002333_AddErp003TenantUserBranchScope creates TenantUserBranchGrants. Its primary key is (TenantId, UserId, BranchId); the branch foreign key is composite (BranchId, TenantId), preventing cross-company references at the database boundary. User and tenant references are enforced, grant actor/time evidence is retained, and supporting user/branch indexes are included. The migration was applied to local Demo on 2026-11-16.
 ## SAL-130A reusable Analytics Center
 
 Migration 135 (`20261022125125_AddReusableAnalyticsCenter`) creates tenant-owned `AnalyticsWorkspaces` and

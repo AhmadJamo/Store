@@ -34,10 +34,14 @@ public static class BusinessServicesExtensions
         services.AddSingleton<HttpTenantContext>();
         services.AddSingleton<ITenantContext>(provider => provider.GetRequiredService<HttpTenantContext>());
         services.AddSingleton<ITenantScope>(provider => provider.GetRequiredService<HttpTenantContext>());
+        services.AddScoped<HttpBranchContext>();
+        services.AddScoped<IBranchContext>(provider => provider.GetRequiredService<HttpBranchContext>());
         services.AddScoped<ITenantMembershipRepository, TenantMembershipRepository>();
         services.AddScoped<ITenantAuthorizationRepository, TenantAuthorizationRepository>();
+        services.AddScoped<IBranchAccessRepository, BranchAccessRepository>();
         services.AddScoped<ITenantRoleRepository, TenantRoleRepository>();
         services.AddScoped<TenantRoleService>();
+        services.AddScoped<BranchAccessService>();
         services.AddScoped<ISaasRepository, SaasRepository>();
         services.AddScoped<EntitlementService>();
         services.AddScoped<PlatformSaasService>();

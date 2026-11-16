@@ -5528,8 +5528,24 @@ Check(branchesApi.GetCustomAttribute<ApiControllerAttribute>() is not null &&
       branchesApi.GetCustomAttribute<AuthorizeAttribute>() is not null &&
       branchesApi.GetMethod(nameof(MiniStore.Web.Controllers.Api.V1.Branches.BranchesApiController.Get))!
           .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
-          $"{PermissionAuthorizeAttribute.PolicyPrefix}Administration.Access",
-    "Branch workspace must remain authenticated and administration-permission protected");
+          $"{PermissionAuthorizeAttribute.PolicyPrefix}Branches.View",
+    "Branch workspace must remain authenticated and independently view-permission protected");
+Check(branchesApi.GetMethod(nameof(MiniStore.Web.Controllers.Api.V1.Branches.BranchesApiController.GetAccessManagement))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
+          $"{PermissionAuthorizeAttribute.PolicyPrefix}Branches.ManageAccess" &&
+      branchesApi.GetMethod(nameof(MiniStore.Web.Controllers.Api.V1.Branches.BranchesApiController.ReplaceUserGrants))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
+          $"{PermissionAuthorizeAttribute.PolicyPrefix}Branches.ManageAccess" &&
+      branchesApi.GetMethod(nameof(MiniStore.Web.Controllers.Api.V1.Branches.BranchesApiController.ReplaceUserGrants))!
+          .GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null,
+    "Branch grant reads and replacements must require ManageAccess and mutations must retain antiforgery");
+Check(PermissionDefinitions.All.Any(x => x.Name == "Branches.View") &&
+      PermissionDefinitions.All.Any(x => x.Name == "Branches.ManageAccess"),
+    "Branch view and access-management permissions must remain independently defined");
+Check(TenantIsolationModel.TenantOwnedTypes.Contains(typeof(TenantUserBranchGrant)),
+    "User branch grants must remain tenant-owned and query-filtered");
+Check(MiniStore.Web.Middleware.BranchContextMiddleware.HeaderName == "X-MiniStore-Branch-Id",
+    "Verified branch request context must retain one explicit allowlisted header");
 
 Console.WriteLine($"Passed {count} security and inventory regression checks.");
 

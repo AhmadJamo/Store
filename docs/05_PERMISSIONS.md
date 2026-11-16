@@ -1,5 +1,12 @@
 # Permissions and authorization
 
+## ERP-003 granular branch permissions
+
+- Branches.View protects the assigned-branch workspace and does not grant access-management operations.
+- Branches.ManageAccess protects management reads and CSRF-protected grant replacement; it does not replace business-operation permissions.
+- Ordinary users need the appropriate operation permission plus an explicit branch grant wherever a workflow adopts branch context.
+- The tenant Admin role retains the existing explicit code-owned all-permissions behavior inside its active company only.
+
 ## UX-013 aging reports
 
 GET /api/v1/aging-reports and /accounting/aging reuse JournalEntries.View. The feature is read-only and introduces no

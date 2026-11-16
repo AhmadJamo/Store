@@ -1,4 +1,8 @@
 # Security assessment
+## ERP-003 server-authoritative branch context
+
+Branch grants are deny-by-default, tenant filtered and database-bound to Branch by (BranchId, TenantId). Grant changes validate active membership, re-resolve tenant branches, commit atomically and emit a registered semantic security event. X-MiniStore-Branch-Id is optional; invalid values return 400 and ungranted/inactive branches return 403 before IBranchContext is populated. Client state and warehouse/POS mappings are never authorization.
+
 > Status: PARTIALLY VERIFIED
 > Source of truth: Static inspection and focused executable regression checks
 > Last reviewed: 2026-11-07

@@ -68,4 +68,6 @@ and controllers remain available as the rollback path until a separately approve
 
 ## Branch workspace (ERP-002, 2026-11-15)
 
-GET /api/v1/branches composes tenant-filtered branch, branch-warehouse operation and POS-terminal records through InventoryAccessService into DTOs for a read-only Angular /branches workspace. The route requires Administration.Access; it performs no EF access in the controller and exposes no entity. Warehouse rules describe operations and are not user-to-branch authorization. No branch selector, business-activity model, schema change or mutation was added.
+GET /api/v1/branches composes tenant-filtered branch, branch-warehouse operation and POS-terminal records through InventoryAccessService into DTOs for a read-only Angular /branches workspace. The route requires Branches.View; it performs no EF access in the controller and exposes no entity. Warehouse rules describe operations and are not user-to-branch authorization. No branch selector or business-activity model was added.
+
+ERP-003 adds an independent Branches.ManageAccess boundary for assigning active users to active branches. Administrators manage those grants from the same cohesive Angular feature, while ordinary Branches.View users receive only explicitly granted branches. Managers retain tenant-wide branch visibility. The verified optional branch header is accepted only after the server confirms an active grant; it is not a client-authoritative selector. Branch switching and operational branch context remain deferred to ERP-004.
