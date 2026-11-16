@@ -178,3 +178,8 @@ repositories, tenant filters, rowversions and reservation workflows remain autho
 create options and delegates create/count/approve/post/cancel commands. Angular conditionally presents each independently authorized
 state transition; it does not calculate variance or mutate balance/location/tracking/valuation facts. Separation of duties and atomic
 posting remain Domain/Application responsibilities.
+
+
+## ERP-004 client branch context
+
+Angular initializes branch context only after the authenticated session and a successful permission-scoped branch response. Browser storage is namespaced by tenant and user, contains only a numeric branch ID and is reconciled against active server-returned choices before use. The interceptor sends the selected ID only to internal API URLs. It never establishes authorization: the Web middleware independently revalidates membership, grant and active branch on every request.

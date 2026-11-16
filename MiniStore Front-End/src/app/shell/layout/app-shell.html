@@ -24,6 +24,17 @@
           <nav class="breadcrumbs" [attr.aria-label]="i18n.text('workspace')"><span>{{ shellI18n.group(navigation.groupForItem(currentItem)) }}</span><span aria-hidden="true">›</span><span aria-current="page">{{ navigationI18n.text(currentItem.labelKey) }}</span></nav>
         }
       </div>
+      @if (branchContext.choices().length) {
+        <label class="branch-switcher">
+          <span>{{ i18n.text('activeBranch') }}</span>
+          <select [value]="branchContext.selectedId() ?? ''" (change)="switchBranch($event)">
+            <option value="">{{ i18n.text('allPermittedBranches') }}</option>
+            @for (branch of branchContext.choices(); track branch.id) {
+              <option [value]="branch.id">{{ branch.code }} — {{ branch.name }}</option>
+            }
+          </select>
+        </label>
+      }
       <div class="command-search" role="search" (focusout)="onSearchFocusOut($event)">
         <label class="search" for="workspace-command-search"><span aria-hidden="true">⌕</span><input id="workspace-command-search" autocomplete="off" [value]="searchQuery()" (input)="updateSearch($any($event.target).value)" (focus)="searchOpen.set(true)" (keydown)="onSearchKeydown($event)" [placeholder]="shellI18n.search('searchPages')" maxlength="80" /><kbd>Ctrl K</kbd></label>
         @if (searchOpen()) {

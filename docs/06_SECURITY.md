@@ -380,3 +380,7 @@ UX-017D keeps adjustment account discovery and mutation behind `BankStatements.A
 ERP-001 removes client-entered ledger IDs from bank setup. Its option endpoint requires `BankStatements.Import` and returns tenant-filtered active Asset accounts; `CreateAccountAsync` independently rejects missing, inactive or non-Asset selections.
 
 ERP-002 keeps branch discovery authenticated and protected by Administration.Access. The controller returns only DTOs assembled through tenant-filtered repositories in the Application layer. The browser does not persist or submit an authoritative selected branch. Existing branch-warehouse and terminal mappings remain operational configuration, never authorization. The accepted ADR requires every future branch-sensitive API to validate a server-side user grant.
+
+## ERP-004 branch-selector boundary
+
+The Angular selector cannot invent branch authority. It accepts only active IDs returned by the protected branch API, scopes persistence to tenant and user, removes stale choices and never attaches the branch header to external URLs. The existing server middleware remains authoritative and returns localized 400/403 responses for invalid or unauthorized context.

@@ -518,3 +518,4 @@ The ERP SaaS Foundation Blueprint is imported as a non-authoritative planning re
 - [ ] ERP-003 add tenant-owned user branch grants and server-authoritative optional branch request context.
 - [ ] After ERP-003, add a permitted-branch switcher without using client state as authorization.
 - [ ] Keep business activities, inter-branch dispatch/receipt and POS cash sessions as separate vertical slices.
+ERP-004 completed 2026-11-16: permitted branch selector, scoped persistence, dirty-tab protection and active-branch operational links. ERP-005 is the next proposed slice.

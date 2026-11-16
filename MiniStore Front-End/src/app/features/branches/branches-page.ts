@@ -8,6 +8,7 @@ import { ApiRecoveryComponent } from '../../shared/ui/api-recovery/api-recovery'
 import { FeedbackStateComponent } from '../../shared/ui/feedback-state/feedback-state';
 import { PageHeaderComponent } from '../../shared/ui/page-header/page-header';
 import { BranchAccessManagement, BranchesApiService, BranchSummary } from './branches-api.service';
+import { BranchContextService } from '../../core/branch-context/branch-context.service';
 
 @Component({
   selector: 'app-branches-page',
@@ -26,8 +27,9 @@ import { BranchAccessManagement, BranchesApiService, BranchSummary } from './bra
         </div>
         <div class="branch-grid">
           @for (branch of branches(); track branch.id) {
-            <article class="branch-card">
+            <article class="branch-card" [class.current]="branchContext.selectedId() === branch.id">
               <header><div><small>{{ branch.code }}</small><h2>{{ branch.name }}</h2></div><span class="status" [class.inactive]="!branch.isActive">{{ i18n.text(branch.isActive ? 'active' : 'inactive') }}</span></header>
+              @if (branchContext.selectedId() === branch.id) { <p class="current-label">{{ i18n.text('currentOperationalBranch') }}</p> }
               <section><h3>{{ i18n.text('linkedWarehouses') }}</h3>
                 @if (branch.warehouses.length === 0) { <p class="muted">{{ i18n.text('noLinkedWarehouses') }}</p> }
                 @for (warehouse of branch.warehouses; track warehouse.id) {
@@ -39,6 +41,14 @@ import { BranchAccessManagement, BranchesApiService, BranchSummary } from './bra
                 @if (branch.posTerminals.length === 0) { <p class="muted">{{ i18n.text('branchWorkspaceNoPosTerminals') }}</p> }
                 @for (terminal of branch.posTerminals; track terminal.id) { <div class="row"><strong>{{ terminal.name }}</strong><span>{{ terminal.defaultWarehouseName }}</span></div> }
               </section>
+              @if (branchContext.selectedId() === branch.id) {
+                <nav class="branch-actions" [attr.aria-label]="i18n.text('branchOperationalLinks')">
+                  @if (session.can('ProductStock.View')) { <a routerLink="/inventory/stocks">{{ i18n.text('openBranchStock') }}</a> }
+                  @if (session.can('StockTransactions.View')) { <a routerLink="/inventory/transactions">{{ i18n.text('openBranchMovements') }}</a> }
+                  @if (session.can('Sales.View') && branch.posTerminals.length) { <a routerLink="/sales/pos">{{ i18n.text('openBranchPos') }}</a> }
+                  @if (session.can('GoodsReceipts.View')) { <a routerLink="/purchases/receipts">{{ i18n.text('openBranchReceiving') }}</a> }
+                </nav>
+              }
             </article>
           }
         </div>
@@ -67,13 +77,14 @@ import { BranchAccessManagement, BranchesApiService, BranchSummary } from './bra
     </section>`,
   styles: [`
     .branches-page{display:grid;gap:1rem}.summary{display:grid;grid-template-columns:repeat(3,minmax(5rem,auto) 1fr);gap:.5rem 1rem;align-items:baseline;padding:1rem;border:1px solid var(--ui-border);border-radius:var(--ui-radius);background:var(--ui-surface)}
-    .summary strong{font-size:1.5rem}.branch-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(19rem,1fr));gap:1rem}.branch-card,.access-card{border:1px solid var(--ui-border);border-radius:var(--ui-radius);background:var(--ui-surface);padding:1rem;display:grid;gap:1rem}.branch-card header,.row,footer{display:flex;justify-content:space-between;gap:1rem;align-items:center}.branch-card h2,.branch-card h3,.access-card h2{margin:.15rem 0}.branch-card h3{font-size:1rem}.status,.chips span{border-radius:999px;padding:.2rem .55rem;background:var(--ui-success-soft)}.status.inactive,.chips span:not(.on){background:var(--ui-muted-surface);color:var(--ui-muted)}.chips{display:flex;flex-wrap:wrap;gap:.35rem;margin-block:.45rem}.row span,.muted{color:var(--ui-muted);font-size:.85rem}.grant-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(16rem,1fr));gap:.5rem}.grant-row{display:flex;gap:.55rem;align-items:center;padding:.65rem;border:1px solid var(--ui-border);border-radius:var(--ui-radius)}footer{justify-content:flex-start;flex-wrap:wrap}@media(max-width:700px){.summary{grid-template-columns:auto 1fr}}
+    .summary strong{font-size:1.5rem}.branch-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(19rem,1fr));gap:1rem}.branch-card,.access-card{border:1px solid var(--ui-border);border-radius:var(--ui-radius);background:var(--ui-surface);padding:1rem;display:grid;gap:1rem}.branch-card.current{border-color:var(--erp-color-primary-strong);box-shadow:0 0 0 1px var(--erp-color-primary-strong)}.branch-card header,.row,footer{display:flex;justify-content:space-between;gap:1rem;align-items:center}.branch-card h2,.branch-card h3,.access-card h2{margin:.15rem 0}.branch-card h3{font-size:1rem}.status,.chips span,.current-label{border-radius:999px;padding:.2rem .55rem;background:var(--ui-success-soft)}.current-label{margin:0;width:max-content}.status.inactive,.chips span:not(.on){background:var(--ui-muted-surface);color:var(--ui-muted)}.chips,.branch-actions{display:flex;flex-wrap:wrap;gap:.35rem;margin-block:.45rem}.branch-actions a{padding:.45rem .65rem;border:1px solid var(--ui-border);border-radius:var(--ui-radius);text-decoration:none}.row span,.muted{color:var(--ui-muted);font-size:.85rem}.grant-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(16rem,1fr));gap:.5rem}.grant-row{display:flex;gap:.55rem;align-items:center;padding:.65rem;border:1px solid var(--ui-border);border-radius:var(--ui-radius)}footer{justify-content:flex-start;flex-wrap:wrap}@media(max-width:700px){.summary{grid-template-columns:auto 1fr}}
   `],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BranchesPageComponent {
   protected readonly i18n = inject(LocalizationService);
   protected readonly session = inject(ApiSessionService);
+  protected readonly branchContext = inject(BranchContextService);
   private readonly api = inject(BranchesApiService);
   private readonly errors = inject(ApiErrorService);
   protected readonly loading = signal(true);

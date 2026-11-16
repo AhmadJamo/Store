@@ -2,6 +2,10 @@
 ## ERP-003 branch isolation
 
 TenantUserBranchGrant is a tenant-owned, query-filtered record with a composite Branch/Tenant relationship. Ordinary users see only explicitly granted branches, while the protected tenant Admin role can manage access through its existing code-owned permission authority. Optional request branch context is validated against current membership and grants on every request carrying the branch header.
+
+## ERP-004 workspace selection
+
+The Angular shell lists only active branches returned through Branches.View and remembers the selected ID per tenant/user. A stale or no-longer-granted value is discarded during initialization. Switching protects dirty tabs and reloads the workspace before subsequent requests use the new context. This is a usability context only; it does not change permissions or replace server validation.
 > Status: PARTIALLY IMPLEMENTED  
 > Source of truth: tenancy entities, AppDbContext and tenant session middleware  
 > Last reviewed: 2026-10-29

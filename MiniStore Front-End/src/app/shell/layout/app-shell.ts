@@ -14,6 +14,7 @@ import { ApiSessionService } from '../../core/api/api-session.service';
 import { NavigationGroupStateService } from '../../workspace/navigation/navigation-group-state.service';
 import { NavigationLocalizationService } from '../../workspace/navigation/navigation-localization.service';
 import { ShellNavigationLocalizationService } from './shell-navigation-localization.service';
+import { BranchContextService } from '../../core/branch-context/branch-context.service';
 
 @Component({
   selector: 'app-shell',
@@ -32,6 +33,7 @@ export class AppShell implements OnInit {
   protected readonly shellI18n = inject(ShellNavigationLocalizationService);
   protected readonly workspaceProfile = inject(WorkspaceProfileService);
   protected readonly session = inject(ApiSessionService);
+  protected readonly branchContext = inject(BranchContextService);
   protected readonly signingOut = signal(false);
   protected readonly signOutFailed = signal(false);
   protected readonly searchQuery = signal('');
@@ -209,6 +211,17 @@ export class AppShell implements OnInit {
   protected setContentWidth(value: string): void { this.preferences.setContentWidth(value as ContentWidthPreference); }
   protected setWorkspaceProfile(value: string): void { this.workspaceProfile.setProfile(value as WorkspaceProfile); }
 
+  protected switchBranch(event: Event): void {
+    const select = event.target as HTMLSelectElement;
+    const nextId = select.value ? Number(select.value) : null;
+    if (this.workspace.tabs().some(tab => tab.dirty) &&
+        !globalThis.confirm(this.i18n.text('branchSwitchUnsavedWarning'))) {
+      select.value = this.branchContext.selectedId()?.toString() ?? '';
+      return;
+    }
+    if (this.branchContext.select(nextId)) globalThis.location.reload();
+  }
+
   protected signOut(): void {
     if (this.signingOut()) return;
     if (this.workspace.tabs().some(tab => tab.dirty) && !globalThis.confirm(this.i18n.text('unsavedDescription'))) return;
@@ -217,6 +230,7 @@ export class AppShell implements OnInit {
     this.account.logout().subscribe({
       next: () => {
         this.session.clear();
+        this.branchContext.clear();
         this.signingOut.set(false);
         void this.router.navigate(['/login']);
       },

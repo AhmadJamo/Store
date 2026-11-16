@@ -6,8 +6,10 @@
 .nav-item.active, .nav-item:hover { color: var(--erp-color-on-primary); background: rgb(255 255 255 / 10%); }
 .sidebar-note { margin-block-start: auto; display: grid; gap: var(--erp-space-2); padding: var(--erp-space-4); border: 1px solid rgb(255 255 255 / 12%); border-radius: var(--erp-radius-md); color: var(--erp-color-sidebar-muted); font-size: .85rem; }
 .workspace { min-width: 0; }
-.topbar { min-height: 5rem; padding: var(--erp-space-4) var(--erp-space-6); display: grid; grid-template-columns: minmax(11rem, 1fr) minmax(8rem, 16rem) auto auto; align-items: center; gap: var(--erp-space-4); background: var(--erp-color-surface); border-block-end: 1px solid var(--erp-color-border); }
+.topbar { min-height: 5rem; padding: var(--erp-space-4) var(--erp-space-6); display: grid; grid-template-columns: minmax(11rem, 1fr) minmax(10rem, 15rem) minmax(8rem, 16rem) auto auto; align-items: center; gap: var(--erp-space-4); background: var(--erp-color-surface); border-block-end: 1px solid var(--erp-color-border); }
 .topbar > div { display: grid; gap: .2rem; }
+.branch-switcher { display:grid; gap:.2rem; color:var(--erp-color-text-muted); font-size:.72rem; }
+.branch-switcher select { min-height:2.35rem; max-width:15rem; }
 .preference-menu { position: relative; justify-self: end; }.preference-menu > summary { display: grid; place-items: center; list-style: none; }.preference-menu > summary::-webkit-details-marker { display: none; }
 .preferences { position: absolute; inset-block-start: calc(100% + var(--erp-space-2)); inset-inline-end: 0; z-index: 40; width: min(24rem, calc(100vw - 2rem)); display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: end; gap: var(--erp-space-3); padding: var(--erp-space-4); border: 1px solid var(--erp-color-border); border-radius: var(--erp-radius-md); background: var(--erp-color-surface); box-shadow: var(--erp-shadow-md); }
 .preferences label { display: grid; gap: .2rem; color: var(--erp-color-text-muted); font-size: .7rem; }

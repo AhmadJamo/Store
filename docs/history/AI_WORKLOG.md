@@ -2421,3 +2421,4 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
 - 2026-11-14: Completed UX-017A as a source-only bank-reconciliation audit. Existing settlement accounts, immutable posted
   journals, external references, periods and close readiness are reusable, but no bank-account/statement/import/allocation
   model exists. Defined UX-017B as bounded CSV evidence and read-only candidates; no schema or runtime behavior changed.
+2026-11-16 — Completed ERP-004. Added tenant/user-scoped permitted branch state, internal-only request header propagation, a shell selector with dirty-tab protection and active-branch operational links. No schema or business authority changed. Release, 249 Angular tests, production build, 1,619 security checks and UI/UX consistency passed. Proposed ERP-005.

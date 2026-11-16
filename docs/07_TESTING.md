@@ -197,3 +197,10 @@ Cafe recipe, product-catalog and managed-unit coverage validates conversion, cla
 - SecurityRegression passed 1,613 checks, including authentication plus Administration.Access on the branch endpoint.
 - Production Angular build passed; the pre-existing initial-chunk warning remains 204.70 KB against 180 KB.
 - EF reports no pending model changes because ERP-002 adds no schema.
+
+## ERP-004 verification (2026-11-16)
+
+- Angular: 120 files and 249 tests passed, including tenant/user-scoped restoration, stale-choice rejection and internal-only header behavior.
+- Angular production build passed; the existing 204.70 kB shared-chunk warning is unchanged.
+- Release build passed with zero warnings/errors.
+- SecurityRegression passed 1,619 checks; UI/UX consistency passed for 121 feature pages and 80 navigation items.

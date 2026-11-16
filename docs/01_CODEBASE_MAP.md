@@ -899,3 +899,10 @@ fiscal periods and controlled journals. No bank-account, statement/import or rec
 - MiniStore.Web/Controllers/Api/V1/Branches/BranchesApiController.cs: authenticated administration-only GET API.
 - MiniStore Front-End/src/app/features/branches/: cohesive bilingual branch workspace, typed client and API test.
 - docs/decisions/2026-11-15-branch-context-and-access-policy.md: tenant/branch/activity/grant/context boundary.
+
+### ERP-004 branch switcher (2026-11-16)
+
+- MiniStore Front-End/src/app/core/branch-context/: tenant/user-scoped permitted-branch state and internal-API header interceptor.
+- MiniStore Front-End/src/app/app.config.ts: initializes branch choices after the authenticated session and before routed pages.
+- MiniStore Front-End/src/app/shell/layout/app-shell.*: global switcher, dirty-tab protection and context reload.
+- MiniStore Front-End/src/app/features/branches/branches-page.ts: active-branch evidence and permission-aware operational links.

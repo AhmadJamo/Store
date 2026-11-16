@@ -516,3 +516,14 @@
 - Added cohesive bilingual grant administration to the Branches workspace; no client branch switcher or business-operation filtering was introduced.
 - Migration applied locally; Release, 245 Angular tests, 1,619 security checks and EF model consistency passed.
 - ERP plan remains ten slices total: ERP-001..003 complete, seven remain.
+
+## ERP-004 — Permitted-branch switcher and operational workspace — COMPLETE 2026-11-16
+
+- Added a shell-level branch switcher populated only from the server-scoped Branches.View response.
+- Restores the choice only in the current tenant/user scope, discards stale or inactive choices and sends the verified value only to same-origin API requests.
+- Branch changes protect dirty workspace tabs and reload the workspace so records from two branch contexts are not mixed.
+- Marks the active branch and exposes permission-aware stock, movement, receiving and POS links only on that branch.
+- The header remains context, not authorization; ERP-003 middleware revalidates the grant on every request.
+- No business permission, query rule, inventory movement, cash session, schema or accounting behavior changed.
+- Release, 249 Angular tests, 1,619 security checks, production build and UI/UX consistency passed.
+- ERP plan remains ten slices total: ERP-001..004 complete, six remain.

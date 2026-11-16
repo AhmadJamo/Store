@@ -626,6 +626,14 @@ largest underrepresented modules; production deployment readiness and physical M
 - Added grant administration inside the cohesive Branches page without splitting it into element-level components.
 - Ordinary users receive only granted branch cards; management controls render only with the independent permission.
 - Added verified request context but deliberately deferred a visible branch switcher to ERP-004.
+
+## ERP-004 — Permitted branch switcher and operational workspace — COMPLETE 2026-11-16
+
+- Added a persistent shell selector using only active branches returned by the server for the current user.
+- Scoped the saved ID by tenant and user, rejected stale values and limited header propagation to internal APIs.
+- Protected dirty tabs before switching and reloaded the workspace to avoid cross-branch screen state.
+- Highlighted the active branch and added permission-aware operational shortcuts without changing business authorization.
+- Verified 249 Angular tests, production build, Release, 1,619 security checks and UI/UX consistency.
 - Preserved reusable recovery, workspace navigation, bilingual RTL/LTR layout and server authorization authority.
 
 ## MOD-031D — fifteen-surface operational retirement — COMPLETED 2026-11-14
