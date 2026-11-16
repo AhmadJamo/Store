@@ -931,3 +931,5 @@ The lifecycle is in `PosCashManagement.cs`; persistence uses `IPosCashRepository
 Terminal-profile presentation remains cohesive in `features/sales/legacy-sales-page.ts`, `.html`, `.scss` and its feature localization service. No new component, API, schema or business service was introduced. Static drift gates live in `tests/SecurityRegression/Program.cs`.
 
 Browser acceptance session capture in `tests/AngularBrowserAcceptance/Program.cs` validates the authenticated session API before persisting temporary Playwright state.
+
+ERP-009 browser evidence is produced by `tests/AngularBrowserAcceptance/Program.cs` under `artifacts/verification/angular-acceptance/erp-009-pos`; session capture requires a successful session API response and retired Accounts/Create is verified as an Angular redirect.

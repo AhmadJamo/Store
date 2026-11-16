@@ -191,3 +191,7 @@ Authorized branch/terminal cash sessions now support setup, opening, reasoned mo
 ## ERP-009 implementation — verification pending 2026-11-16
 
 The POS page now applies terminal product layout, theme/accent, title, cart side, touch targets and autofocus settings. Exact barcode/code/name Enter-add, Escape clear, quantity buttons and a compact cart summary reduce operator clicks. Business authority is unchanged. Release, 1,649 regression checks, 250 Angular tests and production build pass; authenticated Edge acceptance remains pending because the Windows browser helper failed before opening a window.
+
+## ERP-009 completion — 2026-11-16
+
+Authenticated Microsoft Edge acceptance passed 15/15 after hardening session capture and replacing a stale retired-MVC culture probe with the protected Angular redirect contract. ERP progress is 9/10; ERP-010 dashboards and reconciliation is next.

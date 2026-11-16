@@ -712,3 +712,7 @@ Added the complete operator/manager cash workflow to the existing cohesive sales
 ## ERP-009 — touch POS and terminal-profile presentation — IMPLEMENTED / ACCEPTANCE PENDING 2026-11-16
 
 The cohesive sales feature now honors all existing terminal presentation settings and adds fast exact scan/search and quantity controls without component over-fragmentation or business-rule changes. Automated gates pass: Release, 1,649 checks, 250 Angular tests and production build. Risk: authenticated Edge desktop/mobile/RTL acceptance is pending due to a Windows automation ACL helper failure. ERP plan remains 8/10 complete until that evidence closes.
+
+## ERP-009 acceptance closure — COMPLETE 2026-11-16
+
+Authenticated Edge passed 15/15 across RTL/LTR, keyboard, desktop/390px responsiveness, live reconciliation, session boundaries, retired-route protection and five high-risk cohorts. ERP modernization progress is 9/10; ERP-010 is the final planned slice.

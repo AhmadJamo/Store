@@ -537,3 +537,9 @@ ERP-007 completed 2026-11-16: accepted POS cash-session ADR and tenant/branch/te
 - [x] Pass Release, 1,649 regression checks, 250 Angular tests and production build.
 - [ ] Close authenticated Edge desktop/mobile/RTL acceptance after the Windows automation ACL failure is resolved.
 - [ ] Only then mark ERP-009 complete and advance the gate to ERP-010.
+
+## ERP-009 completed 2026-11-16
+
+- [x] Close authenticated Edge desktop/mobile/RTL/keyboard acceptance: 15/15 passed.
+- [x] Harden captured-session validation and replace the stale retired-MVC culture assertion.
+- [ ] ERP-010: branch/company dashboards and reconciliation reports.

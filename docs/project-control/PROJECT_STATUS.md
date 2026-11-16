@@ -482,3 +482,7 @@ Operational POS cash sessions are active with independent permissions, verified 
 ## ERP-009 — IMPLEMENTED, HOSTED ACCEPTANCE PENDING 2026-11-16
 
 Terminal-profile presentation and touch/scan shortcuts are implemented in the cohesive POS page. Automated gates pass (Release, 1,649 checks, 250 Angular tests, production build). Edge acceptance could not start because the Windows automation helper exited on an ACL error. ERP completion remains 8/10 until this evidence is closed.
+
+## ERP-009 — COMPLETE 2026-11-16
+
+Implementation and authenticated Microsoft Edge acceptance are complete. All 15 browser checks passed with no failure or skip. The enterprise expansion plan is 9/10 complete; ERP-010 is active next.

@@ -550,3 +550,7 @@ Added permissioned setup/open/movement/blind-close/independent approval, replay-
 ## ERP-009 — Touch POS and profile presentation — IMPLEMENTED / NOT YET COMPLETE 2026-11-16
 
 Implementation applies the existing terminal profile and reduces common operator clicks. Automated verification passed. Authenticated Edge acceptance remains the only open gate after a Windows automation ACL failure; ERP-010 must not be marked active until ERP-009 acceptance closes.
+
+## ERP-009 — Touch POS and profile presentation — COMPLETE 2026-11-16
+
+Terminal-profile UI, operator shortcuts and automated gates are complete. Authenticated Edge acceptance passed 15/15 after correcting the session-capture and retired-route assertions. ERP-010 is the final ten-slice item.

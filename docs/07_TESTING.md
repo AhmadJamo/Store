@@ -231,3 +231,7 @@ Release passed with zero warnings/errors, 1,649 regression checks passed, 250/25
 ## Browser-session capture hardening — 2026-11-16
 
 The Edge acceptance capture now saves storage state only after `/api/v1/session` returns success. A presentation redirect away from MVC login no longer produces a false authenticated fixture. The project builds cleanly; the ERP-009 interactive attempt timed out without login, so hosted acceptance remains open.
+
+## ERP-009 acceptance closure — 2026-11-16
+
+Authenticated Microsoft Edge passed 15/15: UI states, RTL/LTR, keyboard skip navigation, desktop/390px responsiveness, Angular/API inventory and account reconciliation, anonymous/authenticated session boundaries, retired Accounts presentation redirect and five high-risk read cohorts. No failures or skips remained.

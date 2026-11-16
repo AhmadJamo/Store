@@ -60,3 +60,5 @@ ERP-007 completed 2026-11-16: the cash-session policy ADR and tenant/branch/term
 ERP-008 completed 2026-11-16: operational sessions, replay-safe cash sale/return attachment, reasoned movements, blind close, independent variance approval and journal-gateway integration are implemented. ERP-009 touch usability is next.
 
 ERP-009 implementation landed 2026-11-16: terminal-profile presentation and operator scan/quantity shortcuts are wired into the cohesive POS page. Automated gates pass; hosted Edge evidence remains open, so completion stays 8/10.
+
+ERP-009 completed 2026-11-16 with authenticated Edge 15/15. Terminal-profile presentation and touch/scan shortcuts are verified; ERP progress is 9/10 and ERP-010 dashboards/reconciliation remains.

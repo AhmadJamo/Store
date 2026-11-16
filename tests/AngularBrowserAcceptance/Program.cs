@@ -1563,13 +1563,15 @@ static async Task RunAuthenticatedReconciliationAsync(
 {
     var culture = session.RootElement.GetProperty("culture").GetString();
     Require(culture is "ar-JO" or "en-US", "Authenticated session returned an unsupported culture.");
-    var mvcCultureProbe = await authenticated.GetAsync("/Accounts/Create");
-    Require(mvcCultureProbe.Ok, $"Authenticated excluded MVC account-create view returned {mvcCultureProbe.Status}.");
-    var mvcCultureHtml = await mvcCultureProbe.TextAsync();
-    Require(mvcCultureHtml.Contains($"lang=\"{culture}\"", StringComparison.OrdinalIgnoreCase),
-        "MVC culture does not match the authenticated API session culture.");
-    checks.Add(new("dual-run-identity-culture", "passed",
-        "MVC and API used the same authenticated session culture."));
+    var retiredAccountsProbe = await authenticated.GetAsync("/Accounts/Create",
+        new APIRequestContextOptions { MaxRedirects = 0 });
+    Require(retiredAccountsProbe.Status is 302 or 307 or 308,
+        $"Retired Accounts/Create returned {retiredAccountsProbe.Status} instead of a redirect.");
+    Require(retiredAccountsProbe.Headers.TryGetValue("location", out var accountsLocation) &&
+            accountsLocation.StartsWith("/app/accounting/accounts", StringComparison.OrdinalIgnoreCase),
+        "Retired Accounts/Create did not preserve the Angular presentation boundary.");
+    checks.Add(new("retired-accounts-presentation-boundary", "passed",
+        "The supported session culture and protected Accounts/Create Angular redirect passed."));
 
     if (permissions.Contains("CustomerInvoices.View"))
     {
