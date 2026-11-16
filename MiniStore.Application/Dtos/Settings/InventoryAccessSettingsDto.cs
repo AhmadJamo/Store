@@ -11,6 +11,9 @@ public class InventoryAccessSettingsDto
 public sealed class BranchWorkspaceDto
 {
     public List<BranchWorkspaceRowDto> Branches { get; set; } = [];
+    public DateTime PeriodFromUtc { get; set; }
+    public DateTime PeriodToUtc { get; set; }
+    public BranchOperationsDto? Company { get; set; }
 }
 
 public sealed class BranchWorkspaceRowDto
@@ -21,8 +24,21 @@ public sealed class BranchWorkspaceRowDto
     public bool IsActive { get; set; }
     public List<BranchWorkspaceWarehouseDto> Warehouses { get; set; } = [];
     public List<BranchWorkspaceTerminalDto> PosTerminals { get; set; } = [];
+    public BranchOperationsDto? Operations { get; set; }
 }
 
+public sealed class BranchOperationsDto
+{
+    public decimal SalesAmount { get; set; }
+    public int SalesCount { get; set; }
+    public decimal StockQuantity { get; set; }
+    public decimal StockValue { get; set; }
+    public int OpenTransfers { get; set; }
+    public int TransferExceptions { get; set; }
+    public int OpenCashSessions { get; set; }
+    public int CashSessionsAwaitingApproval { get; set; }
+    public decimal CashVariance { get; set; }
+}
 public sealed class BranchWorkspaceWarehouseDto
 {
     public int Id { get; set; }

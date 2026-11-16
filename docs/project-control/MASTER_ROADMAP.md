@@ -554,3 +554,7 @@ Implementation applies the existing terminal profile and reduces common operator
 ## ERP-009 — Touch POS and profile presentation — COMPLETE 2026-11-16
 
 Terminal-profile UI, operator shortcuts and automated gates are complete. Authenticated Edge acceptance passed 15/15 after correcting the session-capture and retired-route assertions. ERP-010 is the final ten-slice item.
+
+## ERP-010 — COMPLETE 2026-11-16
+
+Completed the final planned branch/company dashboard slice with permitted-branch aggregation, granular authorization, bilingual cohesive Angular presentation and reconciliation exception visibility. ERP planned progress: 10/10.

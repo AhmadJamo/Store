@@ -1,3 +1,4 @@
+import { DecimalPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { ApiErrorService } from '../../core/api/api-error.service';
@@ -12,7 +13,7 @@ import { BranchContextService } from '../../core/branch-context/branch-context.s
 
 @Component({
   selector: 'app-branches-page',
-  imports: [RouterLink, ApiRecoveryComponent, FeedbackStateComponent, PageHeaderComponent],
+  imports: [DecimalPipe, RouterLink, ApiRecoveryComponent, FeedbackStateComponent, PageHeaderComponent],
   template: `
     <section class="branches-page">
       <app-page-header eyebrow="ADMIN" [title]="i18n.text('branchesTitle')" [description]="i18n.text('branchesDescription')" />
@@ -20,7 +21,11 @@ import { BranchContextService } from '../../core/branch-context/branch-context.s
       @else if (problem(); as failure) { <app-api-recovery [problem]="failure" (retry)="load()" /> }
       @else if (branches().length === 0) { <app-feedback-state kind="empty" [title]="i18n.text('branchWorkspaceNoBranches')" [description]="i18n.text('branchWorkspaceNoBranchesDescription')" /> }
       @else {
-        <div class="summary">
+        @if (company(); as total) {
+          <section class="operations company"><h2>{{ i18n.text('branchCompanyDashboard') }}</h2><div class="metric-grid">
+            <span><strong>{{ total.salesAmount | number:'1.2-2' }}</strong>{{ i18n.text('branchPeriodSales') }}</span><span><strong>{{ total.stockValue | number:'1.2-2' }}</strong>{{ i18n.text('branchStockValue') }}</span><span><strong>{{ total.openTransfers }}</strong>{{ i18n.text('branchOpenTransfers') }}</span><span [class.alert]="total.transferExceptions"><strong>{{ total.transferExceptions }}</strong>{{ i18n.text('branchTransferExceptions') }}</span><span><strong>{{ total.openCashSessions }}</strong>{{ i18n.text('branchOpenCashSessions') }}</span><span [class.alert]="total.cashSessionsAwaitingApproval"><strong>{{ total.cashSessionsAwaitingApproval }}</strong>{{ i18n.text('branchCashApprovals') }}</span>
+          </div></section>
+        }        <div class="summary">
           <strong>{{ branches().length }}</strong><span>{{ i18n.text('branchesTitle') }}</span>
           <strong>{{ warehouseCount() }}</strong><span>{{ i18n.text('linkedWarehouses') }}</span>
           <strong>{{ terminalCount() }}</strong><span>{{ i18n.text('posTerminals') }}</span>
@@ -29,6 +34,7 @@ import { BranchContextService } from '../../core/branch-context/branch-context.s
           @for (branch of branches(); track branch.id) {
             <article class="branch-card" [class.current]="branchContext.selectedId() === branch.id">
               <header><div><small>{{ branch.code }}</small><h2>{{ branch.name }}</h2></div><span class="status" [class.inactive]="!branch.isActive">{{ i18n.text(branch.isActive ? 'active' : 'inactive') }}</span></header>
+              @if (branch.operations; as op) {<section class="operations"><div class="metric-grid"><span><strong>{{ op.salesAmount | number:'1.2-2' }}</strong>{{ i18n.text('branchPeriodSales') }}</span><span><strong>{{ op.stockQuantity | number:'1.0-2' }}</strong>{{ i18n.text('branchStockQuantity') }}</span><span><strong>{{ op.openTransfers }}</strong>{{ i18n.text('branchOpenTransfers') }}</span><span [class.alert]="op.transferExceptions + op.cashSessionsAwaitingApproval"><strong>{{ op.transferExceptions + op.cashSessionsAwaitingApproval }}</strong>{{ i18n.text('branchReconciliationExceptions') }}</span></div></section>}
               @if (branchContext.selectedId() === branch.id) { <p class="current-label">{{ i18n.text('currentOperationalBranch') }}</p> }
               <section><h3>{{ i18n.text('linkedWarehouses') }}</h3>
                 @if (branch.warehouses.length === 0) { <p class="muted">{{ i18n.text('noLinkedWarehouses') }}</p> }
@@ -76,7 +82,7 @@ import { BranchContextService } from '../../core/branch-context/branch-context.s
       }
     </section>`,
   styles: [`
-    .branches-page{display:grid;gap:1rem}.summary{display:grid;grid-template-columns:repeat(3,minmax(5rem,auto) 1fr);gap:.5rem 1rem;align-items:baseline;padding:1rem;border:1px solid var(--ui-border);border-radius:var(--ui-radius);background:var(--ui-surface)}
+    .branches-page{display:grid;gap:1rem}.operations{display:grid;gap:.6rem}.operations.company{padding:1rem;border:1px solid var(--ui-border);border-radius:var(--ui-radius);background:var(--ui-surface)}.operations h2{margin:0}.metric-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(8rem,1fr));gap:.55rem}.metric-grid span{display:grid;padding:.65rem;border-radius:var(--ui-radius);background:var(--ui-muted-surface);color:var(--ui-muted)}.metric-grid strong{font-size:1.15rem;color:var(--ui-text)}.metric-grid .alert{background:var(--ui-danger-soft)}.summary{display:grid;grid-template-columns:repeat(3,minmax(5rem,auto) 1fr);gap:.5rem 1rem;align-items:baseline;padding:1rem;border:1px solid var(--ui-border);border-radius:var(--ui-radius);background:var(--ui-surface)}
     .summary strong{font-size:1.5rem}.branch-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(19rem,1fr));gap:1rem}.branch-card,.access-card{border:1px solid var(--ui-border);border-radius:var(--ui-radius);background:var(--ui-surface);padding:1rem;display:grid;gap:1rem}.branch-card.current{border-color:var(--erp-color-primary-strong);box-shadow:0 0 0 1px var(--erp-color-primary-strong)}.branch-card header,.row,footer{display:flex;justify-content:space-between;gap:1rem;align-items:center}.branch-card h2,.branch-card h3,.access-card h2{margin:.15rem 0}.branch-card h3{font-size:1rem}.status,.chips span,.current-label{border-radius:999px;padding:.2rem .55rem;background:var(--ui-success-soft)}.current-label{margin:0;width:max-content}.status.inactive,.chips span:not(.on){background:var(--ui-muted-surface);color:var(--ui-muted)}.chips,.branch-actions{display:flex;flex-wrap:wrap;gap:.35rem;margin-block:.45rem}.branch-actions a{padding:.45rem .65rem;border:1px solid var(--ui-border);border-radius:var(--ui-radius);text-decoration:none}.row span,.muted{color:var(--ui-muted);font-size:.85rem}.grant-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(16rem,1fr));gap:.5rem}.grant-row{display:flex;gap:.55rem;align-items:center;padding:.65rem;border:1px solid var(--ui-border);border-radius:var(--ui-radius)}footer{justify-content:flex-start;flex-wrap:wrap}@media(max-width:700px){.summary{grid-template-columns:auto 1fr}}
   `],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -90,6 +96,7 @@ export class BranchesPageComponent {
   protected readonly loading = signal(true);
   protected readonly problem = signal<NormalizedApiProblem | null>(null);
   protected readonly branches = signal<BranchSummary[]>([]);
+  protected readonly company = signal<import('./branches-api.service').BranchOperations | null>(null);
   protected readonly management = signal<BranchAccessManagement | null>(null);
   protected readonly selectedUserId = signal('');
   protected readonly selectedBranchIds = signal(new Set<number>());
@@ -97,7 +104,7 @@ export class BranchesPageComponent {
   constructor() { this.load(); }
   protected load(): void {
     this.loading.set(true); this.problem.set(null);
-    this.api.getWorkspace().subscribe({ next: page => { this.branches.set(page.branches); this.loading.set(false); }, error: error => { this.problem.set(this.errors.normalize(error)); this.loading.set(false); } });
+    this.api.getWorkspace().subscribe({ next: page => { this.branches.set(page.branches); this.company.set(page.company); this.loading.set(false); }, error: error => { this.problem.set(this.errors.normalize(error)); this.loading.set(false); } });
     if (this.session.can('Branches.ManageAccess')) this.api.getAccessManagement().subscribe({ next: page => this.management.set(page), error: error => this.problem.set(this.errors.normalize(error)) });
   }
   protected selectUser(event: Event): void { const id = (event.target as HTMLSelectElement).value; this.selectedUserId.set(id); this.selectedBranchIds.set(new Set(this.management()?.users.find(x => x.id === id)?.branchIds ?? [])); }
@@ -106,3 +113,4 @@ export class BranchesPageComponent {
   protected warehouseCount(): number { return this.branches().reduce((total, branch) => total + branch.warehouses.length, 0); }
   protected terminalCount(): number { return this.branches().reduce((total, branch) => total + branch.posTerminals.length, 0); }
 }
+

@@ -933,3 +933,10 @@ Terminal-profile presentation remains cohesive in `features/sales/legacy-sales-p
 Browser acceptance session capture in `tests/AngularBrowserAcceptance/Program.cs` validates the authenticated session API before persisting temporary Playwright state.
 
 ERP-009 browser evidence is produced by `tests/AngularBrowserAcceptance/Program.cs` under `artifacts/verification/angular-acceptance/erp-009-pos`; session capture requires a successful session API response and retired Accounts/Create is verified as an Angular redirect.
+
+### ERP-010 branch/company operational dashboard (2026-11-16)
+
+- `IBranchRepository.GetOperationsAsync` / `BranchRepository`: read-only permitted-branch operational projection over existing sales, stock, transfers and POS cash sessions.
+- `InventoryAccessService.GetBranchWorkspaceAsync`: Application-layer authorization-aware DTO composition and company summary.
+- `BranchesApiController`: `Branches.View` workspace plus independently evaluated `Branches.ViewOperations` metrics.
+- Angular `features/branches`: cohesive bilingual rendering and existing permission-aware operational drill-downs.

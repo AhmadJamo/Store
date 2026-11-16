@@ -11,8 +11,11 @@ public class InventoryAccessService(
     BranchAccessService branchAccess,
     IUnitOfWork unitOfWork)
 {
-    public async Task<BranchWorkspaceDto> GetBranchWorkspaceAsync()
+    public async Task<BranchWorkspaceDto> GetBranchWorkspaceAsync(DateTime? fromUtc = null, DateTime? toUtc = null, bool includeOperations = false)
     {
+        var periodTo = (toUtc ?? DateTime.UtcNow.Date.AddDays(1)).ToUniversalTime();
+        var periodFrom = (fromUtc ?? new DateTime(periodTo.Year, periodTo.Month, 1, 0, 0, 0, DateTimeKind.Utc)).ToUniversalTime();
+        if (periodFrom >= periodTo || periodTo - periodFrom > TimeSpan.FromDays(366)) throw new ArgumentException("The dashboard period must be valid and no longer than 366 days.");
         var allowedBranchIds = await branchAccess.GetAccessibleBranchIdsAsync();
         var branches = (await branchRepository.GetAllAsync())
             .Where(x => allowedBranchIds.Contains(x.Id)).ToList();
@@ -21,8 +24,11 @@ public class InventoryAccessService(
         var terminals = await accessRepository.GetPosTerminalsAsync();
         var warehouseNames = warehouses.ToDictionary(x => x.Id, x => x.Name);
 
-        return new BranchWorkspaceDto
+        var operations = includeOperations ? await branchRepository.GetOperationsAsync(branches.Select(x => x.Id).ToArray(), periodFrom, periodTo) : [];
+        var result = new BranchWorkspaceDto
         {
+            PeriodFromUtc = periodFrom,
+            PeriodToUtc = periodTo,
             Branches = branches.OrderBy(x => x.Code).Select(branch => new BranchWorkspaceRowDto
             {
                 Id = branch.Id,
@@ -48,10 +54,15 @@ public class InventoryAccessService(
                         Name = x.Name,
                         DefaultWarehouseName = warehouseNames[x.DefaultWarehouseId],
                         IsActive = x.IsActive
-                    }).ToList()
+                    }).ToList(),
+                Operations = operations.Where(x => x.BranchId == branch.Id).Select(MapOperations).SingleOrDefault()
             }).ToList()
         };
+        if (includeOperations) result.Company = MapOperations(new BranchOperationsSnapshot(0, operations.Sum(x=>x.SalesAmount), operations.Sum(x=>x.SalesCount), operations.Sum(x=>x.StockQuantity), operations.Sum(x=>x.StockValue), operations.Sum(x=>x.OpenTransfers), operations.Sum(x=>x.TransferExceptions), operations.Sum(x=>x.OpenCashSessions), operations.Sum(x=>x.CashSessionsAwaitingApproval), operations.Sum(x=>x.CashVariance)));
+        return result;
     }
+
+    private static BranchOperationsDto MapOperations(BranchOperationsSnapshot x) => new() { SalesAmount=x.SalesAmount, SalesCount=x.SalesCount, StockQuantity=x.StockQuantity, StockValue=x.StockValue, OpenTransfers=x.OpenTransfers, TransferExceptions=x.TransferExceptions, OpenCashSessions=x.OpenCashSessions, CashSessionsAwaitingApproval=x.CashSessionsAwaitingApproval, CashVariance=x.CashVariance };
 
     public async Task<InventoryAccessSettingsDto> GetPageAsync()
     {
@@ -222,3 +233,4 @@ public class InventoryAccessService(
         return access;
     }
 }
+

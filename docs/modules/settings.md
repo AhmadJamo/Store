@@ -73,3 +73,7 @@ GET /api/v1/branches composes tenant-filtered branch, branch-warehouse operation
 ERP-003 adds an independent Branches.ManageAccess boundary for assigning active users to active branches. Administrators manage those grants from the same cohesive Angular feature, while ordinary Branches.View users receive only explicitly granted branches. Managers retain tenant-wide branch visibility. The verified optional branch header is accepted only after the server confirms an active grant; it is not a client-authoritative selector. Branch switching and operational branch context remain deferred to ERP-004.
 
 ERP-004 adds the visible shell switcher. It restores only a currently permitted active branch, protects unsaved workspace tabs and reloads the workspace when context changes. The Branches page highlights that branch and shows only permission-authorized stock, movement, receiving and POS destinations. The selector does not filter business queries by itself and grants no business permission.
+
+## ERP-010 branch operations summary (2026-11-16)
+
+The existing Branches workspace remains the single cohesive feature. With `Branches.ViewOperations`, its API adds server-owned permitted-branch metrics for period sales, current stock/value, open and exception transfers, and POS cash close/reconciliation exceptions. Users without that permission receive no operational aggregates. Company totals always mean the caller's permitted branches.

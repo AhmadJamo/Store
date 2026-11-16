@@ -392,3 +392,7 @@ Dispatch and receipt are independently authorized. The service requires a verifi
 ## ERP-008 POS cash controls
 
 Every mutation requires antiforgery and its dedicated permission. Tenant, verified branch, terminal and drawer are re-resolved server-side; amounts/reasons/accounts are validated; source keys prevent duplicate sale/return attachment; blind expected cash remains hidden; and the counter cannot approve the same variance.
+
+### Branch dashboard aggregation boundary
+
+ERP-010 evaluates `Branches.ViewOperations` through the authorization policy service and passes only branch IDs returned by `BranchAccessService` into the read projection. Company totals therefore mean permitted branches and cannot expose ungranted branch data. The browser receives finalized aggregates and is not a financial authority.

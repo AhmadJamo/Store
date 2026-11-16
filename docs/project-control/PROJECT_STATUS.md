@@ -486,3 +486,7 @@ Terminal-profile presentation and touch/scan shortcuts are implemented in the co
 ## ERP-009 — COMPLETE 2026-11-16
 
 Implementation and authenticated Microsoft Edge acceptance are complete. All 15 browser checks passed with no failure or skip. The enterprise expansion plan is 9/10 complete; ERP-010 is active next.
+
+## 2026-11-16 — ERP expansion roadmap complete (10/10)
+
+ERP-010 is complete. The Branches workspace now exposes server-owned operational and reconciliation indicators only when `Branches.ViewOperations` is authorized, and all data remains limited to the caller's permitted branches. Release, security regression, Angular tests and production build passed. Future tasks must be selected from the maintained backlog and recorded in NEXT_TASK before implementation.

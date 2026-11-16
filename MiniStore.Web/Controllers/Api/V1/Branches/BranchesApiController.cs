@@ -12,12 +12,16 @@ namespace MiniStore.Web.Controllers.Api.V1.Branches;
 [Route("api/v1/branches")]
 public sealed class BranchesApiController(
     InventoryAccessService service,
-    BranchAccessService access) : ControllerBase
+    BranchAccessService access,
+    IAuthorizationService authorization) : ControllerBase
 {
     [HttpGet]
     [PermissionAuthorize("Branches.View")]
-    public async Task<ActionResult<BranchWorkspaceDto>> Get() =>
-        Ok(await service.GetBranchWorkspaceAsync());
+    public async Task<ActionResult<BranchWorkspaceDto>> Get(DateTime? fromUtc = null, DateTime? toUtc = null)
+    {
+        var canViewOperations = (await authorization.AuthorizeAsync(User, PermissionAuthorizeAttribute.PolicyPrefix + "Branches.ViewOperations")).Succeeded;
+        return Ok(await service.GetBranchWorkspaceAsync(fromUtc, toUtc, canViewOperations));
+    }
 
     [HttpGet("access-management")]
     [PermissionAuthorize("Branches.ManageAccess")]

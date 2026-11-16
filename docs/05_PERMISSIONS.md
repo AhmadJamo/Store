@@ -334,3 +334,7 @@ Both mutations require antiforgery and server-side branch/warehouse revalidation
 ## POS cash permissions
 
 Independent permissions are `PosCashSessions.View`, `Configure`, `Open`, `Move`, `Close` and `Approve`. Broad sales access does not imply cash movement or variance approval.
+
+### Branch operational dashboard
+
+`Branches.ViewOperations` independently controls operational sales, stock, transfer and POS cash reconciliation metrics. It does not grant branch access: returned metrics are still intersected with the user's tenant-owned branch grants. `Branches.View` remains required for the endpoint and basic branch workspace.

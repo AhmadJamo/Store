@@ -195,3 +195,7 @@ The POS page now applies terminal product layout, theme/accent, title, cart side
 ## ERP-009 completion — 2026-11-16
 
 Authenticated Microsoft Edge acceptance passed 15/15 after hardening session capture and replacing a stale retired-MVC culture probe with the protected Angular redirect contract. ERP progress is 9/10; ERP-010 dashboards and reconciliation is next.
+
+## ERP roadmap closure (2026-11-16)
+
+The planned ERP expansion is complete at 10/10. ERP-010 added a permission-scoped, server-owned branch/company operational dashboard to the existing Angular Branches workspace; it does not introduce alternate accounting or client-calculated financial authority.

@@ -543,3 +543,10 @@ ERP-007 completed 2026-11-16: accepted POS cash-session ADR and tenant/branch/te
 - [x] Close authenticated Edge desktop/mobile/RTL/keyboard acceptance: 15/15 passed.
 - [x] Harden captured-session validation and replace the stale retired-MVC culture assertion.
 - [ ] ERP-010: branch/company dashboards and reconciliation reports.
+
+## ERP-010 completed 2026-11-16
+
+- [x] Add server-owned permitted-branch/company operational projections.
+- [x] Add independent `Branches.ViewOperations` authorization without weakening `Branches.View`.
+- [x] Render cohesive bilingual sales, stock, transfer and cash reconciliation indicators with existing drill-down links.
+- [x] Close the planned ERP expansion roadmap at 10/10 after Release, 1,649 checks, 250 Angular tests and production build.

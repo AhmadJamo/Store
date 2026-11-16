@@ -1,4 +1,4 @@
-﻿namespace MiniStore.Application.Permissions;
+namespace MiniStore.Application.Permissions;
 
 public static class PermissionDefinitions
 {
@@ -317,6 +317,7 @@ public static class PermissionDefinitions
         new("Users.Delete", "Delete User", "Users"),
 
         new("Branches.View", "View Assigned Branches", "Branches"),
+        new("Branches.ViewOperations", "View Branch Operational Dashboard", "Branches"),
         new("Branches.ManageAccess", "Manage User Branch Access", "Branches"),
 
         // ==========================================

@@ -235,3 +235,7 @@ The Edge acceptance capture now saves storage state only after `/api/v1/session`
 ## ERP-009 acceptance closure — 2026-11-16
 
 Authenticated Microsoft Edge passed 15/15: UI states, RTL/LTR, keyboard skip navigation, desktop/390px responsiveness, Angular/API inventory and account reconciliation, anonymous/authenticated session boundaries, retired Accounts presentation redirect and five high-risk read cohorts. No failures or skips remained.
+
+### ERP-010 verification (2026-11-16)
+
+Release build passed with zero warnings/errors; security/inventory regression passed 1,649 checks; Angular passed 250/250 tests and production build. The known initial-chunk budget warning remains unchanged at 24.88 kB.

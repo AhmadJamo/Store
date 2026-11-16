@@ -716,3 +716,14 @@ The cohesive sales feature now honors all existing terminal presentation setting
 ## ERP-009 acceptance closure — COMPLETE 2026-11-16
 
 Authenticated Edge passed 15/15 across RTL/LTR, keyboard, desktop/390px responsiveness, live reconciliation, session boundaries, retired-route protection and five high-risk cohorts. ERP modernization progress is 9/10; ERP-010 is the final planned slice.
+
+## ERP-010 — branch/company operational dashboard — COMPLETED 2026-11-16
+
+- Extended the cohesive Branches Angular feature; no granular wrapper components were introduced.
+- Added server-owned, permitted-branch projections for period sales, stock quantity/value, open/exception transfers and POS cash close exceptions.
+- Added the independent `Branches.ViewOperations` permission; users without it still retain the configuration-only branch workspace.
+- Metric definitions: sales are invoices created in the selected UTC period and attributed by POS terminal, otherwise by the highest-priority branch/warehouse link; stock is the current on-hand quantity/value; transfer exceptions are receipt-exception documents; cash exceptions are sessions awaiting approval and recorded variance.
+- Company totals mean the caller's permitted branches, not unrestricted tenant totals. Angular renders returned totals and does not recalculate financial authority.
+- Verified Release with zero warnings/errors, 1,649 protection checks, 250 Angular tests and production build. Existing initial-chunk warning remains 24.88 kB.
+
+ERP expansion roadmap: 10/10 planned phases complete. Future work is backlog-driven hardening, not an unverified completion claim for every possible ERP capability.
