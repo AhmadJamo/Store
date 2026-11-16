@@ -1,9 +1,11 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 using MiniStore.Application.Dtos.Settings;
 using MiniStore.Application.Dtos.Security;
 using MiniStore.Application.Services;
 using MiniStore.Web.Authorization;
+using MiniStore.Web.Middleware.Api;
 
 namespace MiniStore.Web.Controllers.Api.V1.Branches;
 
@@ -12,8 +14,10 @@ namespace MiniStore.Web.Controllers.Api.V1.Branches;
 [Route("api/v1/branches")]
 public sealed class BranchesApiController(
     InventoryAccessService service,
+    BranchService branches,
     BranchAccessService access,
-    IAuthorizationService authorization) : ControllerBase
+    IAuthorizationService authorization,
+    IStringLocalizer<SharedResource> localizer) : ControllerBase
 {
     [HttpGet]
     [PermissionAuthorize("Branches.View")]
@@ -23,6 +27,23 @@ public sealed class BranchesApiController(
         return Ok(await service.GetBranchWorkspaceAsync(fromUtc, toUtc, canViewOperations));
     }
 
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    [PermissionAuthorize("Branches.Create")]
+    public Task<ActionResult<BranchRowDto>> Create(BranchCommandDto command) =>
+        Execute(() => branches.CreateAsync(command.Code, command.Name));
+
+    [HttpPut("{id:int}")]
+    [ValidateAntiForgeryToken]
+    [PermissionAuthorize("Branches.Edit")]
+    public Task<ActionResult<BranchRowDto>> Update(int id, BranchCommandDto command) =>
+        Execute(() => branches.UpdateAsync(id, command.Code, command.Name));
+
+    [HttpPut("{id:int}/status")]
+    [ValidateAntiForgeryToken]
+    [PermissionAuthorize("Branches.SetActive")]
+    public Task<ActionResult<BranchRowDto>> SetActive(int id, BranchStatusCommandDto command) =>
+        Execute(() => branches.SetActiveAsync(id, command.IsActive));
     [HttpGet("access-management")]
     [PermissionAuthorize("Branches.ManageAccess")]
     public async Task<ActionResult<BranchAccessManagementDto>> GetAccessManagement() =>
@@ -34,4 +55,15 @@ public sealed class BranchesApiController(
     public async Task<ActionResult<BranchAccessManagementDto>> ReplaceUserGrants(
         ReplaceUserBranchGrantsDto dto) =>
         Ok(await access.ReplaceUserGrantsAsync(dto));
+
+    private async Task<ActionResult<BranchRowDto>> Execute(Func<Task<BranchRowDto>> operation)
+    {
+        try { return Ok(await operation()); }
+        catch (KeyNotFoundException exception) { return InternalApiProblemFactory.Create(HttpContext, 404, localizer[exception.Message], InternalApiProblemCodes.NotFound); }
+        catch (Exception exception) when (exception is ArgumentException or InvalidOperationException)
+        {
+            ModelState.AddModelError(string.Empty, localizer[exception.Message]);
+            return InternalApiProblemFactory.Validation(HttpContext, ModelState, localizer["One or more validation errors occurred."], InternalApiProblemCodes.Validation);
+        }
+    }
 }

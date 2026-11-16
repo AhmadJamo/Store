@@ -9,3 +9,13 @@
 - البناء/الاختبارات: baseline الأخير قبل هذه المهمة Release ناجح، SecurityRegression 1,649، Angular 250/250، production build ناجح. لم تعد هذه المهمة تشغيل الاختبارات لأنها توثيق فقط؛ ستعاد في REC-001.
 - المتبقي: TASK-REC-001.
 - الكومت: يضاف بعد التثبيت.
+
+## 2026-11-17 — TASK-REC-001
+
+- العمل: أُكمل lifecycle الفروع من شاشة `/branches`: إنشاء، تعديل، تفعيل وتعطيل داخل مكوّن feature واحد متماسك.
+- الحدود: لم يُوسّع نموذج Branch بحقول قانونية أو عنوان أو منطقة زمنية، ولم يحدث تغيير schema.
+- الحماية: صلاحيات مستقلة `Branches.Create` و`Branches.Edit` و`Branches.SetActive`، antiforgery، tenant-scoped Application service، DTOs بدل entities، وتدقيق دلالي قبل/بعد.
+- تجربة المستخدم: نموذج ثنائي اللغة يحفظ القيم عند خطأ API ويركّز أول حقل غير صالح، مع SCSS خارجي متوافق مع بوابة التحديث.
+- التحقق: Web Release صفر أخطاء/تحذيرات؛ SecurityRegression 1,650؛ Angular 250/250؛ production build ناجح؛ أكبر lazy chunk 81,895 من 81,920 بايت.
+- قيد الدليل: بوابة المتصفح العامة السابقة توقفت عند selector قديم `#preview-title`؛ لذلك لا يُسجّل نجاح E2E للفروع في هذه المهمة.
+- التالي: TASK-REC-002.

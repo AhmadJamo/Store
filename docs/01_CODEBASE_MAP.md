@@ -896,7 +896,7 @@ fiscal periods and controlled journals. No bank-account, statement/import or rec
 
 - MiniStore.Application/Dtos/Settings/InventoryAccessSettingsDto.cs: read-only branch workspace DTO graph.
 - MiniStore.Application/Services/Settings/InventoryAccessService.cs: tenant-filtered branch/warehouse/POS projection.
-- MiniStore.Web/Controllers/Api/V1/Branches/BranchesApiController.cs: authenticated administration-only GET API.
+- MiniStore.Web/Controllers/Api/V1/Branches/BranchesApiController.cs: authenticated branch workspace GET plus antiforgery-protected create, update and status APIs with independent permissions and localized ProblemDetails.
 - MiniStore Front-End/src/app/features/branches/: cohesive bilingual branch workspace, typed client and API test.
 - docs/decisions/2026-11-15-branch-context-and-access-policy.md: tenant/branch/activity/grant/context boundary.
 
@@ -940,3 +940,5 @@ ERP-009 browser evidence is produced by `tests/AngularBrowserAcceptance/Program.
 - `InventoryAccessService.GetBranchWorkspaceAsync`: Application-layer authorization-aware DTO composition and company summary.
 - `BranchesApiController`: `Branches.View` workspace plus independently evaluated `Branches.ViewOperations` metrics.
 - Angular `features/branches`: cohesive bilingual rendering and existing permission-aware operational drill-downs.
+
+REC-001 branch lifecycle (2026-11-17): `BranchCommandDto` and `BranchStatusCommandDto` cross the API boundary; `BranchService` owns tenant-scoped uniqueness, update/status behavior and semantic audit emission; the Branch entity owns detail/status state changes. Angular keeps one cohesive `features/branches/branches-page.ts` with a typed API service, feature-owned localization and external SCSS.

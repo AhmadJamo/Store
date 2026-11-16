@@ -2,7 +2,7 @@
 
 | ID | العنوان | الوحدة | الشدة | الحالة |
 |---|---|---|---|---|
-| BUG-REC-001 | إدارة الفرع غير متاحة من صفحة الفروع | Branches `/branches` | P1 | Confirmed / Planned |
+| BUG-REC-001 | إدارة الفرع غير متاحة من صفحة الفروع | Branches `/branches` | P1 | Fixed / Verified |
 | BUG-REC-002 | ملف MiniStore.sln لا يحتوي مشاريع | Build | P2 | Confirmed |
 | BUG-REC-003 | حالات ERP متعارضة في PROJECT_CONTEXT | Docs | P2 | Confirmed |
 | BUG-REC-004 | سلامة حذف مستودع مرتبط غير مثبتة في Application | Warehouses | P1 | Requires Integration Test |
@@ -15,7 +15,7 @@
 - المتوقع: إدارة lifecycle من صفحة الفروع بصلاحيات دقيقة.
 - الدليل: `branches-page.ts`, `CatalogMastersApiController.cs`, `BranchService.cs`, `PermissionDefinitions.cs`.
 - التأثير: صعوبة إنشاء الفرع وفصل غير صحيح للصلاحيات؛ لا فساد بيانات مثبت.
-- الحل: TASK-REC-001.
+- الحل: TASK-REC-001؛ أضيف lifecycle كامل وصلاحيات دقيقة وتدقيق دلالي واختبارات API/حماية.
 
 ## BUG-REC-004
 

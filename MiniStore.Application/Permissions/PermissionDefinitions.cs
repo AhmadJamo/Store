@@ -317,6 +317,9 @@ public static class PermissionDefinitions
         new("Users.Delete", "Delete User", "Users"),
 
         new("Branches.View", "View Assigned Branches", "Branches"),
+        new("Branches.Create", "Create Branch", "Branches"),
+        new("Branches.Edit", "Edit Branch", "Branches"),
+        new("Branches.SetActive", "Activate or Deactivate Branch", "Branches"),
         new("Branches.ViewOperations", "View Branch Operational Dashboard", "Branches"),
         new("Branches.ManageAccess", "Manage User Branch Access", "Branches"),
 

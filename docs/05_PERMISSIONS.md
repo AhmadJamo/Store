@@ -338,3 +338,7 @@ Independent permissions are `PosCashSessions.View`, `Configure`, `Open`, `Move`,
 ### Branch operational dashboard
 
 `Branches.ViewOperations` independently controls operational sales, stock, transfer and POS cash reconciliation metrics. It does not grant branch access: returned metrics are still intersected with the user's tenant-owned branch grants. `Branches.View` remains required for the endpoint and basic branch workspace.
+
+### Branch lifecycle permissions — REC-001
+
+`Branches.Create`, `Branches.Edit`, and `Branches.SetActive` independently authorize branch creation, detail changes, and activation state changes. They do not imply `Branches.ManageAccess`, warehouse access, operational metrics, or other business-operation permissions. The Angular page exposes each action only when the session carries its exact permission, while the API remains authoritative.

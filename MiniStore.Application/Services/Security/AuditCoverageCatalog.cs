@@ -26,6 +26,7 @@ public static class AuditCoverageCatalog
         Event("SEC-ROLE-DELETE", SemanticAuditEventTypes.TenantRoleDeleted, "TenantRoleService.DeleteAsync", "Tenant", AuditEventOutcome.Succeeded),
         Event("SEC-USER-CREATE", SemanticAuditEventTypes.TenantUserCreated, "TenantUserAdministrationService.CreateAsync", "Tenant", AuditEventOutcome.Succeeded),
         Event("SEC-USER-BRANCH-GRANTS", SemanticAuditEventTypes.TenantUserBranchGrantsChanged, "BranchAccessService.ReplaceUserGrantsAsync", "Tenant", AuditEventOutcome.Succeeded),
+        Event("CFG-BRANCH-LIFECYCLE", SemanticAuditEventTypes.BranchLifecycleChanged, "BranchService.CreateAsync/UpdateAsync/SetActiveAsync", "Tenant", AuditEventOutcome.Succeeded),
         Event("CFG-ACCOUNTING", SemanticAuditEventTypes.AccountingSettingsChanged, "AccountingSettingsService.UpdateAsync", "Tenant", AuditEventOutcome.Succeeded),
         Event("ACC-FISCAL-PERIOD-STATUS", SemanticAuditEventTypes.FiscalPeriodStatusChanged, "FiscalPeriodService.ChangeStatusCoreAsync", "Tenant", AuditEventOutcome.Succeeded),
         Event("ACC-RECURRING-JOURNAL-TEMPLATE", SemanticAuditEventTypes.RecurringJournalTemplateChanged, "RecurringJournalService.CreateAsync/UpdateAsync/SetStateAsync", "Tenant", AuditEventOutcome.Succeeded),

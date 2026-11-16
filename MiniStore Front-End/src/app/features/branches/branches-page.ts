@@ -1,10 +1,13 @@
 import { DecimalPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, inject, signal } from '@angular/core';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { ApiErrorService } from '../../core/api/api-error.service';
 import { NormalizedApiProblem } from '../../core/api/api.models';
-import { LocalizationService } from '../../core/localization/localization.service';
+import { BranchesLocalizationService } from './branches-localization.service';
 import { ApiSessionService } from '../../core/api/api-session.service';
+import { FormErrorSummaryComponent } from '../../shared/forms/form-error-summary';
+import { FormFocusService } from '../../shared/forms/form-focus.service';
 import { ApiRecoveryComponent } from '../../shared/ui/api-recovery/api-recovery';
 import { FeedbackStateComponent } from '../../shared/ui/feedback-state/feedback-state';
 import { PageHeaderComponent } from '../../shared/ui/page-header/page-header';
@@ -13,10 +16,12 @@ import { BranchContextService } from '../../core/branch-context/branch-context.s
 
 @Component({
   selector: 'app-branches-page',
-  imports: [DecimalPipe, RouterLink, ApiRecoveryComponent, FeedbackStateComponent, PageHeaderComponent],
+  imports: [DecimalPipe, ReactiveFormsModule, RouterLink, FormErrorSummaryComponent, ApiRecoveryComponent, FeedbackStateComponent, PageHeaderComponent],
   template: `
     <section class="branches-page">
-      <app-page-header eyebrow="ADMIN" [title]="i18n.text('branchesTitle')" [description]="i18n.text('branchesDescription')" />
+      <app-page-header eyebrow="ADMIN" [title]="i18n.text('branchesTitle')" [description]="i18n.text('branchesDescription')">@if(session.can('Branches.Create')){<button class="ui-button primary" type="button" (click)="startCreate()">{{ i18n.text('addBranch') }}</button>}</app-page-header>
+      @if (formProblem()) { <app-form-error-summary [title]="formProblem()" [errors]="{}" /> }
+      @if (showForm()) {<form class="branch-form" [formGroup]="form" (ngSubmit)="saveBranch()"><h2>{{ editingId() ? i18n.text('editBranch') : i18n.text('addBranch') }}</h2><label class="ui-field"><span>{{ i18n.text('branchCode') }}</span><input formControlName="code" maxlength="30" autocomplete="off" /></label><label class="ui-field"><span>{{ i18n.text('branchName') }}</span><input formControlName="name" maxlength="100" /></label><div class="actions"><button class="ui-button secondary" type="button" (click)="cancelBranchForm()">{{ i18n.text('cancel') }}</button><button class="ui-button primary" [disabled]="savingBranch()">{{ savingBranch() ? i18n.text('saving') : i18n.text('save') }}</button></div></form>}
       @if (loading()) { <app-feedback-state kind="loading" [title]="i18n.text('loading')" /> }
       @else if (problem(); as failure) { <app-api-recovery [problem]="failure" (retry)="load()" /> }
       @else if (branches().length === 0) { <app-feedback-state kind="empty" [title]="i18n.text('branchWorkspaceNoBranches')" [description]="i18n.text('branchWorkspaceNoBranchesDescription')" /> }
@@ -25,7 +30,8 @@ import { BranchContextService } from '../../core/branch-context/branch-context.s
           <section class="operations company"><h2>{{ i18n.text('branchCompanyDashboard') }}</h2><div class="metric-grid">
             <span><strong>{{ total.salesAmount | number:'1.2-2' }}</strong>{{ i18n.text('branchPeriodSales') }}</span><span><strong>{{ total.stockValue | number:'1.2-2' }}</strong>{{ i18n.text('branchStockValue') }}</span><span><strong>{{ total.openTransfers }}</strong>{{ i18n.text('branchOpenTransfers') }}</span><span [class.alert]="total.transferExceptions"><strong>{{ total.transferExceptions }}</strong>{{ i18n.text('branchTransferExceptions') }}</span><span><strong>{{ total.openCashSessions }}</strong>{{ i18n.text('branchOpenCashSessions') }}</span><span [class.alert]="total.cashSessionsAwaitingApproval"><strong>{{ total.cashSessionsAwaitingApproval }}</strong>{{ i18n.text('branchCashApprovals') }}</span>
           </div></section>
-        }        <div class="summary">
+        }
+        <div class="summary">
           <strong>{{ branches().length }}</strong><span>{{ i18n.text('branchesTitle') }}</span>
           <strong>{{ warehouseCount() }}</strong><span>{{ i18n.text('linkedWarehouses') }}</span>
           <strong>{{ terminalCount() }}</strong><span>{{ i18n.text('posTerminals') }}</span>
@@ -35,6 +41,7 @@ import { BranchContextService } from '../../core/branch-context/branch-context.s
             <article class="branch-card" [class.current]="branchContext.selectedId() === branch.id">
               <header><div><small>{{ branch.code }}</small><h2>{{ branch.name }}</h2></div><span class="status" [class.inactive]="!branch.isActive">{{ i18n.text(branch.isActive ? 'active' : 'inactive') }}</span></header>
               @if (branch.operations; as op) {<section class="operations"><div class="metric-grid"><span><strong>{{ op.salesAmount | number:'1.2-2' }}</strong>{{ i18n.text('branchPeriodSales') }}</span><span><strong>{{ op.stockQuantity | number:'1.0-2' }}</strong>{{ i18n.text('branchStockQuantity') }}</span><span><strong>{{ op.openTransfers }}</strong>{{ i18n.text('branchOpenTransfers') }}</span><span [class.alert]="op.transferExceptions + op.cashSessionsAwaitingApproval"><strong>{{ op.transferExceptions + op.cashSessionsAwaitingApproval }}</strong>{{ i18n.text('branchReconciliationExceptions') }}</span></div></section>}
+              <div class="branch-admin-actions">@if(session.can('Branches.Edit')){<button type="button" (click)="startEdit(branch)">{{ i18n.text('edit') }}</button>}@if(session.can('Branches.SetActive')){<button type="button" (click)="setBranchActive(branch)">{{ i18n.text(branch.isActive ? 'deactivateBranch' : 'activateBranch') }}</button>}</div>
               @if (branchContext.selectedId() === branch.id) { <p class="current-label">{{ i18n.text('currentOperationalBranch') }}</p> }
               <section><h3>{{ i18n.text('linkedWarehouses') }}</h3>
                 @if (branch.warehouses.length === 0) { <p class="muted">{{ i18n.text('noLinkedWarehouses') }}</p> }
@@ -47,6 +54,7 @@ import { BranchContextService } from '../../core/branch-context/branch-context.s
                 @if (branch.posTerminals.length === 0) { <p class="muted">{{ i18n.text('branchWorkspaceNoPosTerminals') }}</p> }
                 @for (terminal of branch.posTerminals; track terminal.id) { <div class="row"><strong>{{ terminal.name }}</strong><span>{{ terminal.defaultWarehouseName }}</span></div> }
               </section>
+
               @if (branchContext.selectedId() === branch.id) {
                 <nav class="branch-actions" [attr.aria-label]="i18n.text('branchOperationalLinks')">
                   @if (session.can('ProductStock.View')) { <a routerLink="/inventory/stocks">{{ i18n.text('openBranchStock') }}</a> }
@@ -81,18 +89,18 @@ import { BranchContextService } from '../../core/branch-context/branch-context.s
         @if (session.can('Administration.Access')) { <footer><a class="ui-button secondary" routerLink="/settings/inventory-access">{{ i18n.text('manageInventoryAccess') }}</a><a class="ui-button secondary" routerLink="/settings/branch-sales-accounts">{{ i18n.text('branchSalesAccounts') }}</a></footer> }
       }
     </section>`,
-  styles: [`
-    .branches-page{display:grid;gap:1rem}.operations{display:grid;gap:.6rem}.operations.company{padding:1rem;border:1px solid var(--ui-border);border-radius:var(--ui-radius);background:var(--ui-surface)}.operations h2{margin:0}.metric-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(8rem,1fr));gap:.55rem}.metric-grid span{display:grid;padding:.65rem;border-radius:var(--ui-radius);background:var(--ui-muted-surface);color:var(--ui-muted)}.metric-grid strong{font-size:1.15rem;color:var(--ui-text)}.metric-grid .alert{background:var(--ui-danger-soft)}.summary{display:grid;grid-template-columns:repeat(3,minmax(5rem,auto) 1fr);gap:.5rem 1rem;align-items:baseline;padding:1rem;border:1px solid var(--ui-border);border-radius:var(--ui-radius);background:var(--ui-surface)}
-    .summary strong{font-size:1.5rem}.branch-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(19rem,1fr));gap:1rem}.branch-card,.access-card{border:1px solid var(--ui-border);border-radius:var(--ui-radius);background:var(--ui-surface);padding:1rem;display:grid;gap:1rem}.branch-card.current{border-color:var(--erp-color-primary-strong);box-shadow:0 0 0 1px var(--erp-color-primary-strong)}.branch-card header,.row,footer{display:flex;justify-content:space-between;gap:1rem;align-items:center}.branch-card h2,.branch-card h3,.access-card h2{margin:.15rem 0}.branch-card h3{font-size:1rem}.status,.chips span,.current-label{border-radius:999px;padding:.2rem .55rem;background:var(--ui-success-soft)}.current-label{margin:0;width:max-content}.status.inactive,.chips span:not(.on){background:var(--ui-muted-surface);color:var(--ui-muted)}.chips,.branch-actions{display:flex;flex-wrap:wrap;gap:.35rem;margin-block:.45rem}.branch-actions a{padding:.45rem .65rem;border:1px solid var(--ui-border);border-radius:var(--ui-radius);text-decoration:none}.row span,.muted{color:var(--ui-muted);font-size:.85rem}.grant-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(16rem,1fr));gap:.5rem}.grant-row{display:flex;gap:.55rem;align-items:center;padding:.65rem;border:1px solid var(--ui-border);border-radius:var(--ui-radius)}footer{justify-content:flex-start;flex-wrap:wrap}@media(max-width:700px){.summary{grid-template-columns:auto 1fr}}
-  `],
+  styleUrl: './branches-page.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BranchesPageComponent {
-  protected readonly i18n = inject(LocalizationService);
+  protected readonly i18n = inject(BranchesLocalizationService);
   protected readonly session = inject(ApiSessionService);
   protected readonly branchContext = inject(BranchContextService);
   private readonly api = inject(BranchesApiService);
   private readonly errors = inject(ApiErrorService);
+  private readonly fb = inject(FormBuilder);
+  private readonly host = inject(ElementRef<HTMLElement>);
+  private readonly focus = inject(FormFocusService);
   protected readonly loading = signal(true);
   protected readonly problem = signal<NormalizedApiProblem | null>(null);
   protected readonly branches = signal<BranchSummary[]>([]);
@@ -101,16 +109,24 @@ export class BranchesPageComponent {
   protected readonly selectedUserId = signal('');
   protected readonly selectedBranchIds = signal(new Set<number>());
   protected readonly savingAccess = signal(false);
+  protected readonly showForm = signal(false);
+  protected readonly editingId = signal<number | null>(null);
+  protected readonly savingBranch = signal(false);
+  protected readonly formProblem = signal('');
+  protected readonly form = this.fb.nonNullable.group({ code: ['', [Validators.required, Validators.maxLength(30), Validators.pattern(/^[A-Za-z0-9][A-Za-z0-9_-]*$/)]], name: ['', [Validators.required, Validators.maxLength(100)]] });
   constructor() { this.load(); }
   protected load(): void {
     this.loading.set(true); this.problem.set(null);
     this.api.getWorkspace().subscribe({ next: page => { this.branches.set(page.branches); this.company.set(page.company); this.loading.set(false); }, error: error => { this.problem.set(this.errors.normalize(error)); this.loading.set(false); } });
     if (this.session.can('Branches.ManageAccess')) this.api.getAccessManagement().subscribe({ next: page => this.management.set(page), error: error => this.problem.set(this.errors.normalize(error)) });
   }
-  protected selectUser(event: Event): void { const id = (event.target as HTMLSelectElement).value; this.selectedUserId.set(id); this.selectedBranchIds.set(new Set(this.management()?.users.find(x => x.id === id)?.branchIds ?? [])); }
+  protected startCreate(): void { this.editingId.set(null); this.form.reset({ code:'', name:'' }); this.formProblem.set(''); this.showForm.set(true); }
+  protected startEdit(branch: BranchSummary): void { this.editingId.set(branch.id); this.form.reset({ code:branch.code, name:branch.name }); this.formProblem.set(''); this.showForm.set(true); }
+  protected cancelBranchForm(): void { this.showForm.set(false); this.editingId.set(null); this.formProblem.set(''); this.form.reset({ code:'', name:'' }); }
+  protected saveBranch(): void { if(this.form.invalid || this.savingBranch()){this.form.markAllAsTouched();this.formProblem.set(this.i18n.text('correctBranchFields'));this.focus.focusFirstInvalid(this.host.nativeElement);return;}const id=this.editingId();const command=this.form.getRawValue();this.savingBranch.set(true);this.formProblem.set('');const request=id?this.api.update(id,command):this.api.create(command);request.subscribe({next:()=>{this.savingBranch.set(false);this.cancelBranchForm();this.load();},error:error=>{const failure=this.errors.normalize(error);this.formProblem.set(failure.detail??failure.title??this.i18n.text('errorDescription'));this.savingBranch.set(false);}}); }
+  protected setBranchActive(branch: BranchSummary): void { if(this.savingBranch())return;this.savingBranch.set(true);this.formProblem.set('');this.api.setActive(branch.id,!branch.isActive).subscribe({next:()=>{this.savingBranch.set(false);this.load();},error:error=>{const failure=this.errors.normalize(error);this.formProblem.set(failure.detail??failure.title??this.i18n.text('errorDescription'));this.savingBranch.set(false);}}); }  protected selectUser(event: Event): void { const id = (event.target as HTMLSelectElement).value; this.selectedUserId.set(id); this.selectedBranchIds.set(new Set(this.management()?.users.find(x => x.id === id)?.branchIds ?? [])); }
   protected toggleBranch(branchId: number, event: Event): void { const next = new Set(this.selectedBranchIds()); (event.target as HTMLInputElement).checked ? next.add(branchId) : next.delete(branchId); this.selectedBranchIds.set(next); }
   protected saveAccess(): void { const userId = this.selectedUserId(); if (!userId || this.savingAccess()) return; this.savingAccess.set(true); this.problem.set(null); this.api.replaceUserGrants(userId, [...this.selectedBranchIds()]).subscribe({ next: page => { this.management.set(page); this.savingAccess.set(false); }, error: error => { this.problem.set(this.errors.normalize(error)); this.savingAccess.set(false); } }); }
   protected warehouseCount(): number { return this.branches().reduce((total, branch) => total + branch.warehouses.length, 0); }
   protected terminalCount(): number { return this.branches().reduce((total, branch) => total + branch.posTerminals.length, 0); }
 }
-

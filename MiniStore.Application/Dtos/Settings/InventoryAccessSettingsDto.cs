@@ -1,5 +1,19 @@
 namespace MiniStore.Application.Dtos.Settings;
 
+
+public sealed class BranchCommandDto
+{
+    [System.ComponentModel.DataAnnotations.Required, System.ComponentModel.DataAnnotations.MaxLength(30)]
+    [System.ComponentModel.DataAnnotations.RegularExpression("^[A-Za-z0-9][A-Za-z0-9_-]*$")]
+    public string Code { get; set; } = string.Empty;
+    [System.ComponentModel.DataAnnotations.Required, System.ComponentModel.DataAnnotations.MaxLength(100)]
+    public string Name { get; set; } = string.Empty;
+}
+
+public sealed class BranchStatusCommandDto
+{
+    public bool IsActive { get; set; }
+}
 public class InventoryAccessSettingsDto
 {
     public List<InventoryAccessBranchDto> Branches { get; set; } = [];

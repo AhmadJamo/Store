@@ -3,7 +3,7 @@
 | ID | المهمة | الوحدة | المصدر | الأولوية | الحالة | الاعتماديات |
 |---|---|---|---|---|---|---|
 | TASK-REC-000 | التدقيق التأسيسي ومركز التحكم V3.0 | Cross-cutting | V3.0 + كود | P0 | Completed | — |
-| TASK-REC-001 | إدارة الفروع من صفحة الفروع | Branches | V3.0 + فجوة مثبتة | P0 | Planned | REC-000 |
+| TASK-REC-001 | إدارة الفروع من صفحة الفروع | Branches | V3.0 + فجوة مثبتة | P0 | Completed | REC-000 |
 | TASK-REC-002 | إثبات سلامة حذف المستودع وUX الإنشاء | Warehouses | تدقيق كود | P0 | Discovered | REC-000 |
 | TASK-REC-003 | جرد 196 مسارًا ووظائفها عبر الطبقات | All | V3.0 | P0 | Planned | REC-000 |
 | TASK-REC-004 | اتساق ProblemDetails وتصنيف business conflict | Cross-cutting | تدقيق كود | P0 | Planned | REC-003 |
@@ -25,4 +25,5 @@
 - الملفات المتوقعة: Branch entity/service/repository DTO/API/permissions/Angular branches/tests/docs.
 - القبول: create ثم reload، edit، deactivate/activate، duplicate validation، unauthorized/forbidden، عدم فقد قيم النموذج، عربي/إنجليزي وRTL.
 - الاختبارات: Release، SecurityRegression، Angular unit/build، Edge authenticated.
+- النتيجة: اكتملت واجهات الإنشاء والتعديل والتفعيل/التعطيل والصلاحيات المنفصلة والتدقيق؛ التحقق المتصفحي الآلي العام بقي خارج دليل القبول بسبب عطل selector سابق غير متعلق بالشاشة.
 - ملاحظة: legal entity/address/timezone خارج هذه الشريحة حتى ADR منفصل.

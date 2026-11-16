@@ -5550,7 +5550,19 @@ Check(branchesApi.GetCustomAttribute<ApiControllerAttribute>() is not null &&
           .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
           $"{PermissionAuthorizeAttribute.PolicyPrefix}Branches.View",
     "Branch workspace must remain authenticated and independently view-permission protected");
-Check(branchesApi.GetMethod(nameof(MiniStore.Web.Controllers.Api.V1.Branches.BranchesApiController.GetAccessManagement))!
+Check(branchesApi.GetMethod(nameof(MiniStore.Web.Controllers.Api.V1.Branches.BranchesApiController.Create))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == "Permission:Branches.Create" &&
+      branchesApi.GetMethod(nameof(MiniStore.Web.Controllers.Api.V1.Branches.BranchesApiController.Update))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == "Permission:Branches.Edit" &&
+      branchesApi.GetMethod(nameof(MiniStore.Web.Controllers.Api.V1.Branches.BranchesApiController.SetActive))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == "Permission:Branches.SetActive" &&
+      branchesApi.GetMethod(nameof(MiniStore.Web.Controllers.Api.V1.Branches.BranchesApiController.Create))!
+          .GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null &&
+      branchesApi.GetMethod(nameof(MiniStore.Web.Controllers.Api.V1.Branches.BranchesApiController.Update))!
+          .GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null &&
+      branchesApi.GetMethod(nameof(MiniStore.Web.Controllers.Api.V1.Branches.BranchesApiController.SetActive))!
+          .GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null,
+    "Branch lifecycle mutations must retain independent permissions and antiforgery");Check(branchesApi.GetMethod(nameof(MiniStore.Web.Controllers.Api.V1.Branches.BranchesApiController.GetAccessManagement))!
           .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
           $"{PermissionAuthorizeAttribute.PolicyPrefix}Branches.ManageAccess" &&
       branchesApi.GetMethod(nameof(MiniStore.Web.Controllers.Api.V1.Branches.BranchesApiController.ReplaceUserGrants))!
@@ -5560,6 +5572,9 @@ Check(branchesApi.GetMethod(nameof(MiniStore.Web.Controllers.Api.V1.Branches.Bra
           .GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null,
     "Branch grant reads and replacements must require ManageAccess and mutations must retain antiforgery");
 Check(PermissionDefinitions.All.Any(x => x.Name == "Branches.View") &&
+      PermissionDefinitions.All.Any(x => x.Name == "Branches.Create") &&
+      PermissionDefinitions.All.Any(x => x.Name == "Branches.Edit") &&
+      PermissionDefinitions.All.Any(x => x.Name == "Branches.SetActive") &&
       PermissionDefinitions.All.Any(x => x.Name == "Branches.ManageAccess"),
     "Branch view and access-management permissions must remain independently defined");
 Check(TenantIsolationModel.TenantOwnedTypes.Contains(typeof(TenantUserBranchGrant)),
@@ -5812,6 +5827,7 @@ sealed class StubBranchRepository : IBranchRepository
 {
     public Task<List<Branch>> GetAllAsync() => Task.FromResult(new List<Branch>());
     public Task<Branch?> GetByIdAsync(int id) => Task.FromResult<Branch?>(null);
+    public Task<IReadOnlyList<BranchOperationsSnapshot>> GetOperationsAsync(IReadOnlyCollection<int> branchIds, DateTime fromUtc, DateTime toUtc) => Task.FromResult<IReadOnlyList<BranchOperationsSnapshot>>([]);
     public Task AddAsync(Branch branch) => Task.CompletedTask;
     public Task SaveChangesAsync() => Task.CompletedTask;
 }
@@ -5862,4 +5878,3 @@ sealed class CapturingLogger<T> : ILogger<T>
     public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception,
         Func<TState, Exception?, string> formatter) => Messages.Add(formatter(state, exception));
 }
-

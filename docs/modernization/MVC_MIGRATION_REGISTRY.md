@@ -4,11 +4,11 @@
 
 ## Reconciliation
 
-- Controllers discovered: 102 total; 13 MVC; 89 API.
+- Controllers discovered: 104 total; 13 MVC; 91 API.
 - User-facing MVC views discovered: 40.
 - MVC actions discovered: 82.
 - Razor files included in the control inventory: 44.
-- Angular application routes discovered: 195.
+- Angular application routes discovered: 196.
 - Presentation surfaces with a verified Angular counterpart: 12.
 - Remaining presentation surfaces without a mapped Angular counterpart: 0.
 - Mutation-only MVC compatibility surfaces: 1 (Language).

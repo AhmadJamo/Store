@@ -12,7 +12,17 @@ describe('BranchesApiService', () => {
     const request = http.expectOne('/api/v1/branches');
     expect(request.request.method).toBe('GET');
     request.flush({ branches: [{ id: 1, code: 'MAIN', name: 'Main', isActive: true, warehouses: [], posTerminals: [] }] });
-    service.getAccessManagement().subscribe();
+    service.create({ code: 'NORTH', name: 'North' }).subscribe();
+    const create = http.expectOne('/api/v1/branches');
+    expect(create.request.method).toBe('POST');
+    expect(create.request.body).toEqual({ code: 'NORTH', name: 'North' });
+    create.flush({ id: 2, code: 'NORTH', name: 'North', isActive: true });
+    service.update(2, { code: 'NORTH-1', name: 'North One' }).subscribe();
+    expect(http.expectOne('/api/v1/branches/2').request.method).toBe('PUT');
+    service.setActive(2, false).subscribe();
+    const status = http.expectOne('/api/v1/branches/2/status');
+    expect(status.request.method).toBe('PUT');
+    expect(status.request.body).toEqual({ isActive: false });    service.getAccessManagement().subscribe();
     expect(http.expectOne('/api/v1/branches/access-management').request.method).toBe('GET');
     service.replaceUserGrants('user-1', [1, 2]).subscribe();
     const update = http.expectOne('/api/v1/branches/access-management');

@@ -550,3 +550,8 @@ ERP-007 completed 2026-11-16: accepted POS cash-session ADR and tenant/branch/te
 - [x] Add independent `Branches.ViewOperations` authorization without weakening `Branches.View`.
 - [x] Render cohesive bilingual sales, stock, transfer and cash reconciliation indicators with existing drill-down links.
 - [x] Close the planned ERP expansion roadmap at 10/10 after Release, 1,649 checks, 250 Angular tests and production build.
+
+## V3 Recovery
+
+- [x] REC-001: complete branch create/edit/activate/deactivate lifecycle in `/branches` with granular permissions, antiforgery, semantic audit, bilingual UX and regression verification (2026-11-17).
+- [ ] REC-002: prove linked-warehouse delete safety against a real database and improve actionable ProblemDetails/warehouse UX only where evidence requires it.

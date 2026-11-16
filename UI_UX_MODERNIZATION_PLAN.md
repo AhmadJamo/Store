@@ -727,3 +727,12 @@ Authenticated Edge passed 15/15 across RTL/LTR, keyboard, desktop/390px responsi
 - Verified Release with zero warnings/errors, 1,649 protection checks, 250 Angular tests and production build. Existing initial-chunk warning remains 24.88 kB.
 
 ERP expansion roadmap: 10/10 planned phases complete. Future work is backlog-driven hardening, not an unverified completion claim for every possible ERP capability.
+
+## V3 REC-001 — Branch lifecycle management — COMPLETED 2026-11-17
+
+- Kept one primary feature component for the MVC/API-to-Angular branch flow; no granular wrapper-component split.
+- Added permission-aware create, edit and active-status actions with a compact inline form, retained values on API failure, invalid-field focus and bilingual RTL-safe styling.
+- Moved branch-only messages into feature-owned localization and externalized page styling to satisfy modernization policy.
+- Verification: Release clean, SecurityRegression 1,650, Angular 250/250, production build passed, lazy budget 81,895/81,920 bytes.
+- Browser acceptance is explicitly not claimed because the shared fixture failed earlier at stale selector `#preview-title`.
+- Next phase: REC-002 warehouse delete-safety evidence and creation/edit discoverability review.

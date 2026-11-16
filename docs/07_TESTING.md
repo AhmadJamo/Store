@@ -239,3 +239,11 @@ Authenticated Microsoft Edge passed 15/15: UI states, RTL/LTR, keyboard skip nav
 ### ERP-010 verification (2026-11-16)
 
 Release build passed with zero warnings/errors; security/inventory regression passed 1,649 checks; Angular passed 250/250 tests and production build. The known initial-chunk budget warning remains unchanged at 24.88 kB.
+
+## REC-001 branch lifecycle — 2026-11-17
+
+- Web Release: passed with 0 warnings and 0 errors.
+- SecurityRegression: 1,650 checks passed, including lifecycle permissions and antiforgery metadata.
+- Angular: 250/250 tests passed across 120 files; typed branch API POST/PUT/status contracts are covered.
+- Production build passed. Largest lazy chunk is 81,895 bytes against the 81,920-byte policy.
+- Browser E2E is not claimed: the shared acceptance fixture stopped at an older `#preview-title` selector before proving the branch workflow.

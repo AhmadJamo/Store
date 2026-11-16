@@ -13,5 +13,7 @@ public class Branch
         if (string.IsNullOrWhiteSpace(code) || string.IsNullOrWhiteSpace(name)) throw new ArgumentException("Branch code and name are required.");
         Code = code.Trim(); Name = name.Trim();
     }
+    public void ChangeDetails(string code, string name) { if (string.IsNullOrWhiteSpace(code) || string.IsNullOrWhiteSpace(name)) throw new ArgumentException("Branch code and name are required."); Code = code.Trim().ToUpperInvariant(); Name = name.Trim(); }
+    public void SetActive(bool isActive) => IsActive = isActive;
     public void AssignSalesRevenueAccount(int accountId) { if (accountId <= 0) throw new ArgumentException("A branch sales account is required."); SalesRevenueAccountId = accountId; }
 }

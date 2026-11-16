@@ -396,3 +396,7 @@ Every mutation requires antiforgery and its dedicated permission. Tenant, verifi
 ### Branch dashboard aggregation boundary
 
 ERP-010 evaluates `Branches.ViewOperations` through the authorization policy service and passes only branch IDs returned by `BranchAccessService` into the read projection. Company totals therefore mean permitted branches and cannot expose ungranted branch data. The browser receives finalized aggregates and is not a financial authority.
+
+### Branch lifecycle mutation boundary — REC-001
+
+Branch create/update/status endpoints require their independent permission and antiforgery validation. Controllers bind command DTOs and delegate to `BranchService`; they do not access EF or expose entities. The Application service re-resolves tenant-owned branches, validates normalized code/name uniqueness, commits through the existing UnitOfWork path and emits `Configuration.BranchLifecycleChanged` semantic audit evidence with before/after state. Expected validation and conflict failures return localized ProblemDetails; entered Angular form values remain intact.

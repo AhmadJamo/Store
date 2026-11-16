@@ -77,3 +77,7 @@ ERP-004 adds the visible shell switcher. It restores only a currently permitted 
 ## ERP-010 branch operations summary (2026-11-16)
 
 The existing Branches workspace remains the single cohesive feature. With `Branches.ViewOperations`, its API adds server-owned permitted-branch metrics for period sales, current stock/value, open and exception transfers, and POS cash close/reconciliation exceptions. Users without that permission receive no operational aggregates. Company totals always mean the caller's permitted branches.
+
+## Branch lifecycle management (REC-001, 2026-11-17)
+
+The existing cohesive `/branches` Angular feature now owns discoverable branch creation, detail editing and activation/deactivation. Commands use dedicated DTOs and `Branches.Create`, `Branches.Edit` and `Branches.SetActive`; `BranchService` retains tenant scope, uniqueness rules, persistence and semantic audit authority. The feature preserves entered values after API validation errors and keeps Arabic/English behavior without element-level component overcutting. Legal entity, address and timezone expansion remains deferred pending a separate data-model ADR.

@@ -199,3 +199,7 @@ Authenticated Microsoft Edge acceptance passed 15/15 after hardening session cap
 ## ERP roadmap closure (2026-11-16)
 
 The planned ERP expansion is complete at 10/10. ERP-010 added a permission-scoped, server-owned branch/company operational dashboard to the existing Angular Branches workspace; it does not introduce alternate accounting or client-calculated financial authority.
+
+## V3 recovery status — 2026-11-17
+
+The historical ERP 10/10 roadmap is complete, but it is not a declaration that the enterprise product is complete. Recovery task REC-001 adds discoverable Branch lifecycle management to the cohesive Angular `/branches` feature with independent create/edit/status permissions, Application-layer validation and semantic auditing. The active gate is REC-002 warehouse delete safety.
