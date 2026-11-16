@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using MiniStore.Domain.Entities;
 using MiniStore.Domain.Interfaces;
 using MiniStore.Infrastructure.Persistence;
@@ -40,6 +40,17 @@ public class WarehouseRepository : IWarehouseRepository
 
     public async Task SaveChangesAsync()
     {
-        await _context.SaveChangesAsync();
+        var deletingWarehouse = _context.ChangeTracker.Entries<Warehouse>()
+            .Any(entry => entry.State == EntityState.Deleted);
+        try
+        {
+            await _context.SaveChangesAsync();
+        }
+        catch (DbUpdateException exception) when (deletingWarehouse)
+        {
+            throw new InvalidOperationException(
+                "The warehouse is used by existing operations and cannot be deleted.",
+                exception);
+        }
     }
 }

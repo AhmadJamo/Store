@@ -4,7 +4,7 @@
 |---|---|---|---|---|---|---|
 | TASK-REC-000 | التدقيق التأسيسي ومركز التحكم V3.0 | Cross-cutting | V3.0 + كود | P0 | Completed | — |
 | TASK-REC-001 | إدارة الفروع من صفحة الفروع | Branches | V3.0 + فجوة مثبتة | P0 | Completed | REC-000 |
-| TASK-REC-002 | إثبات سلامة حذف المستودع وUX الإنشاء | Warehouses | تدقيق كود | P0 | Discovered | REC-000 |
+| TASK-REC-002 | إثبات سلامة حذف المستودع وUX الإنشاء | Warehouses | تدقيق كود | P0 | Completed | REC-000 |
 | TASK-REC-003 | جرد 196 مسارًا ووظائفها عبر الطبقات | All | V3.0 | P0 | Planned | REC-000 |
 | TASK-REC-004 | اتساق ProblemDetails وتصنيف business conflict | Cross-cutting | تدقيق كود | P0 | Planned | REC-003 |
 | TASK-POS-001 | تدقيق فجوات POS مقابل V3.0 | POS | V3.0 | P1 | Planned | REC-001..004 |
@@ -27,3 +27,10 @@
 - الاختبارات: Release، SecurityRegression، Angular unit/build، Edge authenticated.
 - النتيجة: اكتملت واجهات الإنشاء والتعديل والتفعيل/التعطيل والصلاحيات المنفصلة والتدقيق؛ التحقق المتصفحي الآلي العام بقي خارج دليل القبول بسبب عطل selector سابق غير متعلق بالشاشة.
 - ملاحظة: legal entity/address/timezone خارج هذه الشريحة حتى ADR منفصل.
+
+## TASK-REC-002
+
+- النتيجة: قيود SQL كانت تمنع حذف المستودع المرتبط لكنها كانت تتسرب كخطأ خادم؛ أصبح المستودع البرمجي يحول رفض FK إلى تعارض أعمال معروف وAPI يعيده 409 مترجمًا.
+- اختبار قاعدة حقيقية: المستودع المرتبط بـ ProductStock/StockTransaction بقي مع بياناته، بينما حُذف مستودع غير مستخدم.
+- UX: شاشة `/warehouses` كانت تحتوي أصلًا create/edit وربط الفرع والحساب بصلاحيات مستقلة؛ لم تُعد كتابتها. أضيف اختبار يثبت بقاء الصف ورسالة الخطأ عند رفض الحذف.
+- التحقق: Release clean، SQL integration passed، Angular 251/251، SecurityRegression 1,650.

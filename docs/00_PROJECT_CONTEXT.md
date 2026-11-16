@@ -202,4 +202,7 @@ The planned ERP expansion is complete at 10/10. ERP-010 added a permission-scope
 
 ## V3 recovery status — 2026-11-17
 
-The historical ERP 10/10 roadmap is complete, but it is not a declaration that the enterprise product is complete. Recovery task REC-001 adds discoverable Branch lifecycle management to the cohesive Angular `/branches` feature with independent create/edit/status permissions, Application-layer validation and semantic auditing. The active gate is REC-002 warehouse delete safety.
+The historical ERP 10/10 roadmap is complete, but it is not a declaration that the enterprise product is complete. Recovery task REC-001 adds discoverable Branch lifecycle management to the cohesive Angular `/branches` feature with independent create/edit/status permissions, Application-layer validation and semantic auditing. REC-002 subsequently completed warehouse delete safety; the active gate is REC-003 route/function coverage.
+## REC-002 warehouse delete safety — 2026-11-17
+
+Warehouse create/edit and named branch/account selection were already complete. REC-002 closes the verified delete-error gap: relational constraints remain authoritative, the infrastructure repository translates a referenced-warehouse FK rejection into a stable business conflict, and the API returns localized ProblemDetails with HTTP 409. SQL integration proves referenced inventory survives and an unused warehouse remains deletable. The active gate is REC-003 route/function coverage.

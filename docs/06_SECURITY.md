@@ -400,3 +400,6 @@ ERP-010 evaluates `Branches.ViewOperations` through the authorization policy ser
 ### Branch lifecycle mutation boundary — REC-001
 
 Branch create/update/status endpoints require their independent permission and antiforgery validation. Controllers bind command DTOs and delegate to `BranchService`; they do not access EF or expose entities. The Application service re-resolves tenant-owned branches, validates normalized code/name uniqueness, commits through the existing UnitOfWork path and emits `Configuration.BranchLifecycleChanged` semantic audit evidence with before/after state. Expected validation and conflict failures return localized ProblemDetails; entered Angular form values remain intact.
+### Warehouse deletion conflict — REC-002
+
+`Warehouses.Delete` and antiforgery remain mandatory. Tenant query filters resolve the target warehouse; database FK restrictions are the final integrity authority. A referenced delete is translated inside `WarehouseRepository` to a stable business failure and the API returns localized HTTP 409 ProblemDetails without SQL/provider details. Angular permission checks remain presentation-only and a rejected delete does not remove the row.

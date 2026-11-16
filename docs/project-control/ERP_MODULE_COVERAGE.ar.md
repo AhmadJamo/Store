@@ -5,7 +5,7 @@
 | الهوية والصلاحيات | Implemented / needs audit | Identity + Permission policies + Angular users/roles | REC-003/004 |
 | الشركات/التعددية | Partially Implemented | Tenant/SaaS/onboarding | model audit |
 | الفروع | Partially Implemented | Branch workspace + hidden create + grants | REC-001 |
-| المستودعات/WMS | Implemented but deletion unverified | Warehouses API/UI + extensive inventory routes | REC-002 |
+| المستودعات/WMS | Implemented; delete safety verified | Warehouses API/UI + migrated SQL delete-safety test | REC-003 coverage inventory |
 | المنتجات | Implemented | product/catalog/recipes routes and services | functional audit |
 | المشتريات | Broadly implemented | PR→sourcing→PO→receipt→bill/payments | functional audit |
 | المبيعات | Broadly implemented | quotations→orders→delivery→invoice→payment/returns | functional audit |

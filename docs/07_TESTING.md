@@ -247,3 +247,9 @@ Release build passed with zero warnings/errors; security/inventory regression pa
 - Angular: 250/250 tests passed across 120 files; typed branch API POST/PUT/status contracts are covered.
 - Production build passed. Largest lazy chunk is 81,895 bytes against the 81,920-byte policy.
 - Browser E2E is not claimed: the shared acceptance fixture stopped at an older `#preview-title` selector before proving the branch workflow.
+## REC-002 warehouse delete safety — 2026-11-17
+
+- Release build passed with zero warnings/errors.
+- InventorySqlIntegration passed against a temporary migrated SQL database: referenced Warehouse and ProductStock remained; an unused Warehouse was removed.
+- Angular passed 251/251 tests; the warehouse page retains a rejected row and renders API detail.
+- SecurityRegression passed 1,650 checks; independent warehouse permissions and antiforgery remain covered.

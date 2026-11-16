@@ -13,7 +13,7 @@
 ## حدود الدليل
 
 - لا يوجد بعد E2E شامل للفروع create/edit/deactivate؛ REC-001 يجب أن يضيفه.
-- لا يوجد بعد اختبار SQL موثق لحذف مستودع مرتبط؛ REC-002.
+- أضيف في REC-002 اختبار SQL موثق لحذف المستودع المرتبط وغير المستخدم.
 - قبول Edge السابق خاص بنطاق POS/retired routes ولا يثبت 196 مسارًا.
 - `dotnet build MiniStore.sln` غير صالح كدليل لأنه لا يحتوي مشاريع؛ استخدم `MiniStore.slnx` أو csproj الفعلية.
 
@@ -29,3 +29,13 @@
 | Edge end-to-end | Not claimed — shared acceptance stopped at stale `#preview-title` selector |
 
 تغطي اختبارات العميل عقود POST/PUT/status، وتغطي SecurityRegression وجود الصلاحيات وantiforgery على أوامر الفروع. ما زال تحقق المتصفح الكامل create/reload/edit/status مطلوبًا عند إصلاح fixture القبول العام.
+## TASK-REC-002 — 2026-11-17
+
+| البوابة | النتيجة |
+|---|---|
+| Web Release build | Passed — 0 warnings / 0 errors |
+| InventorySqlIntegration | Passed — referenced warehouse and stock preserved; unused warehouse removed |
+| Angular unit | Passed — 251/251 in 120 files |
+| SecurityRegression | Passed — 1,650 checks |
+
+اختبار SQL استخدم migrations والعلاقات الحقيقية، وليس mock. لا يوجد تغيير schema أو migration في هذه المرحلة.

@@ -736,3 +736,11 @@ ERP expansion roadmap: 10/10 planned phases complete. Future work is backlog-dri
 - Verification: Release clean, SecurityRegression 1,650, Angular 250/250, production build passed, lazy budget 81,895/81,920 bytes.
 - Browser acceptance is explicitly not claimed because the shared fixture failed earlier at stale selector `#preview-title`.
 - Next phase: REC-002 warehouse delete-safety evidence and creation/edit discoverability review.
+## V3 REC-002 — Warehouse delete safety — COMPLETED 2026-11-17
+
+- Confirmed `/warehouses` already provides cohesive create/edit and named branch/account selection; no duplicate component flow was introduced.
+- Converted relational rejection of a referenced warehouse delete into localized HTTP 409 ProblemDetails without exposing provider details.
+- Preserved the visible warehouse row and error context after rejection; added Angular regression coverage.
+- SQL integration proves referenced warehouse/stock preservation and successful deletion of an unused warehouse.
+- Verification: Release clean, InventorySqlIntegration passed, Angular 251/251, SecurityRegression 1,650.
+- Next phase: REC-003 cross-layer route/function inventory, beginning with Accounting, Sales and Inventory.

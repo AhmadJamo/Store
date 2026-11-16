@@ -79,6 +79,9 @@ try
         "TENANT-TWO",
         connectionString);
 
+    await VerifyWarehouseDeleteSafetyAsync(
+        tenantOneId, tenantOneFixture.WarehouseId, connectionString);
+
     await VerifyAuditEventFoundationAsync(tenantOneId, tenantTwoId, connectionString);
     await VerifySemanticAuditCoverageAsync(tenantOneId, tenantTwoId, connectionString);
     await VerifyIndependentSecurityAuditAsync(tenantOneId, connectionString);
@@ -889,6 +892,47 @@ static async Task InspectAuditDatabaseAsync()
         Console.WriteLine($"  Unexpected observed event type: {eventType}.");
 }
 
+static async Task VerifyWarehouseDeleteSafetyAsync(int tenantId, int referencedWarehouseId, string connectionString)
+{
+    await using (var referenced = new AppDbContext(CreateOptions(connectionString), new FixedTenantContext(tenantId)))
+    {
+        var repository = new WarehouseRepository(referenced);
+        var warehouse = await repository.GetByIdAsync(referencedWarehouseId)
+            ?? throw new InvalidOperationException("Referenced warehouse fixture was not found.");
+        await repository.DeleteAsync(warehouse);
+        try
+        {
+            await repository.SaveChangesAsync();
+            throw new InvalidOperationException("A warehouse used by stock operations must not be deleted.");
+        }
+        catch (InvalidOperationException exception) when (
+            exception.Message == "The warehouse is used by existing operations and cannot be deleted." &&
+            exception.InnerException is DbUpdateException)
+        {
+            referenced.ChangeTracker.Clear();
+        }
+    }
+
+    int unusedWarehouseId;
+    await using (var unused = new AppDbContext(CreateOptions(connectionString), new FixedTenantContext(tenantId)))
+    {
+        var warehouse = new Warehouse("Unused delete-safety warehouse");
+        unused.Warehouses.Add(warehouse);
+        await unused.SaveChangesAsync();
+        unusedWarehouseId = warehouse.Id;
+        var repository = new WarehouseRepository(unused);
+        await repository.DeleteAsync(warehouse);
+        await repository.SaveChangesAsync();
+    }
+
+    await using var verification = new AppDbContext(CreateOptions(connectionString), new FixedTenantContext(tenantId));
+    if (!await verification.Warehouses.AnyAsync(x => x.Id == referencedWarehouseId) ||
+        !await verification.ProductStocks.AnyAsync(x => x.WarehouseId == referencedWarehouseId) ||
+        await verification.Warehouses.AnyAsync(x => x.Id == unusedWarehouseId))
+    {
+        throw new InvalidOperationException("Warehouse delete safety did not preserve referenced data or remove an unused warehouse.");
+    }
+}
 static async Task<(int ProductId, int StockId, int MeasurementUnitId, int WarehouseId)> SeedTenantAsync(
     int tenantId,
     string productName,

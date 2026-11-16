@@ -288,3 +288,7 @@ Migration `20261116113809_CorrectErp007PosSessionExclusivity` safely replaces th
 ## ERP-008 cash-session additions
 
 `PosCashPolicies.CashPaymentMethodId` is a tenant-composite payment-method relationship. Movement source type/reference have a filtered tenant-scoped unique index for replay safety. Migration `20261116123034_AddErp008PosCashOperations` was applied locally; EF reports no pending changes.
+
+### Warehouse delete safety — REC-002
+
+Warehouse references continue to use the existing relational delete restrictions; no schema or migration changed. `InventorySqlIntegration` now attempts deletion against the migrated SQL schema and proves a warehouse referenced by ProductStock/StockTransaction and its stock data survive the rejected delete. The same test proves an unused warehouse can be deleted. Infrastructure translates the provider exception only for a tracked Warehouse delete so upper layers do not expose database details.

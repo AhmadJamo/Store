@@ -342,7 +342,7 @@ and antiforgery.
 branch list/create operations. Application projections expose account names instead of entity/account IDs as evidence;
 the whole API requires `Administration.Access`, and each mutation validates antiforgery.
 
-`WarehousesApiController` and Angular `/warehouses` complete warehouse list/create/edit/delete over `WarehouseService`.
+`WarehousesApiController` and Angular `/warehouses` complete warehouse list/create/edit/delete over `WarehouseService`. REC-002 makes `WarehouseRepository` translate relational rejection of a referenced delete into a stable business conflict; the API returns localized HTTP 409 while Angular retains the row and entered context.
 Form DTOs project branch/account names; SaaS limits, accounting validation, control-mode/POS transition guards and
 delete constraints remain server-owned with operation-specific permissions and antiforgery.
 

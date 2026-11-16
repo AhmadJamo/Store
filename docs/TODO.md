@@ -554,4 +554,6 @@ ERP-007 completed 2026-11-16: accepted POS cash-session ADR and tenant/branch/te
 ## V3 Recovery
 
 - [x] REC-001: complete branch create/edit/activate/deactivate lifecycle in `/branches` with granular permissions, antiforgery, semantic audit, bilingual UX and regression verification (2026-11-17).
-- [ ] REC-002: prove linked-warehouse delete safety against a real database and improve actionable ProblemDetails/warehouse UX only where evidence requires it.
+- [x] REC-002: linked-warehouse delete safety verified; superseded by the detailed completion entry below.
+- [x] REC-002: prove linked-warehouse delete safety on migrated SQL, return localized HTTP 409, preserve Angular row/context, and confirm existing create/edit/branch-account UX (2026-11-17).
+- [ ] REC-003: classify all Angular routes by controller/API, Application service, permission and verification evidence.

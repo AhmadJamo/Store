@@ -13,7 +13,7 @@
 |---|---|---|---|
 | REC-000 التدقيق التأسيسي ومركز التحكم | Completed | Audit/Recovery/Tasks/Coverage/UX/Bugs/Execution/Test docs | أدلة مصدرية، baseline موثق، مهمة تالية واحدة |
 | REC-001 إدارة الفروع | Completed | CRUD آمن ضمن النموذج الحالي، صلاحيات دقيقة، Angular UX | Create/edit/deactivate/list وإعادة تحميل ورفض غير المخول |
-| REC-002 سلامة المستودعات | Discovered | اختبار حذف مرتبط ورسالة مفهومة وتحسين CTA إن لزم | لا حذف ضار، create/edit وربط branch متحقق |
+| REC-002 سلامة المستودعات | Completed | اختبار حذف مرتبط ورسالة مفهومة وتحسين CTA إن لزم | لا حذف ضار، create/edit وربط branch متحقق |
 | REC-003 جرد العمليات العابرة للطبقات | Planned | route/function matrix على دفعات | كل مسار مصنف بدليل لا بالظهور فقط |
 | REC-004 اتساق الأخطاء | Planned | mapping موحد 400/401/403/404/409/500 | correlationId ورسالة قابلة للفهم وحفظ النموذج |
 | UX-REC موجات UX | Planned | إصلاحات حسب الأدلة، لا redesign شكلي | تقليل clicks واختبارات RTL/LTR/keyboard |

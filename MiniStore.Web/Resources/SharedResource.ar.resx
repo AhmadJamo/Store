@@ -4790,4 +4790,6 @@
   <data name="Open the POS cash session before recording a cash sale." xml:space="preserve"><value>افتح جلسة نقد نقطة البيع قبل تسجيل بيع نقدي.</value></data>
   <data name="Open the POS cash session before recording a cash return." xml:space="preserve"><value>افتح جلسة نقد نقطة البيع قبل تسجيل مرتجع نقدي.</value></data>
   <data name="This cash event has already been posted." xml:space="preserve"><value>تم ترحيل هذه الحركة النقدية مسبقًا.</value></data>
+  <data name="Warehouse cannot be deleted." xml:space="preserve"><value>لا يمكن حذف المستودع.</value></data>
+  <data name="The warehouse is used by existing operations and cannot be deleted." xml:space="preserve"><value>المستودع مستخدم في مخزون أو عمليات قائمة ولا يمكن حذفه.</value></data>
 </root>
