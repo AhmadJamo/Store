@@ -546,3 +546,7 @@ POS cash policy and the tenant/branch/terminal domain foundation are complete. O
 ## ERP-008 — Operational POS cash sessions — COMPLETE 2026-11-16
 
 Added permissioned setup/open/movement/blind-close/independent approval, replay-safe posted cash sale/return evidence, shared journal integration and the cohesive bilingual Angular workflow. Verification passed. Eight of ten ERP slices are complete; ERP-009 touch-POS usability is next.
+
+## ERP-009 — Touch POS and profile presentation — IMPLEMENTED / NOT YET COMPLETE 2026-11-16
+
+Implementation applies the existing terminal profile and reduces common operator clicks. Automated verification passed. Authenticated Edge acceptance remains the only open gate after a Windows automation ACL failure; ERP-010 must not be marked active until ERP-009 acceptance closes.

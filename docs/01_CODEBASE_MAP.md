@@ -925,3 +925,7 @@ fiscal periods and controlled journals. No bank-account, statement/import or rec
 ## ERP-008 POS cash operations
 
 The lifecycle is in `PosCashManagement.cs`; persistence uses `IPosCashRepository`/`PosCashRepository`; orchestration uses `PosCashSessionService`; and the internal boundary is `PosCashSessionsApiController`. Angular extends the cohesive `features/sales/legacy-sales-page.*` flow. Migration: `20261116123034_AddErp008PosCashOperations`.
+
+## ERP-009 POS presentation
+
+Terminal-profile presentation remains cohesive in `features/sales/legacy-sales-page.ts`, `.html`, `.scss` and its feature localization service. No new component, API, schema or business service was introduced. Static drift gates live in `tests/SecurityRegression/Program.cs`.

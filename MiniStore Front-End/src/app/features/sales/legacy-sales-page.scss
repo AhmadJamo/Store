@@ -133,3 +133,89 @@ small {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
+
+.pos-page {
+  --pos-accent: var(--color-primary);
+}
+.pos-brand .product-card,
+.pos-brand .cart-summary {
+  border-color: var(--pos-accent);
+}
+.pos-page .primary,
+.pos-page .product-card:focus-visible {
+  outline-color: var(--pos-accent);
+}
+.pos-dark {
+  color-scheme: dark;
+  background: color-mix(in srgb, var(--color-surface) 82%, #111827);
+  padding: var(--space-4);
+  border-radius: var(--radius-lg);
+}
+.pos-form {
+  display: grid;
+  gap: var(--space-5);
+}
+.pos-form > .section-heading { order: 1; }
+.pos-form > .search-row { order: 2; }
+.pos-form > .product-catalog { order: 3; }
+.pos-form > .line-list { order: 4; }
+.pos-form > .cart-summary,
+.pos-form > .discount,
+.pos-form > .submit { order: 5; }
+.pos-form.cart-start > .line-list,
+.pos-form.cart-start > .cart-summary { order: 3; }
+.pos-form.cart-start > .product-catalog { order: 4; }
+.search-row {
+  display: flex;
+  align-items: end;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+.search-row .search {
+  flex: 1 1 22rem;
+}
+.product-catalog.layout-2,
+.product-catalog.layout-3 {
+  grid-template-columns: 1fr;
+}
+.product-catalog.layout-2 .product-card {
+  grid-template-columns: minmax(9rem, 1fr) auto auto;
+  align-items: center;
+}
+.product-catalog.layout-3 {
+  max-width: 42rem;
+}
+.product-catalog.layout-3 .product-card {
+  grid-template-columns: minmax(9rem, 1fr) auto;
+  min-height: 4.5rem;
+}
+.quantity-actions {
+  display: flex;
+  align-items: end;
+  gap: var(--space-2);
+}
+.quantity-actions .ui-button {
+  min-width: 3rem;
+  font-size: 1.25rem;
+}
+.cart-summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-3);
+  border-inline-start: 0.3rem solid var(--pos-accent);
+}
+.pos-touch .ui-button,
+.pos-touch input,
+.pos-touch select {
+  min-height: 3rem;
+}
+.pos-touch .product-card {
+  min-height: 5.5rem;
+  touch-action: manipulation;
+}
+@media (max-width: 64rem) {
+  .product-catalog {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

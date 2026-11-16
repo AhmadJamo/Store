@@ -708,3 +708,7 @@ largest underrepresented modules; production deployment readiness and physical M
 ## ERP-008 — operational POS cash sessions — COMPLETE 2026-11-16
 
 Added the complete operator/manager cash workflow to the existing cohesive sales feature without granular component splitting. Named choices, bilingual RTL/LTR behavior, branch context and persistent workspace behavior are preserved. Release, 1,645 checks, 250 Angular tests, production build and EF consistency passed. ERP progress: 8/10; ERP-009 is next.
+
+## ERP-009 — touch POS and terminal-profile presentation — IMPLEMENTED / ACCEPTANCE PENDING 2026-11-16
+
+The cohesive sales feature now honors all existing terminal presentation settings and adds fast exact scan/search and quantity controls without component over-fragmentation or business-rule changes. Automated gates pass: Release, 1,649 checks, 250 Angular tests and production build. Risk: authenticated Edge desktop/mobile/RTL acceptance is pending due to a Windows automation ACL helper failure. ERP plan remains 8/10 complete until that evidence closes.

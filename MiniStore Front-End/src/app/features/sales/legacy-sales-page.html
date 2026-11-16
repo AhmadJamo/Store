@@ -1,4 +1,9 @@
-<main class="legacy-sales-page">
+<main class="legacy-sales-page"
+  [class.pos-page]="isPos"
+  [class.pos-touch]="isPos && runtime()?.touchOptimized"
+  [class.pos-dark]="isPos && runtime()?.theme === 2"
+  [class.pos-brand]="isPos && runtime()?.theme === 3"
+  [style.--pos-accent]="isPos ? runtime()?.accentColor : null">
   @if (loading()) {
     <app-feedback-state kind="loading" [title]="i18n.text('loading')" />
   } @else if (failure(); as issue) {
@@ -106,7 +111,7 @@
   } @else if (page(); as p) {
     <app-page-header
       [eyebrow]="i18n.text('area')"
-      [title]="i18n.text(isPos ? 'posCreate' : 'create')"
+      [title]="isPos && runtime()?.headerTitle ? runtime()!.headerTitle : i18n.text(isPos ? 'posCreate' : 'create')"
       [description]="i18n.text('description')"
     />
     @if (problem(); as issue) {
@@ -137,7 +142,9 @@
         }
       </section>
     }
-    <form [formGroup]="form" (ngSubmit)="create()">
+    <form [formGroup]="form" (ngSubmit)="create()" [class.pos-form]="isPos"
+      [class.cart-start]="isPos && runtime()?.cartPosition === 2"
+      [class.cart-end]="isPos && runtime()?.cartPosition !== 2">
       <section class="form-grid ui-card">
         @if (isPos && posPage(); as pos) {
           <label class="ui-field"
@@ -231,15 +238,25 @@
           {{ i18n.text('addItem') }}
         </button>
       </div>
-      <label class="ui-field search"
-        ><span>{{ i18n.text('productSearch') }}</span
-        ><input [formControl]="productSearch"
-      /></label>
+      <div class="search-row">
+        <label class="ui-field search"
+          ><span>{{ i18n.text('productSearch') }}</span
+          ><input #productSearchInput [formControl]="productSearch"
+            (keydown.enter)="addExactProduct($event)"
+            (keydown.escape)="clearProductSearch()"
+            [placeholder]="isPos && runtime()?.quickAddOnBarcodeScan ? i18n.text('scanHint') : ''"
+        /></label>
+        @if (productSearch.value) {
+          <button type="button" class="ui-button" (click)="clearProductSearch()">{{ i18n.text('clearSearch') }}</button>
+        }
+      </div>
       @if (isPos) {
         <section
           class="product-catalog"
           [class.compact]="runtime()?.compactProductCards"
           [style.--pos-columns]="runtime()?.productColumns || 4"
+          [class.layout-2]="runtime()?.productLayout === 2"
+          [class.layout-3]="runtime()?.productLayout === 3"
         >
           @for (product of filteredProducts(p); track product.id) {
             <button type="button" class="product-card ui-card" (click)="addProduct(product)">
@@ -279,6 +296,12 @@
               ><input type="number" step=".000001" formControlName="quantity"
             /></label>
             @if (!isPos || runtime()?.showPrice) {
+            @if (isPos) {
+              <div class="quantity-actions" [attr.aria-label]="i18n.text('quantity')">
+                <button type="button" class="ui-button" (click)="adjustQuantity(i, -1)" [attr.aria-label]="i18n.text('decreaseQuantity')">−</button>
+                <button type="button" class="ui-button" (click)="adjustQuantity(i, 1)" [attr.aria-label]="i18n.text('increaseQuantity')">+</button>
+              </div>
+            }
               <label class="ui-field"
                 ><span>{{ i18n.text('price') }}</span
                 ><input type="number" formControlName="salePrice" readonly
@@ -321,6 +344,12 @@
         }
       </div>
       <section class="discount ui-card">
+      @if (isPos) {
+        <section class="cart-summary ui-card" aria-live="polite">
+          <strong>{{ i18n.text('cart') }}</strong>
+          <span>{{ items.length }} {{ i18n.text('items') }} · {{ cartUnits() | number: '1.0-6' }} {{ i18n.text('units') }}</span>
+        </section>
+      }
         <label class="ui-field"
           ><span>{{ i18n.text('discountType') }}</span
           ><select formControlName="invoiceDiscountType">

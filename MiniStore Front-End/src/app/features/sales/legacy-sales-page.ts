@@ -1,5 +1,5 @@
 import { DatePipe, DecimalPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, DestroyRef, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, ElementRef, ViewChild, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormArray, FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
@@ -56,6 +56,7 @@ export class LegacySalesPageComponent {
   protected readonly success = signal('');
   protected readonly saving = signal(false);
   protected readonly cash = signal<PosCashPage | null>(null);
+  @ViewChild('productSearchInput') private productSearchInput?: ElementRef<HTMLInputElement>;
   protected readonly cashForm = this.fb.group({ drawerId:this.fb.nonNullable.control(0), drawerCode:this.fb.nonNullable.control(''), drawerName:this.fb.nonNullable.control(''), currencyCode:this.fb.nonNullable.control('JOD'), varianceTolerance:this.fb.nonNullable.control(0), approvalThreshold:this.fb.nonNullable.control(0), cashPaymentMethodId:this.fb.nonNullable.control(0), openingFloat:this.fb.nonNullable.control(0), accountId:this.fb.nonNullable.control(0), amount:this.fb.nonNullable.control(0), reason:this.fb.nonNullable.control(''), declaredCash:this.fb.nonNullable.control(0), varianceAccountId:this.fb.nonNullable.control(0) });
   protected readonly productSearch = this.fb.nonNullable.control('');
   protected readonly form = this.fb.group({
@@ -79,15 +80,6 @@ export class LegacySalesPageComponent {
   protected readonly isPos = this.route.snapshot.routeConfig?.path === 'sales/pos';
   constructor() {
     this.form.valueChanges.pipe(takeUntilDestroyed(this.destroy)).subscribe(() => this.syncDirty());
-    this.productSearch.valueChanges.pipe(takeUntilDestroyed(this.destroy)).subscribe((value) => {
-      if (!this.isPos || !this.runtime()?.quickAddOnBarcodeScan) return;
-      const token = value.trim().toLocaleLowerCase();
-      const match = this.page()?.products.find((x) => x.barcode?.toLocaleLowerCase() === token);
-      if (match) {
-        this.addProduct(match);
-        this.productSearch.setValue('', { emitEvent: false });
-      }
-    });
     this.load();
   }
   get items() {
@@ -143,6 +135,35 @@ export class LegacySalesPageComponent {
       existing.patchValue({ quantity: Number(existing.get('quantity')?.value ?? 0) + 1 });
     else this.items.push(this.lineGroup(product));
   }
+  protected addExactProduct(event?: Event) {
+    event?.preventDefault();
+    const token = this.productSearch.value.trim().toLocaleLowerCase();
+    if (!token) return;
+    const matches =
+      this.page()?.products.filter((x) =>
+        [x.barcode, x.code, x.name].some((value) => value?.trim().toLocaleLowerCase() === token),
+      ) ?? [];
+    if (matches.length === 1) {
+      this.addProduct(matches[0]);
+      this.productSearch.setValue('', { emitEvent: false });
+      this.focusProductSearch();
+    }
+  }
+  protected clearProductSearch() {
+    this.productSearch.setValue('', { emitEvent: false });
+    this.focusProductSearch();
+  }
+  protected adjustQuantity(index: number, delta: number) {
+    const control = this.items.at(index).get('quantity');
+    if (!control) return;
+    const next = Number(control.value ?? 0) + delta;
+    if (next <= 0) this.removeItem(index);
+    else control.setValue(next);
+  }
+  protected cartUnits() {
+    return this.items.controls.reduce(
+      (sum, item) => sum + Number(item.get('quantity')?.value ?? 0), 0);
+  }
   protected removeItem(index: number) {
     this.items.removeAt(index);
   }
@@ -187,6 +208,7 @@ export class LegacySalesPageComponent {
       posOrderType: runtime?.defaultOrderType ?? 1,
     });
     this.loadCash();
+    this.focusProductSearch();
   }
   protected posPage() {
     return this.isPos ? (this.page() as LegacyPosCreatePage | null) : null;
@@ -262,6 +284,7 @@ export class LegacySalesPageComponent {
     this.done();
     this.syncDirty();
     this.loadCash();
+    this.focusProductSearch();
   }
   private lineGroup(product?: LegacySaleProductOption | any) {
     const line = 'productId' in (product ?? {}) ? product : this.blankLine(product);
@@ -288,6 +311,10 @@ export class LegacySalesPageComponent {
   }
   private price(product: LegacySaleProductOption) {
     return this.isPos ? product.retailPrice : product.wholesalePrice;
+  }
+  private focusProductSearch() {
+    if (!this.isPos || this.runtime()?.autoFocusSearch === false) return;
+    queueMicrotask(() => this.productSearchInput?.nativeElement.focus());
   }
   private loadDetailAfterPost(id: number) {
     this.api.get(id).subscribe({

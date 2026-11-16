@@ -478,3 +478,7 @@ MVC عادية قابلة للحذف الجماعي.
 ## ERP-008 — COMPLETE 2026-11-16
 
 Operational POS cash sessions are active with independent permissions, verified branch/terminal scope, replay-safe sale/return evidence and shared journal-gateway accounting. The cohesive bilingual Angular workflow is complete. Release, 1,645 checks, 250 Angular tests, production build, migration and EF consistency passed. ERP progress is 8/10.
+
+## ERP-009 — IMPLEMENTED, HOSTED ACCEPTANCE PENDING 2026-11-16
+
+Terminal-profile presentation and touch/scan shortcuts are implemented in the cohesive POS page. Automated gates pass (Release, 1,649 checks, 250 Angular tests, production build). Edge acceptance could not start because the Windows automation helper exited on an ACL error. ERP completion remains 8/10 until this evidence is closed.

@@ -223,3 +223,7 @@ Cafe recipe, product-catalog and managed-unit coverage validates conversion, cla
 ## ERP-008 verification — 2026-11-16
 
 Web Release passed with zero warnings/errors; 1,645 security checks and 250/250 Angular tests passed; the production bundle built (with the existing initial-chunk warning); EF reported no pending model changes; and migration `20261116123034_AddErp008PosCashOperations` applied successfully.
+
+## ERP-009 verification — 2026-11-16
+
+Release passed with zero warnings/errors, 1,649 regression checks passed, 250/250 Angular tests passed and production build passed with the existing initial-chunk warning. Authenticated Microsoft Edge acceptance is pending: the Windows automation kernel exited on an ACL helper error before a browser window could be selected; no visual acceptance is claimed.

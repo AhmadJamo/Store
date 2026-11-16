@@ -529,3 +529,11 @@ ERP-007 completed 2026-11-16: accepted POS cash-session ADR and tenant/branch/te
 - [x] Require verified open sessions and replay-safe cash sale/return evidence.
 - [x] Route accounting through the shared journal gateway and expose a cohesive bilingual Angular workflow.
 - [ ] ERP-009: hosted touch-POS/profile presentation audit and bounded usability improvements.
+
+## ERP-009 implementation 2026-11-16
+
+- [x] Apply terminal layout, theme/accent, title, cart-side, touch and autofocus settings.
+- [x] Add explicit exact-match Enter scanning, Escape clear, quantity buttons and cart summary.
+- [x] Pass Release, 1,649 regression checks, 250 Angular tests and production build.
+- [ ] Close authenticated Edge desktop/mobile/RTL acceptance after the Windows automation ACL failure is resolved.
+- [ ] Only then mark ERP-009 complete and advance the gate to ERP-010.

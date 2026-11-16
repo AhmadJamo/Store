@@ -913,6 +913,24 @@ Check(new long[] { -1, 0 }.All(id =>
       legacySalesCutoverResolver.Resolve(cutoverContext.Request,
           "Sales", "Post", new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = 17 }) is null,
     "Legacy-sales cutover must reject unsafe IDs and keep GL posting outside presentation cutover");
+var posAngularSource = File.ReadAllText(Path.Combine(Directory.GetCurrentDirectory(),
+    "MiniStore Front-End", "src", "app", "features", "sales", "legacy-sales-page.html"));
+var posAngularStyles = File.ReadAllText(Path.Combine(Directory.GetCurrentDirectory(),
+    "MiniStore Front-End", "src", "app", "features", "sales", "legacy-sales-page.scss"));
+Check(posAngularSource.Contains("runtime()?.productLayout === 2", StringComparison.Ordinal) &&
+      posAngularSource.Contains("runtime()?.productLayout === 3", StringComparison.Ordinal),
+    "POS workspace must apply configured list and barcode-focused product layouts");
+Check(posAngularSource.Contains("runtime()?.touchOptimized", StringComparison.Ordinal) &&
+      posAngularSource.Contains("runtime()?.cartPosition", StringComparison.Ordinal) &&
+      posAngularSource.Contains("runtime()?.headerTitle", StringComparison.Ordinal),
+    "POS workspace must apply touch, cart-position and terminal-title settings");
+Check(posAngularSource.Contains("keydown.enter", StringComparison.Ordinal) &&
+      posAngularSource.Contains("adjustQuantity(i, 1)", StringComparison.Ordinal) &&
+      posAngularSource.Contains("adjustQuantity(i, -1)", StringComparison.Ordinal),
+    "POS workspace must preserve explicit barcode and touch quantity shortcuts");
+Check(posAngularStyles.Contains(".pos-touch", StringComparison.Ordinal) &&
+      posAngularStyles.Contains(".product-catalog.layout-3", StringComparison.Ordinal),
+    "POS workspace must retain touch targets and barcode-focused responsive styling");
 var legacySalesReturnsCutoverResolver = new PresentationCutoverResolver(Options.Create(
     new PresentationCutoverOptions
     {

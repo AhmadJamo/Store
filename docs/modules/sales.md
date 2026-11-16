@@ -262,3 +262,7 @@ The sales domain now contains tenant/branch/terminal-scoped cash policy, drawers
 ## POS cash sessions
 
 The cohesive immediate-sales Angular feature now supports one-time policy/drawer setup, verified opening, reasoned paid-in/out, blind count and independent variance approval with named account choices. Cash POS sales/returns require an open branch/terminal session and attach immutable source-unique evidence. Pricing, inventory, tax and journal authority remain server-owned.
+
+## ERP-009 POS operator presentation
+
+The runtime now applies configured grid/list/barcode-focused layouts, touch sizing, theme/accent, terminal title, cart position and search autofocus. Enter adds one exact barcode/code/name match, Escape clears search, and plus/minus controls update quantity without reopening product selection. These are presentation shortcuts only; server pricing, stock, tax, permissions and posting remain authoritative.

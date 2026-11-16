@@ -83,6 +83,7 @@ const copy = {
     approveVariance: 'Approve variance',
     sessionOpen: 'Cash session is open',
     awaitingApproval: 'Close is awaiting independent approval',
+    cart: 'Cart', units: 'units', clearSearch: 'Clear search', scanHint: 'Scan barcode or enter an exact code, then press Enter', increaseQuantity: 'Increase quantity', decreaseQuantity: 'Decrease quantity',
   },
   ar: {
     area: 'المبيعات',
@@ -166,6 +167,7 @@ const copy = {
     approveVariance: 'اعتماد فرق الصندوق',
     sessionOpen: 'جلسة الصندوق مفتوحة',
     awaitingApproval: 'الإغلاق بانتظار اعتماد مستقل',
+    cart: 'السلة', units: 'وحدة', clearSearch: 'مسح البحث', scanHint: 'امسح الباركود أو أدخل الرمز المطابق ثم اضغط Enter', increaseQuantity: 'زيادة الكمية', decreaseQuantity: 'تقليل الكمية',
   },
 } as const;
 export type LegacySalesKey = keyof typeof copy.en;
