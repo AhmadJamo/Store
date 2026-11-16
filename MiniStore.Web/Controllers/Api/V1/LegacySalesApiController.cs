@@ -11,6 +11,7 @@ namespace MiniStore.Web.Controllers.Api.V1;
 [ApiController, Authorize, Route("api/v1/legacy-sales")]
 public sealed class LegacySalesApiController(
     LegacySaleWorkspaceService service,
+    PosCashSessionService cash,
     IStringLocalizer<SharedResource> localizer) : ControllerBase
 {
     [HttpGet, PermissionAuthorize("Sales.View")]
@@ -43,6 +44,7 @@ public sealed class LegacySalesApiController(
     public Task<IActionResult> Post(int id) => Run(async () =>
     {
         await service.PostAsync(id);
+        await cash.LinkPostedSaleAsync(id);
         return NoContent();
     });
 

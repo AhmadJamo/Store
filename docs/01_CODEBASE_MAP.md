@@ -921,3 +921,7 @@ fiscal periods and controlled journals. No bank-account, statement/import or rec
 - `MiniStore.Infrastructure/Persistence/Configurations/Sales/PosCashManagementConfiguration.cs`: tenant-composite relationships, one active terminal session and concurrency.
 - `MiniStore.Infrastructure/Migrations/20261116113058_AddErp007PosCashSessionFoundation*`: five foundation tables; no sale or accounting mutation.
 - `docs/decisions/2026-11-16-pos-cash-session-policy.md`: accepted cash ownership, blind-close, variance and approval boundary.
+
+## ERP-008 POS cash operations
+
+The lifecycle is in `PosCashManagement.cs`; persistence uses `IPosCashRepository`/`PosCashRepository`; orchestration uses `PosCashSessionService`; and the internal boundary is `PosCashSessionsApiController`. Angular extends the cohesive `features/sales/legacy-sales-page.*` flow. Migration: `20261116123034_AddErp008PosCashOperations`.

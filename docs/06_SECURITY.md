@@ -388,3 +388,7 @@ The Angular selector cannot invent branch authority. It accepts only active IDs 
 
 Dispatch and receipt are independently authorized. The service requires a verified branch context matching the source for dispatch and destination for receipt, re-resolves both warehouses, rejects same-branch dispatch and enforces the configured transfer-out/in flags. Client quantities never establish authority and every accepted quantity is bounded by the remaining transfer and active reservation.
 
+
+## ERP-008 POS cash controls
+
+Every mutation requires antiforgery and its dedicated permission. Tenant, verified branch, terminal and drawer are re-resolved server-side; amounts/reasons/accounts are validated; source keys prevent duplicate sale/return attachment; blind expected cash remains hidden; and the counter cannot approve the same variance.

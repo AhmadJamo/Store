@@ -147,3 +147,8 @@ export interface LegacySaleDetailsPage {
   paymentMethodName: string;
   isPosted: boolean;
 }
+export interface PosCashPolicy { currencyCode:string; varianceTolerance:number; mandatoryApprovalThreshold:number; requireApprovalForAnyVariance:boolean; cashPaymentMethodId:number|null; }
+export interface PosCashDrawer { id:number; code:string; name:string; branchId:number; posTerminalId:number; isActive:boolean; }
+export interface PosCashMovement { id:number; type:number; amount:number; occurredAtUtc:string; reason:string|null; sourceType:string|null; sourceReference:string|null; }
+export interface PosCashSession { id:number; branchId:number; posTerminalId:number; drawerId:number; currencyCode:string; openedBy:string; openedAtUtc:string; openingFloat:number; status:number; expectedCash:number|null; declaredCash:number|null; variance:number|null; movements:PosCashMovement[]; rowVersion:string; }
+export interface PosCashPage { policy:PosCashPolicy|null; drawers:PosCashDrawer[]; currentSession:PosCashSession|null; terminalName:string; accounts:{id:number;code:string;name:string}[]; }

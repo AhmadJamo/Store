@@ -8,18 +8,19 @@ public sealed class PosCashPolicy
     public int Id { get; private set; }
     public int TenantId { get; private set; }
     public string CurrencyCode { get; private set; } = string.Empty;
+    public int? CashPaymentMethodId { get; private set; }
     public bool RequireBlindClose { get; private set; } = true;
     public bool RequireApprovalForAnyVariance { get; private set; }
     public decimal VarianceTolerance { get; private set; }
     public decimal MandatoryApprovalThreshold { get; private set; }
     public byte[] RowVersion { get; private set; } = [];
     private PosCashPolicy() { }
-    public PosCashPolicy(int tenantId, string currencyCode, decimal tolerance, decimal approvalThreshold, bool approveAnyVariance = false)
+    public PosCashPolicy(int tenantId, string currencyCode, decimal tolerance, decimal approvalThreshold, bool approveAnyVariance = false, int? cashPaymentMethodId = null)
     {
         if (tenantId <= 0 || string.IsNullOrWhiteSpace(currencyCode)) throw new ArgumentException("Tenant and currency are required.");
         if (tolerance < 0 || approvalThreshold < tolerance) throw new ArgumentException("Cash variance thresholds are invalid.");
         TenantId = tenantId; CurrencyCode = currencyCode.Trim().ToUpperInvariant(); VarianceTolerance = tolerance;
-        MandatoryApprovalThreshold = approvalThreshold; RequireApprovalForAnyVariance = approveAnyVariance;
+        MandatoryApprovalThreshold = approvalThreshold; RequireApprovalForAnyVariance = approveAnyVariance; CashPaymentMethodId = cashPaymentMethodId;
     }
 }
 
@@ -72,10 +73,10 @@ public sealed class PosCashSession
         TenantId=tenantId; BranchId=branchId; PosTerminalId=terminalId; PosCashDrawerId=drawerId; CurrencyCode=currency.Trim().ToUpperInvariant(); OpenedByUserId=userId; OpeningFloat=openingFloat; OpenedAtUtc=openedAtUtc; Status=PosCashSessionStatus.Open;
         _movements.Add(new PosCashMovement(tenantId, PosCashMovementType.OpeningFloat, openingFloat, openedAtUtc, userId, null));
     }
-    public void RecordMovement(PosCashMovementType type, decimal amount, DateTime occurredAtUtc, string userId, string? reason)
+    public void RecordMovement(PosCashMovementType type, decimal amount, DateTime occurredAtUtc, string userId, string? reason, string? sourceType = null, string? sourceReference = null)
     {
         if (Status != PosCashSessionStatus.Open || type == PosCashMovementType.OpeningFloat || amount <= 0) throw new InvalidOperationException("The cash movement is not allowed.");
-        _movements.Add(new PosCashMovement(TenantId, type, amount, occurredAtUtc, userId, reason));
+        _movements.Add(new PosCashMovement(TenantId, type, amount, occurredAtUtc, userId, reason, sourceType, sourceReference));
     }
     public void SubmitBlindCount(decimal declaredCash, DateTime countedAtUtc, string userId, PosCashPolicy policy)
     {
@@ -100,10 +101,12 @@ public sealed class PosCashMovement
     public long Id { get; private set; } public int TenantId { get; private set; } public long PosCashSessionId { get; private set; }
     public PosCashMovementType Type { get; private set; } public decimal Amount { get; private set; } public DateTime OccurredAtUtc { get; private set; }
     public string RecordedByUserId { get; private set; } = string.Empty; public string? Reason { get; private set; }
+    public string? SourceType { get; private set; }
+    public string? SourceReference { get; private set; }
     public decimal ExpectedCashEffect => Type is PosCashMovementType.CashRefund or PosCashMovementType.PaidOut ? -Amount : Amount;
     private PosCashMovement() { }
-    internal PosCashMovement(int tenantId, PosCashMovementType type, decimal amount, DateTime occurredAtUtc, string userId, string? reason)
-    { if (tenantId<=0 || amount<0 || string.IsNullOrWhiteSpace(userId) || type is PosCashMovementType.PaidIn or PosCashMovementType.PaidOut && string.IsNullOrWhiteSpace(reason)) throw new ArgumentException("Cash movement values are invalid.");TenantId=tenantId;Type=type;Amount=amount;OccurredAtUtc=occurredAtUtc;RecordedByUserId=userId;Reason=reason?.Trim(); }
+    internal PosCashMovement(int tenantId, PosCashMovementType type, decimal amount, DateTime occurredAtUtc, string userId, string? reason, string? sourceType = null, string? sourceReference = null)
+    { if (tenantId<=0 || amount<0 || string.IsNullOrWhiteSpace(userId) || type is PosCashMovementType.PaidIn or PosCashMovementType.PaidOut && string.IsNullOrWhiteSpace(reason)) throw new ArgumentException("Cash movement values are invalid.");TenantId=tenantId;Type=type;Amount=amount;OccurredAtUtc=occurredAtUtc;RecordedByUserId=userId;Reason=reason?.Trim();SourceType=sourceType?.Trim();SourceReference=sourceReference?.Trim(); }
 }
 
 public sealed class PosCashCount

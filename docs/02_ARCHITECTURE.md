@@ -191,3 +191,7 @@ An approved inter-branch transfer is dispatched by the source branch and receive
 ## ERP-007 POS cash boundary
 
 Cash-session state is a tenant-owned sales-domain aggregate scoped to branch, terminal and drawer. The database prevents more than one non-final session per terminal and uses composite tenant relationships. ERP-007 deliberately exposes no controller or Application command; ERP-008 must preserve Application-layer authority when it activates the lifecycle.
+
+## ERP-008 cash-session boundary
+
+The antiforgery-protected API delegates to the Application service, which re-resolves branch/terminal/drawer resources and invokes the domain lifecycle. Controllers do not access EF. Cash journals use `JournalPostingService`; the aggregate remains operational evidence rather than an alternative ledger.

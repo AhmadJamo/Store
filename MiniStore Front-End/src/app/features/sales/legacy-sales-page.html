@@ -112,6 +112,31 @@
     @if (problem(); as issue) {
       <app-api-recovery [problem]="issue" [allowRetry]="false" />
     }
+    @if (isPos && cash(); as c) {
+      <section class="ui-card cash-session" [formGroup]="cashForm">
+        <div class="section-heading"><h2>{{ i18n.text('cashSession') }}</h2><strong>{{ c.terminalName }}</strong></div>
+        @if (!c.policy) { @if(session.can('PosCashSessions.Configure')){ <div class="form-grid"><label class="ui-field"><span>{{i18n.text('currency')}}</span><input formControlName="currencyCode" maxlength="3"/></label><label class="ui-field"><span>{{i18n.text('variance')}}</span><input type="number" min="0" formControlName="varianceTolerance"/></label><label class="ui-field"><span>{{i18n.text('approveVariance')}}</span><input type="number" min="0" formControlName="approvalThreshold"/></label><label class="ui-field"><span>{{i18n.text('payment')}}</span><select formControlName="cashPaymentMethodId">@for(p of page()?.paymentMethods??[];track p.id){<option [ngValue]="p.id">{{p.label}}</option>}</select></label></div><button type="button" class="ui-button primary" (click)="configureCash()">{{i18n.text('cashSession')}}</button> } @else { <p>{{ i18n.text('noCashPolicy') }}</p> } }
+        @else if (!c.currentSession) {
+          @if (!c.drawers.length) { @if(session.can('PosCashSessions.Configure')){<div class="form-grid"><label class="ui-field"><span>{{i18n.text('code')}}</span><input formControlName="drawerCode"/></label><label class="ui-field"><span>{{i18n.text('name')}}</span><input formControlName="drawerName"/></label></div><button type="button" class="ui-button" (click)="createDrawer()">{{i18n.text('openDrawer')}}</button>} @else {<p>{{ i18n.text('noDrawer') }}</p>} }
+          @else if (session.can('PosCashSessions.Open')) {
+            <div class="form-grid">
+              <label class="ui-field"><span>{{ i18n.text('cashSession') }}</span><select formControlName="drawerId">@for(d of c.drawers;track d.id){<option [ngValue]="d.id">{{d.code}} · {{d.name}}</option>}</select></label>
+              <label class="ui-field"><span>{{ i18n.text('openingFloat') }}</span><input type="number" min="0" formControlName="openingFloat"/></label>
+              <label class="ui-field"><span>{{ i18n.text('counterpart') }}</span><select formControlName="accountId">@for(a of c.accounts;track a.id){<option [ngValue]="a.id">{{a.code}} · {{a.name}}</option>}</select></label>
+            </div><button type="button" class="ui-button primary" (click)="openCash()">{{i18n.text('openDrawer')}}</button>
+          }
+        } @else {
+          <p class="notice success">{{ i18n.text(c.currentSession.status===3?'awaitingApproval':'sessionOpen') }}</p>
+          <div class="facts"><div><span>{{i18n.text('openingFloat')}}</span><strong>{{c.currentSession.openingFloat|number:'1.2-2'}} {{c.currentSession.currencyCode}}</strong></div>@if(c.currentSession.expectedCash!==null){<div><span>{{i18n.text('expectedCash')}}</span><strong>{{c.currentSession.expectedCash|number:'1.2-2'}}</strong></div><div><span>{{i18n.text('variance')}}</span><strong>{{c.currentSession.variance|number:'1.2-2'}}</strong></div>}</div>
+          @if (c.currentSession.status===1 && session.can('PosCashSessions.Move')) {
+            <div class="form-grid"><label class="ui-field"><span>{{i18n.text('cashAmount')}}</span><input type="number" min="0.01" formControlName="amount"/></label><label class="ui-field"><span>{{i18n.text('counterpart')}}</span><select formControlName="accountId">@for(a of c.accounts;track a.id){<option [ngValue]="a.id">{{a.code}} · {{a.name}}</option>}</select></label><label class="ui-field"><span>{{i18n.text('reason')}}</span><input formControlName="reason"/></label></div>
+            <button type="button" class="ui-button" (click)="moveCash(4)">{{i18n.text('paidIn')}}</button> <button type="button" class="ui-button" (click)="moveCash(5)">{{i18n.text('paidOut')}}</button>
+          }
+          @if (c.currentSession.status===1 && session.can('PosCashSessions.Close')) { <label class="ui-field"><span>{{i18n.text('blindCount')}}</span><input type="number" min="0" formControlName="declaredCash"/></label><button type="button" class="ui-button primary" (click)="countCash()">{{i18n.text('submitCount')}}</button> }
+          @if (c.currentSession.status===3 && session.can('PosCashSessions.Approve')) { <div class="form-grid"><label class="ui-field"><span>{{i18n.text('counterpart')}}</span><select formControlName="varianceAccountId">@for(a of c.accounts;track a.id){<option [ngValue]="a.id">{{a.code}} · {{a.name}}</option>}</select></label><label class="ui-field"><span>{{i18n.text('reason')}}</span><input formControlName="reason"/></label></div><button type="button" class="ui-button primary" (click)="approveCash()">{{i18n.text('approveVariance')}}</button> }
+        }
+      </section>
+    }
     <form [formGroup]="form" (ngSubmit)="create()">
       <section class="form-grid ui-card">
         @if (isPos && posPage(); as pos) {

@@ -284,3 +284,7 @@ Migration 20261116012206_AddErp005006InterBranchReceipts adds non-null decimal(1
 Migration `20261116113058_AddErp007PosCashSessionFoundation` adds `PosCashPolicies`, `PosCashDrawers`, `PosCashSessions`, `PosCashMovements` and `PosCashCounts`. Composite tenant foreign keys protect branch/terminal/drawer/session ownership. A filtered unique index permits only one Open, CountSubmitted or AwaitingApproval session per tenant/terminal. No sales, stock, journal or payment table is changed.
 
 Migration `20261116113809_CorrectErp007PosSessionExclusivity` safely replaces the initial status-keyed index with one filtered unique tenant/terminal index. This prevents simultaneous non-final sessions even when their statuses differ; it changes no rows or tables.
+
+## ERP-008 cash-session additions
+
+`PosCashPolicies.CashPaymentMethodId` is a tenant-composite payment-method relationship. Movement source type/reference have a filtered tenant-scoped unique index for replay safety. Migration `20261116123034_AddErp008PosCashOperations` was applied locally; EF reports no pending changes.

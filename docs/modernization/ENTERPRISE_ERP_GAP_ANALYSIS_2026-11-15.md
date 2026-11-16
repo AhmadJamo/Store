@@ -56,3 +56,5 @@ ERP-001 replaces the only ordinary ERP page found asking for a typed ledger acco
 - POS drawer exclusivity, blind-close policy, variance thresholds and accounting posting ownership.
 
 ERP-007 completed 2026-11-16: the cash-session policy ADR and tenant/branch/terminal-scoped domain/schema foundation are implemented. Operational opening, sale movement attachment, blind close, approval commands and accounting remain ERP-008.
+
+ERP-008 completed 2026-11-16: operational sessions, replay-safe cash sale/return attachment, reasoned movements, blind close, independent variance approval and journal-gateway integration are implemented. ERP-009 touch usability is next.

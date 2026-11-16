@@ -91,6 +91,8 @@ public static class BusinessServicesExtensions
         services.AddScoped<IInventoryAccessRepository, InventoryAccessRepository>();
         services.AddScoped<InventoryAccessService>();
         services.AddScoped<IPosTerminalSettingsRepository, PosTerminalSettingsRepository>();
+        services.AddScoped<IPosCashRepository, PosCashRepository>();
+        services.AddScoped<PosCashSessionService>();
         services.AddScoped<PosExperienceSettingsService>();
         services.AddScoped<IJournalEntryRepository, JournalEntryRepository>();
         services.AddScoped<IFiscalPeriodRepository, FiscalPeriodRepository>();

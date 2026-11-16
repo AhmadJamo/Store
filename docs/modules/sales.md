@@ -258,3 +258,7 @@ antiforgery and rowversion remain authoritative and unchanged.
 ## ERP-007 POS cash-session foundation
 
 The sales domain now contains tenant/branch/terminal-scoped cash policy, drawers and session evidence. A terminal may have only one non-final session. Counts are blind, expected cash is derived from immutable signed movements, manual paid-in/out requires a reason and material variance requires independent approval. ERP-007 does not connect these types to legacy Sale/POS, expose commands or post accounting; ERP-008 owns operational activation.
+
+## POS cash sessions
+
+The cohesive immediate-sales Angular feature now supports one-time policy/drawer setup, verified opening, reasoned paid-in/out, blind count and independent variance approval with named account choices. Cash POS sales/returns require an open branch/terminal session and attach immutable source-unique evidence. Pricing, inventory, tax and journal authority remain server-owned.

@@ -247,3 +247,7 @@ Partial receipt, reported shortage and reported damage are operational inventory
 # POS cash foundation (ERP-007, 2026-11-16)
 
 Opening float, cash movements, blind counts and variances are operational evidence only in ERP-007. The new entities contain no journal reference and invoke no posting service. ERP-008 must define and implement accounting ownership through the existing journal/fiscal-period gateway; no variance expense or cash balance is recognized automatically.
+
+## POS cash accounting
+
+Opening float, reasoned paid-in/out and approved variance entries use `JournalPostingService` with fiscal-period controls. Cash sales/returns change expected drawer cash through source-unique evidence; they do not create duplicate sales journals. Variance approval requires a separate actor and named counterpart account.

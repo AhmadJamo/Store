@@ -27,6 +27,9 @@ public class SaleService : ISaleService
     private readonly IPosTerminalSettingsRepository _posTerminalSettingsRepository;
     private readonly IProductRecipeRepository _productRecipeRepository;
     private readonly ITaxRateRepository _taxRateRepository;
+    private readonly IInventoryAccessRepository _inventoryAccessRepository;
+    private readonly IPosCashRepository _posCashRepository;
+    private readonly IBranchContext _branchContext;
 
     public SaleService(
         ISaleRepository saleRepository,
@@ -46,7 +49,7 @@ public class SaleService : ISaleService
         InventoryAccessService inventoryAccessService,
         IPosTerminalSettingsRepository posTerminalSettingsRepository,
         IProductRecipeRepository productRecipeRepository,
-        ITaxRateRepository taxRateRepository)
+        ITaxRateRepository taxRateRepository, IPosCashRepository posCashRepository, IInventoryAccessRepository inventoryAccessRepository, IBranchContext branchContext)
     {
         _saleRepository = saleRepository;
         _productRepository = productRepository;
@@ -66,6 +69,9 @@ public class SaleService : ISaleService
         _posTerminalSettingsRepository = posTerminalSettingsRepository;
         _productRecipeRepository = productRecipeRepository;
         _taxRateRepository = taxRateRepository;
+        _posCashRepository = posCashRepository;
+        _inventoryAccessRepository = inventoryAccessRepository;
+        _branchContext = branchContext;
     }
 
     public async Task<List<SaleListDto>> GetAllAsync()
@@ -148,7 +154,7 @@ public class SaleService : ISaleService
             throw new ArgumentException(
                 "Sale must contain at least one item.");
         if (dto.CustomerId.HasValue && await _customerRepository.GetByIdAsync(dto.CustomerId.Value) is not { IsActive: true }) throw new ArgumentException("Selected customer was not found or is archived.");
-        if (dto.PaymentMethodId <= 0 || await _paymentMethodRepository.GetByIdAsync(dto.PaymentMethodId) is null) throw new ArgumentException("Select an active payment method.");
+        var paymentMethod = dto.PaymentMethodId > 0 ? await _paymentMethodRepository.GetByIdAsync(dto.PaymentMethodId) : null; if (paymentMethod is null || !paymentMethod.IsActive) throw new ArgumentException("Select an active payment method.");
         var warehouse = await _warehouseRepository.GetByIdAsync(dto.WarehouseId)
             ?? throw new ArgumentException("Selected warehouse was not found.");
         if (channel == SaleChannel.RetailPos && !warehouse.AllowPosSales)
@@ -172,6 +178,13 @@ public class SaleService : ISaleService
                     "This POS terminal is not allowed to sell from the selected warehouse.");
             }
 
+            var policy = await _posCashRepository.GetPolicyAsync();
+            if (policy?.CashPaymentMethodId == paymentMethod.Id)
+            {
+                var terminal = dto.PosTerminalId.HasValue ? await _inventoryAccessRepository.GetPosTerminalAsync(dto.PosTerminalId.Value) : null;
+                if (terminal is null || _branchContext.BranchId != terminal.BranchId) throw new InvalidOperationException("Select the POS terminal branch before continuing.");
+                if (await _posCashRepository.GetCurrentSessionAsync(terminal.Id) is not { Status: PosCashSessionStatus.Open }) throw new InvalidOperationException("Open the POS cash session before recording a cash sale.");
+            }
             if (dto.PosTerminalId.HasValue)
             {
                 terminalSettings = await _posTerminalSettingsRepository.GetAsync(dto.PosTerminalId.Value)

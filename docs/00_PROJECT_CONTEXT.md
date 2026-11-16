@@ -183,3 +183,7 @@ New-company registration now continues into a bilingual guided setup. Business p
 
 
 ERP-007 completed 2026-11-16: tenant/branch/terminal-scoped POS cash policy, drawer, session, movement and blind-count domain evidence now exists with terminal exclusivity, rowversion and independent variance approval. No runtime API, POS sale change or accounting posting was introduced; ERP-008 remains the operational slice.
+
+## ERP-008 POS cash operations — complete 2026-11-16
+
+Authorized branch/terminal cash sessions now support setup, opening, reasoned movements, blind close and independent variance approval. Cash sales and returns attach replay-safe evidence, while accounting stays behind the shared journal gateway. The ten-slice ERP plan is 8/10; ERP-009 is next.

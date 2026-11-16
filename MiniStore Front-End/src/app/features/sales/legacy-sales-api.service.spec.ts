@@ -60,4 +60,12 @@ describe('LegacySalesApiService', () => {
     expect(request.request.body.posTerminalId).toBe(4);
     request.flush({ id: 10 });
   });
+  it('uses the POS cash-session operational endpoints', () => {
+    api.cashPage(4).subscribe(); expect(http.expectOne('/api/v1/pos-cash-sessions/terminal/4').request.method).toBe('GET');
+    api.openCash({posTerminalId:4}).subscribe(); expect(http.expectOne('/api/v1/pos-cash-sessions/open').request.method).toBe('POST');
+    api.cashMovement(8,{amount:5}).subscribe(); expect(http.expectOne('/api/v1/pos-cash-sessions/8/movements').request.method).toBe('POST');
+    api.cashCount(8,100).subscribe(); expect(http.expectOne('/api/v1/pos-cash-sessions/8/count').request.method).toBe('POST');
+    api.approveCash(8,{reason:'reviewed'}).subscribe(); expect(http.expectOne('/api/v1/pos-cash-sessions/8/approve').request.method).toBe('POST');
+    api.linkCashSale(8,12).subscribe(); expect(http.expectOne('/api/v1/pos-cash-sessions/8/link-sale/12').request.method).toBe('POST');
+  });
 });

@@ -11,6 +11,7 @@ namespace MiniStore.Web.Controllers.Api.V1;
 [ApiController, Authorize, Route("api/v1/legacy-sales-returns")]
 public sealed class LegacySalesReturnsApiController(
     SalesReturnService service,
+    PosCashSessionService cash,
     IStringLocalizer<SharedResource> localizer) : ControllerBase
 {
     [HttpGet, PermissionAuthorize("SalesReturns.View")]
@@ -33,7 +34,7 @@ public sealed class LegacySalesReturnsApiController(
     [HttpPost, ValidateAntiForgeryToken, PermissionAuthorize("SalesReturns.Create")]
     public async Task<IActionResult> Create(CreateSalesReturnDto input)
     {
-        try { return Ok(new { id = await service.CreateAsync(input) }); }
+        try { var id = await service.CreateAsync(input); await cash.LinkPostedReturnAsync(id); return Ok(new { id }); }
         catch (Exception exception) when (exception is ArgumentException or InvalidOperationException)
         {
             ModelState.AddModelError(string.Empty, localizer[exception.Message]);

@@ -19,6 +19,7 @@ import {
   LegacySaleProductOption,
   LegacySaleSummary,
   LegacyPosCreatePage,
+  PosCashPage,
 } from './legacy-sales.models';
 
 @Component({
@@ -54,6 +55,8 @@ export class LegacySalesPageComponent {
   protected readonly problem = signal<NormalizedApiProblem | null>(null);
   protected readonly success = signal('');
   protected readonly saving = signal(false);
+  protected readonly cash = signal<PosCashPage | null>(null);
+  protected readonly cashForm = this.fb.group({ drawerId:this.fb.nonNullable.control(0), drawerCode:this.fb.nonNullable.control(''), drawerName:this.fb.nonNullable.control(''), currencyCode:this.fb.nonNullable.control('JOD'), varianceTolerance:this.fb.nonNullable.control(0), approvalThreshold:this.fb.nonNullable.control(0), cashPaymentMethodId:this.fb.nonNullable.control(0), openingFloat:this.fb.nonNullable.control(0), accountId:this.fb.nonNullable.control(0), amount:this.fb.nonNullable.control(0), reason:this.fb.nonNullable.control(''), declaredCash:this.fb.nonNullable.control(0), varianceAccountId:this.fb.nonNullable.control(0) });
   protected readonly productSearch = this.fb.nonNullable.control('');
   protected readonly form = this.fb.group({
     invoiceNumber: this.fb.nonNullable.control(''),
@@ -183,6 +186,7 @@ export class LegacySalesPageComponent {
       warehouseId: terminal.defaultWarehouseId,
       posOrderType: runtime?.defaultOrderType ?? 1,
     });
+    this.loadCash();
   }
   protected posPage() {
     return this.isPos ? (this.page() as LegacyPosCreatePage | null) : null;
@@ -223,6 +227,13 @@ export class LegacySalesPageComponent {
       error: (e) => this.failAction(e),
     });
   }
+  protected loadCash() { const id=this.form.controls.posTerminalId.value; if(!this.isPos||!id||!this.session.can('PosCashSessions.View')){this.cash.set(null);return;} this.api.cashPage(id).subscribe({next:x=>{this.cash.set(x);this.cashForm.controls.drawerId.setValue(x.drawers[0]?.id??0);},error:e=>this.problem.set(this.errors.normalize(e))}); }
+  protected configureCash() { const v=this.cashForm.getRawValue();this.api.configureCashPolicy({currencyCode:v.currencyCode,varianceTolerance:v.varianceTolerance,mandatoryApprovalThreshold:v.approvalThreshold,cashPaymentMethodId:v.cashPaymentMethodId}).subscribe({next:()=>this.loadCash(),error:e=>this.problem.set(this.errors.normalize(e))}); }
+  protected createDrawer() { const terminal=this.posPage()?.terminals.find(x=>x.id===this.form.controls.posTerminalId.value),v=this.cashForm.getRawValue();if(!terminal)return;this.api.createCashDrawer({branchId:terminal.branchId,posTerminalId:terminal.id,code:v.drawerCode,name:v.drawerName}).subscribe({next:()=>this.loadCash(),error:e=>this.problem.set(this.errors.normalize(e))}); }
+  protected openCash() { const terminal=this.form.controls.posTerminalId.value,v=this.cashForm.getRawValue();if(!terminal)return;this.api.openCash({posTerminalId:terminal,drawerId:v.drawerId,openingFloat:v.openingFloat,openingCounterpartAccountId:v.accountId,requestKey:crypto.randomUUID()}).subscribe({next:()=>this.loadCash(),error:e=>this.problem.set(this.errors.normalize(e))}); }
+  protected moveCash(type:number) { const s=this.cash()?.currentSession,v=this.cashForm.getRawValue();if(!s)return;this.api.cashMovement(s.id,{type,amount:v.amount,counterpartAccountId:v.accountId,reason:v.reason,requestKey:crypto.randomUUID()}).subscribe({next:()=>this.loadCash(),error:e=>this.problem.set(this.errors.normalize(e))}); }
+  protected countCash() { const s=this.cash()?.currentSession;if(!s)return;this.api.cashCount(s.id,this.cashForm.controls.declaredCash.value).subscribe({next:()=>this.loadCash(),error:e=>this.problem.set(this.errors.normalize(e))}); }
+  protected approveCash() { const s=this.cash()?.currentSession,v=this.cashForm.getRawValue();if(!s)return;this.api.approveCash(s.id,{varianceAccountId:v.varianceAccountId,reason:v.reason}).subscribe({next:()=>this.loadCash(),error:e=>this.problem.set(this.errors.normalize(e))}); }
   private loadForm(p: LegacySaleCreatePage | LegacyPosCreatePage) {
     this.page.set(p);
     this.items.clear({ emitEvent: false });
@@ -250,6 +261,7 @@ export class LegacySalesPageComponent {
     this.form.markAsPristine();
     this.done();
     this.syncDirty();
+    this.loadCash();
   }
   private lineGroup(product?: LegacySaleProductOption | any) {
     const line = 'productId' in (product ?? {}) ? product : this.blankLine(product);

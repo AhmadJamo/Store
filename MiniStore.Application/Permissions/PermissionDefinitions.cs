@@ -184,6 +184,12 @@ public static class PermissionDefinitions
 
         new("Sales.View", "View Sales", "Sales"),
         new("Sales.Create", "Create Sale", "Sales"),
+        new("PosCashSessions.View", "View POS Cash Sessions", "Sales"),
+        new("PosCashSessions.Configure", "Configure POS Cash", "Sales"),
+        new("PosCashSessions.Open", "Open POS Cash Session", "Sales"),
+        new("PosCashSessions.Move", "Record POS Cash Movements", "Sales"),
+        new("PosCashSessions.Close", "Submit POS Blind Count", "Sales"),
+        new("PosCashSessions.Approve", "Approve POS Cash Variance", "Sales"),
         new("Sales.Edit", "Edit Sale", "Sales"),
         new("Sales.Delete", "Delete Sale", "Sales"),
         new("SalesPricing.View", "View Sales Price Lists", "Sales"),

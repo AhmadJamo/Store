@@ -5281,6 +5281,14 @@ namespace MiniStore.Infrastructure.Migrations
                         .HasMaxLength(450)
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<string>("SourceReference")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("SourceType")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
                     b.Property<int>("TenantId")
                         .HasColumnType("int");
 
@@ -5295,6 +5303,10 @@ namespace MiniStore.Infrastructure.Migrations
 
                     b.HasIndex("TenantId", "PosCashSessionId", "OccurredAtUtc");
 
+                    b.HasIndex("TenantId", "SourceType", "SourceReference")
+                        .IsUnique()
+                        .HasFilter("[SourceType] IS NOT NULL AND [SourceReference] IS NOT NULL");
+
                     b.ToTable("PosCashMovements");
                 });
 
@@ -5305,6 +5317,9 @@ namespace MiniStore.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("CashPaymentMethodId")
+                        .HasColumnType("int");
 
                     b.Property<string>("CurrencyCode")
                         .IsRequired()
@@ -5338,6 +5353,8 @@ namespace MiniStore.Infrastructure.Migrations
 
                     b.HasIndex("TenantId")
                         .IsUnique();
+
+                    b.HasIndex("CashPaymentMethodId", "TenantId");
 
                     b.ToTable("PosCashPolicies");
                 });
@@ -15131,6 +15148,12 @@ namespace MiniStore.Infrastructure.Migrations
                         .HasForeignKey("TenantId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.HasOne("MiniStore.Domain.Entities.PaymentMethod", null)
+                        .WithMany()
+                        .HasForeignKey("CashPaymentMethodId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
+                        .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.PosCashSession", b =>

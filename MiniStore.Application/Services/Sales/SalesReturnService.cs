@@ -18,7 +18,7 @@ public sealed class SalesReturnService(
     DocumentNumberService documentNumbers,
     InventoryTrackingService inventoryTracking,
     ICurrentUserService currentUser,
-    IUnitOfWork unitOfWork)
+    IUnitOfWork unitOfWork, IPosCashRepository posCashRepository, IBranchContext branchContext)
 {
     private const string SaleSourceType = "Sale";
     private const string ReturnSourceType = "SalesReturn";
@@ -94,6 +94,13 @@ public sealed class SalesReturnService(
         var paymentMethod = sale.PaymentMethodId.HasValue
             ? await paymentMethodRepository.GetByIdAsync(sale.PaymentMethodId.Value)
             : null;
+        var cashPolicy = await posCashRepository.GetPolicyAsync();
+        if (cashPolicy?.CashPaymentMethodId == paymentMethod?.Id && sale.PosTerminalId.HasValue)
+        {
+            var cashSession = await posCashRepository.GetCurrentSessionAsync(sale.PosTerminalId.Value);
+            if (cashSession is not { Status: PosCashSessionStatus.Open } || branchContext.BranchId != cashSession.BranchId)
+                throw new InvalidOperationException("Open the POS cash session before recording a cash return.");
+        }
         if (paymentMethod is null || !warehouse.InventoryAccountId.HasValue || !warehouse.BranchId.HasValue)
             throw new InvalidOperationException("The original sale accounting mappings are incomplete.");
         var settings = await accountingSettingsRepository.GetAsync()

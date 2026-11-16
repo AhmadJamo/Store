@@ -219,3 +219,7 @@ Cafe recipe, product-catalog and managed-unit coverage validates conversion, cla
 - SecurityRegression passed 1,641 checks, including tenant isolation, signed expected cash, blind count, threshold escalation and self-approval rejection.
 - EF reports no pending model changes after migration `20261116113058_AddErp007PosCashSessionFoundation`.
 - No Angular test count changed because ERP-007 deliberately adds no UI or API.
+
+## ERP-008 verification — 2026-11-16
+
+Web Release passed with zero warnings/errors; 1,645 security checks and 250/250 Angular tests passed; the production bundle built (with the existing initial-chunk warning); EF reported no pending model changes; and migration `20261116123034_AddErp008PosCashOperations` applied successfully.

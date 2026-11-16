@@ -4764,4 +4764,30 @@
   <data name="Reported discrepancy cannot exceed the outstanding transfer quantity." xml:space="preserve"><value>لا يمكن أن يتجاوز الفرق المبلغ عنه الكمية المعلقة في التحويل.</value></data>
   <data name="The transfer receipt does not match its active reservation." xml:space="preserve"><value>لا يطابق استلام التحويل حجز المخزون النشط.</value></data>
   <data name="Dispatch requires two different assigned branches." xml:space="preserve"><value>يتطلب الإرسال فرعين مختلفين معيّنين للمستودعين.</value></data>
+  <data name="POS cash policy is already configured." xml:space="preserve"><value>تم إعداد سياسة نقد نقطة البيع مسبقًا.</value></data>
+  <data name="Select an active cash payment method." xml:space="preserve"><value>اختر طريقة دفع نقدية نشطة.</value></data>
+  <data name="The drawer branch must match the POS terminal branch." xml:space="preserve"><value>يجب أن يطابق فرع الدرج فرع نقطة البيع.</value></data>
+  <data name="Cash drawer was not found." xml:space="preserve"><value>لم يتم العثور على درج النقد.</value></data>
+  <data name="The cash drawer is not active for this POS terminal." xml:space="preserve"><value>درج النقد غير نشط لنقطة البيع هذه.</value></data>
+  <data name="This POS terminal already has a non-final cash session." xml:space="preserve"><value>توجد جلسة نقد غير نهائية لنقطة البيع هذه.</value></data>
+  <data name="Only paid-in or paid-out is allowed here." xml:space="preserve"><value>يسمح هنا فقط بالإيداع أو الصرف النقدي.</value></data>
+  <data name="Only a cash sale from this POS terminal can be linked." xml:space="preserve"><value>يمكن ربط بيع نقدي صادر من نقطة البيع هذه فقط.</value></data>
+  <data name="Post the sale before linking it to the cash session." xml:space="preserve"><value>رحّل البيع قبل ربطه بجلسة النقد.</value></data>
+  <data name="Only a cash return from this POS terminal can be linked." xml:space="preserve"><value>يمكن ربط مرتجع نقدي صادر من نقطة البيع هذه فقط.</value></data>
+  <data name="Post the return before linking it to the cash session." xml:space="preserve"><value>رحّل المرتجع قبل ربطه بجلسة النقد.</value></data>
+  <data name="This cash session is not awaiting approval." xml:space="preserve"><value>جلسة النقد هذه ليست بانتظار الاعتماد.</value></data>
+  <data name="Cash session was not found." xml:space="preserve"><value>لم يتم العثور على جلسة النقد.</value></data>
+  <data name="Select the cash session branch before continuing." xml:space="preserve"><value>اختر فرع جلسة النقد قبل المتابعة.</value></data>
+  <data name="The cash session is not open." xml:space="preserve"><value>جلسة النقد ليست مفتوحة.</value></data>
+  <data name="POS terminal was not found." xml:space="preserve"><value>لم يتم العثور على نقطة البيع.</value></data>
+  <data name="Select the POS terminal branch before continuing." xml:space="preserve"><value>اختر فرع نقطة البيع قبل المتابعة.</value></data>
+  <data name="Configure the POS cash policy before opening a session." xml:space="preserve"><value>هيّئ سياسة نقد نقطة البيع قبل فتح جلسة.</value></data>
+  <data name="Configure an active cash payment method." xml:space="preserve"><value>هيّئ طريقة دفع نقدية نشطة.</value></data>
+  <data name="Counterpart account was not found." xml:space="preserve"><value>لم يتم العثور على الحساب المقابل.</value></data>
+  <data name="The cash movement is not allowed." xml:space="preserve"><value>حركة النقد غير مسموحة.</value></data>
+  <data name="The cash count cannot be submitted." xml:space="preserve"><value>لا يمكن إرسال العدّ النقدي.</value></data>
+  <data name="Independent approver and reason are required." xml:space="preserve"><value>يلزم معتمد مستقل وسبب واضح.</value></data>
+  <data name="Open the POS cash session before recording a cash sale." xml:space="preserve"><value>افتح جلسة نقد نقطة البيع قبل تسجيل بيع نقدي.</value></data>
+  <data name="Open the POS cash session before recording a cash return." xml:space="preserve"><value>افتح جلسة نقد نقطة البيع قبل تسجيل مرتجع نقدي.</value></data>
+  <data name="This cash event has already been posted." xml:space="preserve"><value>تم ترحيل هذه الحركة النقدية مسبقًا.</value></data>
 </root>

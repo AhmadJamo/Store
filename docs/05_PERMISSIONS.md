@@ -330,3 +330,7 @@ convenience only; controller authorization and server lifecycle checks are autho
 
 Both mutations require antiforgery and server-side branch/warehouse revalidation. The former StockTransfers.Post permission does not authorize the new dispatch route.
 
+
+## POS cash permissions
+
+Independent permissions are `PosCashSessions.View`, `Configure`, `Open`, `Move`, `Close` and `Approve`. Broad sales access does not imply cash movement or variance approval.

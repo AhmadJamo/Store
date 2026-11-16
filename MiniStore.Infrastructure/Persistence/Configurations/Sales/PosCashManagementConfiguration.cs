@@ -8,7 +8,7 @@ public sealed class PosCashPolicyConfiguration : IEntityTypeConfiguration<PosCas
 {
     public void Configure(EntityTypeBuilder<PosCashPolicy> b)
     {
-        b.HasKey(x=>x.Id); b.Property(x=>x.CurrencyCode).HasMaxLength(3).IsRequired(); b.Property(x=>x.VarianceTolerance).HasPrecision(18,2); b.Property(x=>x.MandatoryApprovalThreshold).HasPrecision(18,2); b.Property(x=>x.RowVersion).IsRowVersion(); b.HasIndex(x=>x.TenantId).IsUnique(); b.HasOne<Tenant>().WithMany().HasForeignKey(x=>x.TenantId).OnDelete(DeleteBehavior.Restrict);
+        b.HasKey(x=>x.Id); b.Property(x=>x.CurrencyCode).HasMaxLength(3).IsRequired(); b.Property(x=>x.VarianceTolerance).HasPrecision(18,2); b.Property(x=>x.MandatoryApprovalThreshold).HasPrecision(18,2); b.Property(x=>x.RowVersion).IsRowVersion(); b.HasIndex(x=>x.TenantId).IsUnique(); b.HasOne<Tenant>().WithMany().HasForeignKey(x=>x.TenantId).OnDelete(DeleteBehavior.Restrict); b.HasOne<PaymentMethod>().WithMany().HasForeignKey(x=>x.CashPaymentMethodId).OnDelete(DeleteBehavior.Restrict);
     }
 }
 public sealed class PosCashDrawerConfiguration : IEntityTypeConfiguration<PosCashDrawer>
@@ -27,7 +27,7 @@ public sealed class PosCashSessionConfiguration : IEntityTypeConfiguration<PosCa
 }
 public sealed class PosCashMovementConfiguration : IEntityTypeConfiguration<PosCashMovement>
 {
-    public void Configure(EntityTypeBuilder<PosCashMovement> b) { b.HasKey(x=>x.Id); b.Property(x=>x.Amount).HasPrecision(18,2); b.Property(x=>x.RecordedByUserId).HasMaxLength(450).IsRequired(); b.Property(x=>x.Reason).HasMaxLength(500); b.HasIndex(x=>new{x.TenantId,x.PosCashSessionId,x.OccurredAtUtc}); }
+    public void Configure(EntityTypeBuilder<PosCashMovement> b) { b.HasKey(x=>x.Id); b.Property(x=>x.Amount).HasPrecision(18,2); b.Property(x=>x.RecordedByUserId).HasMaxLength(450).IsRequired(); b.Property(x=>x.Reason).HasMaxLength(500); b.Property(x=>x.SourceType).HasMaxLength(50); b.Property(x=>x.SourceReference).HasMaxLength(100); b.HasIndex(x=>new{x.TenantId,x.SourceType,x.SourceReference}).IsUnique().HasFilter("[SourceType] IS NOT NULL AND [SourceReference] IS NOT NULL"); b.HasIndex(x=>new{x.TenantId,x.PosCashSessionId,x.OccurredAtUtc}); }
 }
 public sealed class PosCashCountConfiguration : IEntityTypeConfiguration<PosCashCount>
 {

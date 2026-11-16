@@ -22,3 +22,7 @@ The foundation stores operational evidence only. It has no journal identifiers a
 Composite tenant relationships prevent cross-company drawer, terminal, branch, session, movement and count links. Rowversion protects mutable policy, drawer and session state. Cash sales cannot be linked retroactively until ERP-008 introduces an explicit, idempotent command contract.
 
 Implementation note: the applied corrective migration `20261116113809_CorrectErp007PosSessionExclusivity` enforces exclusivity across all non-final statuses with one filtered tenant/terminal unique index.
+
+## ERP-008 implementation note
+
+The accepted policy is active: configured cash payment identifies cash sales/returns, source-unique movements prevent duplicate attachment, accounting passes through `JournalPostingService`, and any nonzero variance requires an independently permissioned actor distinct from the counter.

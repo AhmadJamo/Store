@@ -474,3 +474,7 @@ MVC عادية قابلة للحذف الجماعي.
 نُفذ ERP-001 في 2026-11-15: اكتمل تدقيق فجوات Enterprise ERP بالمصدر، وثبت أن سياق الفرع والتحويل بين الفروع وجلسات POS النقدية غير مكتملة. نُفذت أول شريحة آمنة بإزالة إدخال Ledger ID يدويًا من إعداد البنك واستبداله بحسابات أصول نشطة مسماة مع تحقق خادمي وصلاحية Import. لم تتغير قاعدة البيانات أو القيود أو المخزون. ERP-002 مقترح منفصل لسياسة الفرع والوصول.
 
 > Update 2026-11-16: ERP-007 completed. POS cash policy, drawers, sessions, movements and blind counts are tenant/branch/terminal scoped; terminal exclusivity and independent variance approval are enforced. No POS sale or accounting runtime changed. Release, 1,641 security checks and EF consistency passed. ERP plan: 7 complete, 3 remaining.
+
+## ERP-008 — COMPLETE 2026-11-16
+
+Operational POS cash sessions are active with independent permissions, verified branch/terminal scope, replay-safe sale/return evidence and shared journal-gateway accounting. The cohesive bilingual Angular workflow is complete. Release, 1,645 checks, 250 Angular tests, production build, migration and EF consistency passed. ERP progress is 8/10.

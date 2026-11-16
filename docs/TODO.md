@@ -522,3 +522,10 @@ ERP-004 completed 2026-11-16: permitted branch selector, scoped persistence, dir
 ERP-005 and ERP-006 completed together 2026-11-16: branch-authorized dispatch, repeated partial receipt and explicit open shortage/damage evidence. ERP-007 is next.
 
 ERP-007 completed 2026-11-16: accepted POS cash-session ADR and tenant/branch/terminal domain foundation with blind counts and independent variance approval. ERP-008 is next for authorized open/movements/blind close/approval and explicit accounting integration.
+
+## ERP-008 completed 2026-11-16
+
+- [x] Add permissioned, CSRF-protected setup/open/move/close/approve commands.
+- [x] Require verified open sessions and replay-safe cash sale/return evidence.
+- [x] Route accounting through the shared journal gateway and expose a cohesive bilingual Angular workflow.
+- [ ] ERP-009: hosted touch-POS/profile presentation audit and bounded usability improvements.

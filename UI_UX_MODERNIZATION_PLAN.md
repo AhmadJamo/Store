@@ -704,3 +704,7 @@ largest underrepresented modules; production deployment readiness and physical M
 - Accepted the drawer exclusivity, blind-close, variance threshold and independent approval policy.
 - Added server-side foundation only; no premature POS controls or accounting behavior were exposed.
 - ERP-008 will add the cohesive operator/manager workflow using the existing feature-based Angular structure.
+
+## ERP-008 — operational POS cash sessions — COMPLETE 2026-11-16
+
+Added the complete operator/manager cash workflow to the existing cohesive sales feature without granular component splitting. Named choices, bilingual RTL/LTR behavior, branch context and persistent workspace behavior are preserved. Release, 1,645 checks, 250 Angular tests, production build and EF consistency passed. ERP progress: 8/10; ERP-009 is next.

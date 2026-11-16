@@ -542,3 +542,7 @@
 ## ERP-007 completion — 2026-11-16
 
 POS cash policy and the tenant/branch/terminal domain foundation are complete. One non-final session per terminal, blind counts, signed immutable cash evidence, variance thresholds and independent approval are modeled and migrated without runtime or accounting activation. ERP plan progress is 7/10; ERP-008 is next.
+
+## ERP-008 — Operational POS cash sessions — COMPLETE 2026-11-16
+
+Added permissioned setup/open/movement/blind-close/independent approval, replay-safe posted cash sale/return evidence, shared journal integration and the cohesive bilingual Angular workflow. Verification passed. Eight of ten ERP slices are complete; ERP-009 touch-POS usability is next.

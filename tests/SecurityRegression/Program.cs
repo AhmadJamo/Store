@@ -5612,6 +5612,19 @@ exceptionSession.ApproveClose("manager", "Count evidence reviewed", DateTime.Utc
 Check(exceptionSession.Status == PosCashSessionStatus.Closed && exceptionSession.ApprovedByUserId == "manager",
     "An independent manager may approve a reasoned cash variance close");
 
+var posCashPermissions = new[] { "PosCashSessions.View", "PosCashSessions.Configure", "PosCashSessions.Open", "PosCashSessions.Move", "PosCashSessions.Close", "PosCashSessions.Approve" };
+Check(posCashPermissions.All(name => PermissionDefinitions.All.Count(x => x.Name == name) == 1),
+    "POS cash operations must have independent permission definitions");
+var posCashApi = typeof(PosCashSessionsApiController);
+Check(new[] { nameof(PosCashSessionsApiController.ConfigurePolicy), nameof(PosCashSessionsApiController.CreateDrawer), nameof(PosCashSessionsApiController.Open), nameof(PosCashSessionsApiController.Move), nameof(PosCashSessionsApiController.LinkSale), nameof(PosCashSessionsApiController.LinkReturn), nameof(PosCashSessionsApiController.Count), nameof(PosCashSessionsApiController.Approve) }
+      .All(name => posCashApi.GetMethod(name)!.GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null),
+    "Every POS cash mutation must retain antiforgery validation");
+var sourceSession = new PosCashSession(1, 2, 3, 4, "JOD", "cashier", 0m, DateTime.UtcNow);
+sourceSession.RecordMovement(PosCashMovementType.CashSale, 20m, DateTime.UtcNow, "cashier", null, "Sale", "POS-10");
+Check(sourceSession.Movements.Single(x => x.SourceType == "Sale").SourceType == "Sale" && sourceSession.Movements.Single(x => x.SourceType == "Sale").SourceReference == "POS-10",
+    "POS cash sale evidence must retain an idempotent source reference");
+CheckThrows(() => sourceSession.RecordMovement(PosCashMovementType.PaidIn, 0m, DateTime.UtcNow, "cashier", "invalid"),
+    "Manual POS cash movements must be positive");
 Console.WriteLine($"Passed {count} security and inventory regression checks.");
 
 static FiscalPeriodService CreateFiscalPeriodService(IFiscalPeriodRepository repository, IUnitOfWork unitOfWork) =>
