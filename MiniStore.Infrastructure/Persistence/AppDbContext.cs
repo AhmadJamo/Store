@@ -216,6 +216,11 @@ public class AppDbContext
     public DbSet<PosTerminalProduct> PosTerminalProducts => Set<PosTerminalProduct>();
     public DbSet<PosTerminalWarehouse> PosTerminalWarehouses => Set<PosTerminalWarehouse>();
     public DbSet<PosTerminalSettings> PosTerminalSettings => Set<PosTerminalSettings>();
+    public DbSet<PosCashPolicy> PosCashPolicies => Set<PosCashPolicy>();
+    public DbSet<PosCashDrawer> PosCashDrawers => Set<PosCashDrawer>();
+    public DbSet<PosCashSession> PosCashSessions => Set<PosCashSession>();
+    public DbSet<PosCashMovement> PosCashMovements => Set<PosCashMovement>();
+    public DbSet<PosCashCount> PosCashCounts => Set<PosCashCount>();
     public DbSet<BranchWarehouseAccess> BranchWarehouseAccesses => Set<BranchWarehouseAccess>();
     public DbSet<AccountingSettings> AccountingSettings => Set<AccountingSettings>();
     public DbSet<InventorySettings> InventorySettings => Set<InventorySettings>();

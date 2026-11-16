@@ -914,3 +914,10 @@ fiscal periods and controlled journals. No bank-account, statement/import or rec
 - StockTransfersApiController: independently permissioned, antiforgery-protected dispatch and receive commands.
 - Angular stock-transfers feature: bilingual in-transit progress, receipt allocation and discrepancy evidence.
 - Migration 20261116012206_AddErp005006InterBranchReceipts: three decimal evidence columns.
+
+### ERP-007 POS cash-session foundation (2026-11-16)
+
+- `MiniStore.Domain/Entities/Sales/PosCashManagement.cs`: policy, drawer, session, movement/count evidence and invariants.
+- `MiniStore.Infrastructure/Persistence/Configurations/Sales/PosCashManagementConfiguration.cs`: tenant-composite relationships, one active terminal session and concurrency.
+- `MiniStore.Infrastructure/Migrations/20261116113058_AddErp007PosCashSessionFoundation*`: five foundation tables; no sale or accounting mutation.
+- `docs/decisions/2026-11-16-pos-cash-session-policy.md`: accepted cash ownership, blind-close, variance and approval boundary.

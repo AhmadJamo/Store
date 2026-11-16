@@ -181,3 +181,5 @@ Read `project-control/PROJECT_CONTEXT.md`, `project-control/PROJECT_STATUS.md`, 
 ## Guided company onboarding update (2026-09-15)
 New-company registration now continues into a bilingual guided setup. Business presets atomically create a starter chart of accounts, linked branch and warehouse, payment, tax, numbering, discount, inventory and POS configuration. Owners may skip for manual setup, and tenant login accepts an optional company code (the tenant slug).
 
+
+ERP-007 completed 2026-11-16: tenant/branch/terminal-scoped POS cash policy, drawer, session, movement and blind-count domain evidence now exists with terminal exclusivity, rowversion and independent variance approval. No runtime API, POS sale change or accounting posting was introduced; ERP-008 remains the operational slice.

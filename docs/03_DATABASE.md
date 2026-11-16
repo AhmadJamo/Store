@@ -278,3 +278,9 @@ Migrations `20261114185330_AddBankStatementEvidenceFoundation`, `20261114235957_
 
 Migration 20261116012206_AddErp005006InterBranchReceipts adds non-null decimal(18,3) ReceivedQuantity, ReportedShortQuantity and ReportedDamagedQuantity to StockTransferItems with zero defaults for historic rows. Statuses remain numeric enum values in StockTransfers; no receipt deletes or accounting tables are introduced.
 
+
+## ERP-007 POS cash foundation
+
+Migration `20261116113058_AddErp007PosCashSessionFoundation` adds `PosCashPolicies`, `PosCashDrawers`, `PosCashSessions`, `PosCashMovements` and `PosCashCounts`. Composite tenant foreign keys protect branch/terminal/drawer/session ownership. A filtered unique index permits only one Open, CountSubmitted or AwaitingApproval session per tenant/terminal. No sales, stock, journal or payment table is changed.
+
+Migration `20261116113809_CorrectErp007PosSessionExclusivity` safely replaces the initial status-keyed index with one filtered unique tenant/terminal index. This prevents simultaneous non-final sessions even when their statuses differ; it changes no rows or tables.

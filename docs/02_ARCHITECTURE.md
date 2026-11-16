@@ -187,3 +187,7 @@ Angular initializes branch context only after the authenticated session and a su
 ## ERP-005/006 staged inter-branch transfers
 
 An approved inter-branch transfer is dispatched by the source branch and received independently by the destination branch. Dispatch reserves authority without prematurely recognizing destination stock. Each receipt moves only the accepted quantity, consumes the matching reservation quantity, preserves valuation and tracking, and retains shortage or damage as explicit operational evidence. Discrepancies do not create inventory losses or accounting entries automatically; a later controlled workflow must resolve them. See `decisions/2026-11-16-staged-inter-branch-transfer-receipts.md`.
+
+## ERP-007 POS cash boundary
+
+Cash-session state is a tenant-owned sales-domain aggregate scoped to branch, terminal and drawer. The database prevents more than one non-final session per terminal and uses composite tenant relationships. ERP-007 deliberately exposes no controller or Application command; ERP-008 must preserve Application-layer authority when it activates the lifecycle.

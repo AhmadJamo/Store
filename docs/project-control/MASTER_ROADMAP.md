@@ -538,3 +538,7 @@
 - Migration 20261116012206 was applied after safely restoring and reapplying ERP-003.
 - Release, 249 Angular tests, 1,625 security checks, production build, EF consistency and UI/UX consistency passed.
 - ERP plan remains ten slices total: ERP-001..006 complete, four remain.
+
+## ERP-007 completion — 2026-11-16
+
+POS cash policy and the tenant/branch/terminal domain foundation are complete. One non-final session per terminal, blind counts, signed immutable cash evidence, variance thresholds and independent approval are modeled and migrated without runtime or accounting activation. ERP plan progress is 7/10; ERP-008 is next.

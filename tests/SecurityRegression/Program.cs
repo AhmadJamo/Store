@@ -5588,6 +5588,30 @@ Check(receiptTransfer.Status == StockTransferStatus.Received &&
       receiptItem.RemainingQuantity == 0m,
     "A transfer must complete only after every ordered quantity is received");
 
+Check(new[] { typeof(PosCashPolicy), typeof(PosCashDrawer), typeof(PosCashSession), typeof(PosCashMovement), typeof(PosCashCount) }
+      .All(TenantIsolationModel.TenantOwnedTypes.Contains),
+    "Every POS cash foundation entity must remain tenant isolated");
+var cashPolicy = new PosCashPolicy(1, "jod", 1m, 5m);
+var cashSession = new PosCashSession(1, 2, 3, 4, "JOD", "cashier", 100m, DateTime.UtcNow);
+cashSession.RecordMovement(PosCashMovementType.CashSale, 25m, DateTime.UtcNow, "cashier", null);
+cashSession.RecordMovement(PosCashMovementType.PaidOut, 5m, DateTime.UtcNow, "cashier", "Petty cash");
+cashSession.SubmitBlindCount(122m, DateTime.UtcNow, "cashier", cashPolicy);
+Check(cashSession.ExpectedCash == 120m && cashSession.Variance == 2m &&
+      cashSession.Status == PosCashSessionStatus.CountSubmitted && cashSession.Counts.Single().WasBlind,
+    "POS blind count must derive expected cash from immutable signed movements without exposing it to the count input");
+cashSession.CompleteClose(DateTime.UtcNow);
+Check(cashSession.Status == PosCashSessionStatus.Closed && cashSession.ApprovedByUserId is null,
+    "POS variance below the mandatory threshold may close without manager approval");
+var exceptionSession = new PosCashSession(1, 2, 3, 4, "JOD", "cashier", 100m, DateTime.UtcNow);
+exceptionSession.SubmitBlindCount(94m, DateTime.UtcNow, "cashier", cashPolicy);
+Check(exceptionSession.Status == PosCashSessionStatus.AwaitingApproval && exceptionSession.Variance == -6m,
+    "POS variance at the mandatory threshold must require approval");
+CheckThrows(() => exceptionSession.ApproveClose("cashier", "Self approval", DateTime.UtcNow),
+    "The cashier who counted a variance must not approve the same close");
+exceptionSession.ApproveClose("manager", "Count evidence reviewed", DateTime.UtcNow);
+Check(exceptionSession.Status == PosCashSessionStatus.Closed && exceptionSession.ApprovedByUserId == "manager",
+    "An independent manager may approve a reasoned cash variance close");
+
 Console.WriteLine($"Passed {count} security and inventory regression checks.");
 
 static FiscalPeriodService CreateFiscalPeriodService(IFiscalPeriodRepository repository, IUnitOfWork unitOfWork) =>

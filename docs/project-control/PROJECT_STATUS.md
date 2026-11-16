@@ -472,3 +472,5 @@ MVC عادية قابلة للحذف الجماعي.
 اكتمل UX-017D في 2026-11-15: أصبحت المبالغ البنكية غير المسوّاة مانعًا صريحًا للإقفال، وأضيفت أوامر مستقلة ومضبوطة للرسوم والفوائد والتحويلات عبر بوابة القيود الرسمية وفحص الفترة، مع اختيار الحساب بالاسم وrowversion ومعاملة ذرية وتدقيق دلالي. لا تنشئ الاقتراحات أي قيد تلقائيًا. نجح Release وAngular و243/243 اختبارًا و1,609 فحوص حماية، واكتمل مسار UX-017.
 
 نُفذ ERP-001 في 2026-11-15: اكتمل تدقيق فجوات Enterprise ERP بالمصدر، وثبت أن سياق الفرع والتحويل بين الفروع وجلسات POS النقدية غير مكتملة. نُفذت أول شريحة آمنة بإزالة إدخال Ledger ID يدويًا من إعداد البنك واستبداله بحسابات أصول نشطة مسماة مع تحقق خادمي وصلاحية Import. لم تتغير قاعدة البيانات أو القيود أو المخزون. ERP-002 مقترح منفصل لسياسة الفرع والوصول.
+
+> Update 2026-11-16: ERP-007 completed. POS cash policy, drawers, sessions, movements and blind counts are tenant/branch/terminal scoped; terminal exclusivity and independent variance approval are enforced. No POS sale or accounting runtime changed. Release, 1,641 security checks and EF consistency passed. ERP plan: 7 complete, 3 remaining.

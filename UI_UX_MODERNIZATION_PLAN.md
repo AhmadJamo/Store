@@ -699,3 +699,8 @@ largest underrepresented modules; production deployment readiness and physical M
 - Retained server authority for permissions, branch context, quantities, valuation, tracking, locations and reservation consumption.
 - Verified 249 Angular tests, production build, Release, 1,625 security checks, EF consistency and UI/UX consistency.
 
+## ERP-007 — POS cash policy and domain foundation — COMPLETE 2026-11-16
+
+- Accepted the drawer exclusivity, blind-close, variance threshold and independent approval policy.
+- Added server-side foundation only; no premature POS controls or accounting behavior were exposed.
+- ERP-008 will add the cohesive operator/manager workflow using the existing feature-based Angular structure.

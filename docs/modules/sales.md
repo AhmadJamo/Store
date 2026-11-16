@@ -254,3 +254,7 @@ The approved MVC controller and Razor view are retired. Protected legacy reads r
 Create/SetActive POST routes return 405 rather than replaying a command. `SalesApprovalRulesApiController`,
 `SalesOrderApprovalService`, rule evaluation, frozen findings, requester/distinct-approver policies, permissions,
 antiforgery and rowversion remain authoritative and unchanged.
+
+## ERP-007 POS cash-session foundation
+
+The sales domain now contains tenant/branch/terminal-scoped cash policy, drawers and session evidence. A terminal may have only one non-final session. Counts are blind, expected cash is derived from immutable signed movements, manual paid-in/out requires a reason and material variance requires independent approval. ERP-007 does not connect these types to legacy Sale/POS, expose commands or post accounting; ERP-008 owns operational activation.

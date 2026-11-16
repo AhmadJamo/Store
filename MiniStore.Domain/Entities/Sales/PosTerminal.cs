@@ -4,6 +4,7 @@ public class PosTerminal
 {
     private readonly List<PosTerminalWarehouse> _warehouses = [];
     public int Id { get; private set; }
+    public int TenantId { get; private set; }
     public string Name { get; private set; }
     public int BranchId { get; private set; }
     public int DefaultWarehouseId { get; private set; }

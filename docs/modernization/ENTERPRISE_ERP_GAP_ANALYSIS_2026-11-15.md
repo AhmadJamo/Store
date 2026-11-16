@@ -54,3 +54,5 @@ ERP-001 replaces the only ordinary ERP page found asking for a typed ledger acco
 - User-to-branch grant model and whether cross-branch roles are additive or deny-by-default.
 - Inter-branch ownership/valuation policy while goods are in transit and discrepancy accounting.
 - POS drawer exclusivity, blind-close policy, variance thresholds and accounting posting ownership.
+
+ERP-007 completed 2026-11-16: the cash-session policy ADR and tenant/branch/terminal-scoped domain/schema foundation are implemented. Operational opening, sale movement attachment, blind close, approval commands and accounting remain ERP-008.

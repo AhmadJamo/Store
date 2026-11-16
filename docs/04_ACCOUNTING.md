@@ -243,3 +243,7 @@ ERP-001 changes bank-account setup presentation only: eligible linked ledgers ar
 # Inter-branch transfer discrepancies (ERP-005/006, 2026-11-16)
 
 Partial receipt, reported shortage and reported damage are operational inventory evidence only. The receipt workflow moves accepted stock at the preserved cost and does not automatically recognize a loss, expense, payable or journal entry for a discrepancy. Accounting recognition remains deferred until an authorized discrepancy-resolution policy defines ownership, evidence and posting rules.
+
+# POS cash foundation (ERP-007, 2026-11-16)
+
+Opening float, cash movements, blind counts and variances are operational evidence only in ERP-007. The new entities contain no journal reference and invoke no posting service. ERP-008 must define and implement accounting ownership through the existing journal/fiscal-period gateway; no variance expense or cash balance is recognized automatically.
