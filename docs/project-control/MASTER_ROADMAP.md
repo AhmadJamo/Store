@@ -558,3 +558,10 @@ Terminal-profile UI, operator shortcuts and automated gates are complete. Authen
 ## ERP-010 — COMPLETE 2026-11-16
 
 Completed the final planned branch/company dashboard slice with permitted-branch aggregation, granular authorization, bilingual cohesive Angular presentation and reconciliation exception visibility. ERP planned progress: 10/10.
+
+## ERP capability registry — 2026-11-18
+
+- `ERP_MASTER_ROADMAP.md` is the detailed checkable catalog: 180 capabilities and 1,440 execution tasks.
+- This file remains the priority authority; `NEXT_TASK.md` remains the only start authorization.
+- REC-004 is deferred after B10. Functional ERP/Angular completion takes priority.
+- The next bounded task is ERP-ROADMAP-001: validate open P0 capability gaps and choose one vertical slice.

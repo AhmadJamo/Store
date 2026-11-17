@@ -581,3 +581,6 @@ ERP-007 completed 2026-11-16: accepted POS cash-session ADR and tenant/branch/te
 - [x] REC-004B9: migrate fiscal-period lifecycle and posting-date enforcement to typed Application problems (2026-11-17).
 
 - [x] REC-004B10: migrate chart-of-accounts creation and the central posting/reversal gateway to typed Application problems (2026-11-17).
+
+- [x] ERP-ROADMAP-000: create the checkable ERP capability registry with 180 capabilities and 1,440 execution tasks (2026-11-18).
+- [ ] ERP-ROADMAP-001: verify P0 partial capability gaps against current code and select the first bounded vertical implementation slice.

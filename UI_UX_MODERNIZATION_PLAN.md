@@ -834,3 +834,10 @@ ERP expansion roadmap: 10/10 planned phases complete. Future work is backlog-dri
 - Account hierarchy, fiscal-period checks, document numbering, balancing and reversal rules are unchanged.
 - Verified: Release 0/0, 1,668 regression checks, 258 Angular tests, production and bundle gates.
 - Application classification progressed from 889 legacy/122 typed to 883 legacy/127 typed sites.
+
+## ERP capability roadmap handoff (2026-11-18)
+
+- Added `ERP_MASTER_ROADMAP.md` as the checkable cross-module capability and execution registry.
+- It contains 180 capabilities and 1,440 decomposed tasks across ERP, Angular, security, analytics, integrations, SaaS and operations.
+- Proven completed capabilities are checked; partial/planned/future capabilities stay open.
+- Remaining REC-004 error normalization is explicitly deferred behind ERP functional delivery.

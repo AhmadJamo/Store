@@ -533,3 +533,7 @@ Fiscal-period lifecycle and posting-date failures are typed without changing clo
 ## 2026-11-17 — REC-004B10
 
 Chart-of-accounts and central posting/reversal failures are typed without changing accounting authority. All gates passed; REC-004 remains active at 883 legacy/127 typed Application throw sites.
+
+## 2026-11-18 — ERP capability registry
+
+A documentation-only master capability registry now tracks 180 capabilities and 1,440 execution tasks with explicit completion marks. REC-004 is deferred after B10. The next gate is a read-only P0 gap validation before selecting one bounded ERP/Angular vertical slice.

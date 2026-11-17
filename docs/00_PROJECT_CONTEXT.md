@@ -229,3 +229,5 @@ REC-004B8 (2026-11-17) migrates the complete document-design lifecycle to typed 
 REC-004B9 (2026-11-17) migrates fiscal-period lifecycle and posting-date enforcement to typed ProblemDetails semantics without changing close readiness, status transitions, audit or journal authority.
 
 REC-004B10 (2026-11-17) migrates chart-of-accounts creation and the central journal posting/reversal gateway to typed ProblemDetails semantics without changing hierarchy, numbering, fiscal-period or balancing authority.
+
+ERP capability registry (2026-11-18): `ERP_MASTER_ROADMAP.md` records 180 current/future capabilities and 1,440 decomposed execution tasks in checkable tables. It distinguishes proven completion, partial implementation, planned gaps and optional sector expansion. Project-control `NEXT_TASK.md` remains the only execution authority; REC-004 error normalization is deferred.

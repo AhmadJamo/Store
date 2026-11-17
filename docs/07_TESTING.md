@@ -332,3 +332,9 @@ Angular passed 256/256 tests across 122 files. New tests prove mutation conflict
 - Angular: 122 files and 258 tests passed.
 - Production and bundle gate: 340,433/358,400 initial; 81,895/81,920 largest lazy.
 - Application baseline: 883 legacy and 127 typed throw sites.
+
+## ERP roadmap documentation verification — 2026-11-18
+
+- Markdown registry generated with 180 capability rows and 1,440 execution-task rows.
+- Checkbox/status counts were generated from one capability source list and reviewed for explicit completed/partial/planned/future separation.
+- No runtime, schema, permission, API or Angular source changed; build/test gates were therefore not rerun for this documentation-only task.

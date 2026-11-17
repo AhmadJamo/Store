@@ -959,3 +959,5 @@ REC-004B8 map: `DocumentDesignService` selects not-found, duplicate and lifecycl
 REC-004B9 map: `FiscalPeriodService` selects missing-period, lifecycle/posting conflict, malformed-input and rowversion-concurrency semantics; the existing Settings API shared mapper owns HTTP classification.
 
 REC-004B10 map: `AccountService` and `JournalPostingService` select missing/duplicate/input semantics. `AccountsApiController` uses the shared mapper; all posting features continue through the same central Application gateway.
+
+`ERP_MASTER_ROADMAP.md` — living ERP capability registry with 180 capabilities, 1,440 execution tasks, checkboxes, priority and status. It is documentation-only and is governed by `docs/project-control/MASTER_ROADMAP.md` and `NEXT_TASK.md`.
