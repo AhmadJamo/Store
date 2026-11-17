@@ -225,3 +225,5 @@ REC-004B6 (2026-11-17) migrates measurement-unit, tax-rate, payment-method and b
 REC-004B7 (2026-11-17) extends typed ProblemDetails semantics across general, sourcing, POS, exchange-rate and accounting settings. Existing concurrency, validation, permission and business rules remain unchanged.
 
 REC-004B8 (2026-11-17) migrates the complete document-design lifecycle to typed ProblemDetails semantics without changing immutable versioning, activation/default behavior or rendering.
+
+REC-004B9 (2026-11-17) migrates fiscal-period lifecycle and posting-date enforcement to typed ProblemDetails semantics without changing close readiness, status transitions, audit or journal authority.

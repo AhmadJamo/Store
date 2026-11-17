@@ -96,3 +96,9 @@
 - الحالة: Completed — 2026-11-17.
 - النطاق: Document Designs lifecycle + API ProblemDetails.
 - التالي: دفعة مستقلة أخرى من الجرد المقاس ثم مراجعة إغلاق REC-004.
+
+## TASK-REC-004B9
+
+- الحالة: Completed — 2026-11-17.
+- النطاق: Fiscal Period lifecycle + posting-date enforcement.
+- التالي: اختيار دفعة مترابطة جديدة من بوابات المحاسبة أو التشغيل.

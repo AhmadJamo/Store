@@ -419,3 +419,5 @@ REC-004B6 preserves all existing reference-master permissions and antiforgery bo
 REC-004B7 changes no Settings permissions, antiforgery behavior or audit writes. Typed failures retain localized text and correlation IDs without revealing persistence details.
 
 REC-004B8 retains the existing `Administration.Access`, authorization and mutation boundaries. Only safe localized ProblemDetails classification changed; correlation IDs remain present.
+
+REC-004B9 retains the separate `FiscalPeriods.View`, `SoftClose`, `Close` and `Reopen` permission boundaries plus antiforgery and audit evidence. Responses remain localized and correlation-aware.

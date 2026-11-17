@@ -1,4 +1,5 @@
 using MiniStore.Application.DTOs.Settings;
+using MiniStore.Application.Exceptions;
 using MiniStore.Application.Dtos.Accounting;
 using MiniStore.Domain.Entities;
 using MiniStore.Domain.Interfaces;
@@ -25,7 +26,7 @@ public sealed class FiscalPeriodService(
         await unitOfWork.ExecuteInTransactionAsync(async () =>
         {
             if (await repository.OverlapsAsync(dto.StartDate.Date, dto.EndDate.Date))
-                throw new InvalidOperationException("Fiscal periods cannot overlap.");
+                throw new BusinessConflictException("Fiscal periods cannot overlap.");
             await repository.AddAsync(new FiscalPeriod(dto.Name, dto.StartDate, dto.EndDate));
         });
     }
@@ -57,15 +58,15 @@ public sealed class FiscalPeriodService(
         await unitOfWork.ExecuteInTransactionAsync(async () =>
         {
             var period = await repository.GetByIdAsync(id)
-                ?? throw new InvalidOperationException("Fiscal period was not found.");
+                ?? throw new ResourceNotFoundException("Fiscal period was not found.");
             var target = requestedTarget ?? period.Status switch
             {
                 FiscalPeriodStatus.SoftClosed => FiscalPeriodStatus.Open,
                 FiscalPeriodStatus.Closed => FiscalPeriodStatus.SoftClosed,
-                _ => throw new InvalidOperationException("Only a soft-closed or closed fiscal period can be reopened.")
+                _ => throw new BusinessConflictException("Only a soft-closed or closed fiscal period can be reopened.")
             };
             if (requireReadiness && period.EndDate.Date > DateTime.Today)
-                throw new InvalidOperationException("Fiscal period cannot be closed before its end date.");
+                throw new BusinessConflictException("Fiscal period cannot be closed before its end date.");
             if (requireReadiness)
             {
                 var report = await closeReadiness.GetAsync(new CashFlowCloseQueryDto
@@ -76,13 +77,13 @@ public sealed class FiscalPeriodService(
                 var blockers = report.Readiness.Where(check => check.Status == "Blocked" &&
                     check.Code != "FiscalPeriod").Select(check => check.Code).ToArray();
                 if (blockers.Length > 0)
-                    throw new InvalidOperationException(
+                    throw new BusinessConflictException(
                         "Fiscal period close is blocked. Review close readiness and resolve every blocker.");
             }
 
             byte[] rowVersion;
             try { rowVersion = Convert.FromBase64String(dto.RowVersion); }
-            catch (FormatException) { throw new InvalidOperationException("Fiscal period version is invalid."); }
+            catch (FormatException) { throw new ArgumentException("Fiscal period version is invalid."); }
             if (rowVersion.Length == 0 || !period.RowVersion.SequenceEqual(rowVersion))
                 throw new SettingsConcurrencyException(
                     "Fiscal period was modified by another user. Reload and try again.");
@@ -103,9 +104,9 @@ public sealed class FiscalPeriodService(
         if (!await repository.AnyAsync())
             return;
         var period = await repository.FindForDateAsync(date)
-            ?? throw new InvalidOperationException("The posting date is not covered by a fiscal period.");
+            ?? throw new BusinessConflictException("The posting date is not covered by a fiscal period.");
         if (period.Status != FiscalPeriodStatus.Open)
-            throw new InvalidOperationException("The fiscal period for the posting date is not open.");
+            throw new BusinessConflictException("The fiscal period for the posting date is not open.");
     }
 
     private static FiscalPeriodDto Map(FiscalPeriod period) => new()

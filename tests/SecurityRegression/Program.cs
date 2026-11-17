@@ -144,6 +144,12 @@ var documentDesignApiSource = File.ReadAllText(Path.Combine("MiniStore.Web", "Co
 Check(!documentDesignServiceSource.Contains("throw new InvalidOperationException", StringComparison.Ordinal) &&
     documentDesignApiSource.Contains("ApplicationProblem", StringComparison.Ordinal),
     "Document designs must retain typed not-found, duplicate, conflict and API mapping semantics");
+var fiscalPeriodProblemSource = File.ReadAllText(Path.Combine("MiniStore.Application", "Services", "Settings", "FiscalPeriodService.cs"));
+Check(!fiscalPeriodProblemSource.Contains("throw new InvalidOperationException", StringComparison.Ordinal) &&
+    fiscalPeriodProblemSource.Contains("ResourceNotFoundException", StringComparison.Ordinal) &&
+    fiscalPeriodProblemSource.Contains("BusinessConflictException", StringComparison.Ordinal) &&
+    fiscalPeriodProblemSource.Contains("SettingsConcurrencyException", StringComparison.Ordinal),
+    "Fiscal periods must retain explicit not-found, conflict, input and concurrency semantics");
 var mvcCutoverResolver = new PresentationCutoverResolver(Options.Create(
     new PresentationCutoverOptions
     {

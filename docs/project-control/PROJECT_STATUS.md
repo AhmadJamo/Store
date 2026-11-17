@@ -525,3 +525,7 @@ System settings failures are typed across five cohesive services and use the exi
 ## 2026-11-17 — REC-004B8
 
 Document-design lifecycle failures are typed and mapped consistently. All gates passed; REC-004 remains active at 897 legacy/115 typed Application throw sites.
+
+## 2026-11-17 — REC-004B9
+
+Fiscal-period lifecycle and posting-date failures are typed without changing close authority. All gates passed; REC-004 remains active at 889 legacy/122 typed Application throw sites.

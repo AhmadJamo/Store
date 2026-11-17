@@ -87,3 +87,5 @@ REC-004B6: measurement-unit duplicates return `409/duplicate`; missing source/de
 REC-004B7: missing POS terminals, exchange rates and posting accounts return 404; missing prerequisite configuration and protected accounting-policy changes return `409/conflict`; row-version failures remain `409/concurrency`; input validation remains 400.
 
 REC-004B8: missing source/design records return 404; duplicate type/code/version returns `409/duplicate`; invalid clone ancestry/version returns `409/conflict`; stale rowversions remain `409/concurrency`; section and form validation remain 400.
+
+REC-004B9: the fiscal-period Settings workflow now exposes typed missing/conflict/input/concurrency responses while preserving its separate transition permissions, readiness report and audit behavior.

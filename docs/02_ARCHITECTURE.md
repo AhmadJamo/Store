@@ -212,3 +212,5 @@ REC-004B6 keeps reference-master failure meaning in the Application layer and HT
 REC-004B7 preserves the Settings API as a cohesive configuration boundary: services identify missing resources and protected state transitions; Web maps them to stable ProblemDetails codes. Row-version concurrency remains a distinct first-class response.
 
 REC-004B8 keeps document-design lifecycle meaning in Application and HTTP mapping in Web. Immutable design version rules, UnitOfWork transactions and the PDF extension boundary are unchanged.
+
+REC-004B9 preserves fiscal-period authority in Application and the central journal posting gateway. Typed exceptions describe failure meaning only; UnitOfWork, readiness and semantic audit boundaries are unchanged.

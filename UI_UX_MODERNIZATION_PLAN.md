@@ -818,3 +818,11 @@ ERP expansion roadmap: 10/10 planned phases complete. Future work is backlog-dri
 - No design lifecycle, versioning, rendering or PDF rule changed.
 - Verified: Release 0/0, 1,666 regression checks, 258 Angular tests, production and bundle gates.
 - Application classification progressed from 905 legacy/107 typed to 897 legacy/115 typed sites.
+
+## REC-004B9 — Fiscal-period errors (2026-11-17)
+
+- Fiscal-period creation, soft close, close, reopen and posting-date enforcement now emit explicit not-found, business-conflict, input and concurrency semantics.
+- The existing Settings API mapper returns stable 404/409/400 responses; close-readiness, audit and UnitOfWork behavior are unchanged.
+- Malformed rowversion remains a 400 input error while a stale valid rowversion remains `409/concurrency`.
+- Verified: Release 0/0, 1,667 regression checks, 258 Angular tests, production and bundle gates.
+- Application classification progressed from 897 legacy/115 typed to 889 legacy/122 typed sites.
