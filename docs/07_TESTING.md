@@ -259,3 +259,9 @@ Release build passed with zero warnings/errors; security/inventory regression pa
 ## REC-004A operation error toasts — 2026-11-17
 
 Angular passed 256/256 tests across 122 files. New tests prove mutation conflicts create a concise toast with correlation ID, named field validation does not create a toast, 401 is not duplicated, the queue is bounded to three messages and errors expire. Production build passed; initial size is 340,416/358,400 bytes and largest lazy chunk is 81,895/81,920 bytes.
+## REC-004B1 verification — 2026-11-17
+
+- Angular: 258/258 tests across 122 files, including stable `conflict` code and untyped 409 fallback.
+- Regression executable: 1,652 checks, including 409 conflict and 400 validation invariants.
+- Release solution build: passed with 0 warnings and 0 errors before the running host locked Release output; subsequent focused regression rebuild used Debug.
+- Production Angular build passed; bundle gate passed at 340,433/358,400 initial bytes and 81,895/81,920 largest lazy bytes.

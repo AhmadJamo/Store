@@ -406,3 +406,6 @@ Branch create/update/status endpoints require their independent permission and a
 ### Error toast disclosure boundary
 
 The operation toast displays only localized ProblemDetails title/detail and correlation ID already returned to the caller. It does not show stack traces, provider exceptions or audit-sensitive metadata. 401 remains owned by the authentication interceptor, and field validation remains in the form. The toast is presentation feedback and grants no permission or retry authority.
+## ProblemDetails classification guard — 2026-11-17
+
+Business-state rejections expose localized ProblemDetails and correlation IDs without exception internals. A regression guard fixes default HTTP 409 classification to `conflict` and keeps HTTP 400 as `validation`; authorization failures remain owned by the existing 401/403 path.

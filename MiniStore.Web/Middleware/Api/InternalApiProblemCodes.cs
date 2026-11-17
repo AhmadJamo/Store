@@ -4,6 +4,7 @@ public static class InternalApiProblemCodes
 {
     public const string Validation = "validation";
     public const string Duplicate = "duplicate";
+    public const string Conflict = "conflict";
     public const string Concurrency = "concurrency";
     public const string NotFound = "not_found";
     public const string Unauthorized = "unauthorized";
@@ -16,6 +17,7 @@ public static class InternalApiProblemCodes
         StatusCodes.Status401Unauthorized => Unauthorized,
         StatusCodes.Status403Forbidden => Forbidden,
         StatusCodes.Status404NotFound => NotFound,
+        StatusCodes.Status409Conflict => Conflict,
         StatusCodes.Status408RequestTimeout or StatusCodes.Status429TooManyRequests => Transient,
         >= StatusCodes.Status500InternalServerError => Transient,
         _ => Validation

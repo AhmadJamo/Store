@@ -47,3 +47,9 @@
 - النطاق: توستر لأخطاء mutation غير الحقلية فقط؛ لا تغيير لتصنيف الخادم.
 - الدليل: 256 Angular tests، production build، initial/lazy budgets.
 - المتبقي: REC-004B جرد وتوحيد 400/404/409/500 وأكواد ProblemDetails.
+## TASK-REC-004B1
+
+- الحالة: Completed — 2026-11-17.
+- النتيجة: كود `conflict` ثابت لتعارضات الأعمال 409؛ `concurrency` محصور بتعارض rowversion الصريح؛ validation بقي 400.
+- النطاق: حذف المنتج/المستودع وتعارضات الموردين المعروفة، مع تصنيف Angular واختبارات منع الانحدار.
+- المتبقي: استكمال جرد InvalidOperationException وتصنيف الحالات المؤكدة فقط دون مطابقة نصوص هشة.

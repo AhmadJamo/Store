@@ -63,6 +63,11 @@ void Check(bool condition, string message)
     count++;
 }
 
+Check(InternalApiProblemCodes.FromStatus(StatusCodes.Status409Conflict) == InternalApiProblemCodes.Conflict,
+    "Untyped HTTP 409 responses must remain business conflicts, not concurrency or validation errors");
+Check(InternalApiProblemCodes.FromStatus(StatusCodes.Status400BadRequest) == InternalApiProblemCodes.Validation,
+    "HTTP 400 responses must remain validation errors");
+
 var mvcCutoverResolver = new PresentationCutoverResolver(Options.Create(
     new PresentationCutoverOptions
     {

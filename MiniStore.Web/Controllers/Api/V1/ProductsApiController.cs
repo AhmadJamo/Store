@@ -89,7 +89,7 @@ public sealed class ProductsApiController(
         {
             logger.LogWarning(exception, "Product {ProductId} could not be deleted", id);
             return InternalApiProblemFactory.Create(HttpContext, StatusCodes.Status409Conflict,
-                localizer["Product cannot be deleted."], InternalApiProblemCodes.Validation,
+                localizer["Product cannot be deleted."], InternalApiProblemCodes.Conflict,
                 localizer["The product is used by existing operations and cannot be deleted."]);
         }
     }

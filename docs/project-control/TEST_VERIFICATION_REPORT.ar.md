@@ -60,3 +60,14 @@
 | Largest lazy chunk | 81,895 / 81,920 bytes |
 
 السياسة المختبرة: conflict mutation يظهر كتـوستر؛ field validation و401 لا يتكرران في التوستر؛ الطابور محدود ويزول تلقائيًا.
+## TASK-REC-004B1 — 2026-11-17
+
+| الفحص | النتيجة |
+|---|---|
+| Angular unit | 258/258، 122 ملفًا |
+| Security/inventory regression | 1,652 ناجحًا |
+| Solution Release | ناجح، 0 تحذير/0 خطأ قبل قفل الخادم العامل لملفات Release |
+| Angular production | ناجح |
+| Bundle gate | initial 340,433/358,400؛ lazy 81,895/81,920 |
+
+ثبتت الاختبارات أن 409 غير المرمز يصنف `conflict`، وأن `concurrency` لا يستخدم إلا إذا أرسله الخادم صراحة، وأن 400 يبقى `validation`.

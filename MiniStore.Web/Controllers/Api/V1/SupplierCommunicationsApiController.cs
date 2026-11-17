@@ -71,5 +71,5 @@ public sealed class SupplierCommunicationsApiController(
         HttpContext,
         StatusCodes.Status409Conflict,
         localizer[message],
-        InternalApiProblemCodes.Validation);
+        InternalApiProblemCodes.Conflict);
 }

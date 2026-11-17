@@ -199,3 +199,6 @@ The antiforgery-protected API delegates to the Application service, which re-res
 ### Operation error toast boundary
 
 Mutation ProblemDetails may be summarized globally by `operationErrorToastInterceptor`, but the interceptor does not classify business rules, translate server text, retry requests, clear forms or replace field-level validation. It ignores GET, 401 and named field-error payloads. Feature pages remain responsible for inline recovery and exact field focus; server/API layers remain authoritative for status, code, localization and correlation ID.
+## Internal API conflict semantics — 2026-11-17
+
+The presentation contract separates HTTP status from recovery meaning. `409/concurrency` is reserved for optimistic row-version races; `409/conflict` represents a valid command rejected by current business state. Validation remains 400 with named errors when applicable. The Angular client classifies by stable code first and status only as a conservative fallback. No domain rule or transaction boundary changed.

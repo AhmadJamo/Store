@@ -16,7 +16,7 @@ export class ApiErrorService {
 
   private classify(problem: ApiProblem): ApiProblemKind {
     const byCode: Record<string, ApiProblemKind> = {
-      validation: 'validation', duplicate: 'duplicate', concurrency: 'concurrency',
+      validation: 'validation', duplicate: 'duplicate', conflict: 'conflict', concurrency: 'concurrency',
       not_found: 'notFound', unauthorized: 'unauthorized', forbidden: 'forbidden', transient: 'transient',
     };
     if (problem.code && byCode[problem.code]) return byCode[problem.code];
@@ -24,7 +24,7 @@ export class ApiErrorService {
     if (problem.status === 401) return 'unauthorized';
     if (problem.status === 403) return 'forbidden';
     if (problem.status === 404) return 'notFound';
-    if (problem.status === 409) return 'concurrency';
+    if (problem.status === 409) return 'conflict';
     if (problem.status === 0 || problem.status === 408 || problem.status === 429 || (problem.status ?? 0) >= 500) return 'transient';
     return 'unknown';
   }

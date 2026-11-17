@@ -212,3 +212,6 @@ The executable route/function inventory covers 196 unique Angular screen routes 
 ## REC-004A operation error toasts — 2026-11-17
 
 Angular now presents concise localized ProblemDetails from failed mutation requests as bounded, dismissible toasts while retaining existing inline recovery and form state. Field-level validation remains inside forms, GET/load failures remain in page recovery states, and 401 continues through the dedicated authentication handler. This is the first REC-004 presentation slice; server error classification remains the active task.
+## Error contract update — 2026-11-17
+
+Internal API ProblemDetails now distinguishes ordinary business conflicts (`conflict`) from optimistic row-version conflicts (`concurrency`). HTTP 400 remains field/form validation, 404 remains not-found, and all responses retain correlation evidence. Angular mutation failures can therefore show concise toast feedback without misrepresenting a delete/state restriction as a concurrent edit.

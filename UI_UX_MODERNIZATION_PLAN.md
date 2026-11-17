@@ -759,3 +759,10 @@ ERP expansion roadmap: 10/10 planned phases complete. Future work is backlog-dri
 - Toasts are RTL-safe, keyboard-dismissible, responsive, limited to three and auto-expire.
 - Verification: Angular 256/256, production build passed, initial 340,416/358,400 bytes, lazy 81,895/81,920 bytes.
 - REC-004 continues with server ProblemDetails classification.
+## REC-004B1 — Stable business-conflict classification (2026-11-17)
+
+- Added the stable `conflict` ProblemDetails code for non-concurrency HTTP 409 operations.
+- Product and warehouse delete restrictions plus supplier integration, communication and portal state conflicts now use `conflict`; field validation remains HTTP 400 and optimistic concurrency remains `concurrency`.
+- Angular no longer treats every untyped 409 as optimistic concurrency. Mutation ProblemDetails continue through the bounded toast while forms preserve entered values.
+- Verified: Release solution build 0/0, 258 Angular tests, 1,652 regression checks, production build and bundle gates (340,433/358,400 initial; 81,895/81,920 lazy).
+- Remaining REC-004 work: classify the broader InvalidOperationException inventory into typed validation, duplicate, not-found and conflict responses without message guessing or business-rule changes.

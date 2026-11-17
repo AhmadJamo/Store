@@ -5,11 +5,16 @@ describe('ApiErrorService', () => {
   const service = new ApiErrorService();
 
   it.each([
-    ['validation', 'validation'], ['duplicate', 'duplicate'], ['concurrency', 'concurrency'],
+    ['validation', 'validation'], ['duplicate', 'duplicate'], ['conflict', 'conflict'], ['concurrency', 'concurrency'],
     ['not_found', 'notFound'], ['unauthorized', 'unauthorized'], ['forbidden', 'forbidden'], ['transient', 'transient'],
   ] as const)('classifies the stable %s problem code', (code, expected) => {
     const result = service.normalize(new HttpErrorResponse({ status: 400, error: { code } }));
     expect(result.kind).toBe(expected);
+  });
+
+  it('does not mistake an untyped business conflict for an optimistic concurrency failure', () => {
+    const result = service.normalize(new HttpErrorResponse({ status: 409, error: { title: 'Cannot delete' } }));
+    expect(result.kind).toBe('conflict');
   });
 
   it('allows retry only for transient failures', () => {

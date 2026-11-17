@@ -46,6 +46,7 @@ export interface ApiProblem {
 export type ApiProblemKind =
   | 'validation'
   | 'duplicate'
+  | 'conflict'
   | 'concurrency'
   | 'notFound'
   | 'unauthorized'

@@ -20,7 +20,7 @@ export class ApiRecoveryComponent {
 
   protected descriptionKey(): MessageKey {
     return ({
-      validation: 'recoveryValidation', duplicate: 'recoveryDuplicate', concurrency: 'recoveryConcurrency',
+      validation: 'recoveryValidation', duplicate: 'recoveryDuplicate', conflict: 'recoveryUnknown', concurrency: 'recoveryConcurrency',
       notFound: 'recoveryNotFound', unauthorized: 'recoveryUnauthorized', forbidden: 'recoveryForbidden',
       transient: 'recoveryTransient', unknown: 'recoveryUnknown',
     } as const)[this.problem().kind];

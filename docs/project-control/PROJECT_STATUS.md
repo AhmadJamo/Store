@@ -490,3 +490,7 @@ Implementation and authenticated Microsoft Edge acceptance are complete. All 15 
 ## 2026-11-16 — ERP expansion roadmap complete (10/10)
 
 ERP-010 is complete. The Branches workspace now exposes server-owned operational and reconciliation indicators only when `Branches.ViewOperations` is authorized, and all data remains limited to the caller's permitted branches. Release, security regression, Angular tests and production build passed. Future tasks must be selected from the maintained backlog and recorded in NEXT_TASK before implementation.
+
+## 2026-11-17 — REC-004B1 stable conflict semantics
+
+The first server-classification slice is complete. Non-concurrency HTTP 409 responses now use the stable `conflict` code, while explicit row-version races remain `concurrency` and form validation remains 400. Product/warehouse delete restrictions and supplier workflow conflicts were corrected without changing business rules. Angular, regression, production and bundle gates passed. REC-004 remains in progress for the remaining InvalidOperationException inventory.
