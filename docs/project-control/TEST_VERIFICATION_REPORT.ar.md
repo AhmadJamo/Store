@@ -97,3 +97,13 @@
 | Angular unit | 258/258، 122 ملفًا |
 | Production + bundle | ناجح؛ 340,433 initial و81,895 lazy |
 | Application classification | 952 legacy؛ 58 typed |
+## TASK-REC-004B5 — 2026-11-17
+
+| الفحص | النتيجة |
+|---|---|
+| Release | ناجح، 0 تحذير/0 خطأ |
+| Regression | 1,662 ناجحًا |
+| Catalog message-matching guard | ناجح على Categories/Attributes/Templates |
+| Angular | 258/258 |
+| Production + bundle | 340,433 initial؛ 81,895 lazy ضمن الحدود |
+| Classification | 924 legacy؛ 86 typed |

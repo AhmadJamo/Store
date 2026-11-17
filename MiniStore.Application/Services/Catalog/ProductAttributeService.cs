@@ -1,3 +1,4 @@
+using MiniStore.Application.Exceptions;
 using MiniStore.Application.DTOs.Products;
 using MiniStore.Domain.Entities;
 using MiniStore.Domain.Interfaces;
@@ -45,7 +46,7 @@ public sealed class ProductAttributeService(
     {
         var normalizedCode = dto.Code.Trim().ToUpperInvariant();
         if (await repository.CodeExistsAsync(normalizedCode))
-            throw new InvalidOperationException("An attribute with this code already exists.");
+            throw new DuplicateResourceException("An attribute with this code already exists.");
         var distinctCategoryIds = dto.ProductCategoryIds.Where(x => x > 0).Distinct().ToList();
         foreach (var categoryId in distinctCategoryIds)
         {
@@ -80,7 +81,7 @@ public sealed class ProductAttributeService(
     public async Task SetActiveAsync(int id, bool isActive)
     {
         var definition = await repository.GetDefinitionAsync(id)
-            ?? throw new InvalidOperationException("Product attribute was not found.");
+            ?? throw new ResourceNotFoundException("Product attribute was not found.");
         definition.SetActive(isActive);
         await repository.SaveChangesAsync();
     }
@@ -88,7 +89,7 @@ public sealed class ProductAttributeService(
     public async Task<ProductAttributeValuesPageDto> GetValuesPageAsync(int productId)
     {
         var product = await products.GetByIdAsync(productId)
-            ?? throw new InvalidOperationException("Product not found.");
+            ?? throw new ResourceNotFoundException("Product not found.");
         var definitions = (await repository.GetDefinitionsAsync()).Where(x => x.IsActive).ToList();
         var links = await repository.GetCategoryLinksAsync();
         var options = await repository.GetOptionsAsync();
@@ -153,7 +154,7 @@ public sealed class ProductAttributeService(
         await unitOfWork.ExecuteInTransactionAsync(async () =>
         {
             var product = await products.GetByIdAsync(productId)
-                ?? throw new InvalidOperationException("Product not found.");
+                ?? throw new ResourceNotFoundException("Product not found.");
             await productTemplates.RefreshAssignedVariantAsync(product, newValues);
             repository.RemoveValues(await repository.GetValuesAsync(productId));
             foreach (var value in newValues) await repository.AddValueAsync(value);

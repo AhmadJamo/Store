@@ -72,3 +72,9 @@
 
 - الحالة: Completed — 2026-11-17.
 - النطاق: Customers + Suppliers + Products typed duplicate/concurrency/conflict.
+
+
+## TASK-REC-004B5
+
+- الحالة: Completed — 2026-11-17.
+- النطاق: Product Categories + Attributes + Templates.

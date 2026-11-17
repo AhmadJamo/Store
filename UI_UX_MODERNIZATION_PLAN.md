@@ -787,3 +787,10 @@ ERP expansion roadmap: 10/10 planned phases complete. Future work is backlog-dri
 - Product barcode duplicates, missing products/accounts and product-state restrictions are typed; Products API no longer detects duplicates by searching error-message text.
 - Validation errors remain 400 and Angular retains entered form values; 409 mutation feedback is available to the global toast.
 - Verified: 1,661 regression checks, 258 Angular tests, production build and bundle gates. Measured Application backlog moved from 959/51 to 952 legacy/58 typed throw sites.
+## REC-004B5 — Catalog configuration errors (2026-11-17)
+
+- Product categories, attributes and templates now emit typed not-found, duplicate and business-conflict semantics from Application services.
+- Their APIs use the shared mapper and no longer search error messages for `already exists`.
+- Duplicate category code/name, attribute code, template code and variant identity return `409/duplicate`; missing resources return 404; invalid template/generation state returns `409/conflict`; field parsing remains 400.
+- Verified: Release 0/0, 1,662 regression checks, 258 Angular tests, production and bundle gates.
+- Application classification progressed from 952 legacy/58 typed to 924 legacy/86 typed sites.

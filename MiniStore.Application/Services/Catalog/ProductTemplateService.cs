@@ -1,3 +1,4 @@
+using MiniStore.Application.Exceptions;
 using System.Globalization;
 using System.Security.Cryptography;
 using System.Text;
@@ -82,11 +83,11 @@ public sealed class ProductTemplateService(
     {
         var plan = await BuildGenerationPlanAsync(dto);
         var source = await products.GetByIdAsync(dto.SourceProductId)
-            ?? throw new InvalidOperationException("Source product was not found.");
+            ?? throw new ResourceNotFoundException("Source product was not found.");
         var template = await templates.GetByIdAsync(dto.ProductTemplateId)
-            ?? throw new InvalidOperationException("Product template was not found.");
+            ?? throw new ResourceNotFoundException("Product template was not found.");
         if (source.ProductType == ProductType.PreparedToOrder)
-            throw new InvalidOperationException("Prepared-to-order variants must be created manually because recipes are not cloned.");
+            throw new BusinessConflictException("Prepared-to-order variants must be created manually because recipes are not cloned.");
         var sourceValues = await attributes.GetValuesAsync(source.Id);
         var definitions = await attributes.GetDefinitionsAsync();
         var variantDefinitionIds = definitions.Where(x => x.IsActive && x.IsVariantDefining).Select(x => x.Id).ToHashSet();
@@ -128,7 +129,7 @@ public sealed class ProductTemplateService(
         if (!category.IsActive) throw new ArgumentException("Selected product category is inactive.");
         var code = dto.Code.Trim().ToUpperInvariant();
         if (await templates.CodeExistsAsync(code))
-            throw new InvalidOperationException("A product template with this code already exists.");
+            throw new DuplicateResourceException("A product template with this code already exists.");
         await templates.AddAsync(new ProductTemplate(dto.Name, code, category.Id));
         await templates.SaveChangesAsync();
     }
@@ -136,7 +137,7 @@ public sealed class ProductTemplateService(
     public async Task AssignAsync(AssignProductTemplateDto dto)
     {
         var product = await products.GetByIdAsync(dto.ProductId)
-            ?? throw new InvalidOperationException("Product not found.");
+            ?? throw new ResourceNotFoundException("Product not found.");
         if (!dto.ProductTemplateId.HasValue)
         {
             product.AssignTemplate(null, null, null);
@@ -144,14 +145,14 @@ public sealed class ProductTemplateService(
             return;
         }
         var template = await templates.GetByIdAsync(dto.ProductTemplateId.Value)
-            ?? throw new InvalidOperationException("Product template was not found.");
-        if (!template.IsActive) throw new InvalidOperationException("Product template is inactive.");
+            ?? throw new ResourceNotFoundException("Product template was not found.");
+        if (!template.IsActive) throw new BusinessConflictException("Product template is inactive.");
         if (product.ProductCategoryId != template.ProductCategoryId)
-            throw new InvalidOperationException("Product and template must use the same category.");
+            throw new BusinessConflictException("Product and template must use the same category.");
 
         var (signature, label) = await BuildVariantIdentityAsync(product);
         if (await templates.VariantSignatureExistsAsync(template.Id, signature, product.Id))
-            throw new InvalidOperationException("This template already contains a product with the same variant values.");
+            throw new DuplicateResourceException("This template already contains a product with the same variant values.");
         product.AssignTemplate(template.Id, signature, label);
         await products.SaveChangesAsync();
     }
@@ -160,10 +161,10 @@ public sealed class ProductTemplateService(
     {
         if (!product.ProductTemplateId.HasValue) return;
         var template = await templates.GetByIdAsync(product.ProductTemplateId.Value)
-            ?? throw new InvalidOperationException("Product template was not found.");
+            ?? throw new ResourceNotFoundException("Product template was not found.");
         var (signature, label) = await BuildVariantIdentityAsync(product, pendingValues);
         if (await templates.VariantSignatureExistsAsync(template.Id, signature, product.Id))
-            throw new InvalidOperationException("This template already contains a product with the same variant values.");
+            throw new DuplicateResourceException("This template already contains a product with the same variant values.");
         product.AssignTemplate(template.Id, signature, label);
     }
 
@@ -179,7 +180,7 @@ public sealed class ProductTemplateService(
         var applicable = definitions.Where(x => !scopedIds.Contains(x.Id) || linkedIds.Contains(x.Id))
             .OrderBy(x => x.Code).ToList();
         if (applicable.Count == 0)
-            throw new InvalidOperationException("The product category has no active variant-defining attributes.");
+            throw new BusinessConflictException("The product category has no active variant-defining attributes.");
         var values = suppliedValues ?? await attributes.GetValuesAsync(product.Id);
         var options = await attributes.GetOptionsAsync();
         var canonicalParts = new List<string>();
@@ -187,7 +188,7 @@ public sealed class ProductTemplateService(
         foreach (var definition in applicable)
         {
             var value = values.FirstOrDefault(x => x.ProductAttributeDefinitionId == definition.Id)
-                ?? throw new InvalidOperationException("Every variant-defining attribute must have a value before template assignment.");
+                ?? throw new BusinessConflictException("Every variant-defining attribute must have a value before template assignment.");
             var display = FormatValue(value, options);
             canonicalParts.Add($"{definition.Code}={display.Code}");
             labels.Add($"{definition.Name}: {display.Label}");
@@ -200,26 +201,26 @@ public sealed class ProductTemplateService(
     private async Task<List<GenerationCombination>> BuildGenerationPlanAsync(VariantGenerationInputDto dto)
     {
         var template = await templates.GetByIdAsync(dto.ProductTemplateId)
-            ?? throw new InvalidOperationException("Product template was not found.");
-        if (!template.IsActive) throw new InvalidOperationException("Product template is inactive.");
+            ?? throw new ResourceNotFoundException("Product template was not found.");
+        if (!template.IsActive) throw new BusinessConflictException("Product template is inactive.");
         var source = await products.GetByIdAsync(dto.SourceProductId)
-            ?? throw new InvalidOperationException("Source product was not found.");
+            ?? throw new ResourceNotFoundException("Source product was not found.");
         if (source.ProductTemplateId != template.Id)
-            throw new InvalidOperationException("Source product must already belong to the selected template.");
+            throw new BusinessConflictException("Source product must already belong to the selected template.");
 
         var definitions = await attributes.GetDefinitionsAsync();
         var links = await attributes.GetCategoryLinksAsync();
         var applicable = GetGenerationDefinitions(template.ProductCategoryId, definitions, links);
         var allApplicableVariantDefinitions = GetApplicableVariantDefinitions(template.ProductCategoryId, definitions, links);
         if (allApplicableVariantDefinitions.Any(x => x.DataType != ProductAttributeDataType.Selection))
-            throw new InvalidOperationException("Automatic generation supports selection-based variant attributes only.");
+            throw new BusinessConflictException("Automatic generation supports selection-based variant attributes only.");
         if (applicable.Count == 0)
-            throw new InvalidOperationException("The template category has no selectable variant attributes.");
+            throw new BusinessConflictException("The template category has no selectable variant attributes.");
         var allOptions = await attributes.GetOptionsAsync();
         var selected = allOptions.Where(x => x.IsActive && dto.OptionIds.Contains(x.Id)).ToList();
         var groups = applicable.Select(definition => selected.Where(x => x.ProductAttributeDefinitionId == definition.Id).ToList()).ToList();
         if (groups.Any(x => x.Count == 0) || selected.Count != dto.OptionIds.Distinct().Count())
-            throw new InvalidOperationException("Select at least one valid option for every variant attribute.");
+            throw new BusinessConflictException("Select at least one valid option for every variant attribute.");
         var combinations = VariantCombinationBuilder.Build(groups, MaximumGeneratedVariants);
         var result = new List<GenerationCombination>();
         foreach (var combination in combinations)
@@ -267,7 +268,7 @@ public sealed class ProductTemplateService(
         if (value.BooleanValue.HasValue)
             return (value.BooleanValue.Value ? "B:1" : "B:0", value.BooleanValue.Value ? "Yes" : "No");
         var option = options.FirstOrDefault(x => x.Id == value.ProductAttributeOptionId)
-            ?? throw new InvalidOperationException("A variant selection option was not found.");
+            ?? throw new ResourceNotFoundException("A variant selection option was not found.");
         return ($"O:{option.Code}", option.Name);
     }
 }

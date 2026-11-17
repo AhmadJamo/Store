@@ -107,6 +107,14 @@ var productsApiProblemSource = File.ReadAllText(Path.Combine(Directory.GetCurren
 Check(productsApiProblemSource.Contains("ApplicationProblem", StringComparison.Ordinal) &&
     !productsApiProblemSource.Contains("Contains(\"already exists\"", StringComparison.Ordinal),
     "Products API must classify duplicates by exception type rather than message text");
+var catalogProblemControllers = new[]
+{
+    "ProductCategoriesApiController.cs", "ProductAttributesApiController.cs", "ProductTemplatesApiController.cs"
+}.Select(file => File.ReadAllText(Path.Combine(Directory.GetCurrentDirectory(),
+    "MiniStore.Web", "Controllers", "Api", "V1", file))).ToList();
+Check(catalogProblemControllers.All(source => source.Contains("ApplicationProblem", StringComparison.Ordinal) &&
+    !source.Contains("Contains(\"already exists\"", StringComparison.Ordinal)),
+    "Catalog APIs must use typed application problems instead of duplicate message matching");
 var mvcCutoverResolver = new PresentationCutoverResolver(Options.Create(
     new PresentationCutoverOptions
     {

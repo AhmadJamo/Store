@@ -69,3 +69,10 @@
 - صنّفنا أخطاء المنتج وأزلنا البحث عن عبارة `already exists` من Controller.
 - نجح 1,661 فحصًا و258 اختبار Angular والإنتاج والحزم.
 - تقدم الجرد من 959 legacy/51 typed إلى 952 legacy/58 typed.
+## 2026-11-17 — TASK-REC-004B5
+
+- رحّلنا فئات المنتجات والسمات والقوالب إلى not-found/duplicate/conflict الصريحة داخل Application.
+- أزلنا البحث عن `already exists` من Controllers الثلاثة.
+- بقي parsing والتحقق من الحقول على 400 دون تغيير قواعد الكتالوج.
+- نجح Release 0/0، و1,662 فحصًا، و258 اختبار Angular، والإنتاج والحزم.
+- تقدم الجرد إلى 924 legacy و86 typed.

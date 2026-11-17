@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
 using MiniStore.Application.DTOs.Products;
+using MiniStore.Application.Exceptions;
 using MiniStore.Application.Services;
 using MiniStore.Web.Authorization;
 using MiniStore.Web.Middleware.Api;
@@ -50,14 +51,15 @@ public sealed class ProductTemplatesApiController(
     private async Task<ActionResult<T>> Execute<T>(Func<Task<T>> operation)
     {
         try { return Ok(await operation()); }
+        catch (InvalidOperationException exception) when (exception is ResourceNotFoundException or BusinessConflictException or DuplicateResourceException or OptimisticConcurrencyException)
+        {
+            return InternalApiProblemFactory.ApplicationProblem(HttpContext, exception, localizer[exception.Message]);
+        }
         catch (Exception exception) when (exception is ArgumentException or InvalidOperationException)
         {
             ModelState.AddModelError(string.Empty, localizer[exception.Message]);
-            var code = exception.Message.Contains("already exists", StringComparison.OrdinalIgnoreCase)
-                ? InternalApiProblemCodes.Duplicate
-                : InternalApiProblemCodes.Validation;
             return InternalApiProblemFactory.Validation(HttpContext, ModelState,
-                localizer["One or more validation errors occurred."], code);
+                localizer["One or more validation errors occurred."], InternalApiProblemCodes.Validation);
         }
     }
 }

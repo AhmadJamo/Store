@@ -113,3 +113,4 @@ workspace; old create/status POSTs return 405. ProductCategories API, ProductCat
 antiforgery, neutral-code uniqueness and preserved inactive categories remain authoritative.
 
 REC-004B4: product barcode duplicates return `409/duplicate`, missing products or purchase-expense accounts return 404, and template/tracking state restrictions return `409/conflict`. Products API no longer searches exception text; validation remains 400.
+REC-004B5: category, attribute and template duplicates return `409/duplicate`; missing catalog resources return 404; invalid template assignment/generation state returns `409/conflict`; option/value parsing remains 400. No catalog or variant-generation rule changed.

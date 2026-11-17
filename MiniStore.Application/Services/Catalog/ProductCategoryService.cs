@@ -1,3 +1,4 @@
+using MiniStore.Application.Exceptions;
 using MiniStore.Application.DTOs.Products;
 using MiniStore.Domain.Entities;
 using MiniStore.Domain.Interfaces;
@@ -19,9 +20,9 @@ public sealed class ProductCategoryService(IProductCategoryRepository repository
     {
         var code = dto.Code.Trim().ToUpperInvariant();
         if (await repository.GetByCodeAsync(code) is not null)
-            throw new InvalidOperationException("A product category with this code already exists.");
+            throw new DuplicateResourceException("A product category with this code already exists.");
         if (await repository.GetByNameAsync(dto.Name.Trim()) is not null)
-            throw new InvalidOperationException("A product category with this name already exists.");
+            throw new DuplicateResourceException("A product category with this name already exists.");
         var category = new ProductCategory(dto.Name, code);
         await repository.AddAsync(category);
         await repository.SaveChangesAsync();
@@ -31,7 +32,7 @@ public sealed class ProductCategoryService(IProductCategoryRepository repository
     public async Task SetActiveAsync(int id, bool isActive)
     {
         var category = await repository.GetByIdAsync(id)
-            ?? throw new InvalidOperationException("Product category was not found.");
+            ?? throw new ResourceNotFoundException("Product category was not found.");
         category.SetActive(isActive);
         await repository.SaveChangesAsync();
     }
