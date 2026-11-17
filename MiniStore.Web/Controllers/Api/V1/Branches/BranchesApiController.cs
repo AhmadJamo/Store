@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
 using MiniStore.Application.Dtos.Settings;
+using MiniStore.Application.Exceptions;
 using MiniStore.Application.Dtos.Security;
 using MiniStore.Application.Services;
 using MiniStore.Web.Authorization;
@@ -59,7 +60,7 @@ public sealed class BranchesApiController(
     private async Task<ActionResult<BranchRowDto>> Execute(Func<Task<BranchRowDto>> operation)
     {
         try { return Ok(await operation()); }
-        catch (KeyNotFoundException exception) { return InternalApiProblemFactory.Create(HttpContext, 404, localizer[exception.Message], InternalApiProblemCodes.NotFound); }
+        catch (InvalidOperationException exception) when (exception is ResourceNotFoundException or BusinessConflictException or DuplicateResourceException or OptimisticConcurrencyException) { return InternalApiProblemFactory.ApplicationProblem(HttpContext, exception, localizer[exception.Message]); }
         catch (Exception exception) when (exception is ArgumentException or InvalidOperationException)
         {
             ModelState.AddModelError(string.Empty, localizer[exception.Message]);

@@ -513,3 +513,7 @@ Customer, supplier and product master-data errors use the typed contract; duplic
 ## 2026-11-17 — REC-004B5
 
 Catalog configuration errors are typed and controller message matching is removed. All gates passed; REC-004 remains active at 924 legacy/86 typed Application throw sites.
+
+## 2026-11-17 — REC-004B6
+
+Reference-master errors for measurement units, tax rates, payment methods and branches are typed and mapped consistently. All gates passed; REC-004 remains active at 915 legacy/97 typed Application throw sites.

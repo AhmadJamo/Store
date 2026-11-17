@@ -571,3 +571,5 @@ ERP-007 completed 2026-11-16: accepted POS cash-session ADR and tenant/branch/te
 - [x] REC-004B4: make customer/supplier duplicates real 409 responses and remove product message matching (2026-11-17).
 
 - [x] REC-004B5: migrate product categories, attributes and templates and remove duplicate message matching (2026-11-17).
+
+- [x] REC-004B6: migrate measurement units, tax rates, payment methods and branches to typed Application problems (2026-11-17).

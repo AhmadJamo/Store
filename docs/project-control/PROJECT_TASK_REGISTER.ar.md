@@ -78,3 +78,9 @@
 
 - الحالة: Completed — 2026-11-17.
 - النطاق: Product Categories + Attributes + Templates.
+
+## TASK-REC-004B6
+
+- الحالة: Completed — 2026-11-17.
+- النطاق: Measurement Units + Tax Rates + Payment Methods + Branches.
+- التالي: اختيار دفعة مترابطة جديدة من الجرد ثم إعادة تقييم إغلاق REC-004.

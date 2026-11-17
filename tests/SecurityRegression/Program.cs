@@ -115,6 +115,23 @@ var catalogProblemControllers = new[]
 Check(catalogProblemControllers.All(source => source.Contains("ApplicationProblem", StringComparison.Ordinal) &&
     !source.Contains("Contains(\"already exists\"", StringComparison.Ordinal)),
     "Catalog APIs must use typed application problems instead of duplicate message matching");
+var referenceMasterProblemControllers = new[]
+{
+    Path.Combine("MiniStore.Web", "Controllers", "Api", "V1", "CatalogMastersApiController.cs"),
+    Path.Combine("MiniStore.Web", "Controllers", "Api", "V1", "SettingsApiController.cs"),
+    Path.Combine("MiniStore.Web", "Controllers", "Api", "V1", "Branches", "BranchesApiController.cs")
+}.Select(File.ReadAllText).ToList();
+Check(referenceMasterProblemControllers.All(source => source.Contains("ApplicationProblem", StringComparison.Ordinal)),
+    "Reference-master APIs must preserve typed application problem mapping");
+var referenceMasterServices = new[]
+{
+    Path.Combine("MiniStore.Application", "Services", "Settings", "MeasurementUnitService.cs"),
+    Path.Combine("MiniStore.Application", "Services", "Accounting", "TaxRateService.cs"),
+    Path.Combine("MiniStore.Application", "Services", "Accounting", "PaymentMethodService.cs"),
+    Path.Combine("MiniStore.Application", "Services", "Accounting", "BranchService.cs")
+}.Select(File.ReadAllText).ToList();
+Check(referenceMasterServices.All(source => !source.Contains("throw new InvalidOperationException", StringComparison.Ordinal)),
+    "Reference-master services must retain explicit not-found, duplicate and conflict semantics");
 var mvcCutoverResolver = new PresentationCutoverResolver(Options.Create(
     new PresentationCutoverOptions
     {

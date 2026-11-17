@@ -1,4 +1,5 @@
 using MiniStore.Application.DTOs.Settings;
+using MiniStore.Application.Exceptions;
 using MiniStore.Domain.Entities;
 using MiniStore.Domain.Interfaces;
 
@@ -44,7 +45,7 @@ public class MeasurementUnitService(
     {
         var code = dto.Code.Trim().ToUpperInvariant();
         if (await repository.GetByCodeAsync(code) is not null)
-            throw new InvalidOperationException("A measurement unit with this code already exists.");
+            throw new DuplicateResourceException("A measurement unit with this code already exists.");
 
         await unitOfWork.ExecuteInTransactionAsync(async () =>
             await repository.AddAsync(new MeasurementUnit(
@@ -59,7 +60,7 @@ public class MeasurementUnitService(
     public async Task DeactivateAsync(int id)
     {
         var unit = await repository.GetByIdAsync(id)
-            ?? throw new InvalidOperationException("Measurement unit was not found.");
+            ?? throw new ResourceNotFoundException("Measurement unit was not found.");
         unit.Deactivate();
         await unitOfWork.ExecuteInTransactionAsync(() => Task.CompletedTask);
     }
@@ -67,9 +68,9 @@ public class MeasurementUnitService(
     public async Task<decimal> ConvertAsync(decimal quantity, int fromUnitId, int toUnitId)
     {
         var from = await repository.GetByIdAsync(fromUnitId)
-            ?? throw new InvalidOperationException("Source measurement unit was not found.");
+            ?? throw new ResourceNotFoundException("Source measurement unit was not found.");
         var to = await repository.GetByIdAsync(toUnitId)
-            ?? throw new InvalidOperationException("Destination measurement unit was not found.");
+            ?? throw new ResourceNotFoundException("Destination measurement unit was not found.");
         return MeasurementUnitConversion.Convert(quantity, from, to);
     }
 

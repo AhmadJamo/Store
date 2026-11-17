@@ -794,3 +794,11 @@ ERP expansion roadmap: 10/10 planned phases complete. Future work is backlog-dri
 - Duplicate category code/name, attribute code, template code and variant identity return `409/duplicate`; missing resources return 404; invalid template/generation state returns `409/conflict`; field parsing remains 400.
 - Verified: Release 0/0, 1,662 regression checks, 258 Angular tests, production and bundle gates.
 - Application classification progressed from 952 legacy/58 typed to 924 legacy/86 typed sites.
+
+## REC-004B6 — Reference master errors (2026-11-17)
+
+- Measurement units, tax rates, payment methods and branches now emit explicit not-found, duplicate and business-conflict semantics from Application services.
+- Catalog masters, Settings and Branches APIs route typed failures through the shared ProblemDetails mapper; field validation remains 400.
+- No accounting posting, inventory movement, branch-access or master-data business rule changed.
+- Verified: Release 0/0, 1,664 regression checks, 258 Angular tests, production and bundle gates.
+- Application classification progressed from 924 legacy/86 typed to 915 legacy/97 typed sites.

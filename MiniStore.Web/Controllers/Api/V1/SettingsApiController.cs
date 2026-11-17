@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MiniStore.Application.DTOs.Settings;
+using MiniStore.Application.Exceptions;
 using MiniStore.Application.Services;
 using MiniStore.Web.Authorization;
 using Microsoft.Extensions.Caching.Memory;
@@ -309,6 +310,10 @@ public sealed class SettingsApiController(
                 localizer["Settings changed since you opened this page."],
                 InternalApiProblemCodes.Concurrency,
                 localizer[exception.Message]);
+        }
+        catch (InvalidOperationException exception) when (exception is ResourceNotFoundException or BusinessConflictException or DuplicateResourceException or OptimisticConcurrencyException)
+        {
+            return InternalApiProblemFactory.ApplicationProblem(HttpContext, exception, localizer[exception.Message]);
         }
         catch (Exception exception) when (exception is ArgumentException or InvalidOperationException)
         {

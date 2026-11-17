@@ -219,3 +219,5 @@ REC-004B2 (2026-11-17) introduces presentation-neutral typed Application failure
 REC-004B3 (2026-11-17) migrates stock-transfer and purchase-request failure semantics to the typed Application problem contract. It changes response classification only; transfer valuation, reservation, receipt, approval and purchase-request rules remain server-authoritative and unchanged.
 REC-004B4 (2026-11-17) aligns customer, supplier and product master-data failures with the typed ProblemDetails contract. Duplicate records now return real HTTP 409 responses, concurrency remains distinct, and Products API no longer classifies errors by message text.
 REC-004B5 (2026-11-17) migrates product category, attribute and template configuration to typed ProblemDetails semantics. Duplicate detection no longer depends on controller message parsing; catalog business rules are unchanged.
+
+REC-004B6 (2026-11-17) migrates measurement-unit, tax-rate, payment-method and branch reference masters to typed ProblemDetails semantics. Missing references return 404, duplicates return 409/duplicate and invalid branch account state returns 409/conflict; existing business rules are unchanged.

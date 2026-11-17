@@ -2,7 +2,7 @@
 
 ## TASK-REC-004 — توحيد ProblemDetails وتعارضات الأعمال
 
-> الحالة: IN PROGRESS — REC-004A وREC-004B1 وREC-004B2 وREC-004B3 وREC-004B4 وREC-004B5 مكتملة
+> الحالة: IN PROGRESS — REC-004A وREC-004B1 وREC-004B2 وREC-004B3 وREC-004B4 وREC-004B5 وREC-004B6 مكتملة
 
 اجرد أنماط معالجة الأخطاء في Internal API، وحدد InvalidOperationException التي تمثل validation أو duplicate أو not-found أو conflict، ثم وحّد الاستجابة 400/404/409/500 مع correlationId ورسالة محلية قابلة للفهم وحفظ نموذج Angular. ابدأ بالمسارات عالية المخاطر التي كشفتها مصفوفة REC-003، ولا تغيّر قواعد العمل نفسها.
 
@@ -39,3 +39,9 @@
 - ترحيل Categories/Attributes/Templates وإزالة message matching.
 - الجرد الحالي 924 legacy مقابل 86 typed.
 - التالي: دفعة إعدادات/مستندات محدودة جديدة ثم إعادة تقييم إغلاق REC-004.
+
+## المنجز في REC-004B6
+
+- ترحيل Measurement Units/Tax Rates/Payment Methods/Branches إلى العقد المصنف.
+- الجرد الحالي 915 legacy مقابل 97 typed.
+- التالي: دفعة تشغيلية محدودة جديدة، مع إبقاء parsing والحقول على 400.

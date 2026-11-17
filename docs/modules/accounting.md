@@ -47,3 +47,5 @@ MOD-030H physically retires the legacy `JournalEntries.Details` MVC controller/v
 the query service, immutable evidence, tenant filtering and all posting/reversal authorities are unchanged.
 
 REC-004B2: manual-journal command failures use typed Application semantics. Missing resources are 404, state/replay conflicts are 409, and accounting input validation remains 400. No posting or balancing rule changed.
+
+REC-004B6: missing tax/settlement/sales accounts and branches return 404; duplicate payment-method names and branch codes return `409/duplicate`; selecting a root account as branch revenue returns `409/conflict`. Posting behavior is unchanged.

@@ -81,3 +81,5 @@ The existing Branches workspace remains the single cohesive feature. With `Branc
 ## Branch lifecycle management (REC-001, 2026-11-17)
 
 The existing cohesive `/branches` Angular feature now owns discoverable branch creation, detail editing and activation/deactivation. Commands use dedicated DTOs and `Branches.Create`, `Branches.Edit` and `Branches.SetActive`; `BranchService` retains tenant scope, uniqueness rules, persistence and semantic audit authority. The feature preserves entered values after API validation errors and keeps Arabic/English behavior without element-level component overcutting. Legal entity, address and timezone expansion remains deferred pending a separate data-model ADR.
+
+REC-004B6: measurement-unit duplicates return `409/duplicate`; missing source/destination units return 404. The Settings API uses the shared mapper while ordinary input validation remains 400.

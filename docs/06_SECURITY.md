@@ -413,3 +413,5 @@ REC-004B2 fixes a sales-order boundary that previously rendered `UnauthorizedAcc
 REC-004B3 retains permission and antiforgery boundaries on stock-transfer and purchase-request mutations. Stable localized 404/409 ProblemDetails include correlation evidence and do not expose stack traces; authorization decisions remain unchanged.
 REC-004B4 removes message inspection from Products API classification. Customer, supplier and product failures expose only localized ProblemDetails plus correlation evidence; permission and antiforgery policies are unchanged.
 REC-004B5 removes exception-message inspection from product category, attribute and template APIs. Localized ProblemDetails retain correlation IDs; existing Products permissions and antiforgery requirements remain unchanged.
+
+REC-004B6 preserves all existing reference-master permissions and antiforgery boundaries. Only failure classification changed; correlation IDs and localized ProblemDetails remain available without exposing stack or persistence details.
