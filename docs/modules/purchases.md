@@ -403,3 +403,5 @@ Goods Receipt Returns, Purchase Service Acceptances and Supplier Credit Notes no
 controllers and nine list/create/details views were removed together. Protected legacy reads preserve positive source IDs
 and resolve to the exact Angular pages; legacy Create POSTs return 405. Existing Application services still own validation,
 stock movements, posting, immutable evidence and transactions.
+
+REC-004B3: purchase-request missing request/master data returns 404, duplicate replenishment demand returns `409/duplicate`, stale rowversion returns `409/concurrency`, and changed purchasability/unit state returns `409/conflict`. Approval and request lifecycle rules are unchanged.

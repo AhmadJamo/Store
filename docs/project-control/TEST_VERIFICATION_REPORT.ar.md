@@ -79,3 +79,12 @@
 | Security/inventory regression | 1,656 ناجحًا؛ يغطي 404 وconflict وduplicate وconcurrency وcorrelationId |
 | Angular unit | 258/258، 122 ملفًا |
 | Production + bundle | ناجح؛ 340,433 initial و81,895 lazy ضمن الحدود |
+## TASK-REC-004B3 — 2026-11-17
+
+| الفحص | النتيجة |
+|---|---|
+| Release isolated build | ناجح، 0 تحذير/0 خطأ |
+| Regression | 1,658 ناجحًا مع حارسي Purchase Requests وStock Transfers |
+| Angular unit | 258/258، 122 ملفًا |
+| Production + bundle | ناجح؛ 340,433 initial و81,895 lazy ضمن الحدود |
+| Remaining classification baseline | 70 API controllers؛ 959 legacy throw sites؛ 51 typed sites |

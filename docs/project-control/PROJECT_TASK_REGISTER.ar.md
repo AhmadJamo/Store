@@ -59,3 +59,10 @@
 - الحالة: Completed — 2026-11-17.
 - النطاق: typed Application problems + manual journals + sales orders.
 - التالي: Inventory/Purchasing cohort.
+
+
+## TASK-REC-004B3
+
+- الحالة: Completed — 2026-11-17.
+- النطاق: Stock Transfers + Purchase Requests typed ProblemDetails.
+- التالي: REC-004B4 من الجرد المقاس.

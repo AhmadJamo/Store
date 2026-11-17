@@ -773,3 +773,10 @@ ERP expansion roadmap: 10/10 planned phases complete. Future work is backlog-dri
 - Sales-order missing quotation/order returns 404, stale rowversion returns `409/concurrency`, posted-delivery cancellation returns `409/conflict`, and authorization rejection returns 403.
 - Verified: Release 0/0, 1,656 regression checks, 258 Angular tests, production build and fixed bundle gates.
 - Next: migrate the next confirmed Inventory/Purchasing cohort and eliminate remaining ambiguous controller catches incrementally.
+## REC-004B3 — Inventory transfer and purchase-request problems (2026-11-17)
+
+- Stock-transfer APIs now distinguish missing transfer/warehouse/product/location resources (404), duplicate replenishment transfers (`409/duplicate`) and stock, capacity, branch or reversal-state conflicts (`409/conflict`). Input structure validation remains 400.
+- Purchase requests now distinguish missing master data/request (404), duplicate replenishment demand (`409/duplicate`), stale rowversion (`409/concurrency`) and changed master-data state (`409/conflict`).
+- The services select semantics through typed Application exceptions; controllers only use the shared mapper and preserve Angular forms.
+- Verified: Release 0/0, 1,658 regression checks, 258 Angular tests, production build and bundle gates.
+- Remaining inventory baseline: 70 API controllers still catch `InvalidOperationException`; 959 legacy Application throw sites remain versus 51 typed sites. Continue by bounded functional cohorts, not a blind bulk replacement.

@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
 using MiniStore.Application.DTOs.StockTransfers;
+using MiniStore.Application.Exceptions;
 using MiniStore.Application.Services;
 using MiniStore.Domain.Commands;
 using MiniStore.Domain.Entities;
@@ -130,6 +131,10 @@ public sealed class StockTransfersApiController(
         try
         {
             return await action();
+        }
+        catch (InvalidOperationException exception) when (exception is ResourceNotFoundException or BusinessConflictException or DuplicateResourceException or OptimisticConcurrencyException)
+        {
+            return InternalApiProblemFactory.ApplicationProblem(HttpContext, exception, localizer[exception.Message]);
         }
         catch (Exception exception) when (exception is ArgumentException or InvalidOperationException)
         {

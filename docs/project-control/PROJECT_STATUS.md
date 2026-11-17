@@ -498,3 +498,8 @@ The first server-classification slice is complete. Non-concurrency HTTP 409 resp
 ## 2026-11-17 — REC-004B2
 
 Typed Application problem semantics are established and manual journals plus sales orders are migrated. Verification passed; REC-004 continues with Inventory/Purchasing cohorts.
+
+
+## 2026-11-17 — REC-004B3
+
+Stock transfers and purchase requests use typed ProblemDetails semantics. All gates passed. REC-004 continues against the measured 70-controller/959-throw legacy backlog in bounded cohorts.

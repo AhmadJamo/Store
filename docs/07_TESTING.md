@@ -271,3 +271,10 @@ Angular passed 256/256 tests across 122 files. New tests prove mutation conflict
 - Regression executable: 1,656 checks, including all four typed mappings and correlation IDs.
 - Angular: 258/258 across 122 files.
 - Production build and bundle gate: 340,433/358,400 initial; 81,895/81,920 largest lazy.
+## REC-004B3 verification — 2026-11-17
+
+- Release isolated solution build: 0 warnings, 0 errors.
+- Regression executable: 1,658 checks, including source guards for typed Purchase Request and Stock Transfer semantics.
+- Angular: 258/258 across 122 files.
+- Production and bundle gate: 340,433/358,400 initial; 81,895/81,920 largest lazy.
+- Measured remaining baseline: 70 API controllers with legacy InvalidOperation catches and 959 Application InvalidOperation throw sites; 51 typed throw sites are now present.

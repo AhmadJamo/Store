@@ -84,6 +84,18 @@ foreach (var sample in new (InvalidOperationException Exception, int Status, str
         problem.Extensions["correlationId"]?.ToString() == classifiedProblemContext.TraceIdentifier,
         $"{sample.Exception.GetType().Name} must produce its stable status, code and correlation ID");
 }
+var purchaseRequestProblemSource = File.ReadAllText(Path.Combine(Directory.GetCurrentDirectory(),
+    "MiniStore.Application", "Services", "Purchases", "PurchaseRequestService.cs"));
+var stockTransferProblemSource = File.ReadAllText(Path.Combine(Directory.GetCurrentDirectory(),
+    "MiniStore.Application", "Services", "Inventory", "StockTransferService.cs"));
+Check(purchaseRequestProblemSource.Contains("ResourceNotFoundException", StringComparison.Ordinal) &&
+    purchaseRequestProblemSource.Contains("DuplicateResourceException", StringComparison.Ordinal) &&
+    purchaseRequestProblemSource.Contains("OptimisticConcurrencyException", StringComparison.Ordinal),
+    "Purchase requests must retain explicit not-found, duplicate and concurrency semantics");
+Check(stockTransferProblemSource.Contains("ResourceNotFoundException", StringComparison.Ordinal) &&
+    stockTransferProblemSource.Contains("BusinessConflictException", StringComparison.Ordinal) &&
+    stockTransferProblemSource.Contains("DuplicateResourceException", StringComparison.Ordinal),
+    "Stock transfers must retain explicit not-found, business-conflict and duplicate semantics");
 var mvcCutoverResolver = new PresentationCutoverResolver(Options.Create(
     new PresentationCutoverOptions
     {

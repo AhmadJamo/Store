@@ -1,4 +1,5 @@
-﻿using MiniStore.Domain.Commands;
+using MiniStore.Application.Exceptions;
+using MiniStore.Domain.Commands;
 using MiniStore.Domain.Entities;
 using MiniStore.Domain.Interfaces;
 
@@ -87,16 +88,14 @@ public class StockTransferService : IStockTransferService
                 command.FromWarehouseId);
 
         if (fromWarehouse == null)
-            throw new InvalidOperationException(
-                "Source warehouse not found.");
+            throw new ResourceNotFoundException("Source warehouse not found.");
 
         var toWarehouse =
             await _warehouseRepository.GetByIdAsync(
                 command.ToWarehouseId);
 
         if (toWarehouse == null)
-            throw new InvalidOperationException(
-                "Destination warehouse not found.");
+            throw new ResourceNotFoundException("Destination warehouse not found.");
 
         if (command.FromWarehouseId == command.ToWarehouseId)
             throw new InvalidOperationException(
@@ -128,8 +127,7 @@ public class StockTransferService : IStockTransferService
 
             if (product == null)
             {
-                throw new InvalidOperationException(
-                    $"Product with ID {item.ProductId} was not found.");
+                throw new ResourceNotFoundException($"Product with ID {item.ProductId} was not found.");
             }
 
             await ValidateLocationsAsync(
@@ -149,8 +147,7 @@ public class StockTransferService : IStockTransferService
                     var existing = await _stockTransferRepository.GetAllAsync(command.Reference, null);
                     if (existing.Any(x => x.Reference == command.Reference &&
                         x.Status is StockTransferStatus.Draft or StockTransferStatus.Submitted or StockTransferStatus.Approved))
-                        throw new InvalidOperationException(
-                            "An open transfer already exists for this replenishment rule.");
+                        throw new DuplicateResourceException("An open transfer already exists for this replenishment rule.");
                 }
 
                 transfer = new StockTransfer(
@@ -196,8 +193,7 @@ public class StockTransferService : IStockTransferService
             await _stockTransferRepository.GetByIdAsync(id);
 
         if (transfer == null)
-            throw new InvalidOperationException(
-                "Stock transfer not found.");
+            throw new ResourceNotFoundException("Stock transfer not found.");
 
         if (!command.Items.Any())
             throw new InvalidOperationException(
@@ -223,16 +219,14 @@ public class StockTransferService : IStockTransferService
                 command.FromWarehouseId);
 
         if (fromWarehouse == null)
-            throw new InvalidOperationException(
-                "Source warehouse not found.");
+            throw new ResourceNotFoundException("Source warehouse not found.");
 
         var toWarehouse =
             await _warehouseRepository.GetByIdAsync(
                 command.ToWarehouseId);
 
         if (toWarehouse == null)
-            throw new InvalidOperationException(
-                "Destination warehouse not found.");
+            throw new ResourceNotFoundException("Destination warehouse not found.");
 
         var duplicateProductIds =
             command.Items
@@ -261,8 +255,7 @@ public class StockTransferService : IStockTransferService
 
             if (product == null)
             {
-                throw new InvalidOperationException(
-                    $"Product with ID {item.ProductId} was not found.");
+                throw new ResourceNotFoundException($"Product with ID {item.ProductId} was not found.");
             }
 
             await ValidateLocationsAsync(
@@ -432,13 +425,12 @@ public class StockTransferService : IStockTransferService
             await _stockTransferRepository.GetByIdAsync(id);
 
         if (transfer == null)
-            throw new InvalidOperationException(
-                "Stock transfer not found.");
+            throw new ResourceNotFoundException("Stock transfer not found.");
 
         var fromWarehouse = await _warehouseRepository.GetByIdAsync(transfer.FromWarehouseId)
-            ?? throw new InvalidOperationException("Source warehouse not found.");
+            ?? throw new ResourceNotFoundException("Source warehouse not found.");
         var toWarehouse = await _warehouseRepository.GetByIdAsync(transfer.ToWarehouseId)
-            ?? throw new InvalidOperationException("Destination warehouse not found.");
+            ?? throw new ResourceNotFoundException("Destination warehouse not found.");
 
         foreach (var item in transfer.Items)
         {
@@ -464,8 +456,7 @@ public class StockTransferService : IStockTransferService
             await _stockTransferRepository.GetByIdAsync(id);
 
         if (transfer == null)
-            throw new InvalidOperationException(
-                "Stock transfer not found.");
+            throw new ResourceNotFoundException("Stock transfer not found.");
 
         await _unitOfWork.ExecuteInTransactionAsync(
             async () =>
@@ -485,8 +476,7 @@ public class StockTransferService : IStockTransferService
             await _stockTransferRepository.GetByIdAsync(id);
 
         if (transfer == null)
-            throw new InvalidOperationException(
-                "Stock transfer not found.");
+            throw new ResourceNotFoundException("Stock transfer not found.");
 
         await _unitOfWork.ExecuteInTransactionAsync(
             async () =>
@@ -505,8 +495,7 @@ public class StockTransferService : IStockTransferService
             await _stockTransferRepository.GetByIdAsync(id);
 
         if (transfer == null)
-            throw new InvalidOperationException(
-                "Stock transfer not found.");
+            throw new ResourceNotFoundException("Stock transfer not found.");
 
         await _unitOfWork.ExecuteInTransactionAsync(
             async () =>
@@ -520,14 +509,14 @@ public class StockTransferService : IStockTransferService
         string userId)
     {
         var transfer = await _stockTransferRepository.GetByIdAsync(id)
-            ?? throw new InvalidOperationException("Stock transfer not found.");
+            ?? throw new ResourceNotFoundException("Stock transfer not found.");
         var source = await _warehouseRepository.GetByIdAsync(transfer.FromWarehouseId)
-            ?? throw new InvalidOperationException("Source warehouse not found.");
+            ?? throw new ResourceNotFoundException("Source warehouse not found.");
         var destination = await _warehouseRepository.GetByIdAsync(transfer.ToWarehouseId)
-            ?? throw new InvalidOperationException("Destination warehouse not found.");
+            ?? throw new ResourceNotFoundException("Destination warehouse not found.");
         if (!source.BranchId.HasValue || !destination.BranchId.HasValue ||
             source.BranchId == destination.BranchId)
-            throw new InvalidOperationException("Dispatch requires two different assigned branches.");
+            throw new BusinessConflictException("Dispatch requires two different assigned branches.");
         await RequireBranchOperationAsync(source, transferOut: true);
         await _unitOfWork.ExecuteInTransactionAsync(() =>
         {
@@ -542,13 +531,13 @@ public class StockTransferService : IStockTransferService
         IReadOnlyList<ReceiveStockTransferLineCommand> lines)
     {
         var transfer = await _stockTransferRepository.GetByIdAsync(id)
-            ?? throw new InvalidOperationException("Stock transfer not found.");
+            ?? throw new ResourceNotFoundException("Stock transfer not found.");
         if (lines.Count == 0 || lines.GroupBy(x => x.StockTransferItemId).Any(x => x.Count() > 1))
             throw new ArgumentException("Receipt lines must be unique and cannot be empty.");
         var sourceWarehouse = await _warehouseRepository.GetByIdAsync(transfer.FromWarehouseId)
-            ?? throw new InvalidOperationException("Source warehouse not found.");
+            ?? throw new ResourceNotFoundException("Source warehouse not found.");
         var destinationWarehouse = await _warehouseRepository.GetByIdAsync(transfer.ToWarehouseId)
-            ?? throw new InvalidOperationException("Destination warehouse not found.");
+            ?? throw new ResourceNotFoundException("Destination warehouse not found.");
         await RequireBranchOperationAsync(destinationWarehouse, transferOut: false);
 
         await _unitOfWork.ExecuteInTransactionAsync(async () =>
@@ -584,17 +573,17 @@ public class StockTransferService : IStockTransferService
         Warehouse destinationWarehouse)
     {
         var product = await _productRepository.GetByIdAsync(item.ProductId)
-            ?? throw new InvalidOperationException("Transfer product was not found.");
+            ?? throw new ResourceNotFoundException("Transfer product was not found.");
         var sourceStock = await _productStockRepository.GetByProductAndWarehouseAsync(
             item.ProductId, transfer.FromWarehouseId)
-            ?? throw new InvalidOperationException("Source stock record was not found.");
+            ?? throw new BusinessConflictException("Source stock record was not found.");
         if (sourceStock.Quantity < quantity)
-            throw new InvalidOperationException("Insufficient source stock for this receipt.");
+            throw new BusinessConflictException("Insufficient source stock for this receipt.");
         if (item.SourceLocationId.HasValue)
         {
             var sourceLocationStock = await _productLocationStockRepository.GetAsync(
                 item.ProductId, item.SourceLocationId.Value)
-                ?? throw new InvalidOperationException("Source location stock was not found.");
+                ?? throw new BusinessConflictException("Source location stock was not found.");
             sourceLocationStock.RemoveQuantity(quantity);
         }
         else
@@ -603,7 +592,7 @@ public class StockTransferService : IStockTransferService
                 .Where(x => x.ProductId == item.ProductId && x.WarehouseId == transfer.FromWarehouseId)
                 .Sum(x => x.Quantity);
             if (sourceStock.Quantity - assigned < quantity)
-                throw new InvalidOperationException("Insufficient unassigned source stock for this receipt.");
+                throw new BusinessConflictException("Insufficient unassigned source stock for this receipt.");
         }
 
         await _inventoryReservationService.ConsumeTransferAsync(
@@ -621,7 +610,7 @@ public class StockTransferService : IStockTransferService
         if (destinationLocationId.HasValue)
         {
             var location = await _storageLocationRepository.GetByIdAsync(destinationLocationId.Value)
-                ?? throw new InvalidOperationException("Destination location was not found.");
+                ?? throw new ResourceNotFoundException("Destination location was not found.");
             var locationStock = await _productLocationStockRepository.GetAsync(
                 item.ProductId, destinationLocationId.Value);
             if (locationStock is null)
@@ -635,7 +624,7 @@ public class StockTransferService : IStockTransferService
                 var current = (await _productLocationStockRepository.GetAllAsync())
                     .Where(x => x.StorageLocationId == location.Id).Sum(x => x.Quantity);
                 if (current + quantity > location.MaximumQuantity.Value)
-                    throw new InvalidOperationException("Receipt quantity exceeds destination location capacity.");
+                    throw new BusinessConflictException("Receipt quantity exceeds destination location capacity.");
             }
             locationStock.AddQuantity(quantity);
         }
@@ -655,15 +644,15 @@ public class StockTransferService : IStockTransferService
     private async Task RequireBranchOperationAsync(Warehouse warehouse, bool transferOut)
     {
         if (!warehouse.BranchId.HasValue)
-            throw new InvalidOperationException("Inter-branch transfer warehouses must belong to branches.");
+            throw new BusinessConflictException("Inter-branch transfer warehouses must belong to branches.");
         if (_branchContext.BranchId != warehouse.BranchId)
-            throw new InvalidOperationException(transferOut
+            throw new BusinessConflictException(transferOut
                 ? "Select the source branch before dispatching this transfer."
                 : "Select the destination branch before receiving this transfer.");
         var access = await _inventoryAccessRepository.GetBranchAccessAsync(
             warehouse.BranchId.Value, warehouse.Id);
         if (access is null || (transferOut ? !access.AllowTransferOut : !access.AllowTransferIn))
-            throw new InvalidOperationException(transferOut
+            throw new BusinessConflictException(transferOut
                 ? "The source warehouse does not allow transfer dispatch."
                 : "The destination warehouse does not allow transfer receipt.");
     }
@@ -677,8 +666,7 @@ public class StockTransferService : IStockTransferService
             await _stockTransferRepository.GetByIdAsync(id);
 
         if (transfer == null)
-            throw new InvalidOperationException(
-                "Stock transfer not found.");
+            throw new ResourceNotFoundException("Stock transfer not found.");
 
         await _unitOfWork.ExecuteInTransactionAsync(
             async () =>
@@ -686,7 +674,7 @@ public class StockTransferService : IStockTransferService
                 foreach (var item in transfer.Items)
                 {
                     var trackedProduct = await _productRepository.GetByIdAsync(item.ProductId)
-                        ?? throw new InvalidOperationException("Transfer product was not found.");
+                        ?? throw new ResourceNotFoundException("Transfer product was not found.");
                     var sourceStock =
                         await _productStockRepository
                             .GetByProductAndWarehouseAsync(
@@ -695,8 +683,7 @@ public class StockTransferService : IStockTransferService
 
                     if (sourceStock == null)
                     {
-                        throw new InvalidOperationException(
-                            $"No stock record exists for product ID {item.ProductId} in the source warehouse.");
+                        throw new BusinessConflictException($"No stock record exists for product ID {item.ProductId} in the source warehouse.");
                     }
 
                     var destinationStock =
@@ -707,14 +694,12 @@ public class StockTransferService : IStockTransferService
 
                     if (destinationStock == null)
                     {
-                        throw new InvalidOperationException(
-                            $"No stock record exists for product ID {item.ProductId} in the destination warehouse.");
+                        throw new BusinessConflictException($"No stock record exists for product ID {item.ProductId} in the destination warehouse.");
                     }
 
                     if (destinationStock.Quantity < item.Quantity)
                     {
-                        throw new InvalidOperationException(
-                            $"Insufficient stock in the destination warehouse to reverse product ID {item.ProductId}.");
+                        throw new BusinessConflictException($"Insufficient stock in the destination warehouse to reverse product ID {item.ProductId}.");
                     }
 
                     if (item.DestinationLocationId.HasValue)
@@ -723,8 +708,7 @@ public class StockTransferService : IStockTransferService
                             await _productLocationStockRepository.GetAsync(
                                 item.ProductId,
                                 item.DestinationLocationId.Value)
-                            ?? throw new InvalidOperationException(
-                                "Destination location stock is missing and cannot be reversed.");
+                            ?? throw new BusinessConflictException("Destination location stock is missing and cannot be reversed.");
 
                         destinationLocationStock.RemoveQuantity(item.Quantity);
                     }
@@ -740,8 +724,7 @@ public class StockTransferService : IStockTransferService
 
                         if (destinationStock.Quantity - assignedQuantity < item.Quantity)
                         {
-                            throw new InvalidOperationException(
-                                "Insufficient unassigned destination stock to reverse the transfer.");
+                            throw new BusinessConflictException("Insufficient unassigned destination stock to reverse the transfer.");
                         }
                     }
 
