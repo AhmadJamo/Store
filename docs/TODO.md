@@ -567,3 +567,5 @@ ERP-007 completed 2026-11-16: accepted POS cash-session ADR and tenant/branch/te
 
 - [x] REC-004B3: migrate stock transfers and purchase requests to typed 400/404/409 semantics (2026-11-17).
 - [ ] REC-004B4: select the next bounded functional cohort from the measured 70-controller/959-throw backlog; do not bulk-rewrite by message text.
+
+- [x] REC-004B4: make customer/supplier duplicates real 409 responses and remove product message matching (2026-11-17).

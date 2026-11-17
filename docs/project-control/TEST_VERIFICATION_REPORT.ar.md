@@ -88,3 +88,12 @@
 | Angular unit | 258/258، 122 ملفًا |
 | Production + bundle | ناجح؛ 340,433 initial و81,895 lazy ضمن الحدود |
 | Remaining classification baseline | 70 API controllers؛ 959 legacy throw sites؛ 51 typed sites |
+## TASK-REC-004B4 — 2026-11-17
+
+| الفحص | النتيجة |
+|---|---|
+| Isolated Release regression | 1,661 ناجحًا |
+| Contract guards | وراثة duplicate/concurrency ومنع message matching للمنتجات ناجحة |
+| Angular unit | 258/258، 122 ملفًا |
+| Production + bundle | ناجح؛ 340,433 initial و81,895 lazy |
+| Application classification | 952 legacy؛ 58 typed |

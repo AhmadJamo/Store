@@ -1,3 +1,4 @@
+using MiniStore.Application.Exceptions;
 using MiniStore.Application.DTOs.Products;
 using MiniStore.Domain.Entities;
 using MiniStore.Domain.Interfaces;
@@ -162,7 +163,7 @@ public class ProductService(
         if (normalizedBarcode is not null &&
             await productRepository.GetByBarcodeAsync(normalizedBarcode) is not null)
         {
-            throw new InvalidOperationException("A product with this barcode already exists.");
+            throw new DuplicateResourceException("A product with this barcode already exists.");
         }
 
         var product = new Product(
@@ -209,13 +210,12 @@ public class ProductService(
     {
         var measurementUnit = await GetActiveUnitAsync(dto.MeasurementUnitId);
         var product = await productRepository.GetByIdAsync(id)
-            ?? throw new InvalidOperationException("Product not found.");
+            ?? throw new ResourceNotFoundException("Product not found.");
         var category = await GetCategoryAsync(
             dto.ProductCategoryId,
             requireActive: product.ProductCategoryId != dto.ProductCategoryId);
         if (product.ProductTemplateId.HasValue && product.ProductCategoryId != dto.ProductCategoryId)
-            throw new InvalidOperationException(
-                "Remove the product from its template before changing its category.");
+            throw new BusinessConflictException("Remove the product from its template before changing its category.");
         var weightUnit = await GetOptionalUnitAsync(
             dto.WeightMeasurementUnitId, MeasurementDimension.Mass, "weight");
         var dimensionUnit = await GetOptionalUnitAsync(
@@ -226,14 +226,13 @@ public class ProductService(
             ? null
             : await productRepository.GetByBarcodeAsync(normalizedBarcode);
         if (existingProduct is not null && existingProduct.Id != id)
-            throw new InvalidOperationException("A product with this barcode already exists.");
+            throw new DuplicateResourceException("A product with this barcode already exists.");
 
         if (product.TrackingPolicy != dto.TrackingPolicy &&
             dto.TrackingPolicy != ProductTrackingPolicy.None &&
             await productRepository.HasNonZeroStockAsync(id))
         {
-            throw new InvalidOperationException(
-                "Lot or serial tracking cannot be enabled while the product has a non-zero stock balance.");
+            throw new BusinessConflictException("Lot or serial tracking cannot be enabled while the product has a non-zero stock balance.");
         }
 
         await unitOfWork.ExecuteInTransactionAsync(async () =>
@@ -257,7 +256,7 @@ public class ProductService(
     public async Task DeleteAsync(int id)
     {
         var product = await productRepository.GetByIdAsync(id)
-            ?? throw new InvalidOperationException("Product not found.");
+            ?? throw new ResourceNotFoundException("Product not found.");
         await productRepository.DeleteAsync(product);
         await productRepository.SaveChangesAsync();
     }
@@ -320,7 +319,7 @@ public class ProductService(
         if (!accountId.HasValue)
             throw new InvalidOperationException("Select a purchase expense account for products billed without a goods receipt.");
         var account = await accounts.GetByIdAsync(accountId.Value)
-            ?? throw new InvalidOperationException("Purchase expense account was not found.");
+            ?? throw new ResourceNotFoundException("Purchase expense account was not found.");
         if (account.Type != AccountType.Expense)
             throw new InvalidOperationException("Purchase expense account must be an expense account.");
         return account.Id;

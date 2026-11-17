@@ -38,3 +38,5 @@ MOD-030Z physically retires the Suppliers MVC presentation controller, its three
 and three page-model companions. Protected list/create/edit GET/HEAD links now navigate to the established Angular
 workspace. Supplier create/edit authority remains in the authenticated API and existing Application services; legacy MVC
 mutations are never redirected or replayed.
+
+REC-004B4: supplier duplicate failures now return `409/duplicate`; rowversion failures remain `409/concurrency` with localized summary/detail. Input validation remains 400 and supplier rules are unchanged.

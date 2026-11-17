@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
 using MiniStore.Application.DTOs.Suppliers;
+using MiniStore.Application.Exceptions;
 using MiniStore.Application.Services;
 using MiniStore.Web.Authorization;
 using MiniStore.Web.Middleware.Api;
@@ -62,10 +63,8 @@ public sealed class SuppliersApiController(
         }
         catch (SupplierConcurrencyException exception)
         {
-            return InternalApiProblemFactory.Create(HttpContext, StatusCodes.Status409Conflict,
-                localizer["The supplier changed since you opened it."],
-                InternalApiProblemCodes.Concurrency,
-                localizer[exception.Message]);
+            return InternalApiProblemFactory.ApplicationProblem(HttpContext, exception,
+                localizer["The supplier changed since you opened it."], localizer[exception.Message]);
         }
         catch (Exception exception) when (exception is ArgumentException or InvalidOperationException)
         {
@@ -75,14 +74,12 @@ public sealed class SuppliersApiController(
 
     private ActionResult BusinessProblem(Exception exception)
     {
+        if (exception is DuplicateResourceException duplicate)
+            return InternalApiProblemFactory.ApplicationProblem(HttpContext, duplicate, localizer[duplicate.Message]);
         ModelState.AddModelError(string.Empty, localizer[exception.Message]);
-        var code = exception is SupplierDuplicateException
-            ? InternalApiProblemCodes.Duplicate
-            : InternalApiProblemCodes.Validation;
         return InternalApiProblemFactory.Validation(HttpContext, ModelState,
-            localizer["One or more validation errors occurred."], code);
+            localizer["One or more validation errors occurred."], InternalApiProblemCodes.Validation);
     }
-
     private ObjectResult NotFoundProblem() => InternalApiProblemFactory.Create(
         HttpContext, StatusCodes.Status404NotFound, localizer["Supplier not found."],
         InternalApiProblemCodes.NotFound);

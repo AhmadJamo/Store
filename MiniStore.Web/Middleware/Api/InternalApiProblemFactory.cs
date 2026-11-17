@@ -26,7 +26,8 @@ public static class InternalApiProblemFactory
     public static ObjectResult ApplicationProblem(
         HttpContext context,
         InvalidOperationException exception,
-        string localizedMessage)
+        string localizedMessage,
+        string? localizedDetail = null)
     {
         var (status, code) = exception switch
         {
@@ -36,7 +37,7 @@ public static class InternalApiProblemFactory
             BusinessConflictException => (StatusCodes.Status409Conflict, InternalApiProblemCodes.Conflict),
             _ => throw new ArgumentException("The exception does not have an application problem classification.", nameof(exception))
         };
-        return Create(context, status, localizedMessage, code);
+        return Create(context, status, localizedMessage, code, localizedDetail);
     }
     public static BadRequestObjectResult Validation(
         HttpContext context,

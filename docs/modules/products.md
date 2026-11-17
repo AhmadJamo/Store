@@ -111,3 +111,5 @@ and the old MVC POST returns 405. Recipes API, RecipeService, Products permissio
 `MOD-030S` removes the approved ProductCategories controller and Index view. Legacy reads redirect to the Angular category
 workspace; old create/status POSTs return 405. ProductCategories API, ProductCategoryService, Products permissions,
 antiforgery, neutral-code uniqueness and preserved inactive categories remain authoritative.
+
+REC-004B4: product barcode duplicates return `409/duplicate`, missing products or purchase-expense accounts return 404, and template/tracking state restrictions return `409/conflict`. Products API no longer searches exception text; validation remains 400.

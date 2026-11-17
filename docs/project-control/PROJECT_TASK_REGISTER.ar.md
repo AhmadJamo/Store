@@ -66,3 +66,9 @@
 - الحالة: Completed — 2026-11-17.
 - النطاق: Stock Transfers + Purchase Requests typed ProblemDetails.
 - التالي: REC-004B4 من الجرد المقاس.
+
+
+## TASK-REC-004B4
+
+- الحالة: Completed — 2026-11-17.
+- النطاق: Customers + Suppliers + Products typed duplicate/concurrency/conflict.

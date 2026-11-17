@@ -278,3 +278,10 @@ Angular passed 256/256 tests across 122 files. New tests prove mutation conflict
 - Angular: 258/258 across 122 files.
 - Production and bundle gate: 340,433/358,400 initial; 81,895/81,920 largest lazy.
 - Measured remaining baseline: 70 API controllers with legacy InvalidOperation catches and 959 Application InvalidOperation throw sites; 51 typed throw sites are now present.
+## REC-004B4 verification — 2026-11-17
+
+- Isolated Release regression build and executable: 1,661 checks passed.
+- Guards verify customer/supplier exception inheritance and prohibit product duplicate message matching.
+- Angular: 258/258 across 122 files.
+- Production and bundle gate: 340,433/358,400 initial; 81,895/81,920 largest lazy.
+- Application baseline: 952 legacy InvalidOperation throw sites and 58 typed sites.

@@ -96,6 +96,17 @@ Check(stockTransferProblemSource.Contains("ResourceNotFoundException", StringCom
     stockTransferProblemSource.Contains("BusinessConflictException", StringComparison.Ordinal) &&
     stockTransferProblemSource.Contains("DuplicateResourceException", StringComparison.Ordinal),
     "Stock transfers must retain explicit not-found, business-conflict and duplicate semantics");
+Check(typeof(CustomerDuplicateException).IsSubclassOf(typeof(DuplicateResourceException)) &&
+    typeof(SupplierDuplicateException).IsSubclassOf(typeof(DuplicateResourceException)),
+    "Customer and supplier duplicates must use the shared 409 duplicate contract");
+Check(typeof(CustomerConcurrencyException).IsSubclassOf(typeof(OptimisticConcurrencyException)) &&
+    typeof(SupplierConcurrencyException).IsSubclassOf(typeof(OptimisticConcurrencyException)),
+    "Customer and supplier rowversion failures must use the shared concurrency contract");
+var productsApiProblemSource = File.ReadAllText(Path.Combine(Directory.GetCurrentDirectory(),
+    "MiniStore.Web", "Controllers", "Api", "V1", "ProductsApiController.cs"));
+Check(productsApiProblemSource.Contains("ApplicationProblem", StringComparison.Ordinal) &&
+    !productsApiProblemSource.Contains("Contains(\"already exists\"", StringComparison.Ordinal),
+    "Products API must classify duplicates by exception type rather than message text");
 var mvcCutoverResolver = new PresentationCutoverResolver(Options.Create(
     new PresentationCutoverOptions
     {

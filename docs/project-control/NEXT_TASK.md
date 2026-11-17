@@ -2,7 +2,7 @@
 
 ## TASK-REC-004 — توحيد ProblemDetails وتعارضات الأعمال
 
-> الحالة: IN PROGRESS — REC-004A وREC-004B1 وREC-004B2 وREC-004B3 مكتملة
+> الحالة: IN PROGRESS — REC-004A وREC-004B1 وREC-004B2 وREC-004B3 وREC-004B4 مكتملة
 
 اجرد أنماط معالجة الأخطاء في Internal API، وحدد InvalidOperationException التي تمثل validation أو duplicate أو not-found أو conflict، ثم وحّد الاستجابة 400/404/409/500 مع correlationId ورسالة محلية قابلة للفهم وحفظ نموذج Angular. ابدأ بالمسارات عالية المخاطر التي كشفتها مصفوفة REC-003، ولا تغيّر قواعد العمل نفسها.
 
@@ -25,3 +25,10 @@
 - ترحيل Stock Transfers وPurchase Requests إلى التصنيف الصريح.
 - خط الأساس المتبقي: 70 Controller و959 موضع InvalidOperation قديم مقابل 51 موضع typed.
 - التالي: اختيار دفعة وظيفية محدودة جديدة، لا استبدال شامل حسب النص.
+
+
+## المنجز في REC-004B4
+
+- duplicate للعملاء والموردين أصبح 409 فعليًا، وconcurrency بقي مستقلًا.
+- إزالة message matching من Products API وتصنيف أخطاء المنتج داخل Application.
+- الجرد الحالي: 952 legacy مقابل 58 typed؛ التالي دفعة masters/workflows محدودة أخرى.

@@ -503,3 +503,8 @@ Typed Application problem semantics are established and manual journals plus sal
 ## 2026-11-17 — REC-004B3
 
 Stock transfers and purchase requests use typed ProblemDetails semantics. All gates passed. REC-004 continues against the measured 70-controller/959-throw legacy backlog in bounded cohorts.
+
+
+## 2026-11-17 — REC-004B4
+
+Customer, supplier and product master-data errors use the typed contract; duplicate responses are real 409s and product message matching is removed. All gates passed. REC-004 remains active.

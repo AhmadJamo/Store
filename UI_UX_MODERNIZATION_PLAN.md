@@ -780,3 +780,10 @@ ERP expansion roadmap: 10/10 planned phases complete. Future work is backlog-dri
 - The services select semantics through typed Application exceptions; controllers only use the shared mapper and preserve Angular forms.
 - Verified: Release 0/0, 1,658 regression checks, 258 Angular tests, production build and bundle gates.
 - Remaining inventory baseline: 70 API controllers still catch `InvalidOperationException`; 959 legacy Application throw sites remain versus 51 typed sites. Continue by bounded functional cohorts, not a blind bulk replacement.
+## REC-004B4 — Customer, supplier and product master errors (2026-11-17)
+
+- Existing customer/supplier duplicate and concurrency exceptions now inherit the shared Application problem semantics; duplicate is a real `409/duplicate` instead of a duplicate code inside HTTP 400.
+- Customer and supplier optimistic conflicts keep their localized summary and detailed server message through the shared mapper.
+- Product barcode duplicates, missing products/accounts and product-state restrictions are typed; Products API no longer detects duplicates by searching error-message text.
+- Validation errors remain 400 and Angular retains entered form values; 409 mutation feedback is available to the global toast.
+- Verified: 1,661 regression checks, 258 Angular tests, production build and bundle gates. Measured Application backlog moved from 959/51 to 952 legacy/58 typed throw sites.
