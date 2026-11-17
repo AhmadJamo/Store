@@ -223,3 +223,5 @@ REC-004B5 (2026-11-17) migrates product category, attribute and template configu
 REC-004B6 (2026-11-17) migrates measurement-unit, tax-rate, payment-method and branch reference masters to typed ProblemDetails semantics. Missing references return 404, duplicates return 409/duplicate and invalid branch account state returns 409/conflict; existing business rules are unchanged.
 
 REC-004B7 (2026-11-17) extends typed ProblemDetails semantics across general, sourcing, POS, exchange-rate and accounting settings. Existing concurrency, validation, permission and business rules remain unchanged.
+
+REC-004B8 (2026-11-17) migrates the complete document-design lifecycle to typed ProblemDetails semantics without changing immutable versioning, activation/default behavior or rendering.

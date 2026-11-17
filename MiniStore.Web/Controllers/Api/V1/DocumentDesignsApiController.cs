@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
 using MiniStore.Application.Dtos.Settings;
+using MiniStore.Application.Exceptions;
 using MiniStore.Application.Services;
 using MiniStore.Domain.Entities;
 using MiniStore.Web.Authorization;
@@ -30,7 +31,7 @@ public sealed class DocumentDesignsApiController(
         [FromQuery] DocumentDesignType? documentType)
     {
         try { return Ok(await service.GetCreateAsync(sourceDesignId, documentType)); }
-        catch (InvalidOperationException exception) { return Validation(exception); }
+        catch (InvalidOperationException exception) { return ProblemResult(exception); }
     }
 
     [HttpGet("{id:int}")]
@@ -49,7 +50,7 @@ public sealed class DocumentDesignsApiController(
             return CreatedAtAction(nameof(Get), new { id }, await service.GetAsync(id));
         }
         catch (Exception exception) when (exception is ArgumentException or InvalidOperationException)
-        { return Validation(exception); }
+        { return ProblemResult(exception); }
     }
 
     [HttpPost("{id:int}/activate")]
@@ -86,7 +87,15 @@ public sealed class DocumentDesignsApiController(
                 InternalApiProblemCodes.Concurrency, localizer[exception.Message]);
         }
         catch (Exception exception) when (exception is ArgumentException or InvalidOperationException)
-        { return Validation(exception); }
+        { return ProblemResult(exception); }
+    }
+
+    private ActionResult ProblemResult(Exception exception)
+    {
+        if (exception is InvalidOperationException typed &&
+            typed is ResourceNotFoundException or BusinessConflictException or DuplicateResourceException or OptimisticConcurrencyException)
+            return InternalApiProblemFactory.ApplicationProblem(HttpContext, typed, localizer[typed.Message]);
+        return Validation(exception);
     }
 
     private ActionResult Validation(Exception exception)

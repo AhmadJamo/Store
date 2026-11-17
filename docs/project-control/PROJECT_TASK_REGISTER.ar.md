@@ -90,3 +90,9 @@
 - الحالة: Completed — 2026-11-17.
 - النطاق: General + Purchase Sourcing + POS Experience + Exchange Rates + Accounting Settings.
 - التالي: دفعة وظائف تشغيلية محدودة ثم مراجعة نطاق REC-004 المتبقي.
+
+## TASK-REC-004B8
+
+- الحالة: Completed — 2026-11-17.
+- النطاق: Document Designs lifecycle + API ProblemDetails.
+- التالي: دفعة مستقلة أخرى من الجرد المقاس ثم مراجعة إغلاق REC-004.

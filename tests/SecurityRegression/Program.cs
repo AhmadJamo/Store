@@ -139,6 +139,11 @@ var settingsProblemServices = new[]
 }.Select(file => File.ReadAllText(Path.Combine("MiniStore.Application", "Services", "Settings", file))).ToList();
 Check(settingsProblemServices.All(source => !source.Contains("throw new InvalidOperationException", StringComparison.Ordinal)),
     "Settings services must retain explicit not-found, concurrency and business-conflict semantics");
+var documentDesignServiceSource = File.ReadAllText(Path.Combine("MiniStore.Application", "Services", "Settings", "DocumentDesignService.cs"));
+var documentDesignApiSource = File.ReadAllText(Path.Combine("MiniStore.Web", "Controllers", "Api", "V1", "DocumentDesignsApiController.cs"));
+Check(!documentDesignServiceSource.Contains("throw new InvalidOperationException", StringComparison.Ordinal) &&
+    documentDesignApiSource.Contains("ApplicationProblem", StringComparison.Ordinal),
+    "Document designs must retain typed not-found, duplicate, conflict and API mapping semantics");
 var mvcCutoverResolver = new PresentationCutoverResolver(Options.Create(
     new PresentationCutoverOptions
     {

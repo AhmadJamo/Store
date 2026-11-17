@@ -810,3 +810,11 @@ ERP expansion roadmap: 10/10 planned phases complete. Future work is backlog-dri
 - Input parsing and field validation remain 400; no settings or accounting business rule changed.
 - Verified: Release 0/0, 1,665 regression checks, 258 Angular tests, production and bundle gates.
 - Application classification progressed from 915 legacy/97 typed to 905 legacy/107 typed sites.
+
+## REC-004B8 — Document design errors (2026-11-17)
+
+- Document-design create, clone, activate, archive and default-selection flows now emit explicit not-found, duplicate, business-conflict and concurrency semantics.
+- The cohesive Document Designs API routes typed failures through the shared ProblemDetails mapper; section/form validation remains 400.
+- No design lifecycle, versioning, rendering or PDF rule changed.
+- Verified: Release 0/0, 1,666 regression checks, 258 Angular tests, production and bundle gates.
+- Application classification progressed from 905 legacy/107 typed to 897 legacy/115 typed sites.

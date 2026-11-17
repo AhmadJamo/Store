@@ -1,4 +1,5 @@
 using MiniStore.Application.Dtos.Settings;
+using MiniStore.Application.Exceptions;
 using MiniStore.Domain.Entities;
 using MiniStore.Domain.Interfaces;
 
@@ -19,7 +20,7 @@ public sealed class DocumentDesignService(IDocumentDesignRepository designs, IUn
         if (!sourceDesignId.HasValue)
             return new CreateDocumentDesignDto { DocumentType = documentType ?? DocumentDesignType.SalesQuotation };
         var source = await designs.GetByIdAsync(sourceDesignId.Value, false)
-            ?? throw new InvalidOperationException("Source document design was not found.");
+            ?? throw new ResourceNotFoundException("Source document design was not found.");
         var dto = MapForm(source);
         dto.SourceDesignId = source.Id; dto.Version = source.Version + 1; dto.IsDefault = false;
         return dto;
@@ -33,15 +34,15 @@ public sealed class DocumentDesignService(IDocumentDesignRepository designs, IUn
         await unitOfWork.ExecuteInTransactionAsync(async () =>
         {
             if (await designs.GetByCodeVersionAsync(dto.DocumentType, dto.Code, dto.Version) is not null)
-                throw new InvalidOperationException("This document design code and version already exist for the selected document type.");
+                throw new DuplicateResourceException("This document design code and version already exist for the selected document type.");
             if (dto.SourceDesignId.HasValue)
             {
                 var source = await designs.GetByIdAsync(dto.SourceDesignId.Value, false)
-                    ?? throw new InvalidOperationException("Source document design was not found.");
+                    ?? throw new ResourceNotFoundException("Source document design was not found.");
                 if (source.DocumentType != dto.DocumentType || !string.Equals(source.Code, dto.Code.Trim(), StringComparison.OrdinalIgnoreCase))
-                    throw new InvalidOperationException("A new document design version must keep the source document type and code.");
+                    throw new BusinessConflictException("A new document design version must keep the source document type and code.");
                 if (dto.Version <= source.Version)
-                    throw new InvalidOperationException("A new document design version must be greater than the source version.");
+                    throw new BusinessConflictException("A new document design version must be greater than the source version.");
             }
             created = new DocumentDesign(dto.DocumentType, dto.Code, dto.Version, dto.SourceDesignId,
                 dto.Name, dto.Description, dto.IsDefault, dto.ToSettings(), currentUser.UserId);
@@ -67,7 +68,7 @@ public sealed class DocumentDesignService(IDocumentDesignRepository designs, IUn
 
     public Task ActivateAsync(DocumentDesignCommandDto dto) => unitOfWork.ExecuteInTransactionAsync(async () =>
     {
-        var design = await designs.GetByIdAsync(dto.Id) ?? throw new InvalidOperationException("Document design was not found.");
+        var design = await designs.GetByIdAsync(dto.Id) ?? throw new ResourceNotFoundException("Document design was not found.");
         EnsureVersion(design.RowVersion, dto.RowVersion);
         var shouldBeDefault = design.IsDefault;
         foreach (var old in await designs.GetActiveByCodeAsync(design.DocumentType, design.Code))
@@ -84,13 +85,13 @@ public sealed class DocumentDesignService(IDocumentDesignRepository designs, IUn
 
     public Task ArchiveAsync(DocumentDesignCommandDto dto) => unitOfWork.ExecuteInTransactionAsync(async () =>
     {
-        var design = await designs.GetByIdAsync(dto.Id) ?? throw new InvalidOperationException("Document design was not found.");
+        var design = await designs.GetByIdAsync(dto.Id) ?? throw new ResourceNotFoundException("Document design was not found.");
         EnsureVersion(design.RowVersion, dto.RowVersion); design.Archive();
     });
 
     public Task SetDefaultAsync(DocumentDesignCommandDto dto) => unitOfWork.ExecuteInTransactionAsync(async () =>
     {
-        var design = await designs.GetByIdAsync(dto.Id) ?? throw new InvalidOperationException("Document design was not found.");
+        var design = await designs.GetByIdAsync(dto.Id) ?? throw new ResourceNotFoundException("Document design was not found.");
         EnsureVersion(design.RowVersion, dto.RowVersion);
         foreach (var current in await designs.GetActiveDefaultsAsync(design.DocumentType))
             if (current.Id != design.Id) current.SetDefault(false);
