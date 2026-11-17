@@ -71,3 +71,11 @@
 | Bundle gate | initial 340,433/358,400؛ lazy 81,895/81,920 |
 
 ثبتت الاختبارات أن 409 غير المرمز يصنف `conflict`، وأن `concurrency` لا يستخدم إلا إذا أرسله الخادم صراحة، وأن 400 يبقى `validation`.
+## TASK-REC-004B2 — 2026-11-17
+
+| الفحص | النتيجة |
+|---|---|
+| Release isolated build | ناجح، 0 تحذير/0 خطأ مع بقاء الخادم العامل |
+| Security/inventory regression | 1,656 ناجحًا؛ يغطي 404 وconflict وduplicate وconcurrency وcorrelationId |
+| Angular unit | 258/258، 122 ملفًا |
+| Production + bundle | ناجح؛ 340,433 initial و81,895 lazy ضمن الحدود |

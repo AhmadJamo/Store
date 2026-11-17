@@ -202,3 +202,4 @@ Mutation ProblemDetails may be summarized globally by `operationErrorToastInterc
 ## Internal API conflict semantics — 2026-11-17
 
 The presentation contract separates HTTP status from recovery meaning. `409/concurrency` is reserved for optimistic row-version races; `409/conflict` represents a valid command rejected by current business state. Validation remains 400 with named errors when applicable. The Angular client classifies by stable code first and status only as a conservative fallback. No domain rule or transaction boundary changed.
+REC-004B2 keeps failure meaning in Application and HTTP mapping in Web. Services throw typed, presentation-neutral exceptions; controllers delegate their status/code mapping to `InternalApiProblemFactory`. Message matching is prohibited. See ADR `docs/decisions/2026-11-17-typed-application-problems.md`.

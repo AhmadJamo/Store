@@ -251,3 +251,7 @@ Opening float, cash movements, blind counts and variances are operational eviden
 ## POS cash accounting
 
 Opening float, reasoned paid-in/out and approved variance entries use `JournalPostingService` with fiscal-period controls. Cash sales/returns change expected drawer cash through source-unique evidence; they do not create duplicate sales journals. Variance approval requires a separate actor and named counterpart account.
+
+## Manual-journal API failures — 2026-11-17
+
+Manual-journal commands now distinguish missing/non-manual entries (404), invalid posting/reversal state or replay-key conflict (409), and date/line/account/balance validation (400). Posting, reversal, fiscal-period and journal transaction rules are unchanged; Angular keeps the entered draft on rejection.

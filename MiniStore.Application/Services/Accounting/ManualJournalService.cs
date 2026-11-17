@@ -1,4 +1,5 @@
 using MiniStore.Application.Dtos.Accounting;
+using MiniStore.Application.Exceptions;
 using MiniStore.Domain.Entities;
 using MiniStore.Domain.Interfaces;
 
@@ -54,7 +55,7 @@ public sealed class ManualJournalService(IJournalEntryRepository entries, IAccou
         if (existing is not null)
         {
             if (!Matches(existing, input.Date.Date, description, lines))
-                throw new InvalidOperationException("The manual journal request key was already used with different content.");
+                throw new BusinessConflictException("The manual journal request key was already used with different content.");
             return existing.Id;
         }
         var entry = new JournalEntry(await numbers.GenerateAsync(DocumentNumberType.JournalEntry, input.Date.Date),
@@ -72,7 +73,7 @@ public sealed class ManualJournalService(IJournalEntryRepository entries, IAccou
             var entry = await RequireManualForUpdate(id);
             if (entry.Status == JournalEntryStatus.Posted) return;
             if (entry.Status != JournalEntryStatus.Draft)
-                throw new InvalidOperationException("Only a draft manual journal can be posted.");
+                throw new BusinessConflictException("Only a draft manual journal can be posted.");
             await posting.PostDraftAsync(entry);
         });
         return id;
@@ -90,12 +91,12 @@ public sealed class ManualJournalService(IJournalEntryRepository entries, IAccou
             if (existing is not null)
             {
                 if (existing.ReversalOfEntryId != id)
-                    throw new InvalidOperationException("The manual journal request key was already used for another reversal.");
+                    throw new BusinessConflictException("The manual journal request key was already used for another reversal.");
                 reversalId = existing.Id; return;
             }
             var original = await RequireManualForUpdate(id);
             if (original.Status != JournalEntryStatus.Posted)
-                throw new InvalidOperationException("Only a posted manual journal can be reversed.");
+                throw new BusinessConflictException("Only a posted manual journal can be reversed.");
             var reversal = await posting.ReverseAsync(SourceType, original.SourceReference!, key, input.Date.Date, reason);
             await unitOfWork.FlushAsync();
             reversalId = reversal.Id;
@@ -106,9 +107,9 @@ public sealed class ManualJournalService(IJournalEntryRepository entries, IAccou
     private async Task<JournalEntry> RequireManualForUpdate(int id)
     {
         var entry = await entries.GetByIdForUpdateAsync(id)
-            ?? throw new InvalidOperationException("The manual journal was not found.");
+            ?? throw new ResourceNotFoundException("The manual journal was not found.");
         if (!string.Equals(entry.SourceType, SourceType, StringComparison.Ordinal))
-            throw new InvalidOperationException("The journal entry is not a manual journal.");
+            throw new ResourceNotFoundException("The journal entry is not a manual journal.");
         return entry;
     }
 

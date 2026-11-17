@@ -215,3 +215,4 @@ Angular now presents concise localized ProblemDetails from failed mutation reque
 ## Error contract update — 2026-11-17
 
 Internal API ProblemDetails now distinguishes ordinary business conflicts (`conflict`) from optimistic row-version conflicts (`concurrency`). HTTP 400 remains field/form validation, 404 remains not-found, and all responses retain correlation evidence. Angular mutation failures can therefore show concise toast feedback without misrepresenting a delete/state restriction as a concurrent edit.
+REC-004B2 (2026-11-17) introduces presentation-neutral typed Application failures and a single Web ProblemDetails mapping. Manual journals and sales orders are the first migrated high-risk cohort; no HTTP concepts entered Application services and no business rules changed.

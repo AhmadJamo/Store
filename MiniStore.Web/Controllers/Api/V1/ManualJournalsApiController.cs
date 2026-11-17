@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
 using MiniStore.Application.Dtos.Accounting;
+using MiniStore.Application.Exceptions;
 using MiniStore.Application.Services;
 using MiniStore.Web.Authorization;
 using MiniStore.Web.Middleware.Api;
@@ -44,6 +45,10 @@ public sealed class ManualJournalsApiController(ManualJournalService service,
     private async Task<IActionResult> Run<T>(Func<Task<T>> action)
     {
         try { return Ok(await action()); }
+        catch (InvalidOperationException exception) when (exception is ResourceNotFoundException or BusinessConflictException or DuplicateResourceException or OptimisticConcurrencyException)
+        {
+            return InternalApiProblemFactory.ApplicationProblem(HttpContext, exception, localizer[exception.Message]);
+        }
         catch (Exception exception) when (exception is ArgumentException or InvalidOperationException)
         {
             ModelState.AddModelError(string.Empty, localizer[exception.Message]);

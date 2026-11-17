@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
 using MiniStore.Application.Dtos.Sales;
+using MiniStore.Application.Exceptions;
 using MiniStore.Application.Services;
 using MiniStore.Domain.Entities;
 using MiniStore.Web.Authorization;
@@ -61,7 +62,16 @@ public sealed class SalesOrdersApiController(SalesOrderService service,
     private async Task<IActionResult> Run(Func<Task<IActionResult>> action)
     {
         try { return await action(); }
-        catch (Exception exception) when (exception is ArgumentException or InvalidOperationException or UnauthorizedAccessException)
+        catch (InvalidOperationException exception) when (exception is ResourceNotFoundException or BusinessConflictException or DuplicateResourceException or OptimisticConcurrencyException)
+        {
+            return InternalApiProblemFactory.ApplicationProblem(HttpContext, exception, localizer[exception.Message]);
+        }
+        catch (UnauthorizedAccessException exception)
+        {
+            return InternalApiProblemFactory.Create(HttpContext, StatusCodes.Status403Forbidden,
+                localizer[exception.Message], InternalApiProblemCodes.Forbidden);
+        }
+        catch (Exception exception) when (exception is ArgumentException or InvalidOperationException)
         {
             ModelState.AddModelError(string.Empty, localizer[exception.Message]);
             return InternalApiProblemFactory.Validation(HttpContext, ModelState,

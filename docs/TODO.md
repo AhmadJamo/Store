@@ -563,3 +563,4 @@ ERP-007 completed 2026-11-16: accepted POS cash-session ADR and tenant/branch/te
 - [x] REC-004A: add bounded global toasts for mutation ProblemDetails while preserving inline field errors, page recovery and form values (2026-11-17).
 - [ ] REC-004B: inventory and normalize server-side status/code classification for validation, duplicate, not-found, conflict and transient errors.
 - [x] REC-004B1: reserve conflict for business-state 409 responses and keep explicit row-version concurrency semantics (2026-11-17).
+- [x] REC-004B2: add typed Application problem semantics and migrate manual journals plus sales orders without message matching (2026-11-17).

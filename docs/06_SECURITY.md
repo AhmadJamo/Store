@@ -409,3 +409,4 @@ The operation toast displays only localized ProblemDetails title/detail and corr
 ## ProblemDetails classification guard — 2026-11-17
 
 Business-state rejections expose localized ProblemDetails and correlation IDs without exception internals. A regression guard fixes default HTTP 409 classification to `conflict` and keeps HTTP 400 as `validation`; authorization failures remain owned by the existing 401/403 path.
+REC-004B2 fixes a sales-order boundary that previously rendered `UnauthorizedAccessException` as validation 400; it now returns localized 403 ProblemDetails. Typed failures retain correlation IDs and do not expose stack traces or introduce message parsing.

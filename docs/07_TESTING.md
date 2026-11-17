@@ -265,3 +265,9 @@ Angular passed 256/256 tests across 122 files. New tests prove mutation conflict
 - Regression executable: 1,652 checks, including 409 conflict and 400 validation invariants.
 - Release solution build: passed with 0 warnings and 0 errors before the running host locked Release output; subsequent focused regression rebuild used Debug.
 - Production Angular build passed; bundle gate passed at 340,433/358,400 initial bytes and 81,895/81,920 largest lazy bytes.
+## REC-004B2 verification — 2026-11-17
+
+- Release solution build in isolated artifacts: 0 warnings, 0 errors while the live host remained running.
+- Regression executable: 1,656 checks, including all four typed mappings and correlation IDs.
+- Angular: 258/258 across 122 files.
+- Production build and bundle gate: 340,433/358,400 initial; 81,895/81,920 largest lazy.

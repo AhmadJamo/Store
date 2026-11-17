@@ -45,3 +45,5 @@ operational posting and fiscal-period rules remain unchanged.
 MOD-030H physically retires the legacy `JournalEntries.Details` MVC controller/view after confirming the existing
 `JournalEntriesApiController` and Angular detail route. Positive-ID legacy links remain permission-protected redirects;
 the query service, immutable evidence, tenant filtering and all posting/reversal authorities are unchanged.
+
+REC-004B2: manual-journal command failures use typed Application semantics. Missing resources are 404, state/replay conflicts are 409, and accounting input validation remains 400. No posting or balancing rule changed.

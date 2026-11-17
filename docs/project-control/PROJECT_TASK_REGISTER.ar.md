@@ -53,3 +53,9 @@
 - النتيجة: كود `conflict` ثابت لتعارضات الأعمال 409؛ `concurrency` محصور بتعارض rowversion الصريح؛ validation بقي 400.
 - النطاق: حذف المنتج/المستودع وتعارضات الموردين المعروفة، مع تصنيف Angular واختبارات منع الانحدار.
 - المتبقي: استكمال جرد InvalidOperationException وتصنيف الحالات المؤكدة فقط دون مطابقة نصوص هشة.
+
+## TASK-REC-004B2
+
+- الحالة: Completed — 2026-11-17.
+- النطاق: typed Application problems + manual journals + sales orders.
+- التالي: Inventory/Purchasing cohort.

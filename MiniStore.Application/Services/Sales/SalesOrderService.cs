@@ -1,3 +1,4 @@
+using MiniStore.Application.Exceptions;
 using MiniStore.Application.Dtos.Sales;
 using MiniStore.Domain.Entities;
 using MiniStore.Domain.Interfaces;
@@ -24,7 +25,7 @@ public sealed class SalesOrderService(ISalesOrderRepository orders,ISalesQuotati
         await unitOfWork.ExecuteInTransactionAsync(async()=>
         {
             existing=await orders.GetBySourceQuotationIdAsync(dto.QuotationId);if(existing is not null){created=existing;return;}
-            var quotation=await quotations.GetByIdAsync(dto.QuotationId)??throw new InvalidOperationException("Sales quotation was not found.");
+            var quotation=await quotations.GetByIdAsync(dto.QuotationId)??throw new ResourceNotFoundException("Sales quotation was not found.");
             EnsureVersion(quotation.RowVersion,dto.RowVersion,"Sales quotation was modified by another user. Reload and try again.");
             created=new SalesOrder(await numbers.GenerateAsync(DocumentNumberType.SalesOrder,DateTime.Today),quotation,DateOnly.FromDateTime(DateTime.Today),currentUser.UserId);
             await orders.AddAsync(created);
@@ -37,7 +38,7 @@ public sealed class SalesOrderService(ISalesOrderRepository orders,ISalesQuotati
         var outcome=SalesOrderConfirmationOutcome.Confirmed;
         await unitOfWork.ExecuteInTransactionAsync(async() =>
         {
-            var order=await orders.GetByIdAsync(dto.Id)??throw new InvalidOperationException("Sales order was not found.");
+            var order=await orders.GetByIdAsync(dto.Id)??throw new ResourceNotFoundException("Sales order was not found.");
             EnsureVersion(order.RowVersion,dto.RowVersion,"Sales order was modified by another user. Reload and try again.");
             outcome=await approvalService.EvaluateAndConfirmAsync(order);
         });
@@ -45,15 +46,15 @@ public sealed class SalesOrderService(ISalesOrderRepository orders,ISalesQuotati
     }
     public Task CancelAsync(SalesOrderStatusCommandDto dto)=>unitOfWork.ExecuteInTransactionAsync(async()=>
     {
-        var order=await orders.GetByIdAsync(dto.Id)??throw new InvalidOperationException("Sales order was not found.");
+        var order=await orders.GetByIdAsync(dto.Id)??throw new ResourceNotFoundException("Sales order was not found.");
         EnsureVersion(order.RowVersion,dto.RowVersion,"Sales order was modified by another user. Reload and try again.");
         if((await deliveries.GetBySalesOrderAsync(order.Id)).Any(x=>x.Status==SalesDeliveryStatus.Posted))
-            throw new InvalidOperationException("A sales order with posted deliveries cannot be cancelled. Use the controlled return workflow.");
+            throw new BusinessConflictException("A sales order with posted deliveries cannot be cancelled. Use the controlled return workflow.");
         await approvalService.CancelPendingAsync(order.Id);
         await reservationService.ReleaseAllActiveAsync(order.Id,"Sales order cancelled.");
         order.Cancel(currentUser.UserId,dto.Reason??"");
     });
-    private static void EnsureVersion(byte[] current,byte[] submitted,string message){if(submitted.Length==0||!current.SequenceEqual(submitted))throw new InvalidOperationException(message);}
+    private static void EnsureVersion(byte[] current,byte[] submitted,string message){if(submitted.Length==0||!current.SequenceEqual(submitted))throw new OptimisticConcurrencyException(message);}
 
     private async Task<SalesDeliveryProgressDto> GetDeliveryProgressAsync(SalesOrder order)
     {

@@ -266,3 +266,5 @@ The cohesive immediate-sales Angular feature now supports one-time policy/drawer
 ## ERP-009 POS operator presentation
 
 The runtime now applies configured grid/list/barcode-focused layouts, touch sizing, theme/accent, terminal title, cart position and search autofocus. Enter adds one exact barcode/code/name match, Escape clears search, and plus/minus controls update quantity without reopening product selection. These are presentation shortcuts only; server pricing, stock, tax, permissions and posting remain authoritative.
+
+REC-004B2: sales-order commands now return 404 for missing order/quotation, explicit `409/concurrency` for stale rowversion, `409/conflict` when posted deliveries prevent cancellation, and 403 for authorization rejection. Confirmation, reservation, delivery and cancellation rules are unchanged.

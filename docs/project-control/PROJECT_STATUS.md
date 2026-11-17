@@ -494,3 +494,7 @@ ERP-010 is complete. The Branches workspace now exposes server-owned operational
 ## 2026-11-17 — REC-004B1 stable conflict semantics
 
 The first server-classification slice is complete. Non-concurrency HTTP 409 responses now use the stable `conflict` code, while explicit row-version races remain `concurrency` and form validation remains 400. Product/warehouse delete restrictions and supplier workflow conflicts were corrected without changing business rules. Angular, regression, production and bundle gates passed. REC-004 remains in progress for the remaining InvalidOperationException inventory.
+
+## 2026-11-17 — REC-004B2
+
+Typed Application problem semantics are established and manual journals plus sales orders are migrated. Verification passed; REC-004 continues with Inventory/Purchasing cohorts.

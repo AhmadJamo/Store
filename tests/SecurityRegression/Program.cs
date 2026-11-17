@@ -20,6 +20,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using ClosedXML.Excel;
 using MiniStore.Application.Permissions;
+using MiniStore.Application.Exceptions;
 using MiniStore.Application.DTOs.Settings;
 using MiniStore.Application.Dtos.Settings;
 using MiniStore.Application.Dtos.Customers;
@@ -68,6 +69,21 @@ Check(InternalApiProblemCodes.FromStatus(StatusCodes.Status409Conflict) == Inter
 Check(InternalApiProblemCodes.FromStatus(StatusCodes.Status400BadRequest) == InternalApiProblemCodes.Validation,
     "HTTP 400 responses must remain validation errors");
 
+var classifiedProblemContext = new DefaultHttpContext { TraceIdentifier = "classification-test" };
+foreach (var sample in new (InvalidOperationException Exception, int Status, string Code)[]
+{
+    (new ResourceNotFoundException("missing"), StatusCodes.Status404NotFound, InternalApiProblemCodes.NotFound),
+    (new BusinessConflictException("blocked"), StatusCodes.Status409Conflict, InternalApiProblemCodes.Conflict),
+    (new DuplicateResourceException("duplicate"), StatusCodes.Status409Conflict, InternalApiProblemCodes.Duplicate),
+    (new OptimisticConcurrencyException("stale"), StatusCodes.Status409Conflict, InternalApiProblemCodes.Concurrency)
+})
+{
+    var result = InternalApiProblemFactory.ApplicationProblem(classifiedProblemContext, sample.Exception, sample.Exception.Message);
+    var problem = (ProblemDetails)result.Value!;
+    Check(result.StatusCode == sample.Status && problem.Extensions["code"]?.ToString() == sample.Code &&
+        problem.Extensions["correlationId"]?.ToString() == classifiedProblemContext.TraceIdentifier,
+        $"{sample.Exception.GetType().Name} must produce its stable status, code and correlation ID");
+}
 var mvcCutoverResolver = new PresentationCutoverResolver(Options.Create(
     new PresentationCutoverOptions
     {

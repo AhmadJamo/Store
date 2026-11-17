@@ -1,3 +1,4 @@
+using MiniStore.Application.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 
@@ -22,6 +23,21 @@ public static class InternalApiProblemFactory
         return new ObjectResult(problem) { StatusCode = statusCode };
     }
 
+    public static ObjectResult ApplicationProblem(
+        HttpContext context,
+        InvalidOperationException exception,
+        string localizedMessage)
+    {
+        var (status, code) = exception switch
+        {
+            ResourceNotFoundException => (StatusCodes.Status404NotFound, InternalApiProblemCodes.NotFound),
+            DuplicateResourceException => (StatusCodes.Status409Conflict, InternalApiProblemCodes.Duplicate),
+            OptimisticConcurrencyException => (StatusCodes.Status409Conflict, InternalApiProblemCodes.Concurrency),
+            BusinessConflictException => (StatusCodes.Status409Conflict, InternalApiProblemCodes.Conflict),
+            _ => throw new ArgumentException("The exception does not have an application problem classification.", nameof(exception))
+        };
+        return Create(context, status, localizedMessage, code);
+    }
     public static BadRequestObjectResult Validation(
         HttpContext context,
         ModelStateDictionary modelState,

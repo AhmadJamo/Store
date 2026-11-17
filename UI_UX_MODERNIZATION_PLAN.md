@@ -766,3 +766,10 @@ ERP expansion roadmap: 10/10 planned phases complete. Future work is backlog-dri
 - Angular no longer treats every untyped 409 as optimistic concurrency. Mutation ProblemDetails continue through the bounded toast while forms preserve entered values.
 - Verified: Release solution build 0/0, 258 Angular tests, 1,652 regression checks, production build and bundle gates (340,433/358,400 initial; 81,895/81,920 lazy).
 - Remaining REC-004 work: classify the broader InvalidOperationException inventory into typed validation, duplicate, not-found and conflict responses without message guessing or business-rule changes.
+## REC-004B2 — Typed accounting and sales problems (2026-11-17)
+
+- Added reusable Application-layer problem semantics with one Web ProblemDetails mapper; no controller parses exception messages.
+- Manual-journal missing resources now return 404 and invalid state/replay conflicts return 409, while line/date/balance validation remains 400 and preserves the draft.
+- Sales-order missing quotation/order returns 404, stale rowversion returns `409/concurrency`, posted-delivery cancellation returns `409/conflict`, and authorization rejection returns 403.
+- Verified: Release 0/0, 1,656 regression checks, 258 Angular tests, production build and fixed bundle gates.
+- Next: migrate the next confirmed Inventory/Purchasing cohort and eliminate remaining ambiguous controller catches incrementally.
