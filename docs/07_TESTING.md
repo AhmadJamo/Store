@@ -256,3 +256,6 @@ Release build passed with zero warnings/errors; security/inventory regression pa
 ## REC-003 route/function inventory — 2026-11-17
 
 `pwsh scripts/Test-RouteFunctionCoverage.ps1` passed with 196 unique screen routes, zero unresolved P1 wiring gaps and seven P2 manual authorization reviews. Accounting, Sales and Inventory are mandatory gate inputs. The generator is deterministic and updates the project-control matrix from source; business-rule and browser verification remain separate evidence.
+## REC-004A operation error toasts — 2026-11-17
+
+Angular passed 256/256 tests across 122 files. New tests prove mutation conflicts create a concise toast with correlation ID, named field validation does not create a toast, 401 is not duplicated, the queue is bounded to three messages and errors expire. Production build passed; initial size is 340,416/358,400 bytes and largest lazy chunk is 81,895/81,920 bytes.

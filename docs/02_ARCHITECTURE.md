@@ -195,3 +195,7 @@ Cash-session state is a tenant-owned sales-domain aggregate scoped to branch, te
 ## ERP-008 cash-session boundary
 
 The antiforgery-protected API delegates to the Application service, which re-resolves branch/terminal/drawer resources and invokes the domain lifecycle. Controllers do not access EF. Cash journals use `JournalPostingService`; the aggregate remains operational evidence rather than an alternative ledger.
+
+### Operation error toast boundary
+
+Mutation ProblemDetails may be summarized globally by `operationErrorToastInterceptor`, but the interceptor does not classify business rules, translate server text, retry requests, clear forms or replace field-level validation. It ignores GET, 401 and named field-error payloads. Feature pages remain responsible for inline recovery and exact field focus; server/API layers remain authoritative for status, code, localization and correlation ID.

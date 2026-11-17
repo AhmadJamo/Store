@@ -751,3 +751,11 @@ ERP expansion roadmap: 10/10 planned phases complete. Future work is backlog-dri
 - Results: 0 unresolved P1; 7 P2 manual authorization reviews; Accounting 11 routes, Sales 37, Inventory 22.
 - Visibility is not treated as functional completion; the matrix explicitly separates wiring evidence from business-rule and browser evidence.
 - Next phase: REC-004 ProblemDetails and business-conflict normalization.
+## V3 REC-004A — Operation error toast layer — COMPLETED 2026-11-17
+
+- Added one reusable shell-level toast outlet and bounded signal-backed service; no feature-level wrapper proliferation.
+- Failed non-GET operations show concise server-localized title/detail and support reference.
+- Named field validation stays inside the form; GET recovery, retries and unsaved values remain feature-owned; 401 remains with the authentication flow.
+- Toasts are RTL-safe, keyboard-dismissible, responsive, limited to three and auto-expire.
+- Verification: Angular 256/256, production build passed, initial 340,416/358,400 bytes, lazy 81,895/81,920 bytes.
+- REC-004 continues with server ProblemDetails classification.

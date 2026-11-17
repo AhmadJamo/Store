@@ -15,10 +15,11 @@ import { NavigationGroupStateService } from '../../workspace/navigation/navigati
 import { NavigationLocalizationService } from '../../workspace/navigation/navigation-localization.service';
 import { ShellNavigationLocalizationService } from './shell-navigation-localization.service';
 import { BranchContextService } from '../../core/branch-context/branch-context.service';
+import { ToastOutletComponent } from '../../shared/ui/toast/toast-outlet';
 
 @Component({
   selector: 'app-shell',
-  imports: [RouterLink, RouterLinkActive, RouterOutlet],
+  imports: [RouterLink, RouterLinkActive, RouterOutlet, ToastOutletComponent],
   templateUrl: './app-shell.html',
   styleUrl: './app-shell.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -40,3 +40,10 @@
 - النتيجة: 0 فجوات P1 في الربط؛ 182 مسارًا بدليل عابر للطبقات مباشر، وحدود عامة/عرضية معروفة، و7 حالات P2 ذات تفويض authenticated أو API-specific تحتاج مراجعة يدوية مستقلة.
 - الوحدات الحرجة: Accounting (11)، Sales (37)، Inventory (22) دون P1.
 - البوابة: `Test-RouteFunctionCoverage.ps1` تعيد التوليد وتفشل عند أي P1 أو غياب وحدة حرجة.
+
+## TASK-REC-004A
+
+- الحالة: Completed.
+- النطاق: توستر لأخطاء mutation غير الحقلية فقط؛ لا تغيير لتصنيف الخادم.
+- الدليل: 256 Angular tests، production build، initial/lazy budgets.
+- المتبقي: REC-004B جرد وتوحيد 400/404/409/500 وأكواد ProblemDetails.

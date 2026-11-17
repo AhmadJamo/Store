@@ -403,3 +403,6 @@ Branch create/update/status endpoints require their independent permission and a
 ### Warehouse deletion conflict — REC-002
 
 `Warehouses.Delete` and antiforgery remain mandatory. Tenant query filters resolve the target warehouse; database FK restrictions are the final integrity authority. A referenced delete is translated inside `WarehouseRepository` to a stable business failure and the API returns localized HTTP 409 ProblemDetails without SQL/provider details. Angular permission checks remain presentation-only and a rejected delete does not remove the row.
+### Error toast disclosure boundary
+
+The operation toast displays only localized ProblemDetails title/detail and correlation ID already returned to the caller. It does not show stack traces, provider exceptions or audit-sensitive metadata. 401 remains owned by the authentication interceptor, and field validation remains in the form. The toast is presentation feedback and grants no permission or retry authority.

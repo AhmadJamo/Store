@@ -209,3 +209,6 @@ Warehouse create/edit and named branch/account selection were already complete. 
 ## REC-003 cross-layer route inventory — 2026-11-17
 
 The executable route/function inventory covers 196 unique Angular screen routes and maps component-local API contracts to controllers, Application services, permission evidence and adjacent Angular tests. No unresolved P1 wiring gap remains; seven P2 routes use authenticated or API-specific authorization and remain explicitly queued for manual security review. Accounting (11), Sales (37) and Inventory (22) are all present with zero P1. REC-004 is the active gate.
+## REC-004A operation error toasts — 2026-11-17
+
+Angular now presents concise localized ProblemDetails from failed mutation requests as bounded, dismissible toasts while retaining existing inline recovery and form state. Field-level validation remains inside forms, GET/load failures remain in page recovery states, and 401 continues through the dedicated authentication handler. This is the first REC-004 presentation slice; server error classification remains the active task.

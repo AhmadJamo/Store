@@ -50,3 +50,13 @@
 | `Test-RouteFunctionCoverage.ps1` | Passed |
 
 هذه بوابة wiring/evidence وليست بديلًا عن اختبارات قواعد العمل أو E2E لكل عملية.
+## TASK-REC-004A — 2026-11-17
+
+| البوابة | النتيجة |
+|---|---|
+| Angular unit | 256/256 Passed — 122 files |
+| Production build | Passed |
+| Initial bundle | 340,416 / 358,400 bytes |
+| Largest lazy chunk | 81,895 / 81,920 bytes |
+
+السياسة المختبرة: conflict mutation يظهر كتـوستر؛ field validation و401 لا يتكرران في التوستر؛ الطابور محدود ويزول تلقائيًا.
