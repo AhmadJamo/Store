@@ -1,4 +1,5 @@
 using MiniStore.Application.Dtos.Settings;
+using MiniStore.Application.Exceptions;
 using MiniStore.Domain.Entities;
 using MiniStore.Domain.Interfaces;
 
@@ -76,5 +77,5 @@ public sealed class PurchaseSourcingPolicyService(
     };
 
     private int RequireTenant() => tenantContext.TenantId
-        ?? throw new InvalidOperationException("An active company is required.");
+        ?? throw new BusinessConflictException("An active company is required.");
 }

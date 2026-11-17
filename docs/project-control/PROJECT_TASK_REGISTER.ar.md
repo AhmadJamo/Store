@@ -84,3 +84,9 @@
 - الحالة: Completed — 2026-11-17.
 - النطاق: Measurement Units + Tax Rates + Payment Methods + Branches.
 - التالي: اختيار دفعة مترابطة جديدة من الجرد ثم إعادة تقييم إغلاق REC-004.
+
+## TASK-REC-004B7
+
+- الحالة: Completed — 2026-11-17.
+- النطاق: General + Purchase Sourcing + POS Experience + Exchange Rates + Accounting Settings.
+- التالي: دفعة وظائف تشغيلية محدودة ثم مراجعة نطاق REC-004 المتبقي.

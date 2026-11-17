@@ -951,3 +951,5 @@ REC-004B4 map: customer/supplier feature-specific duplicate and concurrency exce
 REC-004B5 map: `ProductCategoryService`, `ProductAttributeService` and `ProductTemplateService` select typed not-found/duplicate/conflict semantics; the three matching API controllers delegate to `InternalApiProblemFactory.ApplicationProblem` and retain 400 validation for field parsing.
 
 REC-004B6 map: `MeasurementUnitService`, `TaxRateService`, `PaymentMethodService` and `BranchService` select typed not-found/duplicate/conflict failures. `CatalogMastersApiController`, `SettingsApiController` and `BranchesApiController` delegate them to `InternalApiProblemFactory.ApplicationProblem`.
+
+REC-004B7 map: five Settings services now select typed missing/configuration-conflict semantics, while the existing `SettingsApiController.ExecuteUpdateAsync` shared mapper owns the HTTP response and preserves the dedicated settings-concurrency branch.

@@ -415,3 +415,5 @@ REC-004B4 removes message inspection from Products API classification. Customer,
 REC-004B5 removes exception-message inspection from product category, attribute and template APIs. Localized ProblemDetails retain correlation IDs; existing Products permissions and antiforgery requirements remain unchanged.
 
 REC-004B6 preserves all existing reference-master permissions and antiforgery boundaries. Only failure classification changed; correlation IDs and localized ProblemDetails remain available without exposing stack or persistence details.
+
+REC-004B7 changes no Settings permissions, antiforgery behavior or audit writes. Typed failures retain localized text and correlation IDs without revealing persistence details.

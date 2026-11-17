@@ -1,4 +1,5 @@
-﻿using MiniStore.Application.DTOs.Settings;
+using MiniStore.Application.DTOs.Settings;
+using MiniStore.Application.Exceptions;
 using MiniStore.Domain.Entities;
 using MiniStore.Domain.Interfaces;
 
@@ -106,7 +107,7 @@ public class GeneralSettingsService
     public async Task UpdatePreferencesAsync(GeneralSettingsPreferencesDto dto)
     {
         var settings = await _repository.GetAsync() ??
-            throw new InvalidOperationException("Configure organization identity before saving general settings.");
+            throw new BusinessConflictException("Configure organization identity before saving general settings.");
         EnsureVersion(settings.RowVersion, dto.RowVersion);
         var before = AuditValues(settings);
         settings.SetCurrency(dto.Currency);

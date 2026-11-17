@@ -1,4 +1,5 @@
 using MiniStore.Application.Dtos.Settings;
+using MiniStore.Application.Exceptions;
 using MiniStore.Domain.Entities;
 using MiniStore.Domain.Interfaces;
 
@@ -32,7 +33,7 @@ public sealed class CurrencyExchangeRateService(
     {
         var companyCurrency = await GetCompanyCurrencyAsync();
         var code = Normalize(dto.CurrencyCode);
-        if (code == companyCurrency) throw new InvalidOperationException("The company currency always has an exchange rate of one and does not need a rate entry.");
+        if (code == companyCurrency) throw new BusinessConflictException("The company currency always has an exchange rate of one and does not need a rate entry.");
         await unitOfWork.ExecuteInTransactionAsync(async () =>
         {
             var existing = await rates.GetAsync(code, dto.EffectiveDate);
@@ -47,7 +48,7 @@ public sealed class CurrencyExchangeRateService(
         var code = Normalize(currencyCode);
         if (code == companyCurrency) return new(code, companyCurrency, 1m, date, "Company currency");
         var rate = await rates.GetLatestAsync(code, date)
-            ?? throw new InvalidOperationException($"Configure an exchange rate for {code} on or before {date:yyyy-MM-dd}.");
+            ?? throw new ResourceNotFoundException($"Configure an exchange rate for {code} on or before {date:yyyy-MM-dd}.");
         return new(code, companyCurrency, rate.CompanyCurrencyPerUnit, rate.EffectiveDate, rate.Source);
     }
 

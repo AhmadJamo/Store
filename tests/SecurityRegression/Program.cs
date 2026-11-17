@@ -132,6 +132,13 @@ var referenceMasterServices = new[]
 }.Select(File.ReadAllText).ToList();
 Check(referenceMasterServices.All(source => !source.Contains("throw new InvalidOperationException", StringComparison.Ordinal)),
     "Reference-master services must retain explicit not-found, duplicate and conflict semantics");
+var settingsProblemServices = new[]
+{
+    "GeneralSettingsService.cs", "PurchaseSourcingPolicyService.cs", "PosExperienceSettingsService.cs",
+    "CurrencyExchangeRateService.cs", "AccountingSettingsService.cs"
+}.Select(file => File.ReadAllText(Path.Combine("MiniStore.Application", "Services", "Settings", file))).ToList();
+Check(settingsProblemServices.All(source => !source.Contains("throw new InvalidOperationException", StringComparison.Ordinal)),
+    "Settings services must retain explicit not-found, concurrency and business-conflict semantics");
 var mvcCutoverResolver = new PresentationCutoverResolver(Options.Create(
     new PresentationCutoverOptions
     {

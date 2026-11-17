@@ -517,3 +517,7 @@ Catalog configuration errors are typed and controller message matching is remove
 ## 2026-11-17 — REC-004B6
 
 Reference-master errors for measurement units, tax rates, payment methods and branches are typed and mapped consistently. All gates passed; REC-004 remains active at 915 legacy/97 typed Application throw sites.
+
+## 2026-11-17 — REC-004B7
+
+System settings failures are typed across five cohesive services and use the existing shared Settings API mapper. All gates passed; REC-004 remains active at 905 legacy/107 typed Application throw sites.

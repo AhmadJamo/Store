@@ -802,3 +802,11 @@ ERP expansion roadmap: 10/10 planned phases complete. Future work is backlog-dri
 - No accounting posting, inventory movement, branch-access or master-data business rule changed.
 - Verified: Release 0/0, 1,664 regression checks, 258 Angular tests, production and bundle gates.
 - Application classification progressed from 924 legacy/86 typed to 915 legacy/97 typed sites.
+
+## REC-004B7 — System settings errors (2026-11-17)
+
+- General preferences, purchase sourcing, POS experience, currency rates and accounting settings now emit explicit typed failures.
+- Missing terminals, exchange rates and posting accounts return 404; unavailable configuration and protected policy transitions return `409/conflict`; existing settings row-version failures remain `409/concurrency`.
+- Input parsing and field validation remain 400; no settings or accounting business rule changed.
+- Verified: Release 0/0, 1,665 regression checks, 258 Angular tests, production and bundle gates.
+- Application classification progressed from 915 legacy/97 typed to 905 legacy/107 typed sites.

@@ -208,3 +208,5 @@ REC-004B4 proves feature-specific exceptions may inherit the reusable Applicatio
 REC-004B5 extends the typed Application failure contract across the cohesive catalog configuration cohort. Controllers contain no catalog duplicate heuristics; Application services own semantic selection and Web owns HTTP mapping.
 
 REC-004B6 keeps reference-master failure meaning in the Application layer and HTTP mapping in Web. Generic input validation remains 400; domain-independent missing, duplicate and state-conflict semantics use the shared typed contract.
+
+REC-004B7 preserves the Settings API as a cohesive configuration boundary: services identify missing resources and protected state transitions; Web maps them to stable ProblemDetails codes. Row-version concurrency remains a distinct first-class response.

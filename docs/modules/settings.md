@@ -83,3 +83,5 @@ The existing Branches workspace remains the single cohesive feature. With `Branc
 The existing cohesive `/branches` Angular feature now owns discoverable branch creation, detail editing and activation/deactivation. Commands use dedicated DTOs and `Branches.Create`, `Branches.Edit` and `Branches.SetActive`; `BranchService` retains tenant scope, uniqueness rules, persistence and semantic audit authority. The feature preserves entered values after API validation errors and keeps Arabic/English behavior without element-level component overcutting. Legal entity, address and timezone expansion remains deferred pending a separate data-model ADR.
 
 REC-004B6: measurement-unit duplicates return `409/duplicate`; missing source/destination units return 404. The Settings API uses the shared mapper while ordinary input validation remains 400.
+
+REC-004B7: missing POS terminals, exchange rates and posting accounts return 404; missing prerequisite configuration and protected accounting-policy changes return `409/conflict`; row-version failures remain `409/concurrency`; input validation remains 400.

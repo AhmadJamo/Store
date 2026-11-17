@@ -221,3 +221,5 @@ REC-004B4 (2026-11-17) aligns customer, supplier and product master-data failure
 REC-004B5 (2026-11-17) migrates product category, attribute and template configuration to typed ProblemDetails semantics. Duplicate detection no longer depends on controller message parsing; catalog business rules are unchanged.
 
 REC-004B6 (2026-11-17) migrates measurement-unit, tax-rate, payment-method and branch reference masters to typed ProblemDetails semantics. Missing references return 404, duplicates return 409/duplicate and invalid branch account state returns 409/conflict; existing business rules are unchanged.
+
+REC-004B7 (2026-11-17) extends typed ProblemDetails semantics across general, sourcing, POS, exchange-rate and accounting settings. Existing concurrency, validation, permission and business rules remain unchanged.

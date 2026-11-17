@@ -1,4 +1,5 @@
 using MiniStore.Application.Dtos.Settings;
+using MiniStore.Application.Exceptions;
 using MiniStore.Domain.Entities;
 using MiniStore.Domain.Interfaces;
 
@@ -38,7 +39,7 @@ public class PosExperienceSettingsService(
     public async Task UpdateAsync(PosExperienceSettingsDto dto)
     {
         var terminal = await accessRepository.GetPosTerminalAsync(dto.PosTerminalId)
-            ?? throw new InvalidOperationException("POS terminal not found.");
+            ?? throw new ResourceNotFoundException("POS terminal not found.");
         var settings = await settingsRepository.GetAsync(dto.PosTerminalId);
 
         if (settings is null)

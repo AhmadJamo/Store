@@ -1,4 +1,5 @@
 using MiniStore.Application.Dtos.Settings;
+using MiniStore.Application.Exceptions;
 using MiniStore.Domain.Entities;
 using MiniStore.Domain.Interfaces;
 
@@ -38,9 +39,9 @@ public class AccountingSettingsService(
 
         var settings = await settingsRepository.GetAsync();
         if(settings?.CustomerReceivableMode is { } current&&dto.CustomerReceivableAccountMode is { } requested&&current!=requested&&await sales.GetAllAsync() is {Count:>0})
-            throw new InvalidOperationException("Customer receivable policy has dependent sales and requires the controlled transition workflow.");
+            throw new BusinessConflictException("Customer receivable policy has dependent sales and requires the controlled transition workflow.");
         if(settings is not null&&settings.SalesInvoicePolicy!=dto.SalesInvoiceQuantityPolicy&&await customerInvoices.GetAllAsync() is {Count:>0})
-            throw new InvalidOperationException("Sales invoice quantity policy has dependent customer invoices and requires the controlled transition workflow.");
+            throw new BusinessConflictException("Sales invoice quantity policy has dependent customer invoices and requires the controlled transition workflow.");
         var before = settings is null ? null : AuditValues(settings);
         if (settings is null)
         {
@@ -120,11 +121,11 @@ public class AccountingSettingsService(
         foreach (var id in ids)
         {
             if (await accountRepository.GetByIdAsync(id) is null)
-                throw new InvalidOperationException("A selected posting account was not found.");
+                throw new ResourceNotFoundException("A selected posting account was not found.");
         }
         if(dto.CustomerReceivableAccountMode==CustomerReceivableAccountMode.SharedControlAccount&&dto.CustomerReceivableControlAccountId is { } controlId&&await accountRepository.GetByIdAsync(controlId) is not {IsActive:true,Type:AccountType.Asset,ParentAccountId:not null})
-            throw new InvalidOperationException("The shared customer receivable control account must be an active asset subaccount.");
+            throw new BusinessConflictException("The shared customer receivable control account must be an active asset subaccount.");
         if(dto.CustomerReceivableAccountMode==CustomerReceivableAccountMode.AutomaticIndividualAccount&&dto.CustomerReceivableParentAccountId is { } parentId&&await accountRepository.GetByIdAsync(parentId) is not {IsActive:true,Type:AccountType.Asset})
-            throw new InvalidOperationException("The automatic customer account parent must be an active asset account.");
+            throw new BusinessConflictException("The automatic customer account parent must be an active asset account.");
     }
 }

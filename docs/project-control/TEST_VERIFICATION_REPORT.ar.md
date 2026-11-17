@@ -118,3 +118,14 @@
 | Angular | 258/258، 122 ملفًا |
 | Production + bundle | 340,433 initial؛ 81,895 lazy ضمن الحدود |
 | Classification | 915 legacy؛ 97 typed |
+
+## TASK-REC-004B7 — 2026-11-17
+
+| الفحص | النتيجة |
+|---|---|
+| Release | ناجح، 0 تحذير/0 خطأ |
+| Regression | 1,665 ناجحًا |
+| Settings service guard | ناجح للخدمات الخمس |
+| Angular | 258/258، 122 ملفًا |
+| Production + bundle | 340,433 initial؛ 81,895 lazy ضمن الحدود |
+| Classification | 905 legacy؛ 107 typed |
