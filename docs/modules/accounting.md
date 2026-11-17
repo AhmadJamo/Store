@@ -53,3 +53,5 @@ REC-004B6: missing tax/settlement/sales accounts and branches return 404; duplic
 REC-004B7: accounting-settings policy transitions with dependent sales/invoices and structurally invalid account choices return `409/conflict`; missing selected posting accounts and required exchange-rate rows return 404. Posting and exchange calculations are unchanged.
 
 REC-004B9: missing fiscal periods return 404; overlapping periods, invalid lifecycle transitions, readiness blockers and blocked/uncovered posting dates return `409/conflict`; malformed version input returns 400 and stale versions remain `409/concurrency`. Accounting rules are unchanged.
+
+REC-004B10: duplicate account codes and already-posted source/reversal identities emit `409/duplicate`; missing parent accounts and original entries emit 404; malformed posting shape remains 400. Hierarchy, balance, numbering, period and reversal behavior are unchanged.

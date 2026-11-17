@@ -102,3 +102,9 @@
 - الحالة: Completed — 2026-11-17.
 - النطاق: Fiscal Period lifecycle + posting-date enforcement.
 - التالي: اختيار دفعة مترابطة جديدة من بوابات المحاسبة أو التشغيل.
+
+## TASK-REC-004B10
+
+- الحالة: Completed — 2026-11-17.
+- النطاق: Chart of Accounts + central Journal Posting/Reversal gateway.
+- التالي: دفعة محاسبية مترابطة جديدة من الجرد المقاس.

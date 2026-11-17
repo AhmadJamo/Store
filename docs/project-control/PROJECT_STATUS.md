@@ -529,3 +529,7 @@ Document-design lifecycle failures are typed and mapped consistently. All gates 
 ## 2026-11-17 — REC-004B9
 
 Fiscal-period lifecycle and posting-date failures are typed without changing close authority. All gates passed; REC-004 remains active at 889 legacy/122 typed Application throw sites.
+
+## 2026-11-17 — REC-004B10
+
+Chart-of-accounts and central posting/reversal failures are typed without changing accounting authority. All gates passed; REC-004 remains active at 883 legacy/127 typed Application throw sites.

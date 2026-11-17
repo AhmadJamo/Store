@@ -150,6 +150,15 @@ Check(!fiscalPeriodProblemSource.Contains("throw new InvalidOperationException",
     fiscalPeriodProblemSource.Contains("BusinessConflictException", StringComparison.Ordinal) &&
     fiscalPeriodProblemSource.Contains("SettingsConcurrencyException", StringComparison.Ordinal),
     "Fiscal periods must retain explicit not-found, conflict, input and concurrency semantics");
+var accountingGatewaySources = new[]
+{
+    Path.Combine("MiniStore.Application", "Services", "Accounting", "AccountService.cs"),
+    Path.Combine("MiniStore.Application", "Services", "Accounting", "JournalPostingService.cs")
+}.Select(File.ReadAllText).ToList();
+var accountsApiProblemSource = File.ReadAllText(Path.Combine("MiniStore.Web", "Controllers", "Api", "V1", "AccountsApiController.cs"));
+Check(accountingGatewaySources.All(source => !source.Contains("throw new InvalidOperationException", StringComparison.Ordinal)) &&
+    accountsApiProblemSource.Contains("ApplicationProblem", StringComparison.Ordinal),
+    "Chart-of-accounts and journal-posting gateways must retain typed problem semantics");
 var mvcCutoverResolver = new PresentationCutoverResolver(Options.Create(
     new PresentationCutoverOptions
     {

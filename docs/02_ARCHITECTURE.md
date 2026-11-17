@@ -214,3 +214,5 @@ REC-004B7 preserves the Settings API as a cohesive configuration boundary: servi
 REC-004B8 keeps document-design lifecycle meaning in Application and HTTP mapping in Web. Immutable design version rules, UnitOfWork transactions and the PDF extension boundary are unchanged.
 
 REC-004B9 preserves fiscal-period authority in Application and the central journal posting gateway. Typed exceptions describe failure meaning only; UnitOfWork, readiness and semantic audit boundaries are unchanged.
+
+REC-004B10 reinforces `JournalPostingService` as the single accounting posting/reversal gateway. Typed failure selection is additive and does not bypass repositories, document numbering, fiscal periods or UnitOfWork ownership.

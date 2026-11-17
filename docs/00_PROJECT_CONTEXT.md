@@ -227,3 +227,5 @@ REC-004B7 (2026-11-17) extends typed ProblemDetails semantics across general, so
 REC-004B8 (2026-11-17) migrates the complete document-design lifecycle to typed ProblemDetails semantics without changing immutable versioning, activation/default behavior or rendering.
 
 REC-004B9 (2026-11-17) migrates fiscal-period lifecycle and posting-date enforcement to typed ProblemDetails semantics without changing close readiness, status transitions, audit or journal authority.
+
+REC-004B10 (2026-11-17) migrates chart-of-accounts creation and the central journal posting/reversal gateway to typed ProblemDetails semantics without changing hierarchy, numbering, fiscal-period or balancing authority.

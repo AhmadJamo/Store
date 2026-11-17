@@ -579,3 +579,5 @@ ERP-007 completed 2026-11-16: accepted POS cash-session ADR and tenant/branch/te
 - [x] REC-004B8: migrate document-design lifecycle and API mapping to typed Application problems (2026-11-17).
 
 - [x] REC-004B9: migrate fiscal-period lifecycle and posting-date enforcement to typed Application problems (2026-11-17).
+
+- [x] REC-004B10: migrate chart-of-accounts creation and the central posting/reversal gateway to typed Application problems (2026-11-17).

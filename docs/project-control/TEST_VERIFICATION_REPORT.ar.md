@@ -151,3 +151,14 @@
 | Angular | 258/258، 122 ملفًا |
 | Production + bundle | 340,433 initial؛ 81,895 lazy ضمن الحدود |
 | Classification | 889 legacy؛ 122 typed |
+
+## TASK-REC-004B10 — 2026-11-17
+
+| الفحص | النتيجة |
+|---|---|
+| Release | ناجح، 0 تحذير/0 خطأ |
+| Regression | 1,668 ناجحًا |
+| Accounting gateway guards | ناجحة للخدمتين وAccounts API |
+| Angular | 258/258، 122 ملفًا |
+| Production + bundle | 340,433 initial؛ 81,895 lazy ضمن الحدود |
+| Classification | 883 legacy؛ 127 typed |

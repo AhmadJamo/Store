@@ -421,3 +421,5 @@ REC-004B7 changes no Settings permissions, antiforgery behavior or audit writes.
 REC-004B8 retains the existing `Administration.Access`, authorization and mutation boundaries. Only safe localized ProblemDetails classification changed; correlation IDs remain present.
 
 REC-004B9 retains the separate `FiscalPeriods.View`, `SoftClose`, `Close` and `Reopen` permission boundaries plus antiforgery and audit evidence. Responses remain localized and correlation-aware.
+
+REC-004B10 retains chart-of-accounts authorization/antiforgery and every source-document permission boundary. Duplicate/not-found responses are localized and correlation-aware without exposing ledger internals.

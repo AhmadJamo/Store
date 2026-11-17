@@ -1,3 +1,4 @@
+using MiniStore.Application.Exceptions;
 using MiniStore.Domain.Entities;
 using MiniStore.Domain.Interfaces;
 
@@ -25,10 +26,10 @@ public sealed class JournalPostingService(
             string.IsNullOrWhiteSpace(request.SourceReference))
             throw new ArgumentException("A journal source requires both its type and reference.");
         if (request.Lines.Count < 2)
-            throw new InvalidOperationException("A posting requires at least two journal lines.");
+            throw new ArgumentException("A posting requires at least two journal lines.");
         await fiscalPeriods.EnsurePostingAllowedAsync(request.Date);
         if (await IsPostedAsync(request.SourceType, request.SourceReference))
-            throw new InvalidOperationException(request.DuplicateMessage);
+            throw new DuplicateResourceException(request.DuplicateMessage);
 
         var entry = new JournalEntry(
             await documentNumbers.GenerateAsync(DocumentNumberType.JournalEntry, request.Date),
@@ -55,10 +56,10 @@ public sealed class JournalPostingService(
     {
         await fiscalPeriods.EnsurePostingAllowedAsync(reversalDate);
         var original = await journalEntryRepository.GetBySourceAsync(originalSourceType, originalSourceReference)
-            ?? throw new InvalidOperationException("The original accounting entry was not found.");
+            ?? throw new ResourceNotFoundException("The original accounting entry was not found.");
         var reversalSourceType = $"{originalSourceType}Reversal";
         if (await journalEntryRepository.ExistsForSourceAsync(reversalSourceType, reversalNumber))
-            throw new InvalidOperationException("This document reversal has already been posted to accounting.");
+            throw new DuplicateResourceException("This document reversal has already been posted to accounting.");
         var entry = original.CreateReversal(
             await documentNumbers.GenerateAsync(DocumentNumberType.JournalEntry, reversalDate), reversalDate,
             $"Reversal {reversalNumber}: {reason}", reversalSourceType, reversalNumber);
