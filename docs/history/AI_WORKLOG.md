@@ -2473,3 +2473,7 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
   - Added `docs/frontend-redesign/03-ODOO-UI-FEATURE-MATRIX.md` with explicit Apply/Adapt/Conditional/Exclude decisions and acceptance evidence requirements.
   - Recorded that Odoo 20 pages timed out during verification; no unverified Odoo 20 behavior or exact proprietary styling is claimed.
   - Activated FRD-C for UX architecture, design-system and route/navigation contracts before further UI rollout.
+- 2026-11-22: Completed frontend reconstruction Phase C UX Architecture.
+  - Added `04-UX-ARCHITECTURE.md` with the three-layer shell, ten-app information model, page archetypes, responsive/RTL behavior and truthful capability boundaries.
+  - Added `06-NAVIGATION-AND-ROUTES.md` with app/route families, deep-link, breadcrumb, workspace, permission, mobile and migration contracts while preserving current URLs.
+  - Accepted ADR `2026-11-22-odoo-inspired-frontend-ux-architecture.md`; the current shell changes remain a pilot until the functional design-system gate passes.

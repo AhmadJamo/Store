@@ -1,11 +1,16 @@
 # المهمة التالية الوحيدة / Next Task
 
-## FRD-C — معمارية UX والتنقل ونظام التصميم
+## FRD-D — نظام التصميم الوظيفي
 
-> الحالة: IN PROGRESS — بعد إغلاق Repository Audit وOdoo Research في 2026-11-22
+> الحالة: IN PROGRESS — بعد إغلاق UX Architecture في 2026-11-22
 
-حوّل نتائج `01-CURRENT-SYSTEM-AUDIT.md` و`02-ODOO-RESEARCH.md` و`03-ODOO-UI-FEATURE-MATRIX.md` إلى معمارية تجربة استخدام قابلة للتنفيذ. أنشئ `04-UX-ARCHITECTURE.md` و`05-DESIGN-SYSTEM.md` و`06-NAVIGATION-AND-ROUTES.md`، وثبّت حدود Shell وList/Form/Kanban/Search/Activities والـresponsive/RTL وحالات الوصول قبل تعميم أي UI جديد.
+ثبّت `05-DESIGN-SYSTEM.md` وحوّل العقد إلى tokens ومكونات مشتركة قابلة للاستخدام داخل صفحة `/design-system`. يجب إثبات Light/Dark وComfortable/Compact وAR/RTL وEN/LTR وحالات focus/loading/empty/error قبل تعميمها على الوحدات. لا يبدأ rollout الشامل قبل Products pilot.
 
+## FRD-C — معمارية UX والتنقل
+
+> الحالة: COMPLETE — أُغلق في 2026-11-22
+
+وُثقت Information Architecture وأنماط الصفحات والتنقل والصلاحيات والاستثناءات في `04-UX-ARCHITECTURE.md` و`06-NAVIGATION-AND-ROUTES.md`، واعتمد القرار في ADR `2026-11-22-odoo-inspired-frontend-ux-architecture.md`.
 ## FRD-B — Odoo Research والتفصيل المقارن
 
 > الحالة: COMPLETE — أُغلق في 2026-11-22

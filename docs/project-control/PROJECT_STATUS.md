@@ -1,5 +1,7 @@
 # حالة المشروع / Project Status
 
+> تحديث 2026-11-22: أُغلقت FRD-C. اعتُمدت معمارية UX بثلاث طبقات و10 تطبيقات رئيسية وأنماط List/Record/Form/Kanban/Dashboard/Workspace/Settings، مع إبقاء URLs وWorkspace authority الحالية. بدأت FRD-D لتحويل عقد التصميم إلى نظام وظيفي مختبر.
+
 > تحديث 2026-11-22: أُغلقت بوابة Odoo Research على مراجع Odoo 19 الرسمية ومصفوفة Apply/Adapt/Conditional/Exclude. تعذّر التحقق من صفحات 20.0 بسبب Timeout، لذلك لا توجد ادعاءات غير موثقة. انتقل العمل إلى FRD-C لمعمارية UX ونظام التصميم والتنقل قبل تعميم الواجهة.
 
 > تحديث 2026-11-22: أُغلق Frontend Repository Audit. ثُبت جرد 196 مساراً و121 Feature page وحدود Core/API/permissions والمخاطر في docs/frontend-redesign/01-CURRENT-SYSTEM-AUDIT.md. توقّف تعميم الـUI مؤقتاً حتى إغلاق Odoo Research وUX/Design gates.

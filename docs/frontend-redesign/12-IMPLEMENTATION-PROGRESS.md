@@ -1,7 +1,7 @@
 # 12 — تقدم إعادة بناء Frontend
 
 > آخر تحديث: 2026-11-22  
-> الحالة العامة: UX architecture gate
+> الحالة العامة: Design system gate
 > المصدر: الكود، الاختبارات، وثائق المشروع، والمراجع الرسمية التي تم التحقق منها
 
 ## بوابات المراحل
@@ -10,8 +10,8 @@
 |---|---|---|---|
 | A — Repository Audit | Verified | `01-CURRENT-SYSTEM-AUDIT.md` + route coverage | مغلقة |
 | B — Odoo Research | Verified | `02-ODOO-RESEARCH.md` + `03-ODOO-UI-FEATURE-MATRIX.md` | مغلقة |
-| C — UX Architecture | In Progress | بوابة البحث مغلقة | الوثائق 04 و06 |
-| D — Design System | Not Started | — | بعد UX Architecture |
+| C — UX Architecture | Verified | `04-UX-ARCHITECTURE.md` + `06-NAVIGATION-AND-ROUTES.md` + route coverage | مغلقة |
+| D — Design System | In Progress | `05-DESIGN-SYSTEM.md` draft | تحويل العقد إلى مكونات فعلية |
 | E — Application Shell | In Progress / Pilot | Commitان d47e9c0 و1356d77 | إعادة تقييم بعد البحث |
 | F — Core Views | Not Started | — | Products pilot بعد design gate |
 | G — Module Migration | Not Started | — | حسب dependency order |
