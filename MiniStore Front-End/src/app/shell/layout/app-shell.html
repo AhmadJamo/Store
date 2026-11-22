@@ -89,18 +89,21 @@
       <button type="button" (click)="back()" [disabled]="!workspace.canGoBack()" [attr.aria-label]="i18n.text('back')" [title]="i18n.text('back')">←</button>
       <button type="button" (click)="forward()" [disabled]="!workspace.canGoForward()" [attr.aria-label]="i18n.text('forward')" [title]="i18n.text('forward')">→</button>
       <button type="button" (click)="reopen()" [disabled]="workspace.recentlyClosed().length === 0" [attr.aria-label]="i18n.text('reopenClosed')" [title]="i18n.text('reopenClosed')">↶</button>
-    </div>
-    <div class="tabs" role="tablist" [attr.aria-label]="i18n.text('workspaceTabs')">
-      @if (workspace.tabs().length === 0) { <span>{{ i18n.text('noTabs') }}</span> }
-      @for (tab of workspace.tabs(); track tab.id; let index = $index) {
-        <div class="workspace-tab" role="presentation" [class.active]="workspace.activeTab()?.id === tab.id">
-          <button type="button" role="tab" [attr.aria-selected]="workspace.activeTab()?.id === tab.id" [attr.tabindex]="workspace.activeTab()?.id === tab.id ? 0 : -1" (click)="activate(tab)" (keydown)="onTabKeydown($event, index)">
-            {{ navigationI18n.text(tab.titleKey) }} @if (tab.dirty) { <span class="dirty" [attr.aria-label]="i18n.text('dirty')">●</span> }
-          </button>
-          <button type="button" class="tab-close" (click)="close($event, tab)" [attr.aria-label]="i18n.text('close') + ' ' + navigationI18n.text(tab.titleKey)">×</button>
-          <button type="button" class="tab-more" (click)="closeOthers($event, tab)" [attr.aria-label]="i18n.text('closeOthers')" [title]="i18n.text('closeOthers')">⋯</button>
+      <details class="open-work-menu">
+        <summary><span aria-hidden="true">▤</span><span>{{ i18n.text('workspaceTabs') }}</span><strong>{{ workspace.tabs().length }}</strong></summary>
+        <div class="tabs" role="tablist" [attr.aria-label]="i18n.text('workspaceTabs')">
+          @if (workspace.tabs().length === 0) { <span class="empty-tabs">{{ i18n.text('noTabs') }}</span> }
+          @for (tab of workspace.tabs(); track tab.id; let index = $index) {
+            <div class="workspace-tab" role="presentation" [class.active]="workspace.activeTab()?.id === tab.id">
+              <button type="button" role="tab" [attr.aria-selected]="workspace.activeTab()?.id === tab.id" [attr.tabindex]="workspace.activeTab()?.id === tab.id ? 0 : -1" (click)="activate(tab)" (keydown)="onTabKeydown($event, index)">
+                {{ navigationI18n.text(tab.titleKey) }} @if (tab.dirty) { <span class="dirty" [attr.aria-label]="i18n.text('dirty')">●</span> }
+              </button>
+              <button type="button" class="tab-close" (click)="close($event, tab)" [attr.aria-label]="i18n.text('close') + ' ' + navigationI18n.text(tab.titleKey)">×</button>
+              <button type="button" class="tab-more" (click)="closeOthers($event, tab)" [attr.aria-label]="i18n.text('closeOthers')" [title]="i18n.text('closeOthers')">⋯</button>
+            </div>
+          }
         </div>
-      }
+      </details>
     </div>
 
     <div class="content-frame"><main id="main-content" tabindex="-1"><router-outlet /></main><aside class="split-panel" [attr.aria-label]="i18n.text('contextPanel')"><h2>{{ i18n.text('contextPanel') }}</h2><p>{{ i18n.text('contextPanelDescription') }}</p><nav>@for (item of navigation.visibleItems(); track item.id) { @if (item.id === 'work-center' || item.id === 'documents') { <a [routerLink]="item.route">{{ navigationI18n.text(item.labelKey) }}</a> } }</nav></aside></div>

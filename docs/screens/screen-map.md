@@ -5,8 +5,8 @@
 The authenticated Angular shell now uses a slim plum global bar and a compact permission-aware module rail instead of
 the former wide dark sidebar. The root home surface presents all permitted registered destinations as searchable,
 favorite-capable application tiles with responsive two-column mobile behavior. Router/workspace history, unsaved-change
-protection, branch context, session, command search and preferences remain intact. Persistent work tabs/history are still
-present and are the next V4 shell simplification; authenticated Arabic/English/mobile visual acceptance is not yet claimed.
+protection, branch context, session, command search and preferences remain intact. Open work now lives in a counted,
+popover-style contextual menu instead of a permanent tab row; authenticated visual acceptance is not yet claimed.
 
 ## Angular ERP workspace shell (UX-001)
 

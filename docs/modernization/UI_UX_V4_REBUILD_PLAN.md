@@ -41,7 +41,7 @@ Odoo-style systems without copying Odoo branding or exact layouts:
 - [x] Replace the command-center landing composition with a searchable permission-aware application launcher.
 - [x] Preserve Router authority, workspace history, dirty guards, branch validation, search, session and preferences.
 - [x] Verify 258/258 Angular tests, production build, 138-template static accessibility and UI/UX consistency.
-- [ ] Move persistent tabs/history into compact contextual controls.
+- [x] Move persistent tabs/history into compact contextual controls.
 - [ ] Complete authenticated Arabic RTL, English LTR and mobile visual acceptance before closing UX-V4-001.
 
 Implementation started 2026-11-22. No API, schema, permission or business-rule change was made.

@@ -2460,3 +2460,7 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
 - 2026-11-22: Started UX-V4-001 after approval to replace the presentation freely. Added the V4 plan and ADR, a plum
   global bar, compact permission-aware module rail and searchable application launcher. Router/workspace, dirty guards,
   branch, session, permissions and APIs remain unchanged. Production build, 258/258 Angular tests, 138-template
+
+- 2026-11-22: Completed the second UX-V4-001 slice. Replaced the permanent workspace tab row with a counted contextual
+  work menu while preserving activation, close, close-others, history, dirty-state confirmation and keyboard behavior.
+  Angular passed 258/258 tests; production build, 138-template accessibility and UI/UX consistency passed.
