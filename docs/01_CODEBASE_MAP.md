@@ -6,6 +6,8 @@ ERP-002 adds a read-only branch workspace DTO graph to InventoryAccessSettingsDt
 
 ## Angular modernization foundation
 
+The governed frontend reconstruction evidence now lives in docs/frontend-redesign. 01-CURRENT-SYSTEM-AUDIT.md summarizes the repository, Angular/Core/workspace boundaries, module counts, presentation gaps and migration risks; docs/project-control/ROUTE_FUNCTION_COVERAGE.ar.md remains the generated per-route/API/permission/test appendix. 12-IMPLEMENTATION-PROGRESS.md is the rolling phase and module status.
+
 UX-V4-001 starts the approved presentation rebuild in the Angular shell layout and home-page feature. The first slice
 introduces a plum global bar, compact permission-aware module rail and searchable application tiles while retaining the
 existing Router, WorkspaceService, branch context, session, search, preferences and dirty-state authority. No API,

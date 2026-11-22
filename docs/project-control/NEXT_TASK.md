@@ -1,5 +1,11 @@
 # المهمة التالية الوحيدة / Next Task
 
+## FRD-B — Odoo Research والتفصيل المقارن
+
+> الحالة: IN PROGRESS — بعد إغلاق Repository Audit في 2026-11-22
+
+حلّل مراجع Odoo الرسمية الحديثة، ووثّق Navigation وList/Form/Kanban/Search/Activities/POS والأنماط المقبولة والمرفوضة، ثم أنشئ 02-ODOO-RESEARCH.md و03-ODOO-UI-FEATURE-MATRIX.md قبل أي تعميم جديد للواجهة.
+
 ## UX-V4-001 — إعادة بناء الـShell وشاشة التطبيقات
 
 > الحالة: IN PROGRESS — موافقة مالك المنتج 2026-11-22

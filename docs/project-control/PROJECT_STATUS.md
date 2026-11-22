@@ -1,5 +1,7 @@
 # حالة المشروع / Project Status
 
+> تحديث 2026-11-22: أُغلق Frontend Repository Audit. ثُبت جرد 196 مساراً و121 Feature page وحدود Core/API/permissions والمخاطر في docs/frontend-redesign/01-CURRENT-SYSTEM-AUDIT.md. توقّف تعميم الـUI مؤقتاً حتى إغلاق Odoo Research وUX/Design gates.
+
 > تحديث 2026-11-22: بدأت UX-V4-001. نُفذت الدفعة الأولى: شريط علوي بلون الهوية، مسار وحدات مضغوط
 > وشاشة تطبيقات مصفاة بالصلاحيات وقابلة للبحث والتفضيل. بقي نقل tabs/history إلى تحكم سياقي وإثبات
 > RTL/LTR والهاتف بصرياً. نجح production build و258/258 اختبار Angular وفحص 138 قالب وصول وفحص
