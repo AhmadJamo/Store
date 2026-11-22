@@ -2468,3 +2468,8 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
 - 2026-11-22: Completed frontend reconstruction Phase A repository audit after receiving the master reconstruction scope.
   Recorded Angular 22 architecture, 196-route generated coverage, module counts, Core/workspace contracts, shared-UI adoption
   gaps, risks and the rule that the two shell commits remain pilots until Odoo research and design gates close.
+- 2026-11-22: Completed frontend reconstruction Phase B Odoo research gate.
+  - Added `docs/frontend-redesign/02-ODOO-RESEARCH.md` with verified Odoo 19 sources for shell, list, form, kanban, search, activities, chatter, mobile and POS patterns.
+  - Added `docs/frontend-redesign/03-ODOO-UI-FEATURE-MATRIX.md` with explicit Apply/Adapt/Conditional/Exclude decisions and acceptance evidence requirements.
+  - Recorded that Odoo 20 pages timed out during verification; no unverified Odoo 20 behavior or exact proprietary styling is claimed.
+  - Activated FRD-C for UX architecture, design-system and route/navigation contracts before further UI rollout.

@@ -1,11 +1,16 @@
 # المهمة التالية الوحيدة / Next Task
 
+## FRD-C — معمارية UX والتنقل ونظام التصميم
+
+> الحالة: IN PROGRESS — بعد إغلاق Repository Audit وOdoo Research في 2026-11-22
+
+حوّل نتائج `01-CURRENT-SYSTEM-AUDIT.md` و`02-ODOO-RESEARCH.md` و`03-ODOO-UI-FEATURE-MATRIX.md` إلى معمارية تجربة استخدام قابلة للتنفيذ. أنشئ `04-UX-ARCHITECTURE.md` و`05-DESIGN-SYSTEM.md` و`06-NAVIGATION-AND-ROUTES.md`، وثبّت حدود Shell وList/Form/Kanban/Search/Activities والـresponsive/RTL وحالات الوصول قبل تعميم أي UI جديد.
+
 ## FRD-B — Odoo Research والتفصيل المقارن
 
-> الحالة: IN PROGRESS — بعد إغلاق Repository Audit في 2026-11-22
+> الحالة: COMPLETE — أُغلق في 2026-11-22
 
-حلّل مراجع Odoo الرسمية الحديثة، ووثّق Navigation وList/Form/Kanban/Search/Activities/POS والأنماط المقبولة والمرفوضة، ثم أنشئ 02-ODOO-RESEARCH.md و03-ODOO-UI-FEATURE-MATRIX.md قبل أي تعميم جديد للواجهة.
-
+وُثقت المراجع الرسمية والقرارات المقارنة في `docs/frontend-redesign/02-ODOO-RESEARCH.md` و`docs/frontend-redesign/03-ODOO-UI-FEATURE-MATRIX.md`. Odoo 19.0 هو المرجع المتحقق؛ لا يُدعى توثيق 20.0 بسبب Timeout أثناء البحث.
 ## UX-V4-001 — إعادة بناء الـShell وشاشة التطبيقات
 
 > الحالة: IN PROGRESS — موافقة مالك المنتج 2026-11-22

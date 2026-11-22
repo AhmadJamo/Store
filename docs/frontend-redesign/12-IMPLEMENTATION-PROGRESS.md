@@ -1,16 +1,16 @@
 # 12 — تقدم إعادة بناء Frontend
 
 > آخر تحديث: 2026-11-22  
-> الحالة العامة: Research gate  
+> الحالة العامة: UX architecture gate
 > المصدر: الكود، الاختبارات، وثائق المشروع، والمراجع الرسمية التي تم التحقق منها
 
 ## بوابات المراحل
 
 | المرحلة | الحالة | الدليل | الخطوة التالية |
 |---|---|---|---|
-| A — Repository Audit | Verified | `01-CURRENT-SYSTEM-AUDIT.md` + route coverage | Commit مستقل |
-| B — Odoo Research | Researching | مصادر Odoo الرسمية قيد التحليل | الوثيقتان 02 و03 |
-| C — UX Architecture | Not Started | — | بعد إغلاق البحث |
+| A — Repository Audit | Verified | `01-CURRENT-SYSTEM-AUDIT.md` + route coverage | مغلقة |
+| B — Odoo Research | Verified | `02-ODOO-RESEARCH.md` + `03-ODOO-UI-FEATURE-MATRIX.md` | مغلقة |
+| C — UX Architecture | In Progress | بوابة البحث مغلقة | الوثائق 04 و06 |
 | D — Design System | Not Started | — | بعد UX Architecture |
 | E — Application Shell | In Progress / Pilot | Commitان d47e9c0 و1356d77 | إعادة تقييم بعد البحث |
 | F — Core Views | Not Started | — | Products pilot بعد design gate |
@@ -23,7 +23,7 @@
 
 | Module | Research | Design | Implementation | API Integration | Tests | Status |
 |---|---|---|---|---|---|---|
-| Shell / Launcher | Researching | Pilot only | First slices | Existing contracts | 258 + static gates | In Progress |
+| Shell / Launcher | Verified research | Pilot only | First slices | Existing contracts | 258 + static gates | In Progress |
 | Products | Not Started | Not Started | Legacy V3 | Verified existing APIs | Existing specs | Planned pilot |
 | Customers / Suppliers | Not Started | Not Started | Legacy V3 | Verified | Existing specs | Planned |
 | Sales | Not Started | Not Started | Legacy V3 | Verified | Existing specs | Planned |
@@ -32,7 +32,7 @@
 | Accounting | Not Started | Not Started | Legacy V3 | Verified | Existing specs | Planned |
 | Branches / Warehouses | Not Started | Not Started | Legacy V3 | Verified | Existing specs | Planned |
 | Users / Roles / Settings | Not Started | Not Started | Legacy V3 | Verified | Existing specs | Planned |
-| POS | Researching | Not Started | Existing cohesive workspace | Verified | Existing specs | Planned |
+| POS | Verified research | Not Started | Existing cohesive workspace | Verified | Existing specs | Planned |
 | Public / Platform / Portal | Not Started | Exception review | Existing | Existing boundaries | Existing specs | Planned exceptions |
 
 ## التغييرات المثبتة
@@ -44,7 +44,7 @@
 
 ## قيود حالية
 
-- لم يُغلق Odoo Research بعد.
+- أُغلق Odoo Research على مرجع 19.0 الرسمي؛ تعذّر توثيق 20.0 بسبب Timeout ولا تُنسب إليه خصائص غير متحققة.
 - لم يُعتمد Design System نهائي.
 - لم يُنفذ Visual Regression مصرح ومثبت للـpilot الحالي.
 - لا توجد وحدة أعمال مصنفة Migrated إلى V4 حتى الآن.

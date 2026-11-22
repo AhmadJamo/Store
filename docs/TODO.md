@@ -1,5 +1,5 @@
 # Project TODO
-# FRD-A completed (2026-11-22): repository/frontend audit is recorded under docs/frontend-redesign with the 196-route coverage as its detailed appendix. FRD-B Odoo research is active.
+# FRD-B completed (2026-11-22): official Odoo 19 UI research and the Apply/Adapt/Conditional/Exclude feature matrix are recorded under docs/frontend-redesign. FRD-C UX architecture and design system are active.
 # UX-V4-001 started (2026-11-22): first shell/app-launcher slice passed 258 Angular tests, production build,
 # 138-template accessibility and UI/UX consistency. Contextual work/history controls are complete; visual acceptance remains.
 # ERP-003 completed (2026-11-16): granular branch permissions, tenant-owned user grants and verified optional request context are implemented. ERP-004 switcher/workspace is proposed. ERP plan: 10 total, 3 complete, 7 remaining.
