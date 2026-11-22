@@ -1,5 +1,13 @@
 # Razor screen map
 
+## Angular ERP workspace V4 first slice (UX-V4-001)
+
+The authenticated Angular shell now uses a slim plum global bar and a compact permission-aware module rail instead of
+the former wide dark sidebar. The root home surface presents all permitted registered destinations as searchable,
+favorite-capable application tiles with responsive two-column mobile behavior. Router/workspace history, unsaved-change
+protection, branch context, session, command search and preferences remain intact. Persistent work tabs/history are still
+present and are the next V4 shell simplification; authenticated Arabic/English/mobile visual acceptance is not yet claimed.
+
 ## Angular ERP workspace shell (UX-001)
 
 The Angular shell now organizes every registered permitted destination into persistent collapsible business groups and

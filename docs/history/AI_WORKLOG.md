@@ -2456,3 +2456,7 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
 - 2026-11-17: Completed REC-004B10 for chart of accounts and the central journal posting/reversal gateway. Duplicate account/source identities and missing parent/original records now use the shared typed contract; invalid posting shape remains 400. No hierarchy, numbering, fiscal-period, balancing or reversal rule changed. Release passed 0/0, regression 1,668, Angular 258/258, production and bundle gates passed. Classification advanced to 883 legacy and 127 typed Application throw sites.
 
 - 2026-11-18: Created `ERP_MASTER_ROADMAP.md`, a documentation-only living registry of 180 ERP/current/future capabilities and 1,440 decomposed execution tasks with checkboxes, status and priority. Completion marks are limited to capabilities already evidenced by code/project documentation. REC-004 error normalization is deferred; project-control files remain the execution gate.
+
+- 2026-11-22: Started UX-V4-001 after approval to replace the presentation freely. Added the V4 plan and ADR, a plum
+  global bar, compact permission-aware module rail and searchable application launcher. Router/workspace, dirty guards,
+  branch, session, permissions and APIs remain unchanged. Production build, 258/258 Angular tests, 138-template

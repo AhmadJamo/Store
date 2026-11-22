@@ -1,5 +1,13 @@
 # Testing
 
+## UX-V4-001 first shell/application-launcher slice — 2026-11-22
+
+- Angular production build passed; the initial-chunk warning and a 526-byte shell style-budget warning remain non-fatal.
+- Angular passed 258/258 tests across 122 files.
+- Static accessibility passed across 138 Angular templates.
+- UI/UX consistency passed with 121 feature pages and 80 registered navigation destinations.
+- Authenticated RTL/LTR/mobile visual acceptance remains in the UX-V4-001 gate.
+
 ## ERP-003 branch-access evidence — 2026-11-16
 
 - Release build passed with zero warnings/errors and Angular production build passed with the existing 204.70 KB warning.

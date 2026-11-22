@@ -42,6 +42,11 @@ Application services; no financial calculation, validation, repository or postin
 
 The Angular visual layer uses semantic CSS custom properties as its stable component contract. Runtime theme and density choices alter root data attributes and tokens rather than duplicating markup. Locale owns `lang`/`dir`; components use logical CSS. The server session culture wins at bootstrap, and a language change writes the same server cookie before changing visible Angular state. A neutral locale signal keeps session consumers aligned without introducing a session/interceptor cycle. Browser storage contains only versioned, non-sensitive UI preferences and is never an authority for server culture, permissions or business state. See `modernization/PHASE_03_VISUAL_SYSTEM.md`.
 
+The V4 presentation rebuild changes only Angular composition and styling. Navigation continues to consume the
+permission-filtered registry, route/history/dirty state remains owned by Router and WorkspaceService, and branch,
+session and preference services retain their existing contracts. The application launcher cannot authorize an endpoint.
+See modernization/UI_UX_V4_REBUILD_PLAN.md and the 2026-11-22 UI/UX V4 presentation-rebuild ADR.
+
 The first business slice, Customers, proves coexistence rather than replacement. MVC and `/api/v1/customers` share the same Application service and DTO authority; Angular adds no direct repository or EF path. Server-side paging, numbering, policy resolution, validation, transaction and concurrency remain behind that boundary. The Angular feature keeps API models/client, presentation components and a separate stylesheet within one feature folder and integrates with the reusable workspace without persisting form payloads.
 
 Shared Angular UI is deliberately presentation-only. Headers, feedback states, table overflow regions and pagers accept text/content or emit UI intent; they never fetch data, inspect permissions or interpret business fields. Customers and Suppliers prove reuse. Supplier paging was added through Domain repository criteria and Application DTO/service projection rather than browser slicing or controller data access.

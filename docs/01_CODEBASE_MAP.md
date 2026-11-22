@@ -6,6 +6,12 @@ ERP-002 adds a read-only branch workspace DTO graph to InventoryAccessSettingsDt
 
 ## Angular modernization foundation
 
+UX-V4-001 starts the approved presentation rebuild in the Angular shell layout and home-page feature. The first slice
+introduces a plum global bar, compact permission-aware module rail and searchable application tiles while retaining the
+existing Router, WorkspaceService, branch context, session, search, preferences and dirty-state authority. No API,
+schema, permission or business behavior changed. See modernization/UI_UX_V4_REBUILD_PLAN.md and the
+2026-11-22 UI/UX V4 presentation-rebuild ADR.
+
 UX-017B adds `BankStatementService`, `BankStatementsApiController`, tenant-scoped bank evidence entities and the cohesive Angular `features/accounting/bank-statements-page` workspace. CSV evidence is immutable and fingerprinted; matching is intentionally absent. See ADR `2026-11-14-bank-statement-evidence-foundation.md`.
 UX-017C adds `BankReconciliationService`, allocation persistence, posted journal-line candidates, Match/Unmatch API commands and the permission-aware Angular reconciliation workflow. See ADR `2026-11-15-controlled-partial-bank-reconciliation.md`.
 UX-017D adds `BankAdjustmentService`, the `BankStatements.Adjust` API boundary, unreconciled close-readiness aggregation and the fee/interest/transfer form inside the same cohesive Angular bank-statements page. See ADR `2026-11-15-controlled-bank-adjustments-and-close-readiness.md`.

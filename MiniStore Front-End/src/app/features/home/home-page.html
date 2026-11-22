@@ -1,17 +1,19 @@
 <section class="command-center">
-  <app-page-header eyebrow="ERP" [title]="i18n.text('commandCenter')" [description]="i18n.text('commandCenterDescription')">
+  <app-page-header eyebrow="MiniStore ERP" [title]="i18n.text('commandCenter')" [description]="i18n.text('commandCenterDescription')">
     <button class="ui-button secondary" type="button" (click)="preferences.reset()">{{ i18n.text('resetCommandCenter') }}</button>
   </app-page-header>
 
-  <section class="command-search" aria-labelledby="command-search-title">
-    <div><h2 id="command-search-title">{{ i18n.text('quickCommand') }}</h2><p>{{ i18n.text('quickCommandDescription') }}</p></div>
+  <section class="app-launcher" aria-labelledby="command-search-title">
+    <header>
+      <div><span class="section-kicker">ERP</span><h2 id="command-search-title">{{ i18n.text('availableDestinations') }}</h2><p>{{ i18n.text('quickCommandDescription') }}</p></div>
+      <div class="launcher-status" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div>
+    </header>
     <form (ngSubmit)="loadPreview()" role="search">
-      <label class="ui-field"><span>{{ i18n.text('search') }}</span><input name="commandSearch" [ngModel]="search()" (ngModelChange)="search.set($event)" [placeholder]="i18n.text('commandSearchPlaceholder')" maxlength="100" /></label>
-      <button class="ui-button primary" type="submit">{{ i18n.text('preview') }}</button>
+      <label class="launcher-search"><span aria-hidden="true">⌕</span><input name="commandSearch" [ngModel]="search()" (ngModelChange)="search.set($event)" [placeholder]="i18n.text('commandSearchPlaceholder')" maxlength="100" /></label>
     </form>
-    <nav class="command-results" [attr.aria-label]="i18n.text('availableDestinations')">
+    <nav class="app-grid" [attr.aria-label]="i18n.text('availableDestinations')">
       @for (item of matchingCommands(); track item.id) {
-        <div class="command-item"><a [routerLink]="item.route"><span aria-hidden="true">{{ item.icon }}</span><strong>{{ navigationI18n.text(item.labelKey) }}</strong></a><button type="button" (click)="preferences.toggleFavorite(item.id)" [attr.aria-pressed]="preferences.isFavorite(item.id)" [title]="i18n.text(preferences.isFavorite(item.id) ? 'removeFavorite' : 'addFavorite')">{{ preferences.isFavorite(item.id) ? '★' : '☆' }}</button></div>
+        <div class="app-tile"><a [routerLink]="item.route"><span class="app-icon" aria-hidden="true">{{ item.icon }}</span><strong>{{ navigationI18n.text(item.labelKey) }}</strong></a><button type="button" (click)="preferences.toggleFavorite(item.id)" [attr.aria-pressed]="preferences.isFavorite(item.id)" [title]="i18n.text(preferences.isFavorite(item.id) ? 'removeFavorite' : 'addFavorite')">{{ preferences.isFavorite(item.id) ? '★' : '☆' }}</button></div>
       }
     </nav>
   </section>
