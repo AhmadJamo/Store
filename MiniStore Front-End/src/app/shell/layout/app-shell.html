@@ -20,7 +20,19 @@
 
   <section class="workspace">
     <header class="topbar">
-      <div class="page-context"><span class="eyebrow">{{ i18n.text('workspace') }}</span><strong>{{ i18n.text('phaseTitle') }}</strong>
+      <details class="mobile-navigation">
+        <summary class="icon-action" [attr.aria-label]="i18n.text('workspace')" [title]="i18n.text('workspace')">☰</summary>
+        <nav class="mobile-navigation-panel" [attr.aria-label]="i18n.text('workspace')">
+          @for (group of navigation.visibleGroups(); track group.id) {
+            <section class="mobile-navigation-group">
+              <h2><span aria-hidden="true">{{ group.icon }}</span>{{ shellI18n.group(group.id) }}</h2>
+              @for (item of group.items; track item.id) {
+                <a class="nav-item" [routerLink]="item.route" (click)="openMobileNavigation($event, item)" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: item.route === '/' }"><span aria-hidden="true">{{ item.icon }}</span>{{ navigationI18n.text(item.labelKey) }}</a>
+              }
+            </section>
+          }
+        </nav>
+      </details>      <div class="page-context"><span class="eyebrow">{{ i18n.text('workspace') }}</span><strong>{{ i18n.text('phaseTitle') }}</strong>
         @if (currentNavigationItem(); as currentItem) {
           <nav class="breadcrumbs" [attr.aria-label]="i18n.text('workspace')"><span>{{ shellI18n.group(navigation.groupForItem(currentItem)) }}</span><span aria-hidden="true">›</span><span aria-current="page">{{ navigationI18n.text(currentItem.labelKey) }}</span></nav>
         }

@@ -49,6 +49,11 @@ describe('AppShell accessibility', () => {
     expect(document.activeElement).toBe(main);
   });
 
+  it('provides a labelled mobile navigation trigger without duplicating navigation authority', () => {
+    const trigger = fixture.nativeElement.querySelector('.mobile-navigation > summary') as HTMLElement;
+    expect(trigger).toBeTruthy();
+    expect(trigger.getAttribute('aria-label')).toBe('workspace');
+  });
   it('keeps dialog focus inside and closes it with Escape', async () => {
     pending.set({ titleKey: 'customersTitle' }); fixture.detectChanges();
     const buttons = fixture.nativeElement.querySelectorAll('.confirm-dialog button') as NodeListOf<HTMLButtonElement>;

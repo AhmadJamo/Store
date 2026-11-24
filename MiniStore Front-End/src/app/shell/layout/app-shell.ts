@@ -99,6 +99,10 @@ export class AppShell implements OnInit {
     if (tab) void this.router.navigateByUrl(tab.route);
   }
 
+  protected openMobileNavigation(event: Event, item: NavigationItem): void {
+    this.openNavigation(event, item);
+    (event.currentTarget as HTMLElement).closest<HTMLDetailsElement>('.mobile-navigation')?.removeAttribute('open');
+  }
   protected updateSearch(value: string): void {
     this.searchQuery.set(value.slice(0, 80));
     this.searchOpen.set(true);

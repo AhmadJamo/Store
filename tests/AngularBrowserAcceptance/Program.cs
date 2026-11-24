@@ -1323,6 +1323,24 @@ static async Task RunUiAsync(IPlaywright playwright, IBrowser browser, Arguments
         "Skip link did not focus main content.");
     checks.Add(new("keyboard", "passed", "Skip navigation focuses the main content."));
 
+    await page.EvaluateAsync("document.activeElement?.blur()");
+    await page.Locator("details.preference-menu > summary").ClickAsync();
+    var preferenceSelects = page.Locator(".preferences select");
+    await preferenceSelects.Nth(0).SelectOptionAsync("dark");
+    await preferenceSelects.Nth(1).SelectOptionAsync("compact");
+    Require(await page.EvaluateAsync<bool>("document.documentElement.dataset.theme === 'dark'"),
+        "Dark theme preference was not applied.");
+    Require(await page.EvaluateAsync<bool>("document.documentElement.dataset.density === 'compact'"),
+        "Compact density preference was not applied.");
+    await page.ScreenshotAsync(new PageScreenshotOptions
+    {
+        Path = Path.Combine(options.OutputDirectory, "design-system-dark-compact.png"), FullPage = true
+    });
+    await preferenceSelects.Nth(0).SelectOptionAsync("light");
+    await preferenceSelects.Nth(1).SelectOptionAsync("comfortable");
+    await page.Locator("details.preference-menu > summary").ClickAsync();
+    checks.Add(new("theme-density", "passed", "Dark/compact and light/comfortable preferences applied."));
+
     await page.ScreenshotAsync(new PageScreenshotOptions
     {
         Path = Path.Combine(options.OutputDirectory, "design-system-desktop.png"), FullPage = true
@@ -1330,6 +1348,12 @@ static async Task RunUiAsync(IPlaywright playwright, IBrowser browser, Arguments
     await page.SetViewportSizeAsync(390, 844);
     await page.ReloadAsync(new PageReloadOptions { WaitUntil = WaitUntilState.NetworkIdle });
     await page.Locator("#preview-title").WaitForAsync();
+    var mobileNavigation = page.Locator(".mobile-navigation > summary");
+    Require(await mobileNavigation.IsVisibleAsync(), "The mobile navigation trigger is not visible.");
+    await mobileNavigation.ClickAsync();
+    Require(await page.Locator(".mobile-navigation-panel").IsVisibleAsync(),
+        "The mobile navigation panel did not open.");
+    await mobileNavigation.ClickAsync();
     Require(!await page.EvaluateAsync<bool>(
         "document.documentElement.scrollWidth > document.documentElement.clientWidth + 1"),
         "The mobile viewport has horizontal overflow.");

@@ -1,11 +1,16 @@
 # المهمة التالية الوحيدة / Next Task
 
+## FRD-E — إعادة بناء Application Shell
+
+> الحالة: IN PROGRESS — بعد إغلاق Design System في 2026-11-24
+
+أعد بناء تركيب Shell على أساس `04-UX-ARCHITECTURE.md`: App switcher، current-app navigation، search، branch، session/user، Open Work وbreadcrumbs دون طبقات متكررة. ثبت App/Section/Archetype metadata في Navigation Registry، وخفّض `app-shell.scss` تحت warning budget أو وثّق استخراجاً آمناً. حافظ على URLs وWorkspace/dirty/permission authority، ثم أعد 260 tests والبناء وPlaywright RTL/LTR/theme/density/desktop/mobile.
+
 ## FRD-D — نظام التصميم الوظيفي
 
-> الحالة: IN PROGRESS — بعد إغلاق UX Architecture في 2026-11-22
+> الحالة: COMPLETE — أُغلق في 2026-11-24
 
-ثُبت `05-DESIGN-SYSTEM.md` ونُفذت أول معاينة وظيفية واجتازت الفحوص الآلية. التالي: تنفيذ visual acceptance لـLight/Dark وComfortable/Compact وAR/RTL وEN/LTR، ثم استخراج primitives المطلوبة فعلياً لـProducts pilot دون rollout شامل.
-
+ثُبت عقد `05-DESIGN-SYSTEM.md` ومعاينة List/Record والحالات. نجح 260 اختباراً والبناء وفحوص 138 قالباً و121 صفحة، وPlaywright 6/6 للاتجاه والثيم والكثافة والكيبورد وDesktop/390px. الأدلة في `docs/frontend-redesign/acceptance/design-system-2026-11-24/`.
 ## FRD-C — معمارية UX والتنقل
 
 > الحالة: COMPLETE — أُغلق في 2026-11-22

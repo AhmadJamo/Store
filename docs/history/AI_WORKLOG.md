@@ -2490,3 +2490,9 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
 - 2026-11-24: Added the active module migration matrix and issue register for frontend reconstruction.
   - `07-MODULE-MIGRATION-MATRIX.md` fixes the safe wave order, Products pilot scope, parity evidence and reversible cutover record.
   - `13-ISSUES-AND-GAPS.md` records visual-runtime, bundle/style budgets, shared-UI adoption, navigation metadata, capability and route-evidence gaps with severity and verification rules.
+- 2026-11-24: Closed FRD-D functional Design System after live browser acceptance and a Mobile Shell correction.
+  - Visual inspection found the legacy 100vh sidebar leaving a large blank mobile area despite the prior overflow check. Replaced it below 680px with a sticky compact topbar and permission-filtered menu popover using the existing Navigation Registry.
+  - Extended AngularBrowserAcceptance to verify Dark/Compact and Light/Comfortable plus opening the mobile navigation panel; removed focus artifacts before baseline screenshots.
+  - Verified 260/260 Angular tests, production build, 138-template accessibility, 121-page UI consistency, acceptance-runner build with zero warnings/errors, and Playwright 6 passed/0 failed/3 authenticated-API skips.
+  - Stored reviewed Desktop, Mobile and Dark/Compact screenshots plus the outcome-only JSON under `docs/frontend-redesign/acceptance/design-system-2026-11-24/`.
+  - Advanced the active gate to FRD-E Application Shell. The shell SCSS warning increased to 8.43 kB and must be reduced before its 10 kB error budget.
