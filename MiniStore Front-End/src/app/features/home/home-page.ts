@@ -33,10 +33,8 @@ export class HomePage {
   protected readonly preview = signal<QuickPreviewResult | null>(null);
   protected readonly matchingCommands = computed(() => {
     const query = this.search().trim().toLocaleLowerCase(this.i18n.locale());
-    const launcherIds = new Set(['sales-center', 'purchasing-center', 'inventory-stock', 'accounting-center', 'customers', 'suppliers', 'products', 'point-of-sale', 'analytics', 'settings']);
-    return this.navigation.visibleItems()
-      .filter((item) => launcherIds.has(item.id))
-      .filter((item) => !query || this.navigationI18n.text(item.labelKey).toLocaleLowerCase(this.i18n.locale()).includes(query));
+    return this.navigation.visibleApplications()
+      .filter((application) => !query || this.navigationI18n.text(application.labelKey).toLocaleLowerCase(this.i18n.locale()).includes(query));
   });
 
   constructor() { if (this.selectedProvider()) this.loadPreview(); }

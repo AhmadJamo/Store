@@ -3,6 +3,7 @@ import { LocalizationService, MessageKey } from '../../core/localization/localiz
 
 const navigationMessages = {
   'ar-JO': {
+    appSales: 'المبيعات', appPurchases: 'المشتريات', appInventory: 'المخزون', appProducts: 'المنتجات', appContacts: 'جهات الاتصال', appAccounting: 'المحاسبة', appPos: 'نقطة البيع', appAnalytics: 'التحليلات', appAdministration: 'الإدارة', appSettings: 'الإعدادات',
     manualJournals: 'القيود اليدوية', recurringJournals: 'القيود الدورية',
     financialReports: 'التقارير المالية',
     agingReports: 'أعمار الذمم والمصالحة', cashFlowClose: 'التدفق النقدي وجاهزية الإقفال', bankStatements: 'التسوية البنكية',
@@ -12,6 +13,7 @@ const navigationMessages = {
     accountingReview: 'المراجعة المحاسبية', journalEntries: 'دليل القيود اليومية', salesPricing: 'تسعير المبيعات', salesQuotationTemplates: 'قوالب عروض الأسعار', salesQuotations: 'عروض الأسعار', salesApprovalRules: 'قواعد اعتماد المبيعات', salesOrders: 'أوامر البيع', salesDeliveries: 'تسليمات المبيعات', customerInvoices: 'فواتير العملاء', customerPayments: 'دفعات العملاء', customerReturnRequests: 'طلبات مرتجعات العملاء', customerReturnReceipts: 'استلام مرتجعات العملاء', customerCreditNotes: 'إشعارات العملاء الدائنة', directSales: 'البيع المباشر', pointOfSale: 'نقطة البيع', directSalesReturns: 'مرتجعات البيع المباشر', chartOfAccounts: 'شجرة الحسابات',
   },
   'en-US': {
+    appSales: 'Sales', appPurchases: 'Purchases', appInventory: 'Inventory', appProducts: 'Products', appContacts: 'Contacts', appAccounting: 'Accounting', appPos: 'Point of sale', appAnalytics: 'Analytics', appAdministration: 'Administration', appSettings: 'Settings',
     manualJournals: 'Manual journals', recurringJournals: 'Recurring journals',
     financialReports: 'Financial reports',
     agingReports: 'Aging and reconciliation', cashFlowClose: 'Cash flow and close readiness', bankStatements: 'Bank reconciliation',

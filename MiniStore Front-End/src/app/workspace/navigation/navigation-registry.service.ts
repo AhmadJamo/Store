@@ -2,6 +2,7 @@ import { computed, Injectable } from '@angular/core';
 import { ApiSessionService } from '../../core/api/api-session.service';
 import { NavigationItem } from '../state/workspace.models';
 import { WorkspaceProfileService } from '../../core/preferences/workspace-profile.service';
+import type { NavigationTextKey } from './navigation-localization.service';
 
 export type NavigationGroupId = 'overview' | 'partners' | 'catalog' | 'inventory' | 'purchasing' | 'sales' | 'accounting' | 'insights' | 'administration';
 
@@ -9,6 +10,21 @@ export interface NavigationGroup {
   readonly id: NavigationGroupId;
   readonly icon: string;
   readonly items: readonly NavigationItem[];
+}
+
+export type NavigationApplicationId = 'sales' | 'purchases' | 'inventory' | 'products' | 'contacts' | 'accounting' | 'pos' | 'analytics' | 'administration' | 'settings';
+
+export interface NavigationApplication {
+  readonly id: NavigationApplicationId;
+  readonly labelKey: NavigationTextKey;
+  readonly icon: string;
+  readonly entryNavigationIds: readonly string[];
+  readonly navigationIds?: readonly string[];
+  readonly routePrefixes?: readonly string[];
+}
+
+export interface VisibleNavigationApplication extends NavigationApplication {
+  readonly entry: NavigationItem;
 }
 
 const navigationGroups: readonly Omit<NavigationGroup, 'items'>[] = [
@@ -21,6 +37,19 @@ const navigationGroups: readonly Omit<NavigationGroup, 'items'>[] = [
   { id: 'accounting', icon: '▤' },
   { id: 'insights', icon: '◫' },
   { id: 'administration', icon: '⚙' },
+];
+
+const navigationApplications: readonly NavigationApplication[] = [
+  { id: 'sales', labelKey: 'appSales', icon: '◈', entryNavigationIds: ['sales-center'], routePrefixes: ['/sales'] },
+  { id: 'purchases', labelKey: 'appPurchases', icon: '▣', entryNavigationIds: ['purchasing-center'], routePrefixes: ['/purchases'] },
+  { id: 'inventory', labelKey: 'appInventory', icon: '▥', entryNavigationIds: ['inventory-stock', 'inventory-availability', 'inventory-ledger'], routePrefixes: ['/inventory'] },
+  { id: 'products', labelKey: 'appProducts', icon: '▦', entryNavigationIds: ['products'], navigationIds: ['products'] },
+  { id: 'contacts', labelKey: 'appContacts', icon: '♙', entryNavigationIds: ['customers', 'suppliers'], navigationIds: ['customers', 'suppliers'] },
+  { id: 'accounting', labelKey: 'appAccounting', icon: '▤', entryNavigationIds: ['accounting-center'], routePrefixes: ['/accounting'] },
+  { id: 'pos', labelKey: 'appPos', icon: '▦', entryNavigationIds: ['point-of-sale'], navigationIds: ['point-of-sale'] },
+  { id: 'analytics', labelKey: 'appAnalytics', icon: '◫', entryNavigationIds: ['analytics'], navigationIds: ['analytics'] },
+  { id: 'administration', labelKey: 'appAdministration', icon: '♜', entryNavigationIds: ['branches', 'users', 'roles', 'audit-events'], navigationIds: ['branches', 'users', 'roles', 'audit-events'] },
+  { id: 'settings', labelKey: 'appSettings', icon: '⚙', entryNavigationIds: ['settings'], navigationIds: ['settings', 'accounting-settings-link', 'fiscal-periods-link', 'currency-rates-link', 'branch-accounts-link'], routePrefixes: ['/settings'] },
 ];
 
 const navigationItems: readonly NavigationItem[] = [
@@ -289,6 +318,7 @@ const navigationItems: readonly NavigationItem[] = [
 @Injectable({ providedIn: 'root' })
 export class NavigationRegistryService {
   readonly items = navigationItems;
+  readonly applications = navigationApplications;
   readonly visibleItems = computed(() => {
     const visible = this.items.filter((item) => this.canAccess(item));
     const priorities: Record<string, readonly string[]> = {
@@ -394,6 +424,14 @@ export class NavigationRegistryService {
       return items.length ? [{ ...group, items }] : [];
     });
   });
+  readonly visibleApplications = computed<readonly VisibleNavigationApplication[]>(() =>
+    this.applications.flatMap((application): VisibleNavigationApplication[] => {
+      const entry = application.entryNavigationIds
+        .map((id) => this.findById(id))
+        .find((item): item is NavigationItem => !!item && this.canAccess(item));
+      return entry ? [{ ...application, entry }] : [];
+    }),
+  );
 
   constructor(
     private readonly session: ApiSessionService,
@@ -402,6 +440,18 @@ export class NavigationRegistryService {
 
   findById(id: string): NavigationItem | undefined {
     return this.items.find((item) => item.id === id);
+  }
+
+  applicationForItem(item: NavigationItem): NavigationApplication | undefined {
+    return this.applications.find((application) => application.navigationIds?.includes(item.id))
+      ?? this.applications.find((application) =>
+        application.routePrefixes?.some((prefix) => item.route === prefix || item.route.startsWith(`${prefix}/`)),
+      );
+  }
+
+  applicationForRoute(route: string): NavigationApplication | undefined {
+    const item = this.findByRoute(route);
+    return item ? this.applicationForItem(item) : undefined;
   }
 
   groupForItem(item: NavigationItem): NavigationGroupId {

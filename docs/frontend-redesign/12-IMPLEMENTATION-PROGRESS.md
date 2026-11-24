@@ -1,6 +1,6 @@
 # 12 — تقدم إعادة بناء Frontend
 
-> آخر تحديث: 2026-11-22  
+> آخر تحديث: 2026-11-24
 > الحالة العامة: Application shell gate
 > المصدر: الكود، الاختبارات، وثائق المشروع، والمراجع الرسمية التي تم التحقق منها
 
@@ -12,18 +12,18 @@
 | B — Odoo Research | Verified | `02-ODOO-RESEARCH.md` + `03-ODOO-UI-FEATURE-MATRIX.md` | مغلقة |
 | C — UX Architecture | Verified | `04-UX-ARCHITECTURE.md` + `06-NAVIGATION-AND-ROUTES.md` + route coverage | مغلقة |
 | D — Design System | Verified | 260 tests + build + static gates + Playwright 6/6 | مغلقة |
-| E — Application Shell | In Progress | pilot + mobile shell correction | desktop composition + metadata + CSS budget |
+| E — Application Shell | In Progress | permission-aware 10-App metadata + launcher/shell context + mobile correction | current-app navigation composition + CSS budget |
 | F — Core Views | Not Started | — | Products pilot بعد design gate |
 | G — Module Migration | Not Started | — | حسب dependency order |
 | H — POS Reconstruction | Not Started | — | بعد core patterns |
-| I — System Quality | In Progress continuously | 258 tests/build/static gates | visual/E2E لاحقاً |
+| I — System Quality | In Progress continuously | 262 tests/build/static gates + Playwright 6/6 | authenticated workflow E2E لاحقاً |
 | J — Cleanup & Handover | Not Started | — | بعد اكتمال routes |
 
 ## تقدم الوحدات
 
 | Module | Research | Design | Implementation | API Integration | Tests | Status |
 |---|---|---|---|---|---|---|
-| Shell / Launcher | Verified research | Design contract | First slices | Existing contracts | 260 + Playwright 6/6 | In Progress |
+| Shell / Launcher | Verified research | Design contract | 10-App registry + first slices | Existing contracts | 262 + Playwright 6/6 | In Progress |
 | Products | Not Started | Not Started | Legacy V3 | Verified existing APIs | Existing specs | Planned pilot |
 | Customers / Suppliers | Not Started | Not Started | Legacy V3 | Verified | Existing specs | Planned |
 | Sales | Not Started | Not Started | Legacy V3 | Verified | Existing specs | Planned |
@@ -46,6 +46,6 @@
 ## قيود حالية
 
 - أُغلق Odoo Research على مرجع 19.0 الرسمي؛ تعذّر توثيق 20.0 بسبب Timeout ولا تُنسب إليه خصائص غير متحققة.
-- أُغلق Design System بعد القبول البصري؛ بقي تخفيض Shell SCSS warning ضمن مرحلة Application Shell.
+- أُغلق Design System بعد القبول البصري؛ أضيف App metadata صريح ومصفى بالصلاحيات، وبقي تركيب current-app navigation وتخفيض Shell SCSS warning ضمن مرحلة Application Shell.
 - أضيفت أربع concept mockups كاتجاه بصري، وثُبت baseline قبول Design System الفعلي في `acceptance/design-system-2026-11-24/`.
 - لا توجد وحدة أعمال مصنفة Migrated إلى V4 حتى الآن.

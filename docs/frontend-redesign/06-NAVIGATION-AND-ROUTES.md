@@ -62,7 +62,7 @@ interface NavigationDestination {
 }
 ```
 
-هذا عقد تصميم مقترح، وليس تصريحاً بتغيير الكود قبل pilot. `permission` يستخدم نفس authority الحالية ولا يكرر منطق الخادم.
+بدأ تنفيذ هذا العقد في شريحة FRD-E الأولى بتاريخ 2026-11-24: يعرّف `NavigationRegistryService` التطبيقات العشرة صراحةً مع اسم مترجم وأيقونة ومرشحي دخول آمنين وعضوية route/وجهة. `visibleApplications()` يختار أول وجهة مسموحة فقط، و`applicationForRoute()` يزود الـShell بسياق التطبيق دون تغيير URL. تبقى `sectionId` و`archetype` و`mobilePriority` ضمن الشرائح التالية؛ `permission` يستخدم authority الحالية ولا يكرر منطق الخادم.
 
 ## 5. Route classification
 

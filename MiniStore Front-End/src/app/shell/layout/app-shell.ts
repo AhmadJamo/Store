@@ -64,6 +64,7 @@ export class AppShell implements OnInit {
   private readonly document = inject(DOCUMENT);
   private dialogOpener: HTMLElement | null = null;
   protected readonly currentRoute = signal('/');
+  protected readonly currentApplication = computed(() => this.navigation.applicationForRoute(this.currentRoute()));
 
   ngOnInit(): void {
     this.currentRoute.set(this.router.url);

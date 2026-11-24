@@ -32,9 +32,9 @@
             </section>
           }
         </nav>
-      </details>      <div class="page-context"><span class="eyebrow">{{ i18n.text('workspace') }}</span><strong>{{ i18n.text('phaseTitle') }}</strong>
+      </details>      <div class="page-context"><span class="eyebrow">{{ currentApplication() ? navigationI18n.text(currentApplication()!.labelKey) : i18n.text('workspace') }}</span><strong>{{ i18n.text('phaseTitle') }}</strong>
         @if (currentNavigationItem(); as currentItem) {
-          <nav class="breadcrumbs" [attr.aria-label]="i18n.text('workspace')"><span>{{ shellI18n.group(navigation.groupForItem(currentItem)) }}</span><span aria-hidden="true">›</span><span aria-current="page">{{ navigationI18n.text(currentItem.labelKey) }}</span></nav>
+          <nav class="breadcrumbs" [attr.aria-label]="i18n.text('workspace')"><span>{{ currentApplication() ? navigationI18n.text(currentApplication()!.labelKey) : shellI18n.group(navigation.groupForItem(currentItem)) }}</span><span aria-hidden="true">›</span><span aria-current="page">{{ navigationI18n.text(currentItem.labelKey) }}</span></nav>
         }
       </div>
       @if (branchContext.choices().length) {

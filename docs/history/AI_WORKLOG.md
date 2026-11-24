@@ -2496,3 +2496,8 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
   - Verified 260/260 Angular tests, production build, 138-template accessibility, 121-page UI consistency, acceptance-runner build with zero warnings/errors, and Playwright 6 passed/0 failed/3 authenticated-API skips.
   - Stored reviewed Desktop, Mobile and Dark/Compact screenshots plus the outcome-only JSON under `docs/frontend-redesign/acceptance/design-system-2026-11-24/`.
   - Advanced the active gate to FRD-E Application Shell. The shell SCSS warning increased to 8.43 kB and must be reduced before its 10 kB error budget.
+
+- 2026-11-24: Completed the first FRD-E Application Shell slice.
+  - Added explicit metadata for the ten target applications, localized Arabic/English application labels, permission-filtered safe entry selection and route-to-application lookup in the Navigation Registry.
+  - Removed the Home launcher's duplicated ID allowlist and made the Shell show current-application context; exact POS membership overrides the broader Sales route family.
+  - Preserved routes, Workspace/dirty behavior, API contracts and server permission authority. Verified 262/262 Angular tests, production build, 138-template accessibility, 121-page consistency and Playwright 6 passed/0 failed/3 authenticated-API skips.

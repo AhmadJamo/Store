@@ -12,8 +12,8 @@
       <label class="launcher-search"><span aria-hidden="true">⌕</span><input name="commandSearch" [ngModel]="search()" (ngModelChange)="search.set($event)" [placeholder]="i18n.text('commandSearchPlaceholder')" maxlength="100" /></label>
     </form>
     <nav class="app-grid" [attr.aria-label]="i18n.text('availableDestinations')">
-      @for (item of matchingCommands(); track item.id) {
-        <div class="app-tile"><a [routerLink]="item.route"><span class="app-icon" aria-hidden="true">{{ item.icon }}</span><strong>{{ navigationI18n.text(item.labelKey) }}</strong></a><button type="button" (click)="preferences.toggleFavorite(item.id)" [attr.aria-pressed]="preferences.isFavorite(item.id)" [title]="i18n.text(preferences.isFavorite(item.id) ? 'removeFavorite' : 'addFavorite')">{{ preferences.isFavorite(item.id) ? '★' : '☆' }}</button></div>
+      @for (application of matchingCommands(); track application.id) {
+        <div class="app-tile"><a [routerLink]="application.entry.route"><span class="app-icon" aria-hidden="true">{{ application.icon }}</span><strong>{{ navigationI18n.text(application.labelKey) }}</strong></a><button type="button" (click)="preferences.toggleFavorite(application.entry.id)" [attr.aria-pressed]="preferences.isFavorite(application.entry.id)" [title]="i18n.text(preferences.isFavorite(application.entry.id) ? 'removeFavorite' : 'addFavorite')">{{ preferences.isFavorite(application.entry.id) ? '★' : '☆' }}</button></div>
       }
     </nav>
   </section>

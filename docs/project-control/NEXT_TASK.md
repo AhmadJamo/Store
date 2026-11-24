@@ -2,7 +2,9 @@
 
 ## FRD-E — إعادة بناء Application Shell
 
-> الحالة: IN PROGRESS — بعد إغلاق Design System في 2026-11-24
+> الحالة: IN PROGRESS — اكتملت شريحة App metadata الأولى في 2026-11-24
+>
+> أضيف سجل صريح للتطبيقات العشرة مع safe entry مصفى بالصلاحيات، وأصبح Launcher والـShell يستهلكانه. التالي: تركيب current-app navigation بصورة أوضح، ثم استخراج CSS لتخفيض warning مع إبقاء سلوك الهاتف.
 
 أعد بناء تركيب Shell على أساس `04-UX-ARCHITECTURE.md`: App switcher، current-app navigation، search، branch، session/user، Open Work وbreadcrumbs دون طبقات متكررة. ثبت App/Section/Archetype metadata في Navigation Registry، وخفّض `app-shell.scss` تحت warning budget أو وثّق استخراجاً آمناً. حافظ على URLs وWorkspace/dirty/permission authority، ثم أعد 260 tests والبناء وPlaywright RTL/LTR/theme/density/desktop/mobile.
 

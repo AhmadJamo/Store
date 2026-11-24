@@ -37,4 +37,20 @@ describe('NavigationRegistryService', () => {
     expect(registry.visibleItems().some((item) => item.id === 'journal-entries')).toBe(true);
     expect(registry.visibleItems().some((item) => item.id === 'settings')).toBe(false);
   });
+
+  it('exposes permission-filtered applications with a safe entry destination', () => {
+    const registry = createRegistry(['Suppliers.View', 'ProductStock.View']);
+
+    expect(registry.visibleApplications().map((application) => application.id)).toEqual(['inventory', 'contacts']);
+    expect(registry.visibleApplications().find((application) => application.id === 'contacts')?.entry.id).toBe('suppliers');
+    expect(registry.visibleApplications().find((application) => application.id === 'inventory')?.entry.id).toBe('inventory-stock');
+  });
+
+  it('maps nested routes to an explicit application while keeping point of sale distinct from sales', () => {
+    const registry = createRegistry(['Sales.View', 'SalesOrders.View']);
+
+    expect(registry.applicationForRoute('/sales/orders/42')?.id).toBe('sales');
+    expect(registry.applicationForRoute('/sales/pos')?.id).toBe('pos');
+    expect(registry.applicationForRoute('/settings/accounting')?.id).toBe('settings');
+  });
 });
