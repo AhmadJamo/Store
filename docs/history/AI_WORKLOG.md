@@ -2483,3 +2483,7 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
   - Added a focused design-system page test. Verified 259/259 Angular tests, production build, 138-template static accessibility and the 121-page UI/UX consistency inventory.
   - Existing build warnings remain unchanged: initial shared chunk 204.88 kB versus 180 kB warning and shell SCSS 7.40 kB versus 6 kB warning; neither exceeds the configured error limit.
   - Native visual inspection remained unavailable because the computer-use runtime could not initialize under the Windows ACL sandbox; no visual-acceptance claim is made.
+- 2026-11-24: Added four original MiniStore frontend concept mockups under `docs/frontend-redesign/mockups/`.
+  - Covered App Launcher, Products List, Sales Order Record and POS Workspace using the accepted Plum/Teal visual direction.
+  - Regenerated the POS concept with fictional unbranded products to avoid third-party marks.
+  - Classified every image as visual direction only; no implementation, API integration or visual-acceptance claim is inferred from the mockups.

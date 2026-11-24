@@ -47,5 +47,5 @@
 
 - أُغلق Odoo Research على مرجع 19.0 الرسمي؛ تعذّر توثيق 20.0 بسبب Timeout ولا تُنسب إليه خصائص غير متحققة.
 - عقد Design System مثبت وتوجد معاينة وظيفية أولى؛ الاعتماد النهائي ينتظر visual acceptance واستخراج primitives المطلوبة للـpilot.
-- لم يُنفذ Visual Regression مصرح ومثبت للـpilot الحالي.
+- أضيفت أربع concept mockups كاتجاه بصري؛ لم يُنفذ Visual Regression أو قبول بصري داخل التطبيق بعد.
 - لا توجد وحدة أعمال مصنفة Migrated إلى V4 حتى الآن.
