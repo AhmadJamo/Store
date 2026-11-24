@@ -8,7 +8,7 @@
 |---|---|---|---|---|---|---|---|
 | FRD-ISS-001 | Native visual QA | computer-use runtime تعذر، لكن بوابة Playwright الرسمية تعمل | لا تأثير متبقٍ على القبول البصري | Medium | استخدام AngularBrowserAcceptance مع مراجعة الصور | Verified | Playwright 6/6 + screenshots 2026-11-24 |
 | FRD-ISS-002 | Angular initial shared chunk | chunk بحجم 204.88 kB يتجاوز warning 180 kB | أداء التحميل الأولي قد يتدهور مع التوسع | Medium | تحليل imports/code splitting قبل rollout | Open | production build 2026-11-24 |
-| FRD-ISS-003 | `app-shell.scss` | pilot shell styles بحجم 8.47 kB تتجاوز warning 6 kB | بقي 1.53 kB قبل error budget 10 kB | Medium | استخراج mobile/navigation primitives وحذف legacy selectors | Open | production build 2026-11-24 |
+| FRD-ISS-003 | `app-shell.scss` | استُخرج current-app navigation وOpen Work CSS المحصور | اختفى component-style warning؛ الملف المصدر 4.79 kB | Medium | إبقاء الأنماط المستخرجة محصورة واختبارها عند تغيير Shell | Verified | production build بلا Shell SCSS warning + 265 tests + Playwright 7/7 |
 | FRD-ISS-004 | Shared UI adoption | FilterBar/Summary/Form/Detail/Workflow adoption أقل بكثير من PageHeader/Feedback | تفاوت كبير بين 121 صفحة | High | pilot ثم migration بالموجات؛ يمنع bulk restyle | In Progress | UI consistency inventory |
 | FRD-ISS-005 | Navigation registry | أضيف App metadata وsafe entry، وما زال Archetype/Section/Mobile priority غير مكتمل | shell يملك سياق التطبيق الآن، لكن تصنيف الصفحات لم يكتمل | High | إكمال metadata مع generated coverage tests | In Progress | 264 tests + App Switcher/current-app navigation + Playwright 7/7 + `06-NAVIGATION-AND-ROUTES.md` |
 | FRD-ISS-006 | Visual identity | بعض feature SCSS يستخدم namespaces وألوان fallback قديمة | dark/RTL/theme consistency غير مضمونة | Medium | token inventory وإزالة القيم المباشرة تدريجياً | Open | repository scan + design contract |
@@ -32,5 +32,5 @@
 1. FRD-ISS-005 ضمن Shell/Products pilot.
 2. FRD-ISS-004 وFRD-ISS-006 عبر primitives حقيقية، لا إعادة كتابة شاملة.
 3. FRD-ISS-001 مغلقة؛ استخدم نفس Playwright gate لكل وحدة.
-4. FRD-ISS-002 وFRD-ISS-003 قبل أن تتجاوز error budgets.
+4. FRD-ISS-003 مغلقة؛ بقي FRD-ISS-002 لتحليل initial shared chunk قبل rollout.
 5. FRD-ISS-009 حسب موجات الوحدة وبحماية route coverage.

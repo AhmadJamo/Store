@@ -1,0 +1,19 @@
+app-shell .workspace-toolbar { min-height: 2.65rem; display: flex; align-items: center; gap: var(--erp-space-1); padding-inline: var(--erp-space-6); background: var(--erp-color-surface); border-block-end: 1px solid var(--erp-color-border); }
+app-shell .workspace-toolbar > button { width: 2rem; min-height: 2rem; color: var(--erp-color-text); border: 0; border-radius: var(--erp-radius-sm); background: transparent; cursor: pointer; }
+app-shell .workspace-toolbar > button:hover:not(:disabled) { color: #6f2d5c; background: #f3e8ef; }
+app-shell .workspace-toolbar > button:disabled { opacity: .4; cursor: not-allowed; }
+app-shell .open-work-menu { position: relative; margin-inline-start: auto; }
+app-shell .open-work-menu > summary { display: flex; align-items: center; gap: var(--erp-space-2); min-height: 2.1rem; padding-inline: .7rem; border: 1px solid var(--erp-color-border); border-radius: .55rem; color: var(--erp-color-text-muted); background: var(--erp-color-surface); cursor: pointer; list-style: none; font-size: .78rem; }
+app-shell .open-work-menu > summary::-webkit-details-marker { display: none; }
+app-shell .open-work-menu > summary:hover, app-shell .open-work-menu[open] > summary { color: #6f2d5c; border-color: #c9a9bc; background: #f8f1f5; }
+app-shell .open-work-menu > summary strong { display: grid; place-items: center; min-width: 1.3rem; min-height: 1.3rem; border-radius: 999px; color: #fff; background: #6f2d5c; font-size: .68rem; }
+app-shell .tabs { position: absolute; inset-block-start: calc(100% + .45rem); inset-inline-end: 0; z-index: 45; width: min(22rem, calc(100vw - 2rem)); max-height: min(28rem, 70vh); display: grid; gap: .3rem; overflow-y: auto; padding: .55rem; color: var(--erp-color-text-muted); background: var(--erp-color-surface); border: 1px solid var(--erp-color-border); border-radius: .75rem; box-shadow: var(--erp-shadow-md); font-size: .82rem; }
+app-shell .workspace-tab { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; align-items: center; min-height: 2.55rem; border: 1px solid transparent; border-radius: .55rem; }
+app-shell .workspace-tab.active { color: #52213f; border-color: #dfc8d5; background: #f7edf3; }
+app-shell .workspace-tab button { min-height: 2.35rem; color: inherit; border: 0; background: transparent; cursor: pointer; }
+app-shell .workspace-tab [role='tab'] { width: auto; overflow: hidden; padding-inline: var(--erp-space-3); font-weight: 650; text-align: start; text-overflow: ellipsis; white-space: nowrap; }
+app-shell .tab-close, app-shell .tab-more { width: 1.8rem; padding: 0; border-radius: var(--erp-radius-sm); }
+app-shell .tab-close:hover, app-shell .tab-more:hover { background: var(--erp-color-surface-muted); }
+app-shell .empty-tabs { padding: var(--erp-space-3); text-align: center; }
+app-shell .dirty { color: var(--erp-color-warning); font-size: .65rem; }
+@media (max-width: 680px) { app-shell .workspace-toolbar, app-shell .tabs { padding-inline: var(--erp-space-4); } }

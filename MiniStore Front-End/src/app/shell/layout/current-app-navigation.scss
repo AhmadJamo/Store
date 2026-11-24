@@ -1,0 +1,20 @@
+:host { display: block; }
+:host(.mobile-mode) { display: none; }
+.nav-item { display: grid; justify-items: center; gap: .2rem; min-height: 3.8rem; border: 0; border-radius: .65rem; padding: .45rem .25rem; color: var(--erp-color-text-muted); background: transparent; cursor: pointer; text-align: center; text-decoration: none; font-size: .64rem; line-height: 1.15; }
+.nav-item.active, .nav-item:hover { color: #6f2d5c; background: #f3e8ef; }
+.nav-group summary { grid-template-columns: 1fr; justify-items: center; color: var(--erp-color-text-muted); }
+.nav-group summary span:not(:first-child) { display: none; }
+.nav-group summary:hover { color: #6f2d5c; background: #f3e8ef; }
+.mobile-navigation { display: none; }
+@media (max-width: 900px) { .nav-item { font-size: 0; justify-content: center; padding-inline: 0; } .nav-item span { font-size: 1rem; } }
+@media (max-width: 680px) {
+  :host(.mobile-mode) { display: block; }
+  .mobile-navigation { position: relative; display: block; }
+  .mobile-navigation > summary { display: grid; place-items: center; width: 2.25rem; min-height: 2.25rem; padding: 0; color: #fff; border: 1px solid rgb(255 255 255 / 35%); border-radius: var(--erp-radius-sm); background: rgb(255 255 255 / 10%); cursor: pointer; list-style: none; }
+  .mobile-navigation > summary::-webkit-details-marker { display: none; }
+  .mobile-navigation-panel { position: absolute; inset-block-start: calc(100% + .65rem); inset-inline-start: 0; z-index: 70; width: min(22rem, calc(100vw - 2rem)); max-height: calc(100vh - 8rem); display: grid; gap: var(--erp-space-3); overflow-y: auto; padding: var(--erp-space-3); border: 1px solid var(--erp-color-border); border-radius: var(--erp-radius-md); color: var(--erp-color-text); background: var(--erp-color-surface); box-shadow: var(--erp-shadow-md); }
+  .mobile-navigation-group { display: grid; gap: var(--erp-space-1); }
+  .mobile-navigation-group h2 { display: flex; align-items: center; gap: var(--erp-space-2); margin: 0; padding: var(--erp-space-2); color: var(--erp-color-text-muted); font-size: .75rem; }
+  .mobile-navigation-panel .nav-item { display: flex; min-height: 2.75rem; align-items: center; justify-content: flex-start; gap: var(--erp-space-2); padding: var(--erp-space-2) var(--erp-space-3); font-size: .82rem; text-align: start; }
+  .mobile-navigation-panel .nav-item span { font-size: 1rem; }
+}

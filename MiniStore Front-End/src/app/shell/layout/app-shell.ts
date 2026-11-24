@@ -1,12 +1,12 @@
 import { DOCUMENT } from '@angular/common';
 import { ChangeDetectionStrategy, Component, DestroyRef, HostListener, computed, inject, OnInit, signal } from '@angular/core';
-import { NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { NavigationEnd, Router, RouterLink, RouterOutlet } from '@angular/router';
 import { filter } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { LocalizationService } from '../../core/localization/localization.service';
 import { ContentWidthPreference, DensityPreference, SidebarPreference, ThemePreference, UiPreferencesService } from '../../core/preferences/ui-preferences.service';
 import { WorkspaceProfile, WorkspaceProfileService } from '../../core/preferences/workspace-profile.service';
-import { NavigationGroupId, NavigationRegistryService } from '../../workspace/navigation/navigation-registry.service';
+import { NavigationRegistryService } from '../../workspace/navigation/navigation-registry.service';
 import { NavigationItem, WorkspaceTab } from '../../workspace/state/workspace.models';
 import { WorkspaceService } from '../../workspace/state/workspace.service';
 import { AccountApiService } from '../../core/api/account-api.service';
@@ -17,10 +17,11 @@ import { ShellNavigationLocalizationService } from './shell-navigation-localizat
 import { BranchContextService } from '../../core/branch-context/branch-context.service';
 import { ToastOutletComponent } from '../../shared/ui/toast/toast-outlet';
 import { ApplicationSwitcherComponent } from '../../workspace/navigation/application-switcher';
+import { CurrentAppNavigationComponent } from './current-app-navigation';
 
 @Component({
   selector: 'app-shell',
-  imports: [RouterLink, RouterLinkActive, RouterOutlet, ToastOutletComponent, ApplicationSwitcherComponent],
+  imports: [RouterLink, RouterOutlet, ToastOutletComponent, ApplicationSwitcherComponent, CurrentAppNavigationComponent],
   templateUrl: './app-shell.html',
   styleUrl: './app-shell.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -85,21 +86,16 @@ export class AppShell implements OnInit {
 
   protected currentNavigationItem(): NavigationItem | undefined { return this.navigation.findByRoute(this.currentRoute()); }
 
-  protected onNavigationGroupToggle(groupId: NavigationGroupId, event: Event): void {
-    this.navigationGroups.setOpen(groupId, (event.currentTarget as HTMLDetailsElement).open);
-  }
-
   @HostListener('window:beforeunload', ['$event'])
   protected protectUnsavedRefresh(event: BeforeUnloadEvent): void {
     if (this.workspace.tabs().some((tab) => tab.dirty)) event.preventDefault();
   }
 
-  protected openNavigation(event: Event, item: NavigationItem): void {
-    event.preventDefault();
+  protected openApplication(item: NavigationItem): void {
     this.openItem(item);
   }
 
-  protected openApplication(item: NavigationItem): void {
+  protected openCurrentNavigation(item: NavigationItem): void {
     this.openItem(item);
   }
 
@@ -110,10 +106,6 @@ export class AppShell implements OnInit {
     if (tab) void this.router.navigateByUrl(tab.route);
   }
 
-  protected openMobileNavigation(event: Event, item: NavigationItem): void {
-    this.openNavigation(event, item);
-    (event.currentTarget as HTMLElement).closest<HTMLDetailsElement>('.mobile-navigation')?.removeAttribute('open');
-  }
   protected updateSearch(value: string): void {
     this.searchQuery.set(value.slice(0, 80));
     this.searchOpen.set(true);

@@ -12,18 +12,18 @@
 | B — Odoo Research | Verified | `02-ODOO-RESEARCH.md` + `03-ODOO-UI-FEATURE-MATRIX.md` | مغلقة |
 | C — UX Architecture | Verified | `04-UX-ARCHITECTURE.md` + `06-NAVIGATION-AND-ROUTES.md` + route coverage | مغلقة |
 | D — Design System | Verified | 260 tests + build + static gates + Playwright 6/6 | مغلقة |
-| E — Application Shell | In Progress | 10-App metadata + App Switcher + current-app navigation + mobile correction | CSS extraction/budget + richer Section metadata |
+| E — Application Shell | In Progress | 10-App metadata + App Switcher + current-app navigation + SCSS budget closed | richer Section/Archetype metadata |
 | F — Core Views | Not Started | — | Products pilot بعد design gate |
 | G — Module Migration | Not Started | — | حسب dependency order |
 | H — POS Reconstruction | Not Started | — | بعد core patterns |
-| I — System Quality | In Progress continuously | 264 tests/build/static gates + Playwright 7/7 | authenticated workflow E2E لاحقاً |
+| I — System Quality | In Progress continuously | 265 tests/build/140-template static gate + Playwright 7/7 | authenticated workflow E2E لاحقاً |
 | J — Cleanup & Handover | Not Started | — | بعد اكتمال routes |
 
 ## تقدم الوحدات
 
 | Module | Research | Design | Implementation | API Integration | Tests | Status |
 |---|---|---|---|---|---|---|
-| Shell / Launcher | Verified research | Design contract | 10-App registry + switcher/current-app navigation | Existing contracts | 264 + Playwright 7/7 | In Progress |
+| Shell / Launcher | Verified research | Design contract | 10-App registry + switcher/current-app navigation | Existing contracts | 265 + Playwright 7/7 | In Progress |
 | Products | Not Started | Not Started | Legacy V3 | Verified existing APIs | Existing specs | Planned pilot |
 | Customers / Suppliers | Not Started | Not Started | Legacy V3 | Verified | Existing specs | Planned |
 | Sales | Not Started | Not Started | Legacy V3 | Verified | Existing specs | Planned |
@@ -46,6 +46,6 @@
 ## قيود حالية
 
 - أُغلق Odoo Research على مرجع 19.0 الرسمي؛ تعذّر توثيق 20.0 بسبب Timeout ولا تُنسب إليه خصائص غير متحققة.
-- أُغلق Design System بعد القبول البصري؛ أضيف App metadata صريح ومصفى بالصلاحيات، واكتمل App Switcher وcurrent-app navigation؛ بقي تخفيض Shell SCSS warning وإكمال Section/Archetype metadata ضمن مرحلة Application Shell.
+- أُغلق Design System بعد القبول البصري؛ أضيف App metadata صريح ومصفى بالصلاحيات، واكتمل App Switcher وcurrent-app navigation؛ أُغلق Shell SCSS warning بالاستخراج المحصور، وبقي إكمال Section/Archetype metadata ضمن مرحلة Application Shell.
 - أضيفت أربع concept mockups كاتجاه بصري، وثُبت baseline قبول Design System الفعلي في `acceptance/design-system-2026-11-24/`.
 - لا توجد وحدة أعمال مصنفة Migrated إلى V4 حتى الآن.

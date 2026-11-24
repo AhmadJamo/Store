@@ -2506,3 +2506,8 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
   - Added a standalone bilingual App Switcher fed only by permission-filtered registry applications and routed selections through the existing Workspace/dirty guard.
   - Limited Desktop and Mobile destination navigation to the current application while retaining dedicated hidden entries such as POS; exact application membership remains authoritative.
   - Verified 264/264 Angular tests across 124 files, production build, 139-template accessibility, 121-page consistency and Playwright 7 passed/0 failed/3 authenticated-API skips, including the bounded Products.View App Switcher check on Desktop and Mobile. The existing initial chunk warning remains 204.88 kB; Shell SCSS is 8.47 kB and remains the next extraction target.
+
+- 2026-11-24: Completed the third FRD-E Application Shell slice and closed the Shell style-budget issue.
+  - Extracted Desktop/Mobile current-app navigation into a focused component with its own navigation-state and mobile-close coverage; selections still return to AppShell Workspace/dirty authority.
+  - Moved unchanged Open Work/toolbar presentation into a globally imported stylesheet fully scoped beneath `app-shell`, avoiding a risky behavior refactor.
+  - Reduced `app-shell.scss` from 8.47 kB to 4.79 kB and removed its production warning. Verified 265/265 Angular tests across 125 files, production build, 140-template accessibility, 121-page consistency and Playwright 7 passed/0 failed/3 authenticated-API skips. The separate 204.88 kB initial shared-chunk warning remains open.

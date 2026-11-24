@@ -111,7 +111,7 @@ interface NavigationDestination {
 
 لا يؤدي switch إلى تغيير branch أو workspace profile تلقائياً.
 
-> تنفيذ FRD-E الحالي: pplication-switcher.* يعرض التطبيقات المسموحة فقط ويمرر safe entry إلى Workspace؛ القائمتان الجانبية والهاتفية تستخدمان isibleGroupsForApplication() لإظهار التطبيق الحالي فقط. تغيير التطبيق لا يتجاوز dirty guard ولا يغير الفرع.
+> تنفيذ FRD-E الحالي: `application-switcher.*` يعرض التطبيقات المسموحة فقط ويمرر safe entry إلى Workspace؛ `current-app-navigation.*` يعرض `visibleGroupsForApplication()` في Desktop/Mobile ويعيد الاختيار إلى AppShell، لذلك لا يتجاوز تغيير التطبيق أو الوجهة dirty guard ولا يغير الفرع. أنماط Open Work المستخرجة محصورة تحت `app-shell` ولا تنشئ navigation authority جديدة.
 
 ## 10. Search, recent, favorites
 

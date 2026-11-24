@@ -1,4 +1,5 @@
 # Project TODO
+# FRD-E third slice completed (2026-11-24): current-app navigation is a focused component and Open Work styles are globally scoped under app-shell; app-shell.scss fell from 8.47 kB to 4.79 kB and its build warning is closed. 265 tests, build, 140 templates, 121 pages and Playwright 7/7 pass.
 # FRD-E second slice completed (2026-11-24): a permission-aware App Switcher and current-app-only desktop/mobile navigation are active; 264 tests, build, 139-template accessibility, 121-page consistency and Playwright 7/7 pass. CSS budget extraction and Section/Archetype metadata remain.
 # FRD-E first slice completed (2026-11-24): the ten permission-aware Apps now have centralized metadata and safe entry destinations consumed by Launcher and Shell; 262 tests, build, 138-template accessibility, 121-page consistency and Playwright 6/6 pass. Current-app navigation composition and shell CSS extraction remain.
 # FRD-D completed (2026-11-24): 260 tests, build, static gates and Playwright 6/6 verify RTL/LTR, theme/density, keyboard and desktop/mobile; FRD-E Application Shell is active.
