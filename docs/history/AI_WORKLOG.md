@@ -2477,3 +2477,9 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
   - Added `04-UX-ARCHITECTURE.md` with the three-layer shell, ten-app information model, page archetypes, responsive/RTL behavior and truthful capability boundaries.
   - Added `06-NAVIGATION-AND-ROUTES.md` with app/route families, deep-link, breadcrumb, workspace, permission, mobile and migration contracts while preserving current URLs.
   - Accepted ADR `2026-11-22-odoo-inspired-frontend-ux-architecture.md`; the current shell changes remain a pilot until the functional design-system gate passes.
+- 2026-11-24: Completed the first functional Design System slice for FRD-D.
+  - Added `05-DESIGN-SYSTEM.md` as the token, component, density, accessibility and localization contract.
+  - Shifted shell identity tokens to original MiniStore Plum while retaining Teal actions, added focus and button variants, and expanded `/design-system` with localized List and Record/workflow previews.
+  - Added a focused design-system page test. Verified 259/259 Angular tests, production build, 138-template static accessibility and the 121-page UI/UX consistency inventory.
+  - Existing build warnings remain unchanged: initial shared chunk 204.88 kB versus 180 kB warning and shell SCSS 7.40 kB versus 6 kB warning; neither exceeds the configured error limit.
+  - Native visual inspection remained unavailable because the computer-use runtime could not initialize under the Windows ACL sandbox; no visual-acceptance claim is made.

@@ -1,5 +1,5 @@
 # Project TODO
-# FRD-C completed (2026-11-22): the three-layer ERP shell, page archetypes, permission-aware navigation and route policy are documented and accepted by ADR. FRD-D functional design system is active.
+# FRD-D first slice completed (2026-11-24): Plum/Teal semantic tokens, localized List/Record/state previews and focused tests are in place; 259 tests, build, 138-template accessibility and UI consistency pass. Visual acceptance and reusable primitive extraction remain.
 # UX-V4-001 started (2026-11-22): first shell/app-launcher slice passed 258 Angular tests, production build,
 # 138-template accessibility and UI/UX consistency. Contextual work/history controls are complete; visual acceptance remains.
 # ERP-003 completed (2026-11-16): granular branch permissions, tenant-owned user grants and verified optional request context are implemented. ERP-004 switcher/workspace is proposed. ERP plan: 10 total, 3 complete, 7 remaining.

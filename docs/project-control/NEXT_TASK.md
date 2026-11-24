@@ -4,7 +4,7 @@
 
 > الحالة: IN PROGRESS — بعد إغلاق UX Architecture في 2026-11-22
 
-ثبّت `05-DESIGN-SYSTEM.md` وحوّل العقد إلى tokens ومكونات مشتركة قابلة للاستخدام داخل صفحة `/design-system`. يجب إثبات Light/Dark وComfortable/Compact وAR/RTL وEN/LTR وحالات focus/loading/empty/error قبل تعميمها على الوحدات. لا يبدأ rollout الشامل قبل Products pilot.
+ثُبت `05-DESIGN-SYSTEM.md` ونُفذت أول معاينة وظيفية واجتازت الفحوص الآلية. التالي: تنفيذ visual acceptance لـLight/Dark وComfortable/Compact وAR/RTL وEN/LTR، ثم استخراج primitives المطلوبة فعلياً لـProducts pilot دون rollout شامل.
 
 ## FRD-C — معمارية UX والتنقل
 
