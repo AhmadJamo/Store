@@ -1270,7 +1270,7 @@ static async Task RunUiAsync(IPlaywright playwright, IBrowser browser, Arguments
         {
             Status = 200,
             ContentType = "application/json",
-            Body = """{"user":{"id":"acceptance-ui","userName":"acceptance","email":null},"tenant":{"id":1,"name":"Acceptance","code":"acceptance"},"culture":"ar-JO","direction":"rtl","permissions":[]}"""
+            Body = """{"user":{"id":"acceptance-ui","userName":"acceptance","email":null},"tenant":{"id":1,"name":"Acceptance","code":"acceptance"},"culture":"ar-JO","direction":"rtl","permissions":["Products.View"]}"""
         }));
         await context.RouteAsync("**/api/v1/security/csrf", route => route.FulfillAsync(new RouteFulfillOptions
         {
@@ -1341,6 +1341,13 @@ static async Task RunUiAsync(IPlaywright playwright, IBrowser browser, Arguments
     await page.Locator("details.preference-menu > summary").ClickAsync();
     checks.Add(new("theme-density", "passed", "Dark/compact and light/comfortable preferences applied."));
 
+    var applicationSwitcher = page.Locator("app-application-switcher > details > summary");
+    Require(await applicationSwitcher.IsVisibleAsync(), "The desktop application switcher is not visible.");
+    await applicationSwitcher.ClickAsync();
+    Require(await page.Locator("app-application-switcher .application-menu a").CountAsync() > 0,
+        "The application switcher has no permission-approved entries.");
+    await applicationSwitcher.ClickAsync();
+
     await page.ScreenshotAsync(new PageScreenshotOptions
     {
         Path = Path.Combine(options.OutputDirectory, "design-system-desktop.png"), FullPage = true
@@ -1348,6 +1355,12 @@ static async Task RunUiAsync(IPlaywright playwright, IBrowser browser, Arguments
     await page.SetViewportSizeAsync(390, 844);
     await page.ReloadAsync(new PageReloadOptions { WaitUntil = WaitUntilState.NetworkIdle });
     await page.Locator("#preview-title").WaitForAsync();
+    Require(await applicationSwitcher.IsVisibleAsync(), "The mobile application switcher is not visible.");
+    await applicationSwitcher.ClickAsync();
+    Require(await page.Locator("app-application-switcher .application-menu").IsVisibleAsync(),
+        "The mobile application switcher did not open.");
+    await applicationSwitcher.ClickAsync();
+    checks.Add(new("app-switcher", "passed", "Permission-approved applications are available on desktop and mobile."));
     var mobileNavigation = page.Locator(".mobile-navigation > summary");
     Require(await mobileNavigation.IsVisibleAsync(), "The mobile navigation trigger is not visible.");
     await mobileNavigation.ClickAsync();

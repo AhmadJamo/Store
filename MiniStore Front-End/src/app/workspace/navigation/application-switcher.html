@@ -1,0 +1,11 @@
+<details class="application-switcher">
+  <summary [attr.aria-label]="navigationI18n.text('switchApplication')" [title]="navigationI18n.text('switchApplication')"><span aria-hidden="true">▦</span></summary>
+  <section class="application-menu" [attr.aria-label]="navigationI18n.text('switchApplication')">
+    <header><strong>{{ navigationI18n.text('applications') }}</strong><small>{{ navigationI18n.text('chooseApplication') }}</small></header>
+    <nav>
+      @for (application of navigation.visibleApplications(); track application.id) {
+        <a [href]="application.entry.route" [class.current]="application.id === currentApplicationId" [attr.aria-current]="application.id === currentApplicationId ? 'page' : null" (click)="select($event, application.entry)"><span aria-hidden="true">{{ application.icon }}</span><strong>{{ navigationI18n.text(application.labelKey) }}</strong></a>
+      }
+    </nav>
+  </section>
+</details>

@@ -2501,3 +2501,8 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
   - Added explicit metadata for the ten target applications, localized Arabic/English application labels, permission-filtered safe entry selection and route-to-application lookup in the Navigation Registry.
   - Removed the Home launcher's duplicated ID allowlist and made the Shell show current-application context; exact POS membership overrides the broader Sales route family.
   - Preserved routes, Workspace/dirty behavior, API contracts and server permission authority. Verified 262/262 Angular tests, production build, 138-template accessibility, 121-page consistency and Playwright 6 passed/0 failed/3 authenticated-API skips.
+
+- 2026-11-24: Completed the second FRD-E Application Shell slice.
+  - Added a standalone bilingual App Switcher fed only by permission-filtered registry applications and routed selections through the existing Workspace/dirty guard.
+  - Limited Desktop and Mobile destination navigation to the current application while retaining dedicated hidden entries such as POS; exact application membership remains authoritative.
+  - Verified 264/264 Angular tests across 124 files, production build, 139-template accessibility, 121-page consistency and Playwright 7 passed/0 failed/3 authenticated-API skips, including the bounded Products.View App Switcher check on Desktop and Mobile. The existing initial chunk warning remains 204.88 kB; Shell SCSS is 8.47 kB and remains the next extraction target.

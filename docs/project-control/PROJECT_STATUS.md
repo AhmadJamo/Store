@@ -1,5 +1,7 @@
 # حالة المشروع / Project Status
 
+> تحديث 2026-11-24: اكتملت شريحة FRD-E الثانية: App Switcher مصفى بالصلاحيات وتنقل Desktop/Mobile محصور بالتطبيق الحالي مع بقاء dirty/workspace authority. نجح 264 اختباراً والبناء و139 قالب وصول و121 صفحة وPlaywright 7/7. تحذير Shell SCSS الآن 8.47 kB؛ الاستخراج هو الخطوة التالية.
+
 > تحديث 2026-11-24: اكتملت أول شريحة FRD-E: سجل مركزي صريح للتطبيقات العشرة، safe-entry حسب الصلاحيات، Launcher بلا IDs مكررة، وسياق App في Shell مع فصل POS عن Sales. نجح 262 اختباراً والبناء وفحصا 138 قالباً و121 صفحة وPlaywright 6/6؛ بقي current-app navigation واستخراج CSS.
 
 > تحديث 2026-11-24: أُغلقت FRD-D بعد اكتشاف وإصلاح فراغ Mobile Shell الناتج عن sidebar بارتفاع 100vh. نجح 260 اختباراً والبناء والفحوص الثابتة وPlaywright 6/6 للاتجاه والثيم والكثافة والكيبورد وDesktop/390px. بدأت FRD-E لإعادة بناء Application Shell وتقليل SCSS warning.

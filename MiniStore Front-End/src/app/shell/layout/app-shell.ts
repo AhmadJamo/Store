@@ -16,10 +16,11 @@ import { NavigationLocalizationService } from '../../workspace/navigation/naviga
 import { ShellNavigationLocalizationService } from './shell-navigation-localization.service';
 import { BranchContextService } from '../../core/branch-context/branch-context.service';
 import { ToastOutletComponent } from '../../shared/ui/toast/toast-outlet';
+import { ApplicationSwitcherComponent } from '../../workspace/navigation/application-switcher';
 
 @Component({
   selector: 'app-shell',
-  imports: [RouterLink, RouterLinkActive, RouterOutlet, ToastOutletComponent],
+  imports: [RouterLink, RouterLinkActive, RouterOutlet, ToastOutletComponent, ApplicationSwitcherComponent],
   templateUrl: './app-shell.html',
   styleUrl: './app-shell.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -65,6 +66,7 @@ export class AppShell implements OnInit {
   private dialogOpener: HTMLElement | null = null;
   protected readonly currentRoute = signal('/');
   protected readonly currentApplication = computed(() => this.navigation.applicationForRoute(this.currentRoute()));
+  protected readonly currentNavigationGroups = computed(() => this.navigation.visibleGroupsForApplication(this.currentApplication()?.id ?? null));
 
   ngOnInit(): void {
     this.currentRoute.set(this.router.url);
@@ -94,6 +96,14 @@ export class AppShell implements OnInit {
 
   protected openNavigation(event: Event, item: NavigationItem): void {
     event.preventDefault();
+    this.openItem(item);
+  }
+
+  protected openApplication(item: NavigationItem): void {
+    this.openItem(item);
+  }
+
+  private openItem(item: NavigationItem): void {
     const targetId = `${item.id}::default`;
     if (!this.confirmLeave(targetId)) return;
     const tab = this.workspace.open(item);

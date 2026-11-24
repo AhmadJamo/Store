@@ -1,4 +1,5 @@
 # Project TODO
+# FRD-E second slice completed (2026-11-24): a permission-aware App Switcher and current-app-only desktop/mobile navigation are active; 264 tests, build, 139-template accessibility, 121-page consistency and Playwright 7/7 pass. CSS budget extraction and Section/Archetype metadata remain.
 # FRD-E first slice completed (2026-11-24): the ten permission-aware Apps now have centralized metadata and safe entry destinations consumed by Launcher and Shell; 262 tests, build, 138-template accessibility, 121-page consistency and Playwright 6/6 pass. Current-app navigation composition and shell CSS extraction remain.
 # FRD-D completed (2026-11-24): 260 tests, build, static gates and Playwright 6/6 verify RTL/LTR, theme/density, keyboard and desktop/mobile; FRD-E Application Shell is active.
 # FRD-D first slice completed (2026-11-24): Plum/Teal semantic tokens, localized List/Record/state previews and focused tests are in place; 259 tests, build, 138-template accessibility and UI consistency pass. Visual acceptance and reusable primitive extraction remain.

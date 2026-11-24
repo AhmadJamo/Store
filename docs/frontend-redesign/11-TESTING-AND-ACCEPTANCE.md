@@ -10,7 +10,7 @@
 | Unit/Component | العرض، الحالات، keyboard contracts، خدمات UI | تكامل خادم حي |
 | Static accessibility | أسماء الأزرار، IDs، shell landmarks، feedback semantics | تجربة قارئ شاشة كاملة |
 | Production build | TypeScript/templates/budgets/error limits | صحة business workflow |
-| Browser presentation | RTL/LTR، theme/density، keyboard، responsive، screenshots | بيانات أو صلاحيات حية عند synthetic session |
+| Browser presentation | RTL/LTR، theme/density، App Switcher، keyboard، responsive، screenshots | بيانات أو صلاحيات حية عند synthetic session |
 | Authenticated integration | Route/Page/API وpermission/branch scope | أثر مالي/مخزني بلا فحص domain evidence |
 | Workflow/E2E | العملية من البداية للنهاية وحالات الفشل | لا يعوض اختبارات Application/Domain |
 | Visual regression | اختلاف التصميم عبر viewport/theme/locale | لا يثبت صحة الأرقام أو الانتقالات |
@@ -29,6 +29,10 @@
 - Skipped intentionally: authenticated inventory/API session checks لعدم تمرير API URL أو external authenticated state. لا يوجد ادعاء API parity في هذه البوابة.
 
 الأدلة محفوظة في `acceptance/design-system-2026-11-24/`.
+
+### بوابة FRD-E الحالية
+
+شريحة App Switcher: 124 ملف اختبار و264/264 اختبار، production build، 139 قالب وصول، 121 صفحة اتساق، وPlaywright ‏7 passed/0 failed/3 authenticated-API skips. أضيف فحص App Switcher على Desktop و390px بجلسة عرض محدودة إلى Products.View؛ هذا يثبت تصفية العرض ولا يدّعي تكامل API حي.
 
 ## 3. بوابة كل migration slice
 

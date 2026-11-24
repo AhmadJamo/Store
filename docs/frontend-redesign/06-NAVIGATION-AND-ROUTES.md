@@ -111,6 +111,8 @@ interface NavigationDestination {
 
 لا يؤدي switch إلى تغيير branch أو workspace profile تلقائياً.
 
+> تنفيذ FRD-E الحالي: pplication-switcher.* يعرض التطبيقات المسموحة فقط ويمرر safe entry إلى Workspace؛ القائمتان الجانبية والهاتفية تستخدمان isibleGroupsForApplication() لإظهار التطبيق الحالي فقط. تغيير التطبيق لا يتجاوز dirty guard ولا يغير الفرع.
+
 ## 10. Search, recent, favorites
 
 - Command search يجمع destinations ثم record preview فقط من providers المسموحة.

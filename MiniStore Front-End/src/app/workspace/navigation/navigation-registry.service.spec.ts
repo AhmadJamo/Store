@@ -53,4 +53,11 @@ describe('NavigationRegistryService', () => {
     expect(registry.applicationForRoute('/sales/pos')?.id).toBe('pos');
     expect(registry.applicationForRoute('/settings/accounting')?.id).toBe('settings');
   });
+  it('limits current-app navigation without hiding a dedicated entry marked out of the global sidebar', () => {
+    const registry = createRegistry(['Sales.View', 'SalesOrders.View']);
+
+    expect(registry.visibleGroupsForApplication('sales').flatMap((group) => group.items).map((item) => item.id)).toEqual(['sales-center']);
+    expect(registry.visibleGroupsForApplication('pos').flatMap((group) => group.items).map((item) => item.id)).toEqual(['point-of-sale']);
+  });
+
 });

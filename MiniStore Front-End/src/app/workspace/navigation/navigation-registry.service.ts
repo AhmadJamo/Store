@@ -433,6 +433,20 @@ export class NavigationRegistryService {
     }),
   );
 
+  visibleGroupsForApplication(applicationId: NavigationApplicationId | null): readonly NavigationGroup[] {
+    if (!applicationId) return this.visibleGroups();
+    const application = this.applications.find((candidate) => candidate.id === applicationId);
+    if (!application) return [];
+    const visible = this.visibleItems().filter((item) =>
+      this.applicationForItem(item)?.id === applicationId &&
+      (item.showInSidebar !== false || application.entryNavigationIds.includes(item.id)),
+    );
+    return navigationGroups.flatMap((group): NavigationGroup[] => {
+      const items = visible.filter((item) => this.groupForItem(item) === group.id);
+      return items.length ? [{ ...group, items }] : [];
+    });
+  }
+
   constructor(
     private readonly session: ApiSessionService,
     private readonly profiles: WorkspaceProfileService,
