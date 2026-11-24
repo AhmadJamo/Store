@@ -2487,3 +2487,6 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
   - Covered App Launcher, Products List, Sales Order Record and POS Workspace using the accepted Plum/Teal visual direction.
   - Regenerated the POS concept with fictional unbranded products to avoid third-party marks.
   - Classified every image as visual direction only; no implementation, API integration or visual-acceptance claim is inferred from the mockups.
+- 2026-11-24: Added the active module migration matrix and issue register for frontend reconstruction.
+  - `07-MODULE-MIGRATION-MATRIX.md` fixes the safe wave order, Products pilot scope, parity evidence and reversible cutover record.
+  - `13-ISSUES-AND-GAPS.md` records visual-runtime, bundle/style budgets, shared-UI adoption, navigation metadata, capability and route-evidence gaps with severity and verification rules.

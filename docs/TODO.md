@@ -1,4 +1,5 @@
 # Project TODO
+# FRD migration planning (2026-11-24): module waves, Products pilot acceptance and the active issue register are documented in frontend-redesign/07 and 13; FRD-D visual acceptance remains the current gate.
 # FRD-D first slice completed (2026-11-24): Plum/Teal semantic tokens, localized List/Record/state previews and focused tests are in place; 259 tests, build, 138-template accessibility and UI consistency pass. Visual acceptance and reusable primitive extraction remain.
 # UX-V4-001 started (2026-11-22): first shell/app-launcher slice passed 258 Angular tests, production build,
 # 138-template accessibility and UI/UX consistency. Contextual work/history controls are complete; visual acceptance remains.
