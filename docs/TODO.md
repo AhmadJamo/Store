@@ -1,4 +1,5 @@
 # Project TODO
+# FRD-F Product Form slice 1 completed (2026-11-25): identity and commercial data are separate sections, duplicate top Cancel is removed, and the localized workflow footer remains authoritative. 272 tests, build, static gates and Playwright 7/7 pass.
 # FRD-F Products List slice 3 completed (2026-11-25): stable column widths and compact accessible row actions preserve View/Edit/Attributes and permission behavior. 271 tests, build, 140 templates, 121 pages and Playwright 7/7 pass. Product Form is next.
 # FRD-F Products List slice 2 completed (2026-11-25): true empty and filtered-empty states are distinct, and Clear filters restores the allowlisted PageContext defaults without changing server-side search. 271 tests, build, 140 templates, 121 pages and Playwright 7/7 pass.
 # FRD-F Products List slice 1 completed (2026-11-25): six secondary catalog destinations are consolidated in one localized menu and Add Product remains the sole primary action. 271 tests, build, 140 templates, 121 pages and Playwright 7/7 pass.

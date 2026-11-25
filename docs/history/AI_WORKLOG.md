@@ -2537,3 +2537,7 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
   - Stabilized column widths and replaced verbose row-action text with compact accessible icon links.
   - Preserved View/Edit/Attributes routes and Products.Edit visibility; no API, permission or business rule changed.
   - Verified 271/271 Angular tests, production build, 140-template accessibility, 121-page consistency and Playwright 7 passed/0 failed/3 authenticated-API skips.
+- 2026-11-25: Completed the first FRD-F Product Form slice.
+  - Split identity/classification from purchasing/pricing/channel controls, localized the catalog eyebrow and removed the duplicate header Cancel action.
+  - Kept the sticky WorkflowFooter, validation, dirty tracking, conditional type rules and ProductCommand unchanged.
+  - Verified 272/272 Angular tests, production build, 140-template accessibility, 121-page consistency and Playwright 7 passed/0 failed/3 authenticated-API skips.

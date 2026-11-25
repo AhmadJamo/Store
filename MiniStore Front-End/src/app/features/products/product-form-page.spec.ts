@@ -24,6 +24,17 @@ describe('ProductFormPageComponent', () => {
     ] }).compileComponents();
   });
 
+  it('separates identity from commercial data and keeps actions in the workflow footer', () => {
+    const fixture = TestBed.createComponent(ProductFormPageComponent);
+    fixture.detectChanges();
+    const legends = [...fixture.nativeElement.querySelectorAll('legend')].map((legend: Element) => legend.textContent?.trim());
+    expect(legends).toContain('identityAndSales');
+    expect(legends).toContain('commercialData');
+    expect(fixture.nativeElement.querySelector('.page-header .ui-button')).toBeNull();
+    expect(fixture.nativeElement.querySelectorAll('app-workflow-footer .ui-button')).toHaveLength(2);
+    expect(fixture.nativeElement.textContent).not.toContain('CATALOG');
+  });
+
   it('creates a complete product command and clears dirty state', () => {
     api.create.mockReturnValue(of({ ...product, id: 7, name: 'Coffee' }));
     const component = TestBed.createComponent(ProductFormPageComponent).componentInstance as any;
