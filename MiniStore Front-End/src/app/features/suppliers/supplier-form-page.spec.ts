@@ -40,6 +40,15 @@ describe('SupplierFormPageComponent', () => {
     }).compileComponents();
   });
 
+  it('uses shared form sections and keeps actions in one workflow footer', () => {
+    const fixture = TestBed.createComponent(SupplierFormPageComponent);
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelectorAll('app-form-section')).toHaveLength(2);
+    expect(fixture.nativeElement.querySelectorAll('.section-description')).toHaveLength(2);
+    expect(fixture.nativeElement.querySelector('.page-header .ui-button')).toBeNull();
+    expect(fixture.nativeElement.querySelectorAll('app-workflow-footer .ui-button')).toHaveLength(2);
+    expect(fixture.nativeElement.textContent).not.toContain('P2P');
+  });
   it('sends only required and selected values then clears dirty state after save', () => {
     api.create.mockReturnValue(of({ ...page.form, id: 7, name: 'Local Foods', accountId: 12 }));
     const component = TestBed.createComponent(SupplierFormPageComponent).componentInstance as any;

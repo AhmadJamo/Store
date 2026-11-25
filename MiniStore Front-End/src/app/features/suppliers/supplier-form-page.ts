@@ -9,14 +9,17 @@ import { LocalizationService } from '../../core/localization/localization.servic
 import { FormErrorSummaryComponent } from '../../shared/forms/form-error-summary';
 import { FormFocusService } from '../../shared/forms/form-focus.service';
 import { SafeFormShortcutsDirective } from '../../shared/forms/safe-form-shortcuts.directive';
+import { FieldCueComponent } from '../../shared/forms/field-cue/field-cue';
+import { FormSectionComponent } from '../../shared/forms/form-section/form-section';
 import { FeedbackStateComponent } from '../../shared/ui/feedback-state/feedback-state';
 import { PageHeaderComponent } from '../../shared/ui/page-header/page-header';
 import { ApiRecoveryComponent } from '../../shared/ui/api-recovery/api-recovery';
+import { WorkflowFooterComponent } from '../../shared/ui/workflow-footer/workflow-footer';
 import { WorkspaceService } from '../../workspace/state/workspace.service';
 import { SupplierApiService } from './data/supplier-api.service';
 import { SupplierCommand, SupplierDetails, SupplierFormPage } from './data/supplier.models';
 
-@Component({ selector: 'app-supplier-form-page', imports: [ReactiveFormsModule, RouterLink, PageHeaderComponent, FeedbackStateComponent, FormErrorSummaryComponent, SafeFormShortcutsDirective, ApiRecoveryComponent], templateUrl: './supplier-form-page.html', styleUrl: './supplier-form-page.scss', changeDetection: ChangeDetectionStrategy.OnPush })
+@Component({ selector: 'app-supplier-form-page', imports: [ReactiveFormsModule, RouterLink, PageHeaderComponent, FeedbackStateComponent, FormErrorSummaryComponent, SafeFormShortcutsDirective, FieldCueComponent, FormSectionComponent, ApiRecoveryComponent, WorkflowFooterComponent], templateUrl: './supplier-form-page.html', styleUrl: './supplier-form-page.scss', changeDetection: ChangeDetectionStrategy.OnPush })
 export class SupplierFormPageComponent {
   protected readonly i18n = inject(LocalizationService);
   private readonly api = inject(SupplierApiService);
