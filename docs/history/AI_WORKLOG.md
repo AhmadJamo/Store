@@ -2603,3 +2603,7 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
   - Replaced the hard-coded Inventory eyebrow and compressed form/filter/projected table with localized context, three FormSections, required FieldCues, WorkflowFooter, FilterBar, SummaryStrip and a typed hierarchical DataTable.
   - Added distinct true-empty/filtered-empty guidance and reset while preserving every location field, hierarchy/parent rule, capability, status, named warehouse option with internal ID, dirty guard and Warehouses.View/Create/Edit behavior.
   - Extended focused coverage and verified 287/287 Angular tests across 132 files, production build, 141-template accessibility, 121-page consistency and Playwright 7 passed/0 failed/3 authenticated-API skips. The pre-existing 204.88 kB initial shared-chunk warning remains open.
+- 2026-11-25: Added the FRD-H Branch Workspace pre-migration safety net.
+  - Extracted the 8 kB inline Branch Workspace markup to `branches-page.html`, bringing it into the HTML-only static accessibility inventory.
+  - Added focused component coverage for server-returned assigned-branch scope, current operations/links, create/status commands and user-grant replacement with internal IDs.
+  - The targeted suite passed 3/3 and static accessibility passed 142 templates before visual restructuring; business/API behavior is unchanged.
