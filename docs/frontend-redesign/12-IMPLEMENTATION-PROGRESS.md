@@ -1,7 +1,7 @@
 # 12 — تقدم إعادة بناء Frontend
 
 > آخر تحديث: 2026-11-25
-> الحالة العامة: Products and Contacts pilots verified; Branches/Warehouses audit next
+> الحالة العامة: Products and Contacts pilots verified; Branches/Warehouses audit complete, Warehouse Master next
 > المصدر: الكود، الاختبارات، وثائق المشروع، والمراجع الرسمية التي تم التحقق منها
 
 ## بوابات المراحل
@@ -30,7 +30,7 @@
 | Purchases | Not Started | Not Started | Legacy V3 | Verified | Existing specs | Planned |
 | Inventory | Not Started | Not Started | Legacy V3 | Verified | Existing specs | Planned |
 | Accounting | Not Started | Not Started | Legacy V3 | Verified | Existing specs | Planned |
-| Branches / Warehouses | Not Started | Not Started | Legacy V3 | Verified | Existing specs | Planned |
+| Branches / Warehouses | Audited | Scoped | Legacy V3 | Verified contracts/context | Existing specs | Warehouse Master next |
 | Users / Roles / Settings | Not Started | Not Started | Legacy V3 | Verified | Existing specs | Planned |
 | POS | Verified research | Not Started | Existing cohesive workspace | Verified | Existing specs | Planned |
 | Public / Platform / Portal | Not Started | Exception review | Existing | Existing boundaries | Existing specs | Planned exceptions |

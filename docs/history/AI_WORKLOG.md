@@ -2588,3 +2588,7 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
   - Recorded List/Form/Record parity for queries, paging/filtering, account/product name selections with internal IDs, dirty/concurrency recovery, View/Create/Edit permissions, antiforgery, bilingual RTL/LTR and responsive presentation.
   - Verified 282/282 Angular tests across 131 files, production build, 141-template accessibility, 121-page consistency, Playwright 7 passed/0 failed/3 authenticated-API skips and 1,668 SecurityRegression checks in Release configuration.
   - Stored machine-readable browser evidence and the explicit live-API limitation in `docs/frontend-redesign/acceptance/contacts-pilot-2026-11-25/`; advanced the active gate to a bounded Branches/Warehouses audit.
+- 2026-11-25: Completed the FRD-H Branches/Warehouses migration audit.
+  - Inventoried Branch Workspace, Warehouse Master, Warehouse Locations, the verified Shell Branch Switcher and 45 warehouse-picker template references.
+  - Confirmed the server-authoritative branch grant/context boundary, View/Create/Edit/Delete/status/access permissions, antiforgery and name-first branch/warehouse selection invariants.
+  - Approved Warehouse Master List/Form as the first bounded slice before Locations and the mixed-responsibility Branch Workspace. No runtime, API, schema or business behavior changed.

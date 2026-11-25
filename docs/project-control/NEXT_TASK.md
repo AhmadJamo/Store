@@ -1,10 +1,10 @@
 # المهمة التالية الوحيدة / Next Task
 
-## FRD-H — Branches/Warehouses Audit
+## FRD-H — Branches/Warehouses Migration
 
-> الحالة: APPROVED NEXT — يبدأ بعد إغلاق FRD-G في 2026-11-25
+> الحالة: IN PROGRESS — اكتمل الجرد في 2026-11-25
 >
-> الهدف: جرد أسطح Branches وWarehouses الفعلية وعقود API والصلاحيات والاختيار بالاسم والـbranch scope قبل أي تغيير بصري. وثّق List/Form/Record/Picker gaps وحدد أول slice محدود فقط؛ لا تنفّذ bulk restyle ولا تغيّر business rules أو schema.
+> ثُبتت أربعة أسطح: Branch Workspace وWarehouse Master وWarehouse Locations وShell Branch Switcher، إضافة إلى 45 warehouse picker reference. التالي: نفّذ Warehouse Master List/Form فقط على `/warehouses` باستخدام PageHeader/FormSection/FieldCue/WorkflowFooter/DataTable، وصحح Delete localization. حافظ على كل settings والخيارات بالأسماء والـIDs وdirty/recovery وWarehouses.View/Create/Edit/Delete. لا تبدأ Locations قبل كومت وبوابة كاملة.
 
 ## FRD-G — Contacts Customers/Suppliers Pilot
 
