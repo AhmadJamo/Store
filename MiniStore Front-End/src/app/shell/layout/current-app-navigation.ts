@@ -1,6 +1,17 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  EventEmitter,
+  Input,
+  Output,
+  inject,
+} from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
-import { NavigationGroup, NavigationGroupId } from '../../workspace/navigation/navigation-registry.service';
+import {
+  NavigationGroup,
+  NavigationGroupId,
+  NavigationRegistryService,
+} from '../../workspace/navigation/navigation-registry.service';
 import { NavigationItem } from '../../workspace/state/workspace.models';
 import { NavigationGroupStateService } from '../../workspace/navigation/navigation-group-state.service';
 import { NavigationLocalizationService } from '../../workspace/navigation/navigation-localization.service';
@@ -20,6 +31,7 @@ export class CurrentAppNavigationComponent {
   protected readonly navigationI18n = inject(NavigationLocalizationService);
   protected readonly shellI18n = inject(ShellNavigationLocalizationService);
   protected readonly i18n = inject(LocalizationService);
+  protected readonly navigation = inject(NavigationRegistryService);
 
   @Input({ required: true }) groups: readonly NavigationGroup[] = [];
   @Input() mode: 'sidebar' | 'mobile' = 'sidebar';
@@ -33,7 +45,15 @@ export class CurrentAppNavigationComponent {
     event.preventDefault();
     this.navigationSelected.emit(item);
     if (this.mode === 'mobile') {
-      (event.currentTarget as HTMLElement).closest<HTMLDetailsElement>('.mobile-navigation')?.removeAttribute('open');
+      (event.currentTarget as HTMLElement)
+        .closest<HTMLDetailsElement>('.mobile-navigation')
+        ?.removeAttribute('open');
     }
+  }
+
+  protected mobileItems(items: readonly NavigationItem[]): readonly NavigationItem[] {
+    return items.filter(
+      (item) => this.navigation.metadataForItem(item).mobilePriority !== 'hidden',
+    );
   }
 }

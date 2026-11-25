@@ -2511,3 +2511,8 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
   - Extracted Desktop/Mobile current-app navigation into a focused component with its own navigation-state and mobile-close coverage; selections still return to AppShell Workspace/dirty authority.
   - Moved unchanged Open Work/toolbar presentation into a globally imported stylesheet fully scoped beneath `app-shell`, avoiding a risky behavior refactor.
   - Reduced `app-shell.scss` from 8.47 kB to 4.79 kB and removed its production warning. Verified 265/265 Angular tests across 125 files, production build, 140-template accessibility, 121-page consistency and Playwright 7 passed/0 failed/3 authenticated-API skips. The separate 204.88 kB initial shared-chunk warning remains open.
+- 2026-11-25: Completed the fourth FRD-E Application Shell slice and closed the navigation metadata gap.
+  - Added one executable destination metadata contract for App, Section, Archetype and Mobile priority without changing routes, permissions, API contracts or Workspace/dirty authority.
+  - Wired current-app links to expose archetype/priority metadata and made the mobile drawer consume the hidden-priority rule; Desktop keeps its permission-filtered application navigation.
+  - Added registry-wide classification coverage plus component coverage for metadata rendering and mobile filtering.
+  - Verified 268/268 Angular tests across 125 files, production build, 140-template accessibility, 121-page UI consistency and Playwright 7 passed/0 failed/3 authenticated-API skips. The pre-existing 204.88 kB initial shared-chunk warning remains open.

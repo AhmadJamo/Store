@@ -62,7 +62,7 @@ interface NavigationDestination {
 }
 ```
 
-بدأ تنفيذ هذا العقد في شريحة FRD-E الأولى بتاريخ 2026-11-24: يعرّف `NavigationRegistryService` التطبيقات العشرة صراحةً مع اسم مترجم وأيقونة ومرشحي دخول آمنين وعضوية route/وجهة. `visibleApplications()` يختار أول وجهة مسموحة فقط، و`applicationForRoute()` يزود الـShell بسياق التطبيق دون تغيير URL. تبقى `sectionId` و`archetype` و`mobilePriority` ضمن الشرائح التالية؛ `permission` يستخدم authority الحالية ولا يكرر منطق الخادم.
+اكتمل تنفيذ App/Section/Archetype/Mobile priority في شريحة FRD-E الرابعة بتاريخ 2026-11-25. يعرّف `NavigationRegistryService` التطبيقات العشرة ومرشحي الدخول الآمنين، ثم يعيد `metadataForItem()` تصنيفاً موحداً لكل destination مسجلة. يأخذ `sectionId` قسم الـhub المعلن أو مجموعة التنقل، وتبقى وجهات المستوى الأعلى غير المتخصصة `list` بينما تصنّف الـhubs والتحليلات `dashboard` ومساحات التشغيل `workspace` وصفحات الإعداد `settings`. أولوية الهاتف `primary` لمداخل التطبيقات والعمل الأساسي، و`hidden` لوجهات الـhub الثانوية غير المخصصة للدخول، و`secondary` للبقية. يستهلك Mobile drawer هذا العقد فعلياً، وتغطي الاختبارات كل عناصر السجل. لا تتغير URLs أو صلاحيات الخادم أو Workspace/dirty authority.
 
 ## 5. Route classification
 

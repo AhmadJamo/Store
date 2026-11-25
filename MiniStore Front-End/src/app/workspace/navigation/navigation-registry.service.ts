@@ -4,7 +4,16 @@ import { NavigationItem } from '../state/workspace.models';
 import { WorkspaceProfileService } from '../../core/preferences/workspace-profile.service';
 import type { NavigationTextKey } from './navigation-localization.service';
 
-export type NavigationGroupId = 'overview' | 'partners' | 'catalog' | 'inventory' | 'purchasing' | 'sales' | 'accounting' | 'insights' | 'administration';
+export type NavigationGroupId =
+  | 'overview'
+  | 'partners'
+  | 'catalog'
+  | 'inventory'
+  | 'purchasing'
+  | 'sales'
+  | 'accounting'
+  | 'insights'
+  | 'administration';
 
 export interface NavigationGroup {
   readonly id: NavigationGroupId;
@@ -12,7 +21,17 @@ export interface NavigationGroup {
   readonly items: readonly NavigationItem[];
 }
 
-export type NavigationApplicationId = 'sales' | 'purchases' | 'inventory' | 'products' | 'contacts' | 'accounting' | 'pos' | 'analytics' | 'administration' | 'settings';
+export type NavigationApplicationId =
+  | 'sales'
+  | 'purchases'
+  | 'inventory'
+  | 'products'
+  | 'contacts'
+  | 'accounting'
+  | 'pos'
+  | 'analytics'
+  | 'administration'
+  | 'settings';
 
 export interface NavigationApplication {
   readonly id: NavigationApplicationId;
@@ -25,6 +44,17 @@ export interface NavigationApplication {
 
 export interface VisibleNavigationApplication extends NavigationApplication {
   readonly entry: NavigationItem;
+}
+
+export type NavigationArchetype =
+  'list' | 'record' | 'form' | 'kanban' | 'dashboard' | 'workspace' | 'settings';
+export type NavigationMobilePriority = 'primary' | 'secondary' | 'hidden';
+
+export interface NavigationDestinationMetadata {
+  readonly appId: NavigationApplicationId | null;
+  readonly sectionId: NavigationGroupId | NavigationTextKey;
+  readonly archetype: NavigationArchetype;
+  readonly mobilePriority: NavigationMobilePriority;
 }
 
 const navigationGroups: readonly Omit<NavigationGroup, 'items'>[] = [
@@ -40,17 +70,117 @@ const navigationGroups: readonly Omit<NavigationGroup, 'items'>[] = [
 ];
 
 const navigationApplications: readonly NavigationApplication[] = [
-  { id: 'sales', labelKey: 'appSales', icon: '◈', entryNavigationIds: ['sales-center'], routePrefixes: ['/sales'] },
-  { id: 'purchases', labelKey: 'appPurchases', icon: '▣', entryNavigationIds: ['purchasing-center'], routePrefixes: ['/purchases'] },
-  { id: 'inventory', labelKey: 'appInventory', icon: '▥', entryNavigationIds: ['inventory-stock', 'inventory-availability', 'inventory-ledger'], routePrefixes: ['/inventory'] },
-  { id: 'products', labelKey: 'appProducts', icon: '▦', entryNavigationIds: ['products'], navigationIds: ['products'] },
-  { id: 'contacts', labelKey: 'appContacts', icon: '♙', entryNavigationIds: ['customers', 'suppliers'], navigationIds: ['customers', 'suppliers'] },
-  { id: 'accounting', labelKey: 'appAccounting', icon: '▤', entryNavigationIds: ['accounting-center'], routePrefixes: ['/accounting'] },
-  { id: 'pos', labelKey: 'appPos', icon: '▦', entryNavigationIds: ['point-of-sale'], navigationIds: ['point-of-sale'] },
-  { id: 'analytics', labelKey: 'appAnalytics', icon: '◫', entryNavigationIds: ['analytics'], navigationIds: ['analytics'] },
-  { id: 'administration', labelKey: 'appAdministration', icon: '♜', entryNavigationIds: ['branches', 'users', 'roles', 'audit-events'], navigationIds: ['branches', 'users', 'roles', 'audit-events'] },
-  { id: 'settings', labelKey: 'appSettings', icon: '⚙', entryNavigationIds: ['settings'], navigationIds: ['settings', 'accounting-settings-link', 'fiscal-periods-link', 'currency-rates-link', 'branch-accounts-link'], routePrefixes: ['/settings'] },
+  {
+    id: 'sales',
+    labelKey: 'appSales',
+    icon: '◈',
+    entryNavigationIds: ['sales-center'],
+    routePrefixes: ['/sales'],
+  },
+  {
+    id: 'purchases',
+    labelKey: 'appPurchases',
+    icon: '▣',
+    entryNavigationIds: ['purchasing-center'],
+    routePrefixes: ['/purchases'],
+  },
+  {
+    id: 'inventory',
+    labelKey: 'appInventory',
+    icon: '▥',
+    entryNavigationIds: ['inventory-stock', 'inventory-availability', 'inventory-ledger'],
+    routePrefixes: ['/inventory'],
+  },
+  {
+    id: 'products',
+    labelKey: 'appProducts',
+    icon: '▦',
+    entryNavigationIds: ['products'],
+    navigationIds: ['products'],
+  },
+  {
+    id: 'contacts',
+    labelKey: 'appContacts',
+    icon: '♙',
+    entryNavigationIds: ['customers', 'suppliers'],
+    navigationIds: ['customers', 'suppliers'],
+  },
+  {
+    id: 'accounting',
+    labelKey: 'appAccounting',
+    icon: '▤',
+    entryNavigationIds: ['accounting-center'],
+    routePrefixes: ['/accounting'],
+  },
+  {
+    id: 'pos',
+    labelKey: 'appPos',
+    icon: '▦',
+    entryNavigationIds: ['point-of-sale'],
+    navigationIds: ['point-of-sale'],
+  },
+  {
+    id: 'analytics',
+    labelKey: 'appAnalytics',
+    icon: '◫',
+    entryNavigationIds: ['analytics'],
+    navigationIds: ['analytics'],
+  },
+  {
+    id: 'administration',
+    labelKey: 'appAdministration',
+    icon: '♜',
+    entryNavigationIds: ['branches', 'users', 'roles', 'audit-events'],
+    navigationIds: ['branches', 'users', 'roles', 'audit-events'],
+  },
+  {
+    id: 'settings',
+    labelKey: 'appSettings',
+    icon: '⚙',
+    entryNavigationIds: ['settings'],
+    navigationIds: [
+      'settings',
+      'accounting-settings-link',
+      'fiscal-periods-link',
+      'currency-rates-link',
+      'branch-accounts-link',
+    ],
+    routePrefixes: ['/settings'],
+  },
 ];
+
+const dashboardNavigationIds = new Set([
+  'home',
+  'analytics',
+  'inventory-insights',
+  'purchase-analytics',
+  'purchasing-center',
+  'sales-center',
+  'accounting-center',
+  'operations-center',
+]);
+
+const workspaceNavigationIds = new Set([
+  'work-center',
+  'inventory-scanning',
+  'inventory-reconciliation',
+  'inventory-putaway',
+  'location-movements',
+  'purchase-sourcing',
+  'supplier-communications',
+  'point-of-sale',
+  'cash-flow-close',
+  'bank-statements',
+  'manual-journals',
+]);
+
+const settingsNavigationIds = new Set([
+  'settings',
+  'accounting-settings-link',
+  'fiscal-periods-link',
+  'currency-rates-link',
+  'branch-accounts-link',
+]);
 
 const navigationItems: readonly NavigationItem[] = [
   { id: 'home', route: '/', labelKey: 'dashboard', icon: '⌂' },
@@ -101,7 +231,13 @@ const navigationItems: readonly NavigationItem[] = [
     icon: '⚙',
     requiredPermission: 'Administration.Access',
   },
-  { id: 'branches', route: '/branches', labelKey: 'branchesTitle', icon: '⌂', requiredPermission: 'Branches.View' },
+  {
+    id: 'branches',
+    route: '/branches',
+    labelKey: 'branchesTitle',
+    icon: '⌂',
+    requiredPermission: 'Branches.View',
+  },
   {
     id: 'users',
     route: '/users',
@@ -172,7 +308,13 @@ const navigationItems: readonly NavigationItem[] = [
     icon: '▣',
     requiredPermission: 'InventoryScanning.View',
   },
-  { id: 'inventory-replenishment', route: '/inventory/replenishment', labelKey: 'replenishment', icon: '↥', requiredPermission: 'Inventory.Replenishment.View' },
+  {
+    id: 'inventory-replenishment',
+    route: '/inventory/replenishment',
+    labelKey: 'replenishment',
+    icon: '↥',
+    requiredPermission: 'Inventory.Replenishment.View',
+  },
   {
     id: 'inventory-insights',
     route: '/inventory/insights',
@@ -227,7 +369,15 @@ const navigationItems: readonly NavigationItem[] = [
     route: '/purchases',
     labelKey: 'purchasingCenter',
     icon: '▣',
-    requiredAnyPermissions: ['PurchaseRequests.View', 'PurchaseSourcing.View', 'PurchaseOrders.View', 'GoodsReceipts.View', 'VendorBills.View', 'SupplierPayments.View', 'PurchaseAnalytics.View'],
+    requiredAnyPermissions: [
+      'PurchaseRequests.View',
+      'PurchaseSourcing.View',
+      'PurchaseOrders.View',
+      'GoodsReceipts.View',
+      'VendorBills.View',
+      'SupplierPayments.View',
+      'PurchaseAnalytics.View',
+    ],
   },
   {
     id: 'purchase-requests',
@@ -238,68 +388,468 @@ const navigationItems: readonly NavigationItem[] = [
     showInSidebar: false,
     hubSectionKey: 'planningAndSourcing',
   },
-  { id: 'purchase-approval-rules', route: '/purchases/approval-rules', labelKey: 'purchaseApprovalRules', icon: '✓', requiredPermission: 'PurchaseApprovalRules.View', showInSidebar: false, hubSectionKey: 'planningAndSourcing' },
-  { id: 'purchase-sourcing', route: '/purchases/sourcing', labelKey: 'purchaseSourcingWorkspace', icon: '⌕', requiredPermission: 'PurchaseSourcing.View', showInSidebar: false, hubSectionKey: 'planningAndSourcing' },
-  { id: 'purchase-orders', route: '/purchases/orders', labelKey: 'purchaseOrders', icon: '▤', requiredPermission: 'PurchaseOrders.View', showInSidebar: false, hubSectionKey: 'planningAndSourcing' },
-  { id: 'purchase-agreements', route: '/purchases/agreements', labelKey: 'purchaseAgreements', icon: '≡', requiredPermission: 'PurchaseAgreements.View', showInSidebar: false, hubSectionKey: 'planningAndSourcing' },
-  { id: 'purchase-templates', route: '/purchases/templates', labelKey: 'purchaseTemplates', icon: '▧', requiredPermission: 'PurchaseTemplates.View', showInSidebar: false, hubSectionKey: 'planningAndSourcing' },
-  { id: 'purchase-replenishment', route: '/purchases/replenishment', labelKey: 'purchaseReplenishment', icon: '↥', requiredPermission: 'PurchaseReplenishment.View', showInSidebar: false, hubSectionKey: 'planningAndSourcing' },
-  { id: 'goods-receipts', route: '/purchases/receipts', labelKey: 'goodsReceipts', icon: '⇲', requiredPermission: 'GoodsReceipts.View', showInSidebar: false, hubSectionKey: 'receivingAndFulfillment' },
-  { id: 'purchase-service-acceptances', route: '/purchases/service-acceptances', labelKey: 'serviceAcceptances', icon: '✓', requiredPermission: 'PurchaseServiceAcceptances.View', showInSidebar: false, hubSectionKey: 'receivingAndFulfillment' },
-  { id: 'purchase-receipt-returns', route: '/purchases/receipt-returns', labelKey: 'purchaseReturns', icon: '↶', requiredPermission: 'GoodsReceiptReturns.View', showInSidebar: false, hubSectionKey: 'receivingAndFulfillment' },
-  { id: 'landed-costs', route: '/purchases/landed-costs', labelKey: 'landedCosts', icon: '＋', requiredPermission: 'LandedCosts.View', showInSidebar: false, hubSectionKey: 'receivingAndFulfillment' },
-  { id: 'vendor-bills', route: '/purchases/bills', labelKey: 'vendorBills', icon: '▥', requiredPermission: 'VendorBills.View', showInSidebar: false, hubSectionKey: 'payablesAndControl' },
-  { id: 'supplier-credit-notes', route: '/purchases/credit-notes', labelKey: 'supplierCreditNotes', icon: '−', requiredPermission: 'SupplierCreditNotes.View', showInSidebar: false, hubSectionKey: 'payablesAndControl' },
-  { id: 'supplier-payments', route: '/purchases/payments', labelKey: 'supplierPayments', icon: '¤', requiredPermission: 'SupplierPayments.View', showInSidebar: false, hubSectionKey: 'payablesAndControl' },
-  { id: 'purchase-reversals', route: '/purchases/reversals', labelKey: 'purchaseReversals', icon: '↺', requiredPermission: 'PurchaseDocumentReversals.View', showInSidebar: false, hubSectionKey: 'payablesAndControl' },
-  { id: 'purchase-reconciliation', route: '/purchases/accounting-reconciliation', labelKey: 'purchaseAccountingReconciliation', icon: '≋', requiredPermission: 'PurchaseAccountingReconciliation.View', showInSidebar: false, hubSectionKey: 'payablesAndControl' },
-  { id: 'supplier-terms', route: '/purchases/supplier-terms', labelKey: 'supplierTerms', icon: '♧', requiredPermission: 'Purchases.SupplierTerms.View', showInSidebar: false, hubSectionKey: 'supplierOperations' },
-  { id: 'supplier-term-exceptions', route: '/purchases/supplier-terms/exceptions', labelKey: 'supplierTermExceptions', icon: '!', requiredPermission: 'Purchases.SupplierTerms.View', showInSidebar: false, hubSectionKey: 'supplierOperations' },
-  { id: 'supplier-communications', route: '/purchases/communications/prepare', labelKey: 'supplierCommunications', icon: '✉', requiredPermission: 'SupplierCommunications.View', showInSidebar: false, hubSectionKey: 'supplierOperations' },
-  { id: 'supplier-integrations', route: '/purchases/integrations', labelKey: 'supplierIntegrations', icon: '⇆', requiredPermission: 'SupplierIntegrations.View', showInSidebar: false, hubSectionKey: 'supplierOperations' },
-  { id: 'purchase-analytics', route: '/purchases/analytics', labelKey: 'purchaseAnalytics', icon: '◫', requiredPermission: 'PurchaseAnalytics.View', showInSidebar: false, hubSectionKey: 'supplierOperations' },
-  { id: 'legacy-purchases', route: '/purchases/legacy', labelKey: 'legacyPurchases', icon: '◷', requiredPermission: 'Purchases.View', showInSidebar: false, hubSectionKey: 'supplierOperations' },
-  { id: 'legacy-purchase-returns', route: '/purchases/legacy-returns', labelKey: 'legacyPurchaseReturns', icon: '↶', requiredPermission: 'PurchaseReturns.View', showInSidebar: false, hubSectionKey: 'supplierOperations' },
+  {
+    id: 'purchase-approval-rules',
+    route: '/purchases/approval-rules',
+    labelKey: 'purchaseApprovalRules',
+    icon: '✓',
+    requiredPermission: 'PurchaseApprovalRules.View',
+    showInSidebar: false,
+    hubSectionKey: 'planningAndSourcing',
+  },
+  {
+    id: 'purchase-sourcing',
+    route: '/purchases/sourcing',
+    labelKey: 'purchaseSourcingWorkspace',
+    icon: '⌕',
+    requiredPermission: 'PurchaseSourcing.View',
+    showInSidebar: false,
+    hubSectionKey: 'planningAndSourcing',
+  },
+  {
+    id: 'purchase-orders',
+    route: '/purchases/orders',
+    labelKey: 'purchaseOrders',
+    icon: '▤',
+    requiredPermission: 'PurchaseOrders.View',
+    showInSidebar: false,
+    hubSectionKey: 'planningAndSourcing',
+  },
+  {
+    id: 'purchase-agreements',
+    route: '/purchases/agreements',
+    labelKey: 'purchaseAgreements',
+    icon: '≡',
+    requiredPermission: 'PurchaseAgreements.View',
+    showInSidebar: false,
+    hubSectionKey: 'planningAndSourcing',
+  },
+  {
+    id: 'purchase-templates',
+    route: '/purchases/templates',
+    labelKey: 'purchaseTemplates',
+    icon: '▧',
+    requiredPermission: 'PurchaseTemplates.View',
+    showInSidebar: false,
+    hubSectionKey: 'planningAndSourcing',
+  },
+  {
+    id: 'purchase-replenishment',
+    route: '/purchases/replenishment',
+    labelKey: 'purchaseReplenishment',
+    icon: '↥',
+    requiredPermission: 'PurchaseReplenishment.View',
+    showInSidebar: false,
+    hubSectionKey: 'planningAndSourcing',
+  },
+  {
+    id: 'goods-receipts',
+    route: '/purchases/receipts',
+    labelKey: 'goodsReceipts',
+    icon: '⇲',
+    requiredPermission: 'GoodsReceipts.View',
+    showInSidebar: false,
+    hubSectionKey: 'receivingAndFulfillment',
+  },
+  {
+    id: 'purchase-service-acceptances',
+    route: '/purchases/service-acceptances',
+    labelKey: 'serviceAcceptances',
+    icon: '✓',
+    requiredPermission: 'PurchaseServiceAcceptances.View',
+    showInSidebar: false,
+    hubSectionKey: 'receivingAndFulfillment',
+  },
+  {
+    id: 'purchase-receipt-returns',
+    route: '/purchases/receipt-returns',
+    labelKey: 'purchaseReturns',
+    icon: '↶',
+    requiredPermission: 'GoodsReceiptReturns.View',
+    showInSidebar: false,
+    hubSectionKey: 'receivingAndFulfillment',
+  },
+  {
+    id: 'landed-costs',
+    route: '/purchases/landed-costs',
+    labelKey: 'landedCosts',
+    icon: '＋',
+    requiredPermission: 'LandedCosts.View',
+    showInSidebar: false,
+    hubSectionKey: 'receivingAndFulfillment',
+  },
+  {
+    id: 'vendor-bills',
+    route: '/purchases/bills',
+    labelKey: 'vendorBills',
+    icon: '▥',
+    requiredPermission: 'VendorBills.View',
+    showInSidebar: false,
+    hubSectionKey: 'payablesAndControl',
+  },
+  {
+    id: 'supplier-credit-notes',
+    route: '/purchases/credit-notes',
+    labelKey: 'supplierCreditNotes',
+    icon: '−',
+    requiredPermission: 'SupplierCreditNotes.View',
+    showInSidebar: false,
+    hubSectionKey: 'payablesAndControl',
+  },
+  {
+    id: 'supplier-payments',
+    route: '/purchases/payments',
+    labelKey: 'supplierPayments',
+    icon: '¤',
+    requiredPermission: 'SupplierPayments.View',
+    showInSidebar: false,
+    hubSectionKey: 'payablesAndControl',
+  },
+  {
+    id: 'purchase-reversals',
+    route: '/purchases/reversals',
+    labelKey: 'purchaseReversals',
+    icon: '↺',
+    requiredPermission: 'PurchaseDocumentReversals.View',
+    showInSidebar: false,
+    hubSectionKey: 'payablesAndControl',
+  },
+  {
+    id: 'purchase-reconciliation',
+    route: '/purchases/accounting-reconciliation',
+    labelKey: 'purchaseAccountingReconciliation',
+    icon: '≋',
+    requiredPermission: 'PurchaseAccountingReconciliation.View',
+    showInSidebar: false,
+    hubSectionKey: 'payablesAndControl',
+  },
+  {
+    id: 'supplier-terms',
+    route: '/purchases/supplier-terms',
+    labelKey: 'supplierTerms',
+    icon: '♧',
+    requiredPermission: 'Purchases.SupplierTerms.View',
+    showInSidebar: false,
+    hubSectionKey: 'supplierOperations',
+  },
+  {
+    id: 'supplier-term-exceptions',
+    route: '/purchases/supplier-terms/exceptions',
+    labelKey: 'supplierTermExceptions',
+    icon: '!',
+    requiredPermission: 'Purchases.SupplierTerms.View',
+    showInSidebar: false,
+    hubSectionKey: 'supplierOperations',
+  },
+  {
+    id: 'supplier-communications',
+    route: '/purchases/communications/prepare',
+    labelKey: 'supplierCommunications',
+    icon: '✉',
+    requiredPermission: 'SupplierCommunications.View',
+    showInSidebar: false,
+    hubSectionKey: 'supplierOperations',
+  },
+  {
+    id: 'supplier-integrations',
+    route: '/purchases/integrations',
+    labelKey: 'supplierIntegrations',
+    icon: '⇆',
+    requiredPermission: 'SupplierIntegrations.View',
+    showInSidebar: false,
+    hubSectionKey: 'supplierOperations',
+  },
+  {
+    id: 'purchase-analytics',
+    route: '/purchases/analytics',
+    labelKey: 'purchaseAnalytics',
+    icon: '◫',
+    requiredPermission: 'PurchaseAnalytics.View',
+    showInSidebar: false,
+    hubSectionKey: 'supplierOperations',
+  },
+  {
+    id: 'legacy-purchases',
+    route: '/purchases/legacy',
+    labelKey: 'legacyPurchases',
+    icon: '◷',
+    requiredPermission: 'Purchases.View',
+    showInSidebar: false,
+    hubSectionKey: 'supplierOperations',
+  },
+  {
+    id: 'legacy-purchase-returns',
+    route: '/purchases/legacy-returns',
+    labelKey: 'legacyPurchaseReturns',
+    icon: '↶',
+    requiredPermission: 'PurchaseReturns.View',
+    showInSidebar: false,
+    hubSectionKey: 'supplierOperations',
+  },
   {
     id: 'sales-center',
     route: '/sales',
     labelKey: 'salesCenter',
     icon: '◈',
-    requiredAnyPermissions: ['Sales.View', 'SalesPricing.View', 'SalesQuotations.View', 'SalesOrders.View', 'SalesDeliveries.View', 'CustomerInvoices.View', 'CustomerPayments.View'],
+    requiredAnyPermissions: [
+      'Sales.View',
+      'SalesPricing.View',
+      'SalesQuotations.View',
+      'SalesOrders.View',
+      'SalesDeliveries.View',
+      'CustomerInvoices.View',
+      'CustomerPayments.View',
+    ],
   },
-  { id: 'sales-pricing', route: '/sales/pricing', labelKey: 'salesPricing', icon: '¤', requiredPermission: 'SalesPricing.View', showInSidebar: false, hubSectionKey: 'commercialPreparation' },
-  { id: 'sales-quotation-templates', route: '/sales/quotation-templates', labelKey: 'salesQuotationTemplates', icon: '▧', requiredPermission: 'SalesQuotationTemplates.View', showInSidebar: false, hubSectionKey: 'commercialPreparation' },
-  { id: 'sales-quotations', route: '/sales/quotations', labelKey: 'salesQuotations', icon: '▤', requiredPermission: 'SalesQuotations.View', showInSidebar: false, hubSectionKey: 'commercialPreparation' },
-  { id: 'sales-approval-rules', route: '/sales/approval-rules', labelKey: 'salesApprovalRules', icon: '✓', requiredPermission: 'SalesApprovalRules.View', showInSidebar: false, hubSectionKey: 'commercialPreparation' },
-  { id: 'sales-orders', route: '/sales/orders', labelKey: 'salesOrders', icon: '▣', requiredPermission: 'SalesOrders.View', showInSidebar: false, hubSectionKey: 'commercialPreparation' },
-  { id: 'sales-deliveries', route: '/sales/deliveries', labelKey: 'salesDeliveries', icon: '⇱', requiredPermission: 'SalesDeliveries.View', showInSidebar: false, hubSectionKey: 'salesFulfillment' },
-  { id: 'customer-invoices', route: '/sales/invoices', labelKey: 'customerInvoices', icon: '▥', requiredPermission: 'CustomerInvoices.View', showInSidebar: false, hubSectionKey: 'receivablesAndCollection' },
-  { id: 'customer-payments', route: '/sales/payments', labelKey: 'customerPayments', icon: '¤', requiredPermission: 'CustomerPayments.View', showInSidebar: false, hubSectionKey: 'receivablesAndCollection' },
-  { id: 'customer-return-requests', route: '/sales/return-requests', labelKey: 'customerReturnRequests', icon: '↶', requiredPermission: 'CustomerReturnRequests.View', showInSidebar: false, hubSectionKey: 'returnsAndCredits' },
-  { id: 'customer-return-receipts', route: '/sales/return-receipts', labelKey: 'customerReturnReceipts', icon: '⇲', requiredPermission: 'CustomerReturnReceipts.View', showInSidebar: false, hubSectionKey: 'returnsAndCredits' },
-  { id: 'customer-credit-notes', route: '/sales/credit-notes', labelKey: 'customerCreditNotes', icon: '−', requiredPermission: 'CustomerCreditNotes.View', showInSidebar: false, hubSectionKey: 'returnsAndCredits' },
-  { id: 'direct-sales', route: '/sales/legacy', labelKey: 'directSales', icon: '◷', requiredPermission: 'Sales.View', showInSidebar: false, hubSectionKey: 'immediateSales' },
-  { id: 'point-of-sale', route: '/sales/pos', labelKey: 'pointOfSale', icon: '▦', requiredPermission: 'Sales.View', showInSidebar: false, hubSectionKey: 'immediateSales' },
-  { id: 'direct-sales-returns', route: '/sales/legacy-returns', labelKey: 'directSalesReturns', icon: '↶', requiredPermission: 'SalesReturns.View', showInSidebar: false, hubSectionKey: 'immediateSales' },
+  {
+    id: 'sales-pricing',
+    route: '/sales/pricing',
+    labelKey: 'salesPricing',
+    icon: '¤',
+    requiredPermission: 'SalesPricing.View',
+    showInSidebar: false,
+    hubSectionKey: 'commercialPreparation',
+  },
+  {
+    id: 'sales-quotation-templates',
+    route: '/sales/quotation-templates',
+    labelKey: 'salesQuotationTemplates',
+    icon: '▧',
+    requiredPermission: 'SalesQuotationTemplates.View',
+    showInSidebar: false,
+    hubSectionKey: 'commercialPreparation',
+  },
+  {
+    id: 'sales-quotations',
+    route: '/sales/quotations',
+    labelKey: 'salesQuotations',
+    icon: '▤',
+    requiredPermission: 'SalesQuotations.View',
+    showInSidebar: false,
+    hubSectionKey: 'commercialPreparation',
+  },
+  {
+    id: 'sales-approval-rules',
+    route: '/sales/approval-rules',
+    labelKey: 'salesApprovalRules',
+    icon: '✓',
+    requiredPermission: 'SalesApprovalRules.View',
+    showInSidebar: false,
+    hubSectionKey: 'commercialPreparation',
+  },
+  {
+    id: 'sales-orders',
+    route: '/sales/orders',
+    labelKey: 'salesOrders',
+    icon: '▣',
+    requiredPermission: 'SalesOrders.View',
+    showInSidebar: false,
+    hubSectionKey: 'commercialPreparation',
+  },
+  {
+    id: 'sales-deliveries',
+    route: '/sales/deliveries',
+    labelKey: 'salesDeliveries',
+    icon: '⇱',
+    requiredPermission: 'SalesDeliveries.View',
+    showInSidebar: false,
+    hubSectionKey: 'salesFulfillment',
+  },
+  {
+    id: 'customer-invoices',
+    route: '/sales/invoices',
+    labelKey: 'customerInvoices',
+    icon: '▥',
+    requiredPermission: 'CustomerInvoices.View',
+    showInSidebar: false,
+    hubSectionKey: 'receivablesAndCollection',
+  },
+  {
+    id: 'customer-payments',
+    route: '/sales/payments',
+    labelKey: 'customerPayments',
+    icon: '¤',
+    requiredPermission: 'CustomerPayments.View',
+    showInSidebar: false,
+    hubSectionKey: 'receivablesAndCollection',
+  },
+  {
+    id: 'customer-return-requests',
+    route: '/sales/return-requests',
+    labelKey: 'customerReturnRequests',
+    icon: '↶',
+    requiredPermission: 'CustomerReturnRequests.View',
+    showInSidebar: false,
+    hubSectionKey: 'returnsAndCredits',
+  },
+  {
+    id: 'customer-return-receipts',
+    route: '/sales/return-receipts',
+    labelKey: 'customerReturnReceipts',
+    icon: '⇲',
+    requiredPermission: 'CustomerReturnReceipts.View',
+    showInSidebar: false,
+    hubSectionKey: 'returnsAndCredits',
+  },
+  {
+    id: 'customer-credit-notes',
+    route: '/sales/credit-notes',
+    labelKey: 'customerCreditNotes',
+    icon: '−',
+    requiredPermission: 'CustomerCreditNotes.View',
+    showInSidebar: false,
+    hubSectionKey: 'returnsAndCredits',
+  },
+  {
+    id: 'direct-sales',
+    route: '/sales/legacy',
+    labelKey: 'directSales',
+    icon: '◷',
+    requiredPermission: 'Sales.View',
+    showInSidebar: false,
+    hubSectionKey: 'immediateSales',
+  },
+  {
+    id: 'point-of-sale',
+    route: '/sales/pos',
+    labelKey: 'pointOfSale',
+    icon: '▦',
+    requiredPermission: 'Sales.View',
+    showInSidebar: false,
+    hubSectionKey: 'immediateSales',
+  },
+  {
+    id: 'direct-sales-returns',
+    route: '/sales/legacy-returns',
+    labelKey: 'directSalesReturns',
+    icon: '↶',
+    requiredPermission: 'SalesReturns.View',
+    showInSidebar: false,
+    hubSectionKey: 'immediateSales',
+  },
   {
     id: 'accounting-center',
     route: '/accounting',
     labelKey: 'accountingCenter',
     icon: '▤',
-    requiredAnyPermissions: ['Administration.Access', 'JournalEntries.View', 'ManualJournals.View', 'ManualJournals.Create', 'RecurringJournals.View', 'FiscalPeriods.View', 'BankStatements.View'],
+    requiredAnyPermissions: [
+      'Administration.Access',
+      'JournalEntries.View',
+      'ManualJournals.View',
+      'ManualJournals.Create',
+      'RecurringJournals.View',
+      'FiscalPeriods.View',
+      'BankStatements.View',
+    ],
   },
-  { id: 'chart-of-accounts', route: '/accounting/accounts', labelKey: 'chartOfAccounts', icon: '⌘', requiredPermission: 'Administration.Access', showInSidebar: false, hubSectionKey: 'accountingSetup' },
-  { id: 'journal-entries', route: '/accounting/journal-entries', labelKey: 'journalEntries', icon: '▤', requiredPermission: 'JournalEntries.View', showInSidebar: false, hubSectionKey: 'accountingReview' },
-  { id: 'financial-reports', route: '/accounting/financial-reports', labelKey: 'financialReports', icon: '▥', requiredPermission: 'JournalEntries.View', showInSidebar: false, hubSectionKey: 'accountingReview' },
-  { id: 'aging-reports', route: '/accounting/aging', labelKey: 'agingReports', icon: '⌛', requiredPermission: 'JournalEntries.View', showInSidebar: false, hubSectionKey: 'accountingReview' },
-  { id: 'cash-flow-close', route: '/accounting/cash-flow-close', labelKey: 'cashFlowClose', icon: '≋', requiredPermission: 'JournalEntries.View', showInSidebar: false, hubSectionKey: 'accountingReview' },
-  { id: 'bank-statements', route: '/accounting/bank-statements', labelKey: 'bankStatements', icon: '≈', requiredPermission: 'BankStatements.View', showInSidebar: false, hubSectionKey: 'accountingReview' },
-  { id: 'manual-journals', route: '/accounting/manual-journals', labelKey: 'manualJournals', icon: '✎', requiredAnyPermissions: ['ManualJournals.View', 'ManualJournals.Create'], showInSidebar: false, hubSectionKey: 'accountingReview' },
-  { id: 'recurring-journals', route: '/accounting/recurring-journals', labelKey: 'recurringJournals', icon: '↻', requiredPermission: 'RecurringJournals.View', showInSidebar: false, hubSectionKey: 'accountingReview' },
-  { id: 'accounting-settings-link', route: '/settings/accounting', labelKey: 'accountingSettings', icon: '⚙', requiredPermission: 'Administration.Access', showInSidebar: false, hubSectionKey: 'accountingSetup' },
-  { id: 'fiscal-periods-link', route: '/settings/fiscal-periods', labelKey: 'fiscalPeriods', icon: '▦', requiredAnyPermissions: ['Administration.Access', 'FiscalPeriods.View'], showInSidebar: false, hubSectionKey: 'accountingSetup' },
-  { id: 'currency-rates-link', route: '/settings/currency-exchange-rates', labelKey: 'currencyExchangeRates', icon: '¤', requiredPermission: 'Administration.Access', showInSidebar: false, hubSectionKey: 'accountingSetup' },
-  { id: 'branch-accounts-link', route: '/settings/branch-sales-accounts', labelKey: 'branchSalesAccounts', icon: '⌂', requiredPermission: 'Administration.Access', showInSidebar: false, hubSectionKey: 'accountingSetup' },
+  {
+    id: 'chart-of-accounts',
+    route: '/accounting/accounts',
+    labelKey: 'chartOfAccounts',
+    icon: '⌘',
+    requiredPermission: 'Administration.Access',
+    showInSidebar: false,
+    hubSectionKey: 'accountingSetup',
+  },
+  {
+    id: 'journal-entries',
+    route: '/accounting/journal-entries',
+    labelKey: 'journalEntries',
+    icon: '▤',
+    requiredPermission: 'JournalEntries.View',
+    showInSidebar: false,
+    hubSectionKey: 'accountingReview',
+  },
+  {
+    id: 'financial-reports',
+    route: '/accounting/financial-reports',
+    labelKey: 'financialReports',
+    icon: '▥',
+    requiredPermission: 'JournalEntries.View',
+    showInSidebar: false,
+    hubSectionKey: 'accountingReview',
+  },
+  {
+    id: 'aging-reports',
+    route: '/accounting/aging',
+    labelKey: 'agingReports',
+    icon: '⌛',
+    requiredPermission: 'JournalEntries.View',
+    showInSidebar: false,
+    hubSectionKey: 'accountingReview',
+  },
+  {
+    id: 'cash-flow-close',
+    route: '/accounting/cash-flow-close',
+    labelKey: 'cashFlowClose',
+    icon: '≋',
+    requiredPermission: 'JournalEntries.View',
+    showInSidebar: false,
+    hubSectionKey: 'accountingReview',
+  },
+  {
+    id: 'bank-statements',
+    route: '/accounting/bank-statements',
+    labelKey: 'bankStatements',
+    icon: '≈',
+    requiredPermission: 'BankStatements.View',
+    showInSidebar: false,
+    hubSectionKey: 'accountingReview',
+  },
+  {
+    id: 'manual-journals',
+    route: '/accounting/manual-journals',
+    labelKey: 'manualJournals',
+    icon: '✎',
+    requiredAnyPermissions: ['ManualJournals.View', 'ManualJournals.Create'],
+    showInSidebar: false,
+    hubSectionKey: 'accountingReview',
+  },
+  {
+    id: 'recurring-journals',
+    route: '/accounting/recurring-journals',
+    labelKey: 'recurringJournals',
+    icon: '↻',
+    requiredPermission: 'RecurringJournals.View',
+    showInSidebar: false,
+    hubSectionKey: 'accountingReview',
+  },
+  {
+    id: 'accounting-settings-link',
+    route: '/settings/accounting',
+    labelKey: 'accountingSettings',
+    icon: '⚙',
+    requiredPermission: 'Administration.Access',
+    showInSidebar: false,
+    hubSectionKey: 'accountingSetup',
+  },
+  {
+    id: 'fiscal-periods-link',
+    route: '/settings/fiscal-periods',
+    labelKey: 'fiscalPeriods',
+    icon: '▦',
+    requiredAnyPermissions: ['Administration.Access', 'FiscalPeriods.View'],
+    showInSidebar: false,
+    hubSectionKey: 'accountingSetup',
+  },
+  {
+    id: 'currency-rates-link',
+    route: '/settings/currency-exchange-rates',
+    labelKey: 'currencyExchangeRates',
+    icon: '¤',
+    requiredPermission: 'Administration.Access',
+    showInSidebar: false,
+    hubSectionKey: 'accountingSetup',
+  },
+  {
+    id: 'branch-accounts-link',
+    route: '/settings/branch-sales-accounts',
+    labelKey: 'branchSalesAccounts',
+    icon: '⌂',
+    requiredPermission: 'Administration.Access',
+    showInSidebar: false,
+    hubSectionKey: 'accountingSetup',
+  },
   {
     id: 'operations-center',
     route: '/operations-center',
@@ -414,13 +964,18 @@ export class NavigationRegistryService {
       ],
     };
     const order = priorities[this.profiles.profile()];
-    const rank = (id: string) => { const index = order.indexOf(id); return index < 0 ? Number.MAX_SAFE_INTEGER : index; };
+    const rank = (id: string) => {
+      const index = order.indexOf(id);
+      return index < 0 ? Number.MAX_SAFE_INTEGER : index;
+    };
     return [...visible].sort((a, b) => rank(a.id) - rank(b.id));
   });
   readonly visibleGroups = computed<readonly NavigationGroup[]>(() => {
     const visible = this.visibleItems();
     return navigationGroups.flatMap((group): NavigationGroup[] => {
-      const items = visible.filter((item) => item.showInSidebar !== false && this.groupForItem(item) === group.id);
+      const items = visible.filter(
+        (item) => item.showInSidebar !== false && this.groupForItem(item) === group.id,
+      );
       return items.length ? [{ ...group, items }] : [];
     });
   });
@@ -433,13 +988,16 @@ export class NavigationRegistryService {
     }),
   );
 
-  visibleGroupsForApplication(applicationId: NavigationApplicationId | null): readonly NavigationGroup[] {
+  visibleGroupsForApplication(
+    applicationId: NavigationApplicationId | null,
+  ): readonly NavigationGroup[] {
     if (!applicationId) return this.visibleGroups();
     const application = this.applications.find((candidate) => candidate.id === applicationId);
     if (!application) return [];
-    const visible = this.visibleItems().filter((item) =>
-      this.applicationForItem(item)?.id === applicationId &&
-      (item.showInSidebar !== false || application.entryNavigationIds.includes(item.id)),
+    const visible = this.visibleItems().filter(
+      (item) =>
+        this.applicationForItem(item)?.id === applicationId &&
+        (item.showInSidebar !== false || application.entryNavigationIds.includes(item.id)),
     );
     return navigationGroups.flatMap((group): NavigationGroup[] => {
       const items = visible.filter((item) => this.groupForItem(item) === group.id);
@@ -457,15 +1015,41 @@ export class NavigationRegistryService {
   }
 
   applicationForItem(item: NavigationItem): NavigationApplication | undefined {
-    return this.applications.find((application) => application.navigationIds?.includes(item.id))
-      ?? this.applications.find((application) =>
-        application.routePrefixes?.some((prefix) => item.route === prefix || item.route.startsWith(`${prefix}/`)),
-      );
+    return (
+      this.applications.find((application) => application.navigationIds?.includes(item.id)) ??
+      this.applications.find((application) =>
+        application.routePrefixes?.some(
+          (prefix) => item.route === prefix || item.route.startsWith(`${prefix}/`),
+        ),
+      )
+    );
   }
 
   applicationForRoute(route: string): NavigationApplication | undefined {
     const item = this.findByRoute(route);
     return item ? this.applicationForItem(item) : undefined;
+  }
+
+  metadataForItem(item: NavigationItem): NavigationDestinationMetadata {
+    const application = this.applicationForItem(item);
+    const isApplicationEntry = application?.entryNavigationIds.includes(item.id) ?? false;
+    return {
+      appId: application?.id ?? null,
+      sectionId: item.hubSectionKey ?? this.groupForItem(item),
+      archetype: settingsNavigationIds.has(item.id)
+        ? 'settings'
+        : dashboardNavigationIds.has(item.id)
+          ? 'dashboard'
+          : workspaceNavigationIds.has(item.id)
+            ? 'workspace'
+            : 'list',
+      mobilePriority:
+        item.showInSidebar === false && !isApplicationEntry
+          ? 'hidden'
+          : isApplicationEntry || item.id === 'home' || item.id === 'work-center'
+            ? 'primary'
+            : 'secondary',
+    };
   }
 
   groupForItem(item: NavigationItem): NavigationGroupId {
@@ -477,7 +1061,8 @@ export class NavigationRegistryService {
     if (item.id === 'customers' || item.id === 'suppliers') return 'partners';
     if (item.id === 'products') return 'catalog';
     if (item.id === 'documents' || item.id === 'analytics') return 'insights';
-    if (['settings', 'users', 'roles', 'audit-events', 'design-system'].includes(item.id)) return 'administration';
+    if (['settings', 'users', 'roles', 'audit-events', 'design-system'].includes(item.id))
+      return 'administration';
     return 'overview';
   }
 

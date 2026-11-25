@@ -32,7 +32,7 @@
 
 ### بوابة FRD-E الحالية
 
-شريحة App Switcher وShell extraction: 125 ملف اختبار و265/265 اختبار، production build بلا `app-shell.scss` warning، 140 قالب وصول، 121 صفحة اتساق، وPlaywright ‏7 passed/0 failed/3 authenticated-API skips. أضيف فحص App Switcher على Desktop و390px بجلسة عرض محدودة إلى Products.View؛ هذا يثبت تصفية العرض ولا يدّعي تكامل API حي.
+أربع شرائح Shell مكتملة: App metadata، App Switcher، current-app navigation/CSS extraction، وSection/Archetype/Mobile priority metadata. البوابة الحالية: 125 ملف اختبار و268/268 اختبار، production build بلا `app-shell.scss` warning، 140 قالب وصول، 121 صفحة اتساق، وPlaywright ‏7 passed/0 failed/3 authenticated-API skips. يغطي الاختبار تصفية التطبيقات، اكتمال تصنيف كل destination، وعرض Desktop/Mobile. هذا لا يدّعي تكامل API حي.
 
 ## 3. بوابة كل migration slice
 

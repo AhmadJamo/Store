@@ -41,9 +41,17 @@ describe('NavigationRegistryService', () => {
   it('exposes permission-filtered applications with a safe entry destination', () => {
     const registry = createRegistry(['Suppliers.View', 'ProductStock.View']);
 
-    expect(registry.visibleApplications().map((application) => application.id)).toEqual(['inventory', 'contacts']);
-    expect(registry.visibleApplications().find((application) => application.id === 'contacts')?.entry.id).toBe('suppliers');
-    expect(registry.visibleApplications().find((application) => application.id === 'inventory')?.entry.id).toBe('inventory-stock');
+    expect(registry.visibleApplications().map((application) => application.id)).toEqual([
+      'inventory',
+      'contacts',
+    ]);
+    expect(
+      registry.visibleApplications().find((application) => application.id === 'contacts')?.entry.id,
+    ).toBe('suppliers');
+    expect(
+      registry.visibleApplications().find((application) => application.id === 'inventory')?.entry
+        .id,
+    ).toBe('inventory-stock');
   });
 
   it('maps nested routes to an explicit application while keeping point of sale distinct from sales', () => {
@@ -56,8 +64,55 @@ describe('NavigationRegistryService', () => {
   it('limits current-app navigation without hiding a dedicated entry marked out of the global sidebar', () => {
     const registry = createRegistry(['Sales.View', 'SalesOrders.View']);
 
-    expect(registry.visibleGroupsForApplication('sales').flatMap((group) => group.items).map((item) => item.id)).toEqual(['sales-center']);
-    expect(registry.visibleGroupsForApplication('pos').flatMap((group) => group.items).map((item) => item.id)).toEqual(['point-of-sale']);
+    expect(
+      registry
+        .visibleGroupsForApplication('sales')
+        .flatMap((group) => group.items)
+        .map((item) => item.id),
+    ).toEqual(['sales-center']);
+    expect(
+      registry
+        .visibleGroupsForApplication('pos')
+        .flatMap((group) => group.items)
+        .map((item) => item.id),
+    ).toEqual(['point-of-sale']);
   });
 
+  it('classifies every registered destination for section, archetype, and mobile navigation', () => {
+    const registry = createRegistry([]);
+    const allowedArchetypes = [
+      'list',
+      'record',
+      'form',
+      'kanban',
+      'dashboard',
+      'workspace',
+      'settings',
+    ];
+    const allowedMobilePriorities = ['primary', 'secondary', 'hidden'];
+
+    for (const item of registry.items) {
+      const metadata = registry.metadataForItem(item);
+      expect(metadata.sectionId, item.id).toBeTruthy();
+      expect(allowedArchetypes, item.id).toContain(metadata.archetype);
+      expect(allowedMobilePriorities, item.id).toContain(metadata.mobilePriority);
+    }
+  });
+
+  it('keeps application entries prominent while hiding secondary hub-only destinations on mobile', () => {
+    const registry = createRegistry([]);
+
+    expect(registry.metadataForItem(registry.findById('point-of-sale')!)).toEqual({
+      appId: 'pos',
+      sectionId: 'immediateSales',
+      archetype: 'workspace',
+      mobilePriority: 'primary',
+    });
+    expect(registry.metadataForItem(registry.findById('sales-orders')!)).toEqual({
+      appId: 'sales',
+      sectionId: 'commercialPreparation',
+      archetype: 'list',
+      mobilePriority: 'hidden',
+    });
+  });
 });

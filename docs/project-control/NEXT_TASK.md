@@ -2,11 +2,11 @@
 
 ## FRD-E — إعادة بناء Application Shell
 
-> الحالة: IN PROGRESS — اكتملت App metadata وApp Switcher وإغلاق SCSS budget في 2026-11-24
+> الحالة: IN PROGRESS — اكتملت metadata التنفيذية في 2026-11-25
 >
-> أضيف سجل التطبيقات وApp Switcher، وحُصرت قوائم Desktop/Mobile بالتطبيق الحالي، واختفى تحذير `app-shell.scss` بعد استخراج navigation وOpen Work CSS. التالي: إكمال Section/Archetype/Mobile priority metadata دون تغيير المسارات.
+> اكتملت App metadata وApp Switcher وcurrent-app navigation واستخراج CSS وSection/Archetype/Mobile priority coverage. التالي: تبسيط hierarchy المرئية للـShell (search، branch، session/user، Open Work وbreadcrumbs) وإزالة أي صفوف/طبقات متكررة دون تغيير authority أو URLs.
 
-أعد بناء تركيب Shell على أساس `04-UX-ARCHITECTURE.md`: App switcher، current-app navigation، search، branch، session/user، Open Work وbreadcrumbs دون طبقات متكررة. ثبت App/Section/Archetype metadata في Navigation Registry، وخفّض `app-shell.scss` تحت warning budget أو وثّق استخراجاً آمناً. حافظ على URLs وWorkspace/dirty/permission authority، ثم أعد 260 tests والبناء وPlaywright RTL/LTR/theme/density/desktop/mobile.
+أكمل تركيب Shell على أساس `04-UX-ARCHITECTURE.md`: راجع الشريط العلوي وworkspace toolbar وbreadcrumbs وOpen Work كمنظومة واحدة، واجعل البحث والفرع والجلسة قابلة للوصول من دون تكرار طبقات التنقل. حافظ على URLs وWorkspace/dirty/permission authority، ولا تغيّر API أو قواعد الأعمال. أضف اختبارات مكوّن/متصفح لأي سلوك يتغير، ثم أعد Angular tests والبناء والفحوص الثابتة وPlaywright RTL/LTR/theme/density/desktop/mobile.
 
 ## FRD-D — نظام التصميم الوظيفي
 
