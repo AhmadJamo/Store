@@ -9,13 +9,17 @@ import { LocalizationService } from '../../core/localization/localization.servic
 import { FormErrorSummaryComponent } from '../../shared/forms/form-error-summary';
 import { FormFocusService } from '../../shared/forms/form-focus.service';
 import { SafeFormShortcutsDirective } from '../../shared/forms/safe-form-shortcuts.directive';
+import { FieldCueComponent } from '../../shared/forms/field-cue/field-cue';
+import { FormSectionComponent } from '../../shared/forms/form-section/form-section';
 import { ApiRecoveryComponent } from '../../shared/ui/api-recovery/api-recovery';
 import { PageHeaderComponent } from '../../shared/ui/page-header/page-header';
+import { FeedbackStateComponent } from '../../shared/ui/feedback-state/feedback-state';
+import { WorkflowFooterComponent } from '../../shared/ui/workflow-footer/workflow-footer';
 import { WorkspaceService } from '../../workspace/state/workspace.service';
 import { CustomerApiService } from './data/customer-api.service';
 import { CustomerForm, CustomerFormPage } from './data/customer.models';
 
-@Component({ selector: 'app-customer-form-page', imports: [ReactiveFormsModule, RouterLink, FormErrorSummaryComponent, SafeFormShortcutsDirective, ApiRecoveryComponent, PageHeaderComponent], templateUrl: './customer-form-page.html', styleUrl: './customers.scss', changeDetection: ChangeDetectionStrategy.OnPush })
+@Component({ selector: 'app-customer-form-page', imports: [ReactiveFormsModule, RouterLink, FormErrorSummaryComponent, SafeFormShortcutsDirective, FieldCueComponent, FormSectionComponent, ApiRecoveryComponent, PageHeaderComponent, FeedbackStateComponent, WorkflowFooterComponent], templateUrl: './customer-form-page.html', styleUrl: './customers.scss', changeDetection: ChangeDetectionStrategy.OnPush })
 export class CustomerFormPageComponent {
   protected readonly i18n = inject(LocalizationService);
   private readonly api = inject(CustomerApiService);

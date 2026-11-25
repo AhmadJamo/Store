@@ -28,6 +28,7 @@ Customers are the first complete business slice exposed through the internal API
 - FRD-G moves that list to the shared FilterBar/SummaryStrip/typed DataTable hierarchy, distinguishes true and filtered empty states, keeps safe saved-view controls and adds focused component coverage without changing its query contract.
 - Details page for profile, commercial defaults, contacts and addresses.
 - One create/edit form for the complete customer profile and future-document defaults.
+- FRD-G organizes that form with shared FormSection, FieldCue, FeedbackState and WorkflowFooter primitives; the duplicate header Cancel and hard-coded CRM eyebrow are removed while every field, option source, row version, command and recovery behavior remains intact.
 - Client validation is convenience only; server validation remains authoritative and maps Problem Details to the form.
 - Successful save clears workspace dirty state and opens details; failed save keeps the form and displays the problem.
 - Router and workspace guards require an explicit decision before abandoning dirty input.

@@ -1,13 +1,13 @@
 <section class="customer-page">
-  <app-page-header eyebrow="CRM" [title]="i18n.text(id ? 'editCustomer' : 'newCustomer')" [description]="i18n.text('customerFormDescription')"><a class="ui-button secondary" routerLink="/customers">{{ i18n.text('cancel') }}</a></app-page-header>
-  @if (!page() && !problem()) { <div class="state" aria-live="polite">{{ i18n.text('loading') }}</div> }
+  <app-page-header [eyebrow]="i18n.text('contactsNavigation')" [title]="i18n.text(id ? 'editCustomer' : 'newCustomer')" [description]="i18n.text('customerFormDescription')" />
+  @if (!page() && !problem()) { <app-feedback-state kind="loading" [title]="i18n.text('loading')" /> }
   @if (problem()) { <app-form-error-summary [title]="problem()" [errors]="fieldErrors()" (fieldRequested)="focusField($event)" /> }
   @if (recovery(); as failure) { <app-api-recovery [problem]="failure" [allowRetry]="recoveryAllowsRetry()" [sourceUrl]="latestRecordUrl()" (retry)="loadForm()" /> }
   @if (page(); as options) {
     <form appSafeFormShortcuts [saving]="saving()" (saveShortcut)="save()" [formGroup]="form" (ngSubmit)="save()" novalidate>
-      <fieldset><legend>{{ i18n.text('profile') }}</legend><div class="form-grid">
+      <app-form-section [title]="i18n.text('profile')" [description]="i18n.text('customerProfileSectionDescription')"><div class="form-grid">
         @if (id) { <label class="ui-field"><span>{{ i18n.text('customerCode') }}</span><input formControlName="customerCode" readonly /></label> }
-        <label class="ui-field"><span>{{ i18n.text('customerName') }} *</span><input formControlName="name" autocomplete="organization" />@if (errorFor('name')) { <small>{{ errorFor('name') }}</small> }</label>
+        <label class="ui-field"><app-field-cue [label]="i18n.text('customerName')" [required]="true" [requiredText]="i18n.text('requiredField')" [optionalText]="i18n.text('optionalField')" /><input formControlName="name" autocomplete="organization" />@if (errorFor('name')) { <small>{{ errorFor('name') }}</small> }</label>
         <label class="ui-field"><span>{{ i18n.text('customerType') }}</span><select formControlName="type"><option [value]="1">{{ i18n.text('company') }}</option><option [value]="2">{{ i18n.text('individual') }}</option></select></label>
         <label class="ui-field"><span>{{ i18n.text('legalName') }}</span><input formControlName="legalName" /></label>
         <label class="ui-field"><span>{{ i18n.text('phone') }}</span><input formControlName="phone" autocomplete="tel" /></label>
@@ -16,10 +16,10 @@
         <label class="ui-field"><span>{{ i18n.text('registrationNumber') }}</span><input formControlName="registrationNumber" /></label>
         <label class="ui-field"><span>{{ i18n.text('taxNumber') }}</span><input formControlName="taxNumber" /></label>
         <label class="ui-field"><span>{{ i18n.text('preferredLanguage') }}</span><select formControlName="preferredLanguage"><option value="ar-JO">العربية</option><option value="en-US">English</option></select></label>
-        <label class="ui-field"><span>{{ i18n.text('timeZone') }}</span><input formControlName="timeZoneId" /></label>
+        <label class="ui-field"><app-field-cue [label]="i18n.text('timeZone')" [required]="true" [requiredText]="i18n.text('requiredField')" [optionalText]="i18n.text('optionalField')" /><input formControlName="timeZoneId" />@if (errorFor('timeZoneId')) { <small>{{ errorFor('timeZoneId') }}</small> }</label>
         <label class="ui-field full"><span>{{ i18n.text('notes') }}</span><textarea formControlName="notes" rows="3"></textarea></label>
-      </div></fieldset>
-      <fieldset><legend>{{ i18n.text('commercialDefaults') }}</legend><p class="field-note">{{ i18n.text('optionalFieldsNote') }}</p><div class="form-grid">
+      </div></app-form-section>
+      <app-form-section [title]="i18n.text('commercialDefaults')" [description]="i18n.text('customerCommercialSectionDescription')"><div class="form-grid">
         <label class="ui-field"><span>{{ i18n.text('receivableAccount') }}</span><select formControlName="accountId"><option [ngValue]="null">{{ i18n.text('automaticOrConfigured') }}</option>@for (account of options.accounts; track account.id) { <option [ngValue]="account.id">{{ account.code }} — {{ account.name }}</option> }</select></label>
         <label class="ui-field"><span>{{ i18n.text('paymentTermDays') }}</span><input formControlName="paymentTermDays" type="number" min="0" max="3650" /></label>
         <label class="ui-field"><span>{{ i18n.text('currency') }}</span><select formControlName="preferredCurrencyCode"><option value="">—</option>@for (currency of options.currencies; track currency) { <option [value]="currency">{{ currency }}</option> }</select></label>
@@ -27,8 +27,8 @@
         <label class="ui-field"><span>{{ i18n.text('priceList') }}</span><select formControlName="defaultSalesPriceListId"><option [ngValue]="null">—</option>@for (list of options.priceLists; track list.id) { <option [ngValue]="list.id">{{ list.code }} — {{ list.name }}</option> }</select></label>
         <label class="check-field"><input formControlName="isTaxExempt" type="checkbox" /> {{ i18n.text('taxExempt') }}</label>
         @if (form.controls.isTaxExempt.value) { <label class="ui-field full"><span>{{ i18n.text('taxExemptionReason') }}</span><textarea formControlName="taxExemptionReason" rows="2"></textarea></label> }
-      </div></fieldset>
-      <footer class="form-actions"><span class="shortcut-hint">{{ i18n.text('saveShortcutHint') }}</span><a class="ui-button secondary" routerLink="/customers">{{ i18n.text('cancel') }}</a><button class="ui-button primary" type="submit" [disabled]="saving()">{{ saving() ? i18n.text('saving') : i18n.text('save') }}</button></footer>
+      </div></app-form-section>
+      <app-workflow-footer [label]="i18n.text('save')"><span secondary-actions class="shortcut-hint">{{ i18n.text('saveShortcutHint') }}</span><a secondary-actions class="ui-button secondary" routerLink="/customers">{{ i18n.text('cancel') }}</a><button class="ui-button primary" type="submit" [disabled]="saving()">{{ saving() ? i18n.text('saving') : i18n.text('save') }}</button></app-workflow-footer>
     </form>
   }
 </section>

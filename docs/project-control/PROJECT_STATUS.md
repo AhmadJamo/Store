@@ -1,5 +1,7 @@
 # حالة المشروع / Project Status
 
+> تحديث 2026-11-25: اكتملت شريحة FRD-G الثالثة: Customer Form تستخدم FormSection وFieldCue وWorkflowFooter، أزيل CRM وCancel المكرر، وبقيت كل الحقول والخيارات وdirty/concurrency/commands. نجح 277 اختباراً والبناء و140 قالب وصول و121 صفحة وPlaywright 7/7.
+
 > تحديث 2026-11-25: اكتملت شريحة FRD-G الثانية: Supplier List تستخدم FilterBar وSummaryStrip وtyped DataTable وسياق Contacts المترجم وfiltered-empty، مع بقاء includeInactive وpaging والتفضيلات. نجح 276 اختباراً والبناء و140 قالب وصول و121 صفحة وPlaywright 7/7.
 
 > تحديث 2026-11-25: اكتملت أول شريحة FRD-G: Customer List تستخدم FilterBar وSummaryStrip وtyped DataTable، أزيل CRM المكتوب يدوياً، وأضيف filtered-empty ومسح الفلاتر واختبار يحمي sort/preferences/actions. نجح 275 اختباراً والبناء و140 قالب وصول و121 صفحة وPlaywright 7/7.

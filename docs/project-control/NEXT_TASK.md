@@ -6,7 +6,7 @@
 >
 > الهدف هو نقل موجة Contacts التالية من Legacy V3 إلى نمط List/Form/Record المعتمد، بدءاً بجرد Customers وSuppliers الفعلي قبل أي تغيير بصري.
 
-اكتملت قائمتا Customers وSuppliers بالـhierarchy المشتركة واختبارات مكوّن مستقلة، مع بقاء server query وPageContext وSafeListPreferences والصلاحيات. التالي: نفّذ Customer Form فقط باستخدام FormSection وFieldCue وWorkflowFooter، أزل Cancel المكرر وCRM المكتوب يدوياً، وحافظ على كل الحقول وgenerated code وخيارات الحساب/العملة/الضريبة/قائمة السعر وdirty/concurrency/commands. لا تبدأ Supplier Form قبل كومت وبوابة كاملة.
+اكتملت القائمتان وCustomer Form؛ نموذج الزبون يستخدم FormSection وFieldCue وWorkflowFooter وسياق Contacts مترجم، مع بقاء كل الحقول والخيارات وgenerated code وdirty/concurrency/commands. التالي: نفّذ Supplier Form فقط بنفس primitives، أزل Cancel المكرر وP2P المكتوب يدوياً، وحافظ على payable-account والمنتجات المختارة بالأسماء/IDs وisActive وrowVersion وrecovery. لا تبدأ Records قبل كومت وبوابة كاملة.
 
 ## FRD-F — Products List/Form/Record Pilot
 

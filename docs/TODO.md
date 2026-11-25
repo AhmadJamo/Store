@@ -1,4 +1,5 @@
 # Project TODO
+# FRD-G Customer Form slice 3 completed (2026-11-25): shared FormSection/FieldCue/FeedbackState/WorkflowFooter and localized Contacts context preserve all fields, option sources, generated code, dirty/concurrency recovery and commands. 277 tests, build, 140 templates, 121 pages and Playwright 7/7 pass.
 # FRD-G Supplier List slice 2 completed (2026-11-25): shared FilterBar/SummaryStrip/typed DataTable, localized Contacts context, filtered-empty/reset and compact accessible actions preserve inactive filtering, paging, preferences and permissions. 276 tests, build, 140 templates, 121 pages and Playwright 7/7 pass.
 # FRD-G Customer List slice 1 completed (2026-11-25): shared FilterBar/SummaryStrip/typed DataTable, localized Contacts context, filtered-empty/reset and compact accessible actions preserve server sort, saved preferences and permissions. 275 tests, build, 140 templates, 121 pages and Playwright 7/7 pass.
 # FRD-G Contacts audit completed (2026-11-25): six Customer/Supplier List/Form/Record surfaces and their API/permission/dirty/concurrency invariants are scoped. Customer List is the first bounded slice; no runtime behavior changed.

@@ -2565,3 +2565,7 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
   - Replaced hand-built filters/table presentation with FilterBar, SummaryStrip and typed DataTable, reused the localized Contacts context and added compact accessible View/Edit actions.
   - Added distinct true-empty/filtered-empty guidance and Clear filters while preserving PageContext, safe saved-view preferences, server search/paging, inactive filtering, routes and permission gates.
   - Added focused component coverage and verified 276/276 Angular tests across 129 files, production build, 140-template accessibility, 121-page consistency and Playwright 7 passed/0 failed/3 authenticated-API skips. The pre-existing 204.88 kB initial shared-chunk warning remains open.
+- 2026-11-25: Completed the third FRD-G Customer Form slice.
+  - Adopted shared FormSection, FieldCue, FeedbackState and WorkflowFooter primitives with bilingual section guidance and localized Contacts context.
+  - Removed the duplicated header Cancel and hard-coded CRM eyebrow while preserving every profile/commercial field, option source, generated code, row version, dirty guard, validation, recovery and create/update command.
+  - Extended focused coverage and verified 277/277 Angular tests across 129 files, production build, 140-template accessibility, 121-page consistency and Playwright 7 passed/0 failed/3 authenticated-API skips. The pre-existing 204.88 kB initial shared-chunk warning remains open.
