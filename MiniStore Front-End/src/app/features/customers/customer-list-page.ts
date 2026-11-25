@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, computed, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
@@ -6,17 +6,19 @@ import { ApiErrorService } from '../../core/api/api-error.service';
 import { NormalizedApiProblem } from '../../core/api/api.models';
 import { ApiSessionService } from '../../core/api/api-session.service';
 import { LocalizationService } from '../../core/localization/localization.service';
-import { DataTableComponent } from '../../shared/ui/data-table/data-table';
+import { DataTableCellDirective, DataTableColumn, DataTableComponent, DataTableSort } from '../../shared/ui/data-table/data-table';
 import { FeedbackStateComponent } from '../../shared/ui/feedback-state/feedback-state';
 import { PageHeaderComponent } from '../../shared/ui/page-header/page-header';
 import { PagerComponent } from '../../shared/ui/pager/pager';
+import { FilterBarComponent } from '../../shared/ui/filter-bar/filter-bar';
+import { SummaryStripComponent } from '../../shared/ui/summary-strip/summary-strip';
 import { ApiRecoveryComponent } from '../../shared/ui/api-recovery/api-recovery';
-import { CustomerListPreferences, SafeListPreferencesService } from '../../shared/forms/safe-list-preferences.service';
+import { SafeListPreferencesService } from '../../shared/forms/safe-list-preferences.service';
 import { CustomerApiService } from './data/customer-api.service';
 import { CustomerListPage } from './data/customer.models';
 import { PageContextService, pageContextFields } from '../../shared/state/page-context.service';
 
-@Component({ selector: 'app-customer-list-page', imports: [RouterLink, PageHeaderComponent, FeedbackStateComponent, DataTableComponent, PagerComponent, ApiRecoveryComponent], templateUrl: './customer-list-page.html', styleUrl: './customers.scss', changeDetection: ChangeDetectionStrategy.OnPush })
+@Component({ selector: 'app-customer-list-page', imports: [RouterLink, PageHeaderComponent, FilterBarComponent, SummaryStripComponent, FeedbackStateComponent, DataTableComponent, DataTableCellDirective, PagerComponent, ApiRecoveryComponent], templateUrl: './customer-list-page.html', styleUrl: './customers.scss', changeDetection: ChangeDetectionStrategy.OnPush })
 export class CustomerListPageComponent {
   protected readonly i18n = inject(LocalizationService);
   protected readonly session = inject(ApiSessionService);
@@ -30,6 +32,15 @@ export class CustomerListPageComponent {
   protected readonly page = signal<CustomerListPage | null>(null);
   protected readonly loading = signal(true);
   protected readonly problem = signal<NormalizedApiProblem | null>(null);
+  protected readonly tableColumns = computed<readonly DataTableColumn[]>(() => [
+    { key: 'code', header: this.i18n.text('customerCode'), kind: 'code', sortable: true, width: '8rem' },
+    { key: 'name', header: this.i18n.text('customerName'), sortable: true, width: '30%' },
+    { key: 'contact', header: this.i18n.text('contact'), width: '13rem' },
+    { key: 'accountName', header: this.i18n.text('receivableAccount'), width: '14rem' },
+    { key: 'status', header: this.i18n.text('status'), kind: 'status', sortable: true, width: '7rem' },
+    { key: 'actions', header: this.i18n.text('actions'), kind: 'actions', width: '5.5rem' },
+  ]);
+  protected readonly tableSort = computed<DataTableSort>(() => ({ key: this.query.sortBy, direction: this.query.sortDescending ? 'desc' : 'asc' }));
   private readonly contextSchema = {
     defaults: { page: 1, search: '', ...this.preferences.loadCustomers() },
     fields: {
@@ -51,7 +62,11 @@ export class CustomerListPageComponent {
   }
   protected search(value: string): void { this.searchChanges.next(value.trim()); }
   protected includeArchived(value: boolean): void { this.update({ ...this.query, includeArchived: value, page: 1 }); }
-  protected sort(sortBy: CustomerListPreferences['sortBy']): void { this.update({ ...this.query, sortDescending: this.query.sortBy === sortBy ? !this.query.sortDescending : false, sortBy, page: 1 }); }
+  protected sort(sort: DataTableSort): void { this.update({ ...this.query, sortBy: sort.key as 'code' | 'name' | 'status', sortDescending: sort.direction === 'desc', page: 1 }); }
+  protected hasFilters(): boolean { return !!this.query.search || this.query.includeArchived; }
+  protected clearFilters(): void { this.update({ ...this.query, page: 1, search: '', includeArchived: false }); }
+  protected emptyTitle(): string { return this.i18n.text(this.hasFilters() ? 'filteredCustomersEmpty' : 'noCustomers'); }
+  protected emptyDescription(): string { return this.i18n.text(this.hasFilters() ? 'filteredCustomersEmptyDescription' : 'noCustomersDescription'); }
   protected saveView(): void { this.preferences.saveCustomers(this.query); }
   protected resetView(): void { this.preferences.reset('customers'); this.update({ page: 1, search: '', ...this.preferences.loadCustomers() }); }
   protected move(page: number): void { if (page >= 1 && page <= (this.page()?.totalPages ?? 1)) this.update({ ...this.query, page }); }

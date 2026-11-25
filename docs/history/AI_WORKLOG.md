@@ -2557,3 +2557,7 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
   - Inventoried six List/Form/Record surfaces, routes, API clients, permissions, page-context/preferences, dirty guards and concurrency behavior.
   - Confirmed the principal V3 gaps: hand-built filters/tables/cards/fieldsets, hard-coded CRM/P2P eyebrows, duplicated form actions, no filtered-empty distinction and no Customer/Supplier list component coverage.
   - Approved Customer List as the first bounded slice before Supplier List, Forms and Records; recorded the invariants and exit criteria in `docs/frontend-redesign/14-CONTACTS-MIGRATION-AUDIT.md`. No runtime behavior changed.
+- 2026-11-25: Completed the first FRD-G Customer List slice.
+  - Replaced hand-built filters/table presentation with FilterBar, SummaryStrip and typed DataTable, localized the Contacts context and added compact accessible View/Edit actions.
+  - Added distinct true-empty/filtered-empty guidance and Clear filters while preserving PageContext, safe saved-view preferences, server search/sort/paging, routes and permission gates.
+  - Added focused component coverage and verified 275/275 Angular tests across 128 files, production build, 140-template accessibility, 121-page consistency and Playwright 7 passed/0 failed/3 authenticated-API skips. The pre-existing 204.88 kB initial shared-chunk warning remains open.

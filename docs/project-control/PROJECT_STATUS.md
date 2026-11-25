@@ -1,5 +1,7 @@
 # حالة المشروع / Project Status
 
+> تحديث 2026-11-25: اكتملت أول شريحة FRD-G: Customer List تستخدم FilterBar وSummaryStrip وtyped DataTable، أزيل CRM المكتوب يدوياً، وأضيف filtered-empty ومسح الفلاتر واختبار يحمي sort/preferences/actions. نجح 275 اختباراً والبناء و140 قالب وصول و121 صفحة وPlaywright 7/7.
+
 > تحديث 2026-11-25: اكتمل جرد FRD-G Contacts. ثُبتت ستة أسطح Customers/Suppliers وعقودها وفجوات V3، واعتمد Customer List كأول slice محدود قبل Supplier List ثم Forms/Records. لا تغيير كود أو API في خطوة الجرد.
 
 > تحديث 2026-11-25: أُغلقت FRD-F وأصبحت Products أول وحدة V4 مهاجرة: List/Form/Record موثقة ببحث الاسم/الرمز/الباركود وعقود CRUD والصلاحيات. نجح 274 اختباراً والبناء و140 قالب وصول و121 صفحة وPlaywright 7/7 و1,668 فحص أمني؛ بقيت 3 اختبارات API حي متجاوزة بوضوح لغياب بيئة مصادق عليها.

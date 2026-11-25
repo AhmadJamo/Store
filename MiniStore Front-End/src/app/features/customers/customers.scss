@@ -1,6 +1,8 @@
 .customer-page { display: grid; gap: var(--erp-space-5); max-width: 90rem; margin-inline: auto; }
 .header-actions, .row-actions, .form-actions { display: flex; gap: var(--erp-space-2); align-items: center; }
 .ui-button { display: inline-flex; align-items: center; text-decoration: none; }
+app-filter-bar label { display: grid; gap: .3rem; } app-filter-bar input[type="search"] { min-width: min(28rem, 80vw); }
+.row-actions { justify-content: flex-end; gap: .25rem; } .row-action { display: grid; place-items: center; width: 2rem; min-height: 2rem; border-radius: var(--erp-radius-sm); color: var(--erp-color-text-muted); text-decoration: none; } .row-action:hover, .row-action:focus-visible { color: var(--erp-color-primary); background: var(--erp-color-surface-muted); } .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
 .filters { display: grid; grid-template-columns: minmax(15rem, 32rem) auto 1fr; align-items: end; gap: var(--erp-space-4); padding: var(--erp-card-padding); border: 1px solid var(--erp-color-border); border-radius: var(--erp-radius-md); background: var(--erp-color-surface); }.filter-actions { display: flex; justify-content: end; gap: var(--erp-space-2); }
 .check-field { display: flex; align-items: center; gap: var(--erp-space-2); min-height: var(--erp-control-height); }
 .validation-summary { display: grid; gap: var(--erp-space-2); padding: var(--erp-space-5); border: 1px dashed var(--erp-color-danger-border); border-radius: var(--erp-radius-md); color: var(--erp-color-danger); background: var(--erp-color-danger-soft); }

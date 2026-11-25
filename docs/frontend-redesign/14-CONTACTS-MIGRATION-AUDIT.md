@@ -8,7 +8,7 @@
 
 | Surface | Routes | Current behavior | Main presentation gap |
 |---|---|---|---|
-| Customer List | `/customers` | Server search, archived filter, server sort, paging and safe saved-view preferences | Hand-built filters/table, hard-coded `CRM`, no filtered-empty distinction or component spec |
+| Customer List | `/customers` | Server search, archived filter, server sort, paging and safe saved-view preferences | FRD-G slice 1 complete: shared FilterBar/SummaryStrip/typed DataTable, localized context, filtered-empty and component spec |
 | Customer Form | `/customers/new`, `/customers/:id/edit` | Create/update, generated code, receivable and commercial options, row-version recovery and dirty guard | Raw fieldsets, duplicated Cancel, raw required marker and custom footer |
 | Customer Record | `/customers/:id` | Profile, commercial defaults, contacts, addresses and permission-aware Edit | Generic cards, no record context/status badge and no recovery retry |
 | Supplier List | `/suppliers` | Server search, inactive filter, paging and safe saved-view preferences | Hand-built filters/table, hard-coded `P2P`, no filtered-empty distinction or component spec |
@@ -28,7 +28,7 @@
 
 ## Migration order
 
-1. Customer List: adopt FilterBar, SummaryStrip and typed DataTable; localize the application eyebrow; add filtered-empty/reset behavior and focused coverage while preserving sort and saved-view behavior.
+1. Customer List: COMPLETE — FilterBar, SummaryStrip and typed DataTable adopted; application eyebrow localized; filtered-empty/reset behavior and focused coverage preserve sort and saved-view behavior.
 2. Supplier List: reuse the proven list hierarchy while preserving inactive filtering, paging and preferences.
 3. Customer Form, then Supplier Form: adopt FormSection, FieldCue and WorkflowFooter without changing commands or conditional fields.
 4. Customer Record, then Supplier Record: adopt DetailSection and record context without inventing metrics or actions.

@@ -25,6 +25,7 @@ Customers are the first complete business slice exposed through the internal API
 
 - Permission-aware Customers navigation entry.
 - Responsive server-paged list with search, archive inclusion and safe supported sorting.
+- FRD-G moves that list to the shared FilterBar/SummaryStrip/typed DataTable hierarchy, distinguishes true and filtered empty states, keeps safe saved-view controls and adds focused component coverage without changing its query contract.
 - Details page for profile, commercial defaults, contacts and addresses.
 - One create/edit form for the complete customer profile and future-document defaults.
 - Client validation is convenience only; server validation remains authoritative and maps Problem Details to the form.

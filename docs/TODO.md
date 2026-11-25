@@ -1,4 +1,5 @@
 # Project TODO
+# FRD-G Customer List slice 1 completed (2026-11-25): shared FilterBar/SummaryStrip/typed DataTable, localized Contacts context, filtered-empty/reset and compact accessible actions preserve server sort, saved preferences and permissions. 275 tests, build, 140 templates, 121 pages and Playwright 7/7 pass.
 # FRD-G Contacts audit completed (2026-11-25): six Customer/Supplier List/Form/Record surfaces and their API/permission/dirty/concurrency invariants are scoped. Customer List is the first bounded slice; no runtime behavior changed.
 # FRD-F completed (2026-11-25): Products List/Form/Record is the first migrated V4 module with documented search/barcode/CRUD/permission parity. 274 tests, build, 140 templates, 121 pages, Playwright 7/7 and 1,668 security checks pass; live authenticated API checks remain explicitly external.
 # FRD-F Product Form slice 2 completed (2026-11-25): bilingual section descriptions and field-addressable cross-field validation replace generic failures for weight, dimensions, tracking and expense account rules. 274 tests, build, 140 templates, 121 pages and Playwright 7/7 pass.

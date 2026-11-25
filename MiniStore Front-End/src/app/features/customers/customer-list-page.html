@@ -1,11 +1,28 @@
-<section class="customer-page" aria-labelledby="customers-title">
-  <app-page-header eyebrow="CRM" [title]="i18n.text('customersTitle')" [description]="i18n.text('customersDescription')">@if (session.can('Customers.Create')) { <a class="ui-button primary" routerLink="/customers/new">{{ i18n.text('newCustomer') }}</a> }</app-page-header>
-  <div class="filters"><label class="ui-field"><span>{{ i18n.text('searchCustomers') }}</span><input #searchBox type="search" [value]="query.search" (input)="search(searchBox.value)" [placeholder]="i18n.text('searchCustomersPlaceholder')" /></label><label class="check-field"><input #archived type="checkbox" [checked]="query.includeArchived" (change)="includeArchived(archived.checked)" /> {{ i18n.text('includeArchived') }}</label><div class="filter-actions"><button class="ui-button secondary" type="button" (click)="saveView()">{{ i18n.text('saveView') }}</button><button class="ui-button secondary" type="button" (click)="resetView()">{{ i18n.text('resetView') }}</button></div></div>
+<section class="customer-page">
+  <app-page-header [eyebrow]="i18n.text('contactsNavigation')" [title]="i18n.text('customersTitle')" [description]="i18n.text('customersDescription')">
+    @if (session.can('Customers.Create')) { <a primary-actions class="ui-button primary" routerLink="/customers/new">{{ i18n.text('newCustomer') }}</a> }
+  </app-page-header>
+  <app-filter-bar [label]="i18n.text('searchCustomers')">
+    <label><span>{{ i18n.text('searchCustomers') }}</span><input #searchBox type="search" [value]="query.search" (input)="search(searchBox.value)" [placeholder]="i18n.text('searchCustomersPlaceholder')" /></label>
+    <label class="check-field"><input #archived type="checkbox" [checked]="query.includeArchived" (change)="includeArchived(archived.checked)" /> {{ i18n.text('includeArchived') }}</label>
+    @if (hasFilters()) { <button filter-actions class="ui-button secondary" type="button" (click)="clearFilters()">{{ i18n.text('clearFilters') }}</button> }
+    <button filter-actions class="ui-button secondary" type="button" (click)="saveView()">{{ i18n.text('saveView') }}</button>
+    <button filter-actions class="ui-button secondary" type="button" (click)="resetView()">{{ i18n.text('resetView') }}</button>
+  </app-filter-bar>
   @if (loading()) { <app-feedback-state kind="loading" [title]="i18n.text('loading')" /> }
   @else if (problem(); as failure) { <app-api-recovery [problem]="failure" (retry)="load()" /> }
   @else if (page(); as result) {
-    @if (result.items.length === 0) { <app-feedback-state kind="empty" [title]="i18n.text('noCustomers')" [description]="i18n.text('noCustomersDescription')" /> }
-    @else { <app-data-table [label]="i18n.text('customersTitle')"><table><thead><tr><th><button type="button" (click)="sort('code')">{{ i18n.text('customerCode') }}</button></th><th><button type="button" (click)="sort('name')">{{ i18n.text('customerName') }}</button></th><th>{{ i18n.text('contact') }}</th><th>{{ i18n.text('receivableAccount') }}</th><th><button type="button" (click)="sort('status')">{{ i18n.text('status') }}</button></th><th>{{ i18n.text('actions') }}</th></tr></thead><tbody>@for (customer of result.items; track customer.id) { <tr><td><code>{{ customer.customerCode }}</code></td><td><strong>{{ customer.name }}</strong><span>{{ customer.type === 1 ? i18n.text('company') : i18n.text('individual') }}</span></td><td>{{ customer.phone || customer.email || '—' }}</td><td>{{ customer.accountName }}</td><td><span class="ui-badge" [class.success]="customer.isActive" [class.warning]="!customer.isActive">{{ customer.isActive ? i18n.text('active') : i18n.text('archived') }}</span></td><td class="row-actions"><a [routerLink]="['/customers', customer.id]">{{ i18n.text('view') }}</a>@if (session.can('Customers.Edit')) { <a [routerLink]="['/customers', customer.id, 'edit']">{{ i18n.text('edit') }}</a> }</td></tr> }</tbody></table></app-data-table> }
+    <app-summary-strip [label]="i18n.text('customersTitle')" [items]="[
+      { label: i18n.text('totalRecords'), value: result.totalCount },
+      { label: i18n.text('status'), value: query.includeArchived ? i18n.text('includingArchived') : i18n.text('activeCustomers') }
+    ]" />
+    <app-data-table [label]="i18n.text('customersTitle')" [columns]="tableColumns()" [rows]="result.items" [sort]="tableSort()" (sortChange)="sort($event)" [emptyTitle]="emptyTitle()" [emptyDescription]="emptyDescription()">
+      <ng-template appDataCell="code" let-customer><code>{{ customer.customerCode }}</code></ng-template>
+      <ng-template appDataCell="name" let-customer><strong><a [routerLink]="['/customers', customer.id]">{{ customer.name }}</a></strong><span>{{ customer.type === 1 ? i18n.text('company') : i18n.text('individual') }}</span></ng-template>
+      <ng-template appDataCell="contact" let-customer>{{ customer.phone || customer.email || '—' }}</ng-template>
+      <ng-template appDataCell="status" let-customer><span class="ui-badge" [class.success]="customer.isActive" [class.warning]="!customer.isActive">{{ customer.isActive ? i18n.text('active') : i18n.text('archived') }}</span></ng-template>
+      <ng-template appDataCell="actions" let-customer><div class="row-actions"><a class="row-action" [routerLink]="['/customers', customer.id]" [attr.aria-label]="i18n.text('view')" [title]="i18n.text('view')"><span aria-hidden="true">↗</span><span class="sr-only">{{ i18n.text('view') }}</span></a>@if (session.can('Customers.Edit')) { <a class="row-action" [routerLink]="['/customers', customer.id, 'edit']" [attr.aria-label]="i18n.text('edit')" [title]="i18n.text('edit')"><span aria-hidden="true">✎</span><span class="sr-only">{{ i18n.text('edit') }}</span></a> }</div></ng-template>
+    </app-data-table>
     <app-pager [page]="result.query.page" [totalPages]="result.totalPages" [totalCount]="result.totalCount" [totalLabel]="i18n.text('totalRecords')" [previousLabel]="i18n.text('previous')" [nextLabel]="i18n.text('next')" (pageChange)="move($event)" />
   }
 </section>
