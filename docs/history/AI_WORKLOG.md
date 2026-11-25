@@ -2584,3 +2584,7 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
   - Replaced generic cards with two DetailSections, removed hard-coded P2P and added localized Contacts context with active state and assigned-product count.
   - Preserved profile, commercial defaults, Suppliers.Edit and routes; added normalized recovery retry and focused hierarchy/retry coverage. No supplier code was invented because the API contract exposes none.
   - Verified 282/282 Angular tests across 131 files, production build, 141-template accessibility, 121-page consistency and Playwright 7 passed/0 failed/3 authenticated-API skips. The pre-existing 204.88 kB initial shared-chunk warning remains open.
+- 2026-11-25: Closed FRD-G and classified Customers/Suppliers as migrated V4 Contacts surfaces.
+  - Recorded List/Form/Record parity for queries, paging/filtering, account/product name selections with internal IDs, dirty/concurrency recovery, View/Create/Edit permissions, antiforgery, bilingual RTL/LTR and responsive presentation.
+  - Verified 282/282 Angular tests across 131 files, production build, 141-template accessibility, 121-page consistency, Playwright 7 passed/0 failed/3 authenticated-API skips and 1,668 SecurityRegression checks in Release configuration.
+  - Stored machine-readable browser evidence and the explicit live-API limitation in `docs/frontend-redesign/acceptance/contacts-pilot-2026-11-25/`; advanced the active gate to a bounded Branches/Warehouses audit.

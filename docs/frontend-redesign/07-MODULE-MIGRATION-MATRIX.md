@@ -29,7 +29,7 @@
 | Shell / Launcher | Verified | Verified | FRD-E complete | Existing | 270 + Playwright 7/7 | Verified |
 | Design System | Verified | Contract v1 | FRD-D complete | N/A | 260 + Playwright 6/6 | Verified |
 | Products / Catalog | Audited | Verified | FRD-F List/Form/Record | Verified current APIs and permissions | 274 + security 1,668 + Playwright 7/7 | Migrated — `acceptance/products-pilot-2026-11-25/` |
-| Contacts | Audited | Scoped | Lists + both Forms + both Records | Verified current APIs | 282 + focused specs + Playwright 7/7 | FRD-G — final parity/permission gate next |
+| Contacts | Audited | Verified | FRD-G List/Form/Record | Verified current APIs and permissions | 282 + security 1,668 + Playwright 7/7 | Migrated — `acceptance/contacts-pilot-2026-11-25/` |
 | Branches / Warehouses | Audited | Planned | Legacy V3 | Verified | existing specs | Planned wave 3 |
 | Inventory | Audited | Planned | Legacy V3 | Verified | existing specs | Planned wave 4 |
 | Purchases | Audited | Planned | Legacy V3 | Verified | existing specs | Planned wave 5 |

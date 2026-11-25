@@ -1,5 +1,7 @@
 # حالة المشروع / Project Status
 
+> تحديث 2026-11-25: أُغلق FRD-G وصُنفت Customers/Suppliers كأسطح V4 مهاجرة. نجح 282 اختباراً والبناء و141 قالب وصول و121 صفحة وPlaywright 7/7 و1,668 فحصاً أمنياً. الدليل في `docs/frontend-redesign/acceptance/contacts-pilot-2026-11-25/`، والخطوة التالية جرد Branches/Warehouses.
+
 > تحديث 2026-11-25: اكتملت شريحة FRD-G السادسة: Supplier Record تستخدم PageHeader context وDetailSection، أزيل P2P وتظهر الحالة وعدد المنتجات مع recovery retry، وبقيت profile/commercial وSuppliers.Edit. لا يوجد supplier code في العقد فلم يُخترع. نجح 282 اختباراً والبناء و141 قالب وصول و121 صفحة وPlaywright 7/7.
 
 > تحديث 2026-11-25: اكتملت شريحة FRD-G الخامسة: Customer Record تستخدم PageHeader context وDetailSection، تعرض status/type/code وتحافظ على profile/commercial/contacts/addresses وCustomers.Edit مع recovery retry. نجح 280 اختباراً والبناء و141 قالب وصول و121 صفحة وPlaywright 7/7.

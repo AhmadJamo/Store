@@ -1,12 +1,16 @@
 # المهمة التالية الوحيدة / Next Task
 
+## FRD-H — Branches/Warehouses Audit
+
+> الحالة: APPROVED NEXT — يبدأ بعد إغلاق FRD-G في 2026-11-25
+>
+> الهدف: جرد أسطح Branches وWarehouses الفعلية وعقود API والصلاحيات والاختيار بالاسم والـbranch scope قبل أي تغيير بصري. وثّق List/Form/Record/Picker gaps وحدد أول slice محدود فقط؛ لا تنفّذ bulk restyle ولا تغيّر business rules أو schema.
+
 ## FRD-G — Contacts Customers/Suppliers Pilot
 
-> الحالة: IN PROGRESS — بدأ بعد إغلاق FRD-F في 2026-11-25
+> الحالة: COMPLETE — أُغلق في 2026-11-25
 >
-> الهدف هو نقل موجة Contacts التالية من Legacy V3 إلى نمط List/Form/Record المعتمد، بدءاً بجرد Customers وSuppliers الفعلي قبل أي تغيير بصري.
-
-اكتملت القائمتان والنموذجان والسجلان باستخدام primitives المشتركة، وبقيت العقود والصلاحيات والبيانات كما هي؛ لم يُخترع supplier code غير موجود في العقد. التالي: نفّذ بوابة إغلاق FRD-G فقط: parity للصلاحيات والـroutes والبيانات، SecurityRegression، وثّق حدود live authenticated API، وأنشئ evidence نهائي قبل اختيار الموجة التالية.
+> Customers وSuppliers مهاجران إلى List/Form/Record V4 مع بقاء العقود والصلاحيات والبيانات. الدليل في `docs/frontend-redesign/acceptance/contacts-pilot-2026-11-25/`: 282 اختباراً، build، 141 قالب وصول، 121 صفحة، Playwright 7/7 و1,668 فحصاً أمنياً. لا يوجد ادعاء live authenticated API E2E جديد.
 
 ## FRD-F — Products List/Form/Record Pilot
 

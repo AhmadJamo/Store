@@ -1,6 +1,6 @@
 # 14 — Contacts Customers/Suppliers migration audit
 
-> Status: FRD-G implementation complete — final parity and permission acceptance next
+> Status: COMPLETE — FRD-G closed 2026-11-25
 > Date: 2026-11-25
 > Source of truth: Angular components, API clients, Application services, API controllers and existing regression coverage
 
@@ -33,7 +33,7 @@
 3. Customer and Supplier Forms: COMPLETE — FormSection, FieldCue and WorkflowFooter adopted without changing commands, option identities or conditional fields.
 4. Customer Record: COMPLETE — DetailSection and record context adopted with recovery retry while retaining all facts and Customers.Edit.
 5. Supplier Record: COMPLETE — DetailSection and record context adopted with recovery retry while retaining all facts and Suppliers.Edit; no nonexistent supplier code was invented.
-6. Run parity and permission acceptance for both surfaces, record the live-API limitation explicitly, then close FRD-G.
+6. COMPLETE — parity, permission and presentation acceptance recorded in `acceptance/contacts-pilot-2026-11-25/`; live authenticated API checks remain explicitly external.
 
 ## First slice decision
 

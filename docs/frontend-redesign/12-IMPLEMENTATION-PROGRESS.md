@@ -1,7 +1,7 @@
 # 12 — تقدم إعادة بناء Frontend
 
 > آخر تحديث: 2026-11-25
-> الحالة العامة: Products pilot verified; Contacts wave next
+> الحالة العامة: Products and Contacts pilots verified; Branches/Warehouses audit next
 > المصدر: الكود، الاختبارات، وثائق المشروع، والمراجع الرسمية التي تم التحقق منها
 
 ## بوابات المراحل
@@ -13,10 +13,10 @@
 | C — UX Architecture | Verified | `04-UX-ARCHITECTURE.md` + `06-NAVIGATION-AND-ROUTES.md` + route coverage | مغلقة |
 | D — Design System | Verified | 260 tests + build + static gates + Playwright 6/6 | مغلقة |
 | E — Application Shell | Verified | 10-App metadata + App Switcher + navigation/context/account hierarchy | مغلقة |
-| F — Core Views | Verified pilot | Products List/Form/Record + acceptance record | Contacts wave |
-| G — Module Migration | In Progress | Products migrated | Contacts audit then bounded pilot |
+| F — Core Views | Verified pilots | Products and Contacts List/Form/Record + acceptance records | Branches/Warehouses wave |
+| G — Module Migration | In Progress | Products and Contacts migrated | Branches/Warehouses audit then bounded pilot |
 | H — POS Reconstruction | Not Started | — | بعد core patterns |
-| I — System Quality | In Progress continuously | 274 tests/build/140-template gate + security 1,668 + Playwright 7/7 | authenticated workflow E2E لاحقاً |
+| I — System Quality | In Progress continuously | 282 tests/build/141-template gate + security 1,668 + Playwright 7/7 | authenticated workflow E2E لاحقاً |
 | J — Cleanup & Handover | Not Started | — | بعد اكتمال routes |
 
 ## تقدم الوحدات
@@ -25,7 +25,7 @@
 |---|---|---|---|---|---|---|
 | Shell / Launcher | Verified research | Verified | FRD-E complete | Existing contracts | 270 + Playwright 7/7 | Verified |
 | Products | Audited | Verified | FRD-F List/Form/Record | Verified contracts/permissions | 274 + security 1,668 + Playwright 7/7 | Migrated |
-| Customers / Suppliers | Audited | Planned | Legacy V3 | Verified | Existing specs | Next wave |
+| Customers / Suppliers | Audited | Verified | FRD-G List/Form/Record | Verified contracts/permissions | 282 + security 1,668 + Playwright 7/7 | Migrated |
 | Sales | Not Started | Not Started | Legacy V3 | Verified | Existing specs | Planned |
 | Purchases | Not Started | Not Started | Legacy V3 | Verified | Existing specs | Planned |
 | Inventory | Not Started | Not Started | Legacy V3 | Verified | Existing specs | Planned |
@@ -44,10 +44,11 @@
 | 03cd6fa | functional design-system slice | 259 tests/build/accessibility/consistency passed |
 | c93406e | FRD-E Application Shell close | 270 tests/build/static/Playwright passed |
 | 52f749a + 142324a | FRD-F Product Record/Form completion | 274 tests/build/static/Playwright passed |
+| 7a9df93 + face230 | FRD-G Customer/Supplier Records completion | 282 tests/build/static/security/Playwright passed |
 
 ## قيود حالية
 
 - أُغلق Odoo Research على مرجع 19.0 الرسمي؛ تعذّر توثيق 20.0 بسبب Timeout ولا تُنسب إليه خصائص غير متحققة.
 - أُغلق Design System وApplication Shell بعد القبول البصري؛ اكتملت App metadata وApp Switcher وcurrent-app navigation وSection/Archetype metadata وقائمة الحساب/الفرع، وأُغلق Shell SCSS warning بالاستخراج المحصور.
 - أضيفت أربع concept mockups كاتجاه بصري، وثُبت baseline قبول Design System الفعلي في `acceptance/design-system-2026-11-24/`.
-- Products هي أول وحدة أعمال مصنفة Migrated إلى V4؛ يبقى تكامل API حي مصادق عليه بوابة منفصلة عند توفر environment/state خارجيين.
+- Products وContacts هما وحدتا الأعمال المصنفتان Migrated إلى V4؛ يبقى تكامل API حي مصادق عليه بوابة منفصلة عند توفر environment/state خارجيين.
