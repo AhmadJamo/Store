@@ -2573,3 +2573,6 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
   - Adopted shared FormSection, FieldCue and WorkflowFooter primitives with bilingual section guidance and localized Contacts context.
   - Removed the duplicated header Cancel and hard-coded P2P eyebrow while preserving every profile/commercial field, payable-account and named-product ID selection, active state, row version, dirty guard, validation, concurrency recovery and create/update command.
   - Extended focused coverage and verified 278/278 Angular tests across 129 files, production build, 140-template accessibility, 121-page consistency and Playwright 7 passed/0 failed/3 authenticated-API skips. The pre-existing 204.88 kB initial shared-chunk warning remains open.
+- 2026-11-25: Closed the external-style policy gap in the shared toast outlet.
+  - Extracted the toast template and logical RTL-safe styles from the component decorator into dedicated HTML and SCSS files without changing the bounded queue, localization, dismissal or AppShell hosting behavior.
+  - Verified the external SCSS policy, production build and 141-template static accessibility gate. The pre-existing 204.88 kB initial shared-chunk warning remains open.

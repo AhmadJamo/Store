@@ -1,0 +1,12 @@
+<section class="toast-region" aria-live="assertive" aria-atomic="false">
+  @for (message of toasts.messages(); track message.id) {
+    <article class="toast" [class]="message.kind" role="alert">
+      <div>
+        <strong>{{ message.title }}</strong>
+        @if (message.detail) { <p>{{ message.detail }}</p> }
+        @if (message.correlationId) { <small>{{ i18n.text('supportReference') }}: {{ message.correlationId }}</small> }
+      </div>
+      <button type="button" (click)="toasts.dismiss(message.id)" [attr.aria-label]="i18n.text('close')">×</button>
+    </article>
+  }
+</section>
