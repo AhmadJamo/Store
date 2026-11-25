@@ -36,5 +36,17 @@ describe('ProductListPageComponent', () => {
     expect(clear.textContent).toContain('clearFilters');
     clear.click();
     expect(replace).toHaveBeenCalledWith('products-list', expect.anything(), expect.anything(), { page: 1, search: '', isActive: undefined });
+
+    (fixture.componentInstance as any).page.set({
+      query: { page: 1, pageSize: 25, sortBy: 'name', sortDescending: false },
+      items: [{ id: 4, productCode: 'P-004', name: 'Coffee', barcode: '1234', salePrice: 2, isActive: true }],
+      totalCount: 1,
+      totalPages: 1,
+      categories: [],
+    });
+    fixture.detectChanges();
+    const actions = fixture.nativeElement.querySelectorAll('.row-action') as NodeListOf<HTMLAnchorElement>;
+    expect(actions).toHaveLength(3);
+    expect([...actions].map(action => action.getAttribute('aria-label'))).toEqual(['view', 'edit', 'attributes']);
   });
 });

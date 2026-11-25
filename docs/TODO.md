@@ -1,4 +1,5 @@
 # Project TODO
+# FRD-F Products List slice 3 completed (2026-11-25): stable column widths and compact accessible row actions preserve View/Edit/Attributes and permission behavior. 271 tests, build, 140 templates, 121 pages and Playwright 7/7 pass. Product Form is next.
 # FRD-F Products List slice 2 completed (2026-11-25): true empty and filtered-empty states are distinct, and Clear filters restores the allowlisted PageContext defaults without changing server-side search. 271 tests, build, 140 templates, 121 pages and Playwright 7/7 pass.
 # FRD-F Products List slice 1 completed (2026-11-25): six secondary catalog destinations are consolidated in one localized menu and Add Product remains the sole primary action. 271 tests, build, 140 templates, 121 pages and Playwright 7/7 pass.
 # FRD-E completed (2026-11-25): branch, company, user and sign-out now share one contextual account menu while search remains directly available. The planned Application Shell layers are complete; 270 tests, build, 140 templates, 121 pages and Playwright 7/7 pass. Products pilot is next.

@@ -31,13 +31,13 @@ export class ProductListPageComponent {
   protected readonly loading = signal(true);
   protected readonly problem = signal<NormalizedApiProblem | null>(null);
   protected readonly tableColumns = computed<readonly DataTableColumn[]>(() => [
-    { key: 'productCode', header: this.i18n.text('productCode'), kind: 'code' },
-    { key: 'name', header: this.i18n.text('productName') },
-    { key: 'category', header: this.i18n.text('category') },
-    { key: 'salePrice', header: this.i18n.text('salePrice'), kind: 'number' },
-    { key: 'channels', header: this.i18n.text('channels') },
-    { key: 'status', header: this.i18n.text('status'), kind: 'status' },
-    { key: 'actions', header: this.i18n.text('actions'), kind: 'actions' },
+    { key: 'productCode', header: this.i18n.text('productCode'), kind: 'code', width: '8rem' },
+    { key: 'name', header: this.i18n.text('productName'), width: '32%' },
+    { key: 'category', header: this.i18n.text('category'), width: '12rem' },
+    { key: 'salePrice', header: this.i18n.text('salePrice'), kind: 'number', width: '8rem' },
+    { key: 'channels', header: this.i18n.text('channels'), width: '8rem' },
+    { key: 'status', header: this.i18n.text('status'), kind: 'status', width: '7rem' },
+    { key: 'actions', header: this.i18n.text('actions'), kind: 'actions', width: '7.5rem' },
   ]);
   private readonly contextSchema = {
     defaults: { page: 1, search: '', isActive: undefined as boolean | undefined },

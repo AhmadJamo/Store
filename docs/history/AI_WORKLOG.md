@@ -2533,3 +2533,7 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
   - Distinguished the true empty catalog from filtered-empty results with bilingual guidance and a Clear filters action.
   - Reset filters through the existing allowlisted PageContext defaults; server-side search, paging, routes, permissions and API contracts remain unchanged.
   - Verified 271/271 Angular tests across 126 files, production build, 140-template accessibility, 121-page consistency and Playwright 7 passed/0 failed/3 authenticated-API skips.
+- 2026-11-25: Completed the third FRD-F Products List slice.
+  - Stabilized column widths and replaced verbose row-action text with compact accessible icon links.
+  - Preserved View/Edit/Attributes routes and Products.Edit visibility; no API, permission or business rule changed.
+  - Verified 271/271 Angular tests, production build, 140-template accessibility, 121-page consistency and Playwright 7 passed/0 failed/3 authenticated-API skips.
