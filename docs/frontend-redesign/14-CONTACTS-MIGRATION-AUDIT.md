@@ -1,0 +1,47 @@
+# 14 — Contacts Customers/Suppliers migration audit
+
+> Status: Approved FRD-G scope
+> Date: 2026-11-25
+> Source of truth: Angular components, API clients, Application services, API controllers and existing regression coverage
+
+## Current surfaces
+
+| Surface | Routes | Current behavior | Main presentation gap |
+|---|---|---|---|
+| Customer List | `/customers` | Server search, archived filter, server sort, paging and safe saved-view preferences | Hand-built filters/table, hard-coded `CRM`, no filtered-empty distinction or component spec |
+| Customer Form | `/customers/new`, `/customers/:id/edit` | Create/update, generated code, receivable and commercial options, row-version recovery and dirty guard | Raw fieldsets, duplicated Cancel, raw required marker and custom footer |
+| Customer Record | `/customers/:id` | Profile, commercial defaults, contacts, addresses and permission-aware Edit | Generic cards, no record context/status badge and no recovery retry |
+| Supplier List | `/suppliers` | Server search, inactive filter, paging and safe saved-view preferences | Hand-built filters/table, hard-coded `P2P`, no filtered-empty distinction or component spec |
+| Supplier Form | `/suppliers/new`, `/suppliers/:id/edit` | Create/update, payable-account and named-product selection, row-version recovery and dirty guard | Raw fieldsets, duplicated Cancel, raw required markers and custom footer |
+| Supplier Record | `/suppliers/:id` | Profile, commercial defaults, assigned-product count and permission-aware Edit | Generic cards, hard-coded `P2P` and no recovery retry |
+
+## Contracts that must not change
+
+- Customer reads/create/edit remain separated by `Customers.View`, `Customers.Create` and `Customers.Edit`.
+- Supplier reads/create/edit remain separated by `Suppliers.View`, `Suppliers.Create` and `Suppliers.Edit`.
+- Server search, paging, customer sorting, archived/inactive filters and page-context allowlists remain authoritative.
+- Saved list preferences remain limited to approved view fields; search text is not persisted.
+- Customer receivable accounts, currencies, tax rates and price lists remain name/code selections with internal IDs.
+- Supplier payable accounts and product assignments remain name/code selections with internal IDs.
+- Row versions, concurrency recovery, dirty guards, tenant scope, validation and mutation protection remain unchanged.
+- No delete/archive capability is invented by the redesign. Customer archived state and Supplier active state continue to follow existing Application behavior.
+
+## Migration order
+
+1. Customer List: adopt FilterBar, SummaryStrip and typed DataTable; localize the application eyebrow; add filtered-empty/reset behavior and focused coverage while preserving sort and saved-view behavior.
+2. Supplier List: reuse the proven list hierarchy while preserving inactive filtering, paging and preferences.
+3. Customer Form, then Supplier Form: adopt FormSection, FieldCue and WorkflowFooter without changing commands or conditional fields.
+4. Customer Record, then Supplier Record: adopt DetailSection and record context without inventing metrics or actions.
+5. Run parity and permission acceptance for both surfaces, record the live-API limitation explicitly, then close FRD-G.
+
+## First slice decision
+
+Customer List is first. It exercises the broader list contract—search, archived status, server sorting, paging and safe preferences—without touching create/edit commands. Supplier List follows only after the Customer component test and full gates pass. This avoids a bulk two-module restyle and keeps every rollback bounded to one surface.
+
+## Exit criteria
+
+- Both lists distinguish true empty from filtered empty and retain server query behavior.
+- Forms retain every current field, option source, validation, recovery and dirty-state rule.
+- Records retain every displayed profile/commercial/contact/address/product fact and permission-aware action.
+- EN/AR, RTL/LTR, desktop/390px, keyboard, loading/error/empty/validation/concurrency states pass.
+- API methods, DTOs, schema, Application rules and tenant/permission authority do not change.

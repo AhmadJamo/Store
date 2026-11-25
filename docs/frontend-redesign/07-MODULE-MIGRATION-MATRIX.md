@@ -29,7 +29,7 @@
 | Shell / Launcher | Verified | Verified | FRD-E complete | Existing | 270 + Playwright 7/7 | Verified |
 | Design System | Verified | Contract v1 | FRD-D complete | N/A | 260 + Playwright 6/6 | Verified |
 | Products / Catalog | Audited | Verified | FRD-F List/Form/Record | Verified current APIs and permissions | 274 + security 1,668 + Playwright 7/7 | Migrated — `acceptance/products-pilot-2026-11-25/` |
-| Contacts | Audited | Planned | Legacy V3 | Verified | existing specs | Planned wave 2 |
+| Contacts | Audited | Scoped | Legacy V3 | Verified current APIs | API/form specs; list specs missing | FRD-G — Customer List first |
 | Branches / Warehouses | Audited | Planned | Legacy V3 | Verified | existing specs | Planned wave 3 |
 | Inventory | Audited | Planned | Legacy V3 | Verified | existing specs | Planned wave 4 |
 | Purchases | Audited | Planned | Legacy V3 | Verified | existing specs | Planned wave 5 |
@@ -84,7 +84,11 @@
 5. كل الاختبارات الحالية والجديدة والبناء وفحوص static والقبول البصري ناجحة.
 6. لا يحذف surface قديم قبل parity وrollback موثقين.
 
-## 5. قواعد cutover
+
+## 5. Contacts pilot
+
+The bounded inventory, invariants, order and exit criteria are in `14-CONTACTS-MIGRATION-AUDIT.md`. Customer List is the first slice; Supplier List follows only after the shared list hierarchy and focused coverage pass. Forms and Records remain out of scope until both lists are proven.
+## 6. قواعد cutover
 
 - migration additive أولاً؛ route الحالي يمكنه تحميل component الجديد خلف قرار محدود وقابل للعكس.
 - لا تعديل route public أو tokenized ضمن migration داخلي.

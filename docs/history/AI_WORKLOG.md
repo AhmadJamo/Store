@@ -2553,3 +2553,7 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
   - Recorded List/Form/Record parity for search by name/code/barcode, paging/filtering, CRUD, dirty/recovery states, View/Create/Edit/Delete permissions, antiforgery, bilingual RTL/LTR and responsive presentation.
   - Verified 274/274 Angular tests across 127 files, production build, 140-template accessibility, 121-page consistency, Playwright 7 passed/0 failed/3 authenticated-API skips, and 1,668 SecurityRegression checks in Release configuration.
   - Stored machine-readable browser evidence and the explicit live-API limitation in `docs/frontend-redesign/acceptance/products-pilot-2026-11-25/`; advanced the active gate to a bounded Contacts Customers/Suppliers audit.
+- 2026-11-25: Completed the FRD-G Contacts Customers/Suppliers migration audit.
+  - Inventoried six List/Form/Record surfaces, routes, API clients, permissions, page-context/preferences, dirty guards and concurrency behavior.
+  - Confirmed the principal V3 gaps: hand-built filters/tables/cards/fieldsets, hard-coded CRM/P2P eyebrows, duplicated form actions, no filtered-empty distinction and no Customer/Supplier list component coverage.
+  - Approved Customer List as the first bounded slice before Supplier List, Forms and Records; recorded the invariants and exit criteria in `docs/frontend-redesign/14-CONTACTS-MIGRATION-AUDIT.md`. No runtime behavior changed.

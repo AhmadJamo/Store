@@ -6,7 +6,7 @@
 >
 > الهدف هو نقل موجة Contacts التالية من Legacy V3 إلى نمط List/Form/Record المعتمد، بدءاً بجرد Customers وSuppliers الفعلي قبل أي تغيير بصري.
 
-راجع المسارات والمكونات وعقود API والصلاحيات والاختبارات والاختلافات الوظيفية بين Customers وSuppliers. حافظ على اختيار الحسابات والمنتجات بالأسماء مع IDs داخلية، وعلى tenant/permission/antiforgery وdirty/recovery/concurrency. اقترح أول slice محدوداً في `07-MODULE-MIGRATION-MATRIX.md` ثم نفّذه من دون bulk restyle أو تغيير قواعد الأعمال.
+اكتمل الجرد في `docs/frontend-redesign/14-CONTACTS-MIGRATION-AUDIT.md`. نفّذ Customer List كأول slice: استبدل الفلاتر والجدول اليدويين بـFilterBar/SummaryStrip/typed DataTable، أزل `CRM` المكتوب يدوياً، ميّز true-empty عن filtered-empty، وأضف component coverage. حافظ على البحث والترتيب server-side وincludeArchived وSafeListPreferences وPageContext والصلاحيات والمسارات وAPI. لا تبدأ Supplier List قبل نجاح البوابة الكاملة وكومت مستقل.
 
 ## FRD-F — Products List/Form/Record Pilot
 
