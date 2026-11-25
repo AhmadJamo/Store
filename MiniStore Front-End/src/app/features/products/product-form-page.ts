@@ -75,7 +75,8 @@ export class ProductFormPageComponent {
   protected save(): void {
     if (this.saving()) return;
     this.problem.set(''); this.fieldErrors.set({}); this.recovery.set(null);
-    if (this.form.invalid || !this.crossFieldValid()) { this.form.markAllAsTouched(); this.fieldErrors.set(this.clientErrors()); this.problem.set(this.i18n.text('correctProductFields')); this.focus.focusFirstInvalid(this.host.nativeElement); return; }
+    const clientErrors = { ...this.clientErrors(), ...this.crossFieldErrors() };
+    if (this.form.invalid || Object.keys(clientErrors).length) { this.form.markAllAsTouched(); this.fieldErrors.set(clientErrors); this.problem.set(this.i18n.text('correctProductFields')); const first = Object.keys(clientErrors)[0]; if (first) this.focus.focusField(this.host.nativeElement, first); else this.focus.focusFirstInvalid(this.host.nativeElement); return; }
     this.saving.set(true);
     const command = this.toCommand();
     const request = this.id ? this.api.update(this.id, command) : this.api.create(command);
@@ -97,14 +98,16 @@ export class ProductFormPageComponent {
     if (type !== ProductType.Service && this.form.controls.purchaseBillingPolicy.value === BillingPolicy.ServiceCompletion) this.form.controls.purchaseBillingPolicy.setValue(BillingPolicy.Received, { emitEvent: false });
     if (markDirty) this.form.markAsDirty();
   }
-  private crossFieldValid(): boolean {
+  private crossFieldErrors(): Record<string, readonly string[]> {
     const value = this.form.getRawValue();
-    if ((value.netWeight !== null || value.grossWeight !== null) && value.weightMeasurementUnitId === null) return false;
+    const errors: Record<string, readonly string[]> = {};
+    if ((value.netWeight !== null || value.grossWeight !== null) && value.weightMeasurementUnitId === null) errors['weightMeasurementUnitId'] = [this.i18n.text('weightUnitRequired')];
+    if (value.grossWeight !== null && value.netWeight !== null && value.grossWeight < value.netWeight) errors['grossWeight'] = [this.i18n.text('grossWeightInvalid')];
     const dimensions = [value.length, value.width, value.height];
-    if (dimensions.some(item => item !== null) && (dimensions.some(item => item === null) || value.dimensionMeasurementUnitId === null)) return false;
-    if (value.trackingPolicy === 0 && (value.defaultShelfLifeDays !== null || value.requireExpirationDate)) return false;
-    if (value.purchaseBillingPolicy !== BillingPolicy.Received && value.purchaseExpenseAccountId === null) return false;
-    return value.grossWeight === null || value.netWeight === null || value.grossWeight >= value.netWeight;
+    if (dimensions.some(item => item !== null) && (dimensions.some(item => item === null) || value.dimensionMeasurementUnitId === null)) errors['dimensionMeasurementUnitId'] = [this.i18n.text('dimensionsIncomplete')];
+    if (value.trackingPolicy === 0 && (value.defaultShelfLifeDays !== null || value.requireExpirationDate)) errors['trackingPolicy'] = [this.i18n.text('shelfLifeTrackingRequired')];
+    if (value.purchaseBillingPolicy !== BillingPolicy.Received && value.purchaseExpenseAccountId === null) errors['purchaseExpenseAccountId'] = [this.i18n.text('expenseAccountRequired')];
+    return errors;
   }
   private clientErrors(): Record<string, readonly string[]> { return Object.fromEntries(Object.entries(this.form.controls).filter(([, control]) => control.invalid).map(([name]) => [name, [this.i18n.text('invalidField')]])); }
   private toControls(product: Product) { return { name: product.name ?? '', barcode: product.barcode ?? '', productType: product.productType || ProductType.Direct, measurementUnitId: product.measurementUnitId ?? 0, productCategoryId: product.productCategoryId ?? null, purchaseBillingPolicy: product.purchaseBillingPolicy || BillingPolicy.Received, purchaseExpenseAccountId: product.purchaseExpenseAccountId ?? null, purchasePrice: product.purchasePrice ?? 0, wholesalePrice: product.wholesalePrice ?? 0, salePrice: product.salePrice ?? 0, isSellableInPos: product.isSellableInPos ?? true, isSellableInSales: product.isSellableInSales ?? true, allowNegativeRecipeConsumption: product.allowNegativeRecipeConsumption ?? false, isActive: product.isActive ?? true, supplierIds: [...(product.supplierIds ?? [])], trackingPolicy: product.trackingPolicy ?? 0, defaultShelfLifeDays: product.defaultShelfLifeDays ?? null, requireExpirationDate: product.requireExpirationDate ?? false, expirationWarningDays: product.expirationWarningDays ?? 30, netWeight: product.netWeight ?? null, grossWeight: product.grossWeight ?? null, weightMeasurementUnitId: product.weightMeasurementUnitId ?? null, length: product.length ?? null, width: product.width ?? null, height: product.height ?? null, dimensionMeasurementUnitId: product.dimensionMeasurementUnitId ?? null, isFragile: !!(product.handlingRequirements & Handling.Fragile), keepDry: !!(product.handlingRequirements & Handling.KeepDry), requiresRefrigeration: !!(product.handlingRequirements & Handling.Refrigerated), requiresFrozenStorage: !!(product.handlingRequirements & Handling.Frozen), isHazardous: !!(product.handlingRequirements & Handling.Hazardous) }; }

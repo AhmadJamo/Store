@@ -31,10 +31,22 @@ describe('ProductFormPageComponent', () => {
     expect(legends).toContain('identityAndSales');
     expect(legends).toContain('commercialData');
     expect(fixture.nativeElement.querySelector('.page-header .ui-button')).toBeNull();
+    expect(fixture.nativeElement.querySelectorAll('.section-description')).toHaveLength(5);
     expect(fixture.nativeElement.querySelectorAll('app-workflow-footer .ui-button')).toHaveLength(2);
     expect(fixture.nativeElement.textContent).not.toContain('CATALOG');
   });
 
+  it('maps cross-field rules to actionable localized fields', () => {
+    const component = TestBed.createComponent(ProductFormPageComponent).componentInstance as any;
+    component.form.patchValue({ netWeight: 2, grossWeight: 1, weightMeasurementUnitId: null, length: 1, width: null, height: 1, dimensionMeasurementUnitId: null }, { emitEvent: false });
+    component.save();
+    expect(component.fieldErrors()).toEqual(expect.objectContaining({
+      weightMeasurementUnitId: ['weightUnitRequired'],
+      grossWeight: ['grossWeightInvalid'],
+      dimensionMeasurementUnitId: ['dimensionsIncomplete'],
+    }));
+    expect(api.create).not.toHaveBeenCalled();
+  });
   it('creates a complete product command and clears dirty state', () => {
     api.create.mockReturnValue(of({ ...product, id: 7, name: 'Coffee' }));
     const component = TestBed.createComponent(ProductFormPageComponent).componentInstance as any;

@@ -2545,3 +2545,7 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
   - Replaced the hard-coded catalog eyebrow with bilingual localization and added concise status, type and category context to the record header.
   - Reduced the detail sheet from three cramped columns to a responsive two-column hierarchy and made the destructive area compact and explanatory.
   - Preserved Products.Edit/Products.Delete gates, Edit/Attributes routes, confirmation, API and business behavior. Added focused record coverage and verified 273/273 Angular tests across 127 files, production build, 140-template accessibility, 121-page consistency and Playwright 7 passed/0 failed/3 authenticated-API skips. The pre-existing 204.88 kB initial shared-chunk warning remains open.
+- 2026-11-25: Completed the second FRD-F Product Form slice.
+  - Added bilingual guidance to all five visible form sections and replaced the conditional expense-account asterisk with the shared required-field cue.
+  - Replaced generic cross-field rejection with field-addressable messages for weight unit, gross/net weight, complete dimensions, shelf-life tracking and expense-account requirements; the same rules and ProductCommand remain authoritative.
+  - Added focused regression coverage and verified 274/274 Angular tests across 127 files, production build, 140-template accessibility, 121-page consistency and Playwright 7 passed/0 failed/3 authenticated-API skips. The pre-existing 204.88 kB initial shared-chunk warning remains open.

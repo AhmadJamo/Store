@@ -27,7 +27,7 @@ UX-005 groups Product create/edit fields into semantic sections, adds localized 
 identity and commercial fields, keeps the existing save shortcut/lock in the shared workflow footer, and presents Product
 details through consistent detail sections. All validators, values, permissions and delete behavior are unchanged.
 
-FRD-F refines that product pilot into the approved Odoo-inspired hierarchy: the List keeps one primary create action and compact row actions, the Form separates identity from commercial controls, and the Record exposes localized status/type/category context above a two-column detail sheet. Edit, Attributes and Delete remain permission-gated; API contracts, validation and business rules are unchanged.
+FRD-F refines that product pilot into the approved Odoo-inspired hierarchy: the List keeps one primary create action and compact row actions, the Form separates identity from commercial controls and maps cross-field failures to bilingual actionable fields, and the Record exposes localized status/type/category context above a two-column detail sheet. Edit, Attributes and Delete remain permission-gated; API contracts, validation rules and business rules are unchanged.
 
 `MOD-021A` completes product-master parity in Angular: server-paged list/search, details, create, edit and confirmed
 delete. The API delegates to `ProductService`, separates View/Create/Edit/Delete permissions and validates antiforgery

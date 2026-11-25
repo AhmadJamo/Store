@@ -6,7 +6,7 @@
 >
 > الهدف التالي هو أول تحويل كامل لنمط صفحات فعلي، وليس تجميلاً عاماً: Products List ثم Create/Edit ثم Record/Details، مع الحفاظ على CRUD والبحث بالاسم والباركود والصلاحيات وURLs وAPI الحالية.
 
-اكتملت Product List actions وempty states وكثافة الجدول، وبدأ Product Form بفصل الهوية عن البيانات التجارية وإزالة الإجراء المكرر، واكتملت أول شريحة Product Record بسياق مترجم وتخطيط تفاصيل بعمودين ومنطقة حذف مفسرة. التالي: تحسين Product Form descriptions وvalidation scan ثم تنفيذ قبول parity نهائي لـList/Form/Record وتوثيقه قبل إغلاق FRD-F. لا تغيّر قواعد المنتج أو DTOs أو API. أثبت EN/AR وRTL/LTR وdesktop/mobile والبحث بالاسم والباركود والصلاحيات والحالات loading/empty/error وسلامة Create/Edit/Delete قبل الإغلاق.
+اكتملت Product List actions وempty states وكثافة الجدول، واكتملت Product Form hierarchy والأوصاف وأخطاء cross-field، واكتملت أول شريحة Product Record بسياق مترجم وتخطيط تفاصيل بعمودين ومنطقة حذف مفسرة. التالي: نفّذ قبول parity نهائي موثق لـList/Form/Record، راجع البحث بالاسم والباركود والصلاحيات والحالات loading/empty/error وسلامة Create/Edit/Delete، ثم أغلق FRD-F وانتقل لأول وحدة عالية الاستخدام حسب مصفوفة الترحيل. لا تغيّر قواعد المنتج أو DTOs أو API.
 
 ## FRD-E — إعادة بناء Application Shell
 
