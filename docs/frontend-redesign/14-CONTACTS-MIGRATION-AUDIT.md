@@ -11,7 +11,7 @@
 | Customer List | `/customers` | Server search, archived filter, server sort, paging and safe saved-view preferences | FRD-G slice 1 complete: shared FilterBar/SummaryStrip/typed DataTable, localized context, filtered-empty and component spec |
 | Customer Form | `/customers/new`, `/customers/:id/edit` | Create/update, generated code, receivable and commercial options, row-version recovery and dirty guard | Raw fieldsets, duplicated Cancel, raw required marker and custom footer |
 | Customer Record | `/customers/:id` | Profile, commercial defaults, contacts, addresses and permission-aware Edit | Generic cards, no record context/status badge and no recovery retry |
-| Supplier List | `/suppliers` | Server search, inactive filter, paging and safe saved-view preferences | Hand-built filters/table, hard-coded `P2P`, no filtered-empty distinction or component spec |
+| Supplier List | `/suppliers` | Server search, inactive filter, paging and safe saved-view preferences | FRD-G slice 2 complete: shared FilterBar/SummaryStrip/typed DataTable, localized context, filtered-empty and component spec |
 | Supplier Form | `/suppliers/new`, `/suppliers/:id/edit` | Create/update, payable-account and named-product selection, row-version recovery and dirty guard | Raw fieldsets, duplicated Cancel, raw required markers and custom footer |
 | Supplier Record | `/suppliers/:id` | Profile, commercial defaults, assigned-product count and permission-aware Edit | Generic cards, hard-coded `P2P` and no recovery retry |
 
@@ -29,7 +29,7 @@
 ## Migration order
 
 1. Customer List: COMPLETE — FilterBar, SummaryStrip and typed DataTable adopted; application eyebrow localized; filtered-empty/reset behavior and focused coverage preserve sort and saved-view behavior.
-2. Supplier List: reuse the proven list hierarchy while preserving inactive filtering, paging and preferences.
+2. Supplier List: COMPLETE — proven list hierarchy reused while preserving inactive filtering, paging and preferences.
 3. Customer Form, then Supplier Form: adopt FormSection, FieldCue and WorkflowFooter without changing commands or conditional fields.
 4. Customer Record, then Supplier Record: adopt DetailSection and record context without inventing metrics or actions.
 5. Run parity and permission acceptance for both surfaces, record the live-API limitation explicitly, then close FRD-G.

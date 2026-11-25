@@ -2,7 +2,7 @@
 
 `MOD-031C` retires SupplierCommunications MVC/Razor presentation; authenticated Angular/API commands and attachment
 download remain authoritative and retain their separate permissions.
-> Status: IMPLEMENTED | Last reviewed: 2026-10-12
+> Status: IMPLEMENTED | Last reviewed: 2026-11-25
 
 ## Purpose and flow
 
@@ -25,7 +25,7 @@ Supplier profile changes and relationship changes commit in one Serializable Uni
 Review supplier entity/configuration/migration, supplier and product DTOs/services/controllers/forms, PUR-010 purchasing data, localization, database docs, codebase map and regression checks.
 ## Angular supplier workflow update (2026-10-24)
 
-MOD-006 added the permission-aware directory as the second consumer of the shared page/feedback/table/pager primitives. MOD-007 completes details/create/edit with separate `Suppliers.View`, `Suppliers.Create` and `Suppliers.Edit` API permissions, Application-owned account/product options, Problem Details validation, row-version HTTP 409 handling, dirty-form protection and external SCSS. Only name and the established payable-account rule are mandatory; the other profile fields and product assignments remain optional. The list projection still avoids product-assignment N+1 work. Existing MVC screens, supplier purchasing data and all downstream purchasing rules remain unchanged.
+MOD-006 added the permission-aware directory as the second consumer of the shared page/feedback/table/pager primitives. FRD-G now moves the directory to the complete FilterBar/SummaryStrip/typed DataTable hierarchy with localized Contacts context, distinct true/filtered empty states and focused component coverage while preserving search, inactive filtering, paging and safe preferences. MOD-007 completes details/create/edit with separate `Suppliers.View`, `Suppliers.Create` and `Suppliers.Edit` API permissions, Application-owned account/product options, Problem Details validation, row-version HTTP 409 handling, dirty-form protection and external SCSS. Only name and the established payable-account rule are mandatory; the other profile fields and product assignments remain optional. The list projection still avoids product-assignment N+1 work. Existing MVC screens, supplier purchasing data and all downstream purchasing rules remain unchanged.
 
 MOD-011 makes the Supplier slice a second consumer of stable error classification and the shared recovery component.
 Duplicate and validation failures preserve input, transient list reads alone offer retry, and concurrency comparison

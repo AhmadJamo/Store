@@ -1,11 +1,27 @@
 <section class="supplier-page">
-  <app-page-header eyebrow="P2P" [title]="i18n.text('suppliersTitle')" [description]="i18n.text('suppliersDescription')">@if (session.can('Suppliers.Create')) { <a class="ui-button primary" routerLink="/suppliers/new">{{ i18n.text('newSupplier') }}</a> }</app-page-header>
-  <div class="filters"><label class="ui-field"><span>{{ i18n.text('searchSuppliers') }}</span><input #searchBox type="search" [value]="query.search" (input)="search(searchBox.value)" [placeholder]="i18n.text('searchSuppliersPlaceholder')" /></label><label class="check-field"><input #inactive type="checkbox" [checked]="query.includeInactive" (change)="includeInactive(inactive.checked)" /> {{ i18n.text('includeInactive') }}</label><div class="filter-actions"><button class="ui-button secondary" type="button" (click)="saveView()">{{ i18n.text('saveView') }}</button><button class="ui-button secondary" type="button" (click)="resetView()">{{ i18n.text('resetView') }}</button></div></div>
+  <app-page-header [eyebrow]="i18n.text('contactsNavigation')" [title]="i18n.text('suppliersTitle')" [description]="i18n.text('suppliersDescription')">
+    @if (session.can('Suppliers.Create')) { <a primary-actions class="ui-button primary" routerLink="/suppliers/new">{{ i18n.text('newSupplier') }}</a> }
+  </app-page-header>
+  <app-filter-bar [label]="i18n.text('searchSuppliers')">
+    <label><span>{{ i18n.text('searchSuppliers') }}</span><input #searchBox type="search" [value]="query.search" (input)="search(searchBox.value)" [placeholder]="i18n.text('searchSuppliersPlaceholder')" /></label>
+    <label class="check-field"><input #inactive type="checkbox" [checked]="query.includeInactive" (change)="includeInactive(inactive.checked)" /> {{ i18n.text('includeInactive') }}</label>
+    @if (hasFilters()) { <button filter-actions class="ui-button secondary" type="button" (click)="clearFilters()">{{ i18n.text('clearFilters') }}</button> }
+    <button filter-actions class="ui-button secondary" type="button" (click)="saveView()">{{ i18n.text('saveView') }}</button>
+    <button filter-actions class="ui-button secondary" type="button" (click)="resetView()">{{ i18n.text('resetView') }}</button>
+  </app-filter-bar>
   @if (loading()) { <app-feedback-state kind="loading" [title]="i18n.text('loading')" /> }
   @else if (problem(); as failure) { <app-api-recovery [problem]="failure" (retry)="load()" /> }
   @else if (result(); as page) {
-    @if (page.items.length === 0) { <app-feedback-state kind="empty" [title]="i18n.text('noSuppliers')" [description]="i18n.text('noSuppliersDescription')" /> }
-    @else { <app-data-table [label]="i18n.text('suppliersTitle')"><table><thead><tr><th>{{ i18n.text('supplierName') }}</th><th>{{ i18n.text('contactPerson') }}</th><th>{{ i18n.text('contact') }}</th><th>{{ i18n.text('paymentTermDays') }}</th><th>{{ i18n.text('status') }}</th><th>{{ i18n.text('actions') }}</th></tr></thead><tbody>@for (supplier of page.items; track supplier.id) { <tr><td><strong>{{ supplier.name }}</strong><span>{{ supplier.legalName || '' }}</span></td><td>{{ supplier.contactPerson || '—' }}</td><td>{{ supplier.phone || supplier.email || '—' }}</td><td>{{ supplier.paymentTermsDays }}</td><td><span class="ui-badge" [class.success]="supplier.isActive" [class.warning]="!supplier.isActive">{{ supplier.isActive ? i18n.text('active') : i18n.text('inactive') }}</span></td><td class="row-actions"><a [routerLink]="['/suppliers', supplier.id]">{{ i18n.text('view') }}</a>@if (session.can('Suppliers.Edit')) { <a [routerLink]="['/suppliers', supplier.id, 'edit']">{{ i18n.text('edit') }}</a> }</td></tr> }</tbody></table></app-data-table> }
+    <app-summary-strip [label]="i18n.text('suppliersTitle')" [items]="[
+      { label: i18n.text('totalRecords'), value: page.totalCount },
+      { label: i18n.text('status'), value: query.includeInactive ? i18n.text('includingInactive') : i18n.text('activeSuppliers') }
+    ]" />
+    <app-data-table [label]="i18n.text('suppliersTitle')" [columns]="tableColumns()" [rows]="page.items" [emptyTitle]="emptyTitle()" [emptyDescription]="emptyDescription()">
+      <ng-template appDataCell="name" let-supplier><strong><a [routerLink]="['/suppliers', supplier.id]">{{ supplier.name }}</a></strong><span>{{ supplier.legalName || '' }}</span></ng-template>
+      <ng-template appDataCell="contact" let-supplier>{{ supplier.phone || supplier.email || '—' }}</ng-template>
+      <ng-template appDataCell="status" let-supplier><span class="ui-badge" [class.success]="supplier.isActive" [class.warning]="!supplier.isActive">{{ supplier.isActive ? i18n.text('active') : i18n.text('inactive') }}</span></ng-template>
+      <ng-template appDataCell="actions" let-supplier><div class="row-actions"><a class="row-action" [routerLink]="['/suppliers', supplier.id]" [attr.aria-label]="i18n.text('view')" [title]="i18n.text('view')"><span aria-hidden="true">↗</span><span class="sr-only">{{ i18n.text('view') }}</span></a>@if (session.can('Suppliers.Edit')) { <a class="row-action" [routerLink]="['/suppliers', supplier.id, 'edit']" [attr.aria-label]="i18n.text('edit')" [title]="i18n.text('edit')"><span aria-hidden="true">✎</span><span class="sr-only">{{ i18n.text('edit') }}</span></a> }</div></ng-template>
+    </app-data-table>
     <app-pager [page]="page.query.page" [totalPages]="page.totalPages" [totalCount]="page.totalCount" [totalLabel]="i18n.text('totalRecords')" [previousLabel]="i18n.text('previous')" [nextLabel]="i18n.text('next')" (pageChange)="move($event)" />
   }
 </section>
