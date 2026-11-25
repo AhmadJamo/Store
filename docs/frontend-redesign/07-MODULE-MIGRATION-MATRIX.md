@@ -1,7 +1,7 @@
 # 07 — مصفوفة ترحيل الوحدات
 
 > الحالة: Active planning matrix
-> آخر تحديث: 2026-11-24
+> آخر تحديث: 2026-11-25
 > القاعدة: لا تعتبر الوحدة Migrated قبل parity وظيفي وAPI/permission evidence واختبارات وvisual acceptance
 
 ## 1. ترتيب التنفيذ
@@ -26,9 +26,9 @@
 
 | Module | Research | Design | Implementation | API Integration | Tests | Status / next gate |
 |---|---|---|---|---|---|---|
-| Shell / Launcher | Verified | Pilot | First slices | Existing | 259 + static | In Progress — visual acceptance |
-| Design System | Verified | Contract v1 | First slice | N/A | focused + build | In Progress — primitives |
-| Products / Catalog | Audited | In Progress | FRD-F List pilot | Verified current APIs | 271 tests + Playwright 7/7 | List actions/empty states complete; density then Form/Record |
+| Shell / Launcher | Verified | Verified | FRD-E complete | Existing | 270 + Playwright 7/7 | Verified |
+| Design System | Verified | Contract v1 | FRD-D complete | N/A | 260 + Playwright 6/6 | Verified |
+| Products / Catalog | Audited | Verified | FRD-F List/Form/Record | Verified current APIs and permissions | 274 + security 1,668 + Playwright 7/7 | Migrated — `acceptance/products-pilot-2026-11-25/` |
 | Contacts | Audited | Planned | Legacy V3 | Verified | existing specs | Planned wave 2 |
 | Branches / Warehouses | Audited | Planned | Legacy V3 | Verified | existing specs | Planned wave 3 |
 | Inventory | Audited | Planned | Legacy V3 | Verified | existing specs | Planned wave 4 |
@@ -47,6 +47,10 @@
 | Old Route | Old Component | New Route | New Component | Actions preserved | Permission | API evidence | Tests | Cutover | Rollback |
 |---|---|---|---|---|---|---|---|---|---|
 | مثال فقط | — | — | — | — | — | — | — | Not Started | legacy remains |
+| `/Products` | Retired Razor list | `/products` | `ProductListPageComponent` | Search/paging/filter/view/create/edit/attributes | View/Create/Edit | GET page + focused API spec | List component + full suite | FRD-F verified | Deploy/Git rollback |
+| `/Products/Create` | Retired Razor form | `/products/new` | `ProductFormPageComponent` | Create/validation/dirty guard/save lock | Create | GET form + POST | Form component + API spec | FRD-F verified | Deploy/Git rollback |
+| `/Products/Edit/{id}` | Retired Razor form | `/products/:id/edit` | `ProductFormPageComponent` | Load/update/validation/dirty guard | Edit | GET edit form + PUT | Form component + API spec | FRD-F verified | Deploy/Git rollback |
+| Product details route | Retired Razor details | `/products/:id` | `ProductDetailsPageComponent` | View/edit/attributes/delete | View/Edit/Delete | GET + DELETE | Details component + security regression | FRD-F verified | Deploy/Git rollback |
 
 لا يوضع صف Implemented قبل توثيق كل action موجود، بما فيه الإجراءات النادرة والـempty/error/concurrency states.
 

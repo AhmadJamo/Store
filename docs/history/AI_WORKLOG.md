@@ -2549,3 +2549,7 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
   - Added bilingual guidance to all five visible form sections and replaced the conditional expense-account asterisk with the shared required-field cue.
   - Replaced generic cross-field rejection with field-addressable messages for weight unit, gross/net weight, complete dimensions, shelf-life tracking and expense-account requirements; the same rules and ProductCommand remain authoritative.
   - Added focused regression coverage and verified 274/274 Angular tests across 127 files, production build, 140-template accessibility, 121-page consistency and Playwright 7 passed/0 failed/3 authenticated-API skips. The pre-existing 204.88 kB initial shared-chunk warning remains open.
+- 2026-11-25: Closed FRD-F and classified Products as the first migrated V4 module surface.
+  - Recorded List/Form/Record parity for search by name/code/barcode, paging/filtering, CRUD, dirty/recovery states, View/Create/Edit/Delete permissions, antiforgery, bilingual RTL/LTR and responsive presentation.
+  - Verified 274/274 Angular tests across 127 files, production build, 140-template accessibility, 121-page consistency, Playwright 7 passed/0 failed/3 authenticated-API skips, and 1,668 SecurityRegression checks in Release configuration.
+  - Stored machine-readable browser evidence and the explicit live-API limitation in `docs/frontend-redesign/acceptance/products-pilot-2026-11-25/`; advanced the active gate to a bounded Contacts Customers/Suppliers audit.

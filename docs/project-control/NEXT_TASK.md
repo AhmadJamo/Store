@@ -1,13 +1,18 @@
 # المهمة التالية الوحيدة / Next Task
 
+## FRD-G — Contacts Customers/Suppliers Pilot
+
+> الحالة: IN PROGRESS — بدأ بعد إغلاق FRD-F في 2026-11-25
+>
+> الهدف هو نقل موجة Contacts التالية من Legacy V3 إلى نمط List/Form/Record المعتمد، بدءاً بجرد Customers وSuppliers الفعلي قبل أي تغيير بصري.
+
+راجع المسارات والمكونات وعقود API والصلاحيات والاختبارات والاختلافات الوظيفية بين Customers وSuppliers. حافظ على اختيار الحسابات والمنتجات بالأسماء مع IDs داخلية، وعلى tenant/permission/antiforgery وdirty/recovery/concurrency. اقترح أول slice محدوداً في `07-MODULE-MIGRATION-MATRIX.md` ثم نفّذه من دون bulk restyle أو تغيير قواعد الأعمال.
+
 ## FRD-F — Products List/Form/Record Pilot
 
-> الحالة: IN PROGRESS — بدأ بعد إغلاق FRD-E في 2026-11-25
+> الحالة: COMPLETE — أُغلق في 2026-11-25
 >
-> الهدف التالي هو أول تحويل كامل لنمط صفحات فعلي، وليس تجميلاً عاماً: Products List ثم Create/Edit ثم Record/Details، مع الحفاظ على CRUD والبحث بالاسم والباركود والصلاحيات وURLs وAPI الحالية.
-
-اكتملت Product List actions وempty states وكثافة الجدول، واكتملت Product Form hierarchy والأوصاف وأخطاء cross-field، واكتملت أول شريحة Product Record بسياق مترجم وتخطيط تفاصيل بعمودين ومنطقة حذف مفسرة. التالي: نفّذ قبول parity نهائي موثق لـList/Form/Record، راجع البحث بالاسم والباركود والصلاحيات والحالات loading/empty/error وسلامة Create/Edit/Delete، ثم أغلق FRD-F وانتقل لأول وحدة عالية الاستخدام حسب مصفوفة الترحيل. لا تغيّر قواعد المنتج أو DTOs أو API.
-
+> Products هي أول وحدة V4 مهاجرة. الدليل الكامل في `docs/frontend-redesign/acceptance/products-pilot-2026-11-25/`: 274 اختباراً، build، 140 قالب وصول، 121 صفحة، Playwright 7/7 و1,668 فحص أمني. لا يوجد ادعاء live authenticated API E2E جديد؛ الاختبارات الثلاثة تحتاج بيئة وحالة مصادق عليها خارجياً.
 ## FRD-E — إعادة بناء Application Shell
 
 > الحالة: COMPLETE — أُغلقت في 2026-11-25

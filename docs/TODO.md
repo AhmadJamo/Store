@@ -1,4 +1,5 @@
 # Project TODO
+# FRD-F completed (2026-11-25): Products List/Form/Record is the first migrated V4 module with documented search/barcode/CRUD/permission parity. 274 tests, build, 140 templates, 121 pages, Playwright 7/7 and 1,668 security checks pass; live authenticated API checks remain explicitly external.
 # FRD-F Product Form slice 2 completed (2026-11-25): bilingual section descriptions and field-addressable cross-field validation replace generic failures for weight, dimensions, tracking and expense account rules. 274 tests, build, 140 templates, 121 pages and Playwright 7/7 pass.
 # FRD-F Product Record slice 1 completed (2026-11-25): localized record context, a two-column detail hierarchy, and an explained compact delete zone preserve Edit/Attributes/Delete permissions and behavior. 273 tests, build, 140 templates, 121 pages and Playwright 7/7 pass.
 # FRD-F Product Form slice 1 completed (2026-11-25): identity and commercial data are separate sections, duplicate top Cancel is removed, and the localized workflow footer remains authoritative. 272 tests, build, static gates and Playwright 7/7 pass.

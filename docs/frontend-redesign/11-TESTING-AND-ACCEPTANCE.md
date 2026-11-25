@@ -1,7 +1,7 @@
 # 11 — استراتيجية الاختبار والقبول
 
 > الحالة: Active acceptance authority
-> آخر تحديث: 2026-11-24
+> آخر تحديث: 2026-11-25
 
 ## 1. طبقات التحقق
 
@@ -34,6 +34,9 @@
 
 اكتملت شرائح Shell: App metadata، App Switcher، current-app navigation/CSS extraction، destination metadata، context hierarchy، وقائمة الحساب/الفرع الموحدة. البوابة النهائية: 125 ملف اختبار و270/270 اختبار، production build بلا `app-shell.scss` warning، 140 قالب وصول، 121 صفحة اتساق، وPlaywright ‏7 passed/0 failed/3 authenticated-API skips. يغطي الاختبار تصفية التطبيقات، اكتمال التصنيف، hierarchy وقائمة الحساب وعرض Desktop/Mobile. هذا لا يدّعي تكامل API حي.
 
+### بوابة FRD-F المكتملة
+
+أُغلقت Products List/Form/Record بعد 274/274 اختبار Angular عبر 127 ملفاً، production build، 140 قالب وصول، اتساق 121 صفحة، Playwright ‏7 passed/0 failed/3 authenticated-API skips، و1,668 فحص SecurityRegression. ثُبت البحث server-side بالاسم والرمز والباركود من مسار Angular حتى `ProductRepository`، وثُبت فصل View/Create/Edit/Delete والصلاحيات وantiforgery. لا تدعي البوابة live authenticated E2E جديداً؛ الأدلة والحدود موثقة في `acceptance/products-pilot-2026-11-25/`.
 ## 3. بوابة كل migration slice
 
 1. تحليل old page actions والpermissions والـAPI calls.

@@ -324,7 +324,7 @@ slice. `ProductsApiController` exposes explicit permission-separated form and mu
 Problem Details, while `ProductService` remains the owner of barcode uniqueness, managed units, type/pricing/channel,
 supplier, tracking, shelf-life and logistics rules. The Application form-page DTO projects category, unit, supplier and
 expense-account options and product details expose display names rather than internal IDs. Focused `product-list-page.spec.ts`, `product-form-page.spec.ts` and `product-details-page.spec.ts` coverage protects the FRD-F List/Form/Record hierarchy and permission-aware actions. See
-`docs/modernization/PHASE_21_CATALOG.md`.
+`docs/modernization/PHASE_21_CATALOG.md`. FRD-F parity and verification evidence is recorded in `docs/frontend-redesign/acceptance/products-pilot-2026-11-25/`.
 
 `ProductCategoriesApiController` and Angular `/products/categories` complete category list/create/status parity over
 `ProductCategoryService`. Reads use `Products.View`; create and activate/deactivate use `Products.Edit` plus
