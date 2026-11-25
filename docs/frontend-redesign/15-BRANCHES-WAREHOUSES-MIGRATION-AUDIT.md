@@ -1,6 +1,6 @@
 # 15 — Branches/Warehouses migration audit
 
-> Status: FRD-H implementation complete — final acceptance and closure evidence next
+> Status: FRD-H COMPLETE — accepted 2026-11-25
 > Date: 2026-11-25
 > Source of truth: Angular routes/components, API clients, Application services, API controllers, permission definitions and branch-context ADRs
 
@@ -32,7 +32,7 @@
 1. Warehouse Master List/Form: COMPLETE — shared PageHeader/FormSection/FieldCue/WorkflowFooter/typed DataTable adopted; every command, option, dirty guard, recovery state and permission preserved.
 2. Warehouse Locations: COMPLETE — focused coverage plus shared form/filter/summary/typed-tree hierarchy preserve named warehouse selection, hierarchy, capabilities and create/edit commands.
 3. Branch Workspace: COMPLETE — external template, localized context, shared form/summary/workflow hierarchy and separate company/directory/access sections preserve server-returned scope, operations/links, master commands and grant replacement without splitting authority or inventing routes.
-4. NEXT — run branch-context, picker-name, permission and presentation acceptance; record the live authenticated API limitation explicitly, then close FRD-H.
+4. COMPLETE — branch-context, picker-name, permission and presentation acceptance passed; the live authenticated API limitation is explicit in `acceptance/branches-warehouses-pilot-2026-11-25/`.
 
 ## First slice decision
 
@@ -46,3 +46,15 @@ Warehouse Master is first because it is one existing route with a dedicated exte
 - The Shell branch selector and context interceptor remain unchanged unless a separate security-authorized task explicitly changes them.
 - EN/AR, RTL/LTR, desktop/390px, keyboard, loading/error/empty/filtered-empty/validation/conflict states pass.
 - API methods, DTOs, schema, Application rules, tenant scope and permission authority do not change.
+
+## Closure evidence
+
+- Angular: 291/291 tests across 133 files.
+- Production build: passed; only the pre-existing 204.88 kB shared-chunk warning remains.
+- Static accessibility: 142 templates passed.
+- UI/UX consistency: 122 feature pages accounted for.
+- Browser: 7 passed, 0 failed and 3 authenticated-API skips.
+- SecurityRegression: 1,668 checks passed in Release configuration.
+- Machine-readable and review evidence: `acceptance/branches-warehouses-pilot-2026-11-25/`.
+
+FRD-H is closed. Wave 4 begins with a bounded Inventory audit; this closure authorizes no bulk inventory restyle and no business-rule change.

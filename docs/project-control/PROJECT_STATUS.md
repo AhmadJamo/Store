@@ -1,5 +1,7 @@
 # حالة المشروع / Project Status
 
+> تحديث 2026-11-25: أُغلق FRD-H وصُنفت Branch Workspace وWarehouse Master وWarehouse Locations كأسطح V4 مهاجرة مع بقاء سلطة الفرع/المستودع والصلاحيات. نجح 291 اختباراً والبناء و142 قالب وصول و122 صفحة وPlaywright 7/7 و1,668 فحصاً أمنياً. انتقلت البوابة إلى جرد Inventory المحدود.
+
 > تحديث 2026-11-25: اكتملت شريحة FRD-H الثالثة: Branch Workspace تفصل dashboard ودليل الفروع وإدارة الصلاحيات بمكونات V4 المشتركة وسياق Administration مترجم، مع بقاء نطاق الخادم والروابط والأوامر والصلاحيات. نجح 291 اختباراً والبناء و142 قالب وصول وجرد 122 صفحة؛ بوابة الإغلاق النهائية هي التالية.
 
 > تحديث 2026-11-25: اكتملت شريحة FRD-H الثانية: Warehouse Locations تستخدم سياق Inventory مترجماً وFormSection/FieldCue/WorkflowFooter وFilterBar/SummaryStrip وtyped hierarchical DataTable، مع filtered-empty ومسح المرشحات وبقاء كل الحقول والشجرة والقدرات والاختيار بالاسم. نجح 287 اختباراً والبناء و141 قالب وصول و121 صفحة وPlaywright 7/7.

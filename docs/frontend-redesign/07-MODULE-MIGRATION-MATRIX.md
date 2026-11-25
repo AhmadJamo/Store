@@ -30,7 +30,7 @@
 | Design System | Verified | Contract v1 | FRD-D complete | N/A | 260 + Playwright 6/6 | Verified |
 | Products / Catalog | Audited | Verified | FRD-F List/Form/Record | Verified current APIs and permissions | 274 + security 1,668 + Playwright 7/7 | Migrated — `acceptance/products-pilot-2026-11-25/` |
 | Contacts | Audited | Verified | FRD-G List/Form/Record | Verified current APIs and permissions | 282 + security 1,668 + Playwright 7/7 | Migrated — `acceptance/contacts-pilot-2026-11-25/` |
-| Branches / Warehouses | Audited | Scoped | Warehouse Master + Locations complete | Verified current APIs, permissions and branch context | 287 + focused specs + Playwright 7/7 | FRD-H — Branch Workspace next |
+| Branches / Warehouses | Audited | Verified | FRD-H Workspace/Master/Locations | Verified current APIs, permissions and branch context | 291 + security 1,668 + Playwright 7/7 | Migrated — `acceptance/branches-warehouses-pilot-2026-11-25/` |
 | Inventory | Audited | Planned | Legacy V3 | Verified | existing specs | Planned wave 4 |
 | Purchases | Audited | Planned | Legacy V3 | Verified | existing specs | Planned wave 5 |
 | Sales | Audited | Record concept | Legacy V3 | Verified | existing specs | Planned wave 6 |
@@ -51,6 +51,9 @@
 | `/Products/Create` | Retired Razor form | `/products/new` | `ProductFormPageComponent` | Create/validation/dirty guard/save lock | Create | GET form + POST | Form component + API spec | FRD-F verified | Deploy/Git rollback |
 | `/Products/Edit/{id}` | Retired Razor form | `/products/:id/edit` | `ProductFormPageComponent` | Load/update/validation/dirty guard | Edit | GET edit form + PUT | Form component + API spec | FRD-F verified | Deploy/Git rollback |
 | Product details route | Retired Razor details | `/products/:id` | `ProductDetailsPageComponent` | View/edit/attributes/delete | View/Edit/Delete | GET + DELETE | Details component + security regression | FRD-F verified | Deploy/Git rollback |
+| `/Branches` | Retired Razor workspace | `/branches` | `BranchesPageComponent` | Assigned scope, dashboard, create/edit/status, operations and access grants | Branches View/Create/Edit/SetActive/ViewOperations/ManageAccess | Workspace + command + access APIs | Component + security regression | FRD-H verified | Deploy/Git rollback |
+| `/Warehouses` | Retired Razor list/form | `/warehouses` | `WarehousesPageComponent` | List/create/edit/delete, settings, named branch/account choices and conflict recovery | Warehouses View/Create/Edit/Delete | Form/list + CRUD APIs | Component + security regression | FRD-H verified | Deploy/Git rollback |
+| Warehouse locations route | Retired Razor workspace | `/inventory/locations` | `WarehouseLocationsPageComponent` | Filter, hierarchy, create/edit, coordinates and capabilities | Warehouses View/Create/Edit | Options/list + create/update APIs | Component + security regression | FRD-H verified | Deploy/Git rollback |
 
 لا يوضع صف Implemented قبل توثيق كل action موجود، بما فيه الإجراءات النادرة والـempty/error/concurrency states.
 

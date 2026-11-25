@@ -1,0 +1,60 @@
+{
+  "generatedAtUtc": "2026-11-25T19:06:33.8145489+00:00",
+  "frontendUrl": "http://127.0.0.1:4310",
+  "apiUrl": null,
+  "checks": [
+    {
+      "Name": "ui-session-boundary",
+      "Status": "passed",
+      "Detail": "Presentation-only checks used a bounded synthetic session; live API checks remain separate."
+    },
+    {
+      "Name": "ui-states",
+      "Status": "passed",
+      "Detail": "Loading, empty/status and error states render."
+    },
+    {
+      "Name": "rtl-ltr",
+      "Status": "passed",
+      "Detail": "Direction changed from rtl to ltr."
+    },
+    {
+      "Name": "keyboard",
+      "Status": "passed",
+      "Detail": "Skip navigation focuses the main content."
+    },
+    {
+      "Name": "theme-density",
+      "Status": "passed",
+      "Detail": "Dark/compact and light/comfortable preferences applied."
+    },
+    {
+      "Name": "app-switcher",
+      "Status": "passed",
+      "Detail": "Permission-approved applications are available on desktop and mobile."
+    },
+    {
+      "Name": "responsive",
+      "Status": "passed",
+      "Detail": "Desktop and 390px mobile viewports passed."
+    },
+    {
+      "Name": "angular-api-inventory-stocks",
+      "Status": "skipped",
+      "Detail": "A live API URL and authenticated storage-state are required for Angular/API reconciliation."
+    },
+    {
+      "Name": "api-session-anonymous",
+      "Status": "skipped",
+      "Detail": "No API base URL was supplied."
+    },
+    {
+      "Name": "api-session-authenticated",
+      "Status": "skipped",
+      "Detail": "No API base URL was supplied."
+    }
+  ],
+  "passed": 7,
+  "failed": 0,
+  "skipped": 3
+}

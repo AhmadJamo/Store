@@ -1,10 +1,16 @@
 # المهمة التالية الوحيدة / Next Task
 
+## FRD-I — Inventory Migration Audit
+
+> الحالة: NEXT — تبدأ بعد إغلاق FRD-H في 2026-11-25
+>
+> راجع أسطح Inventory الفعلية ومساراتها ومكوّناتها وعقود API/Application والصلاحيات والـbranch/warehouse context قبل أي تعديل بصري. صنّف List/Form/Record/Workflow، وحدد أول شريحة محدودة منخفضة المخاطر لا تنقل stock authority إلى المتصفح ولا تغيّر posting/reservation/tracking rules. أنشئ وثيقة audit وخطة ترتيب واختبارات safety net، ثم اعمل commit للجرد قبل بدء أول UI slice.
+
 ## FRD-H — Branches/Warehouses Migration
 
-> الحالة: IN PROGRESS — اكتمل الجرد في 2026-11-25
+> الحالة: COMPLETE — أُغلق في 2026-11-25
 >
-> اكتمل تنفيذ Warehouse Master وWarehouse Locations وBranch Workspace. أصبحت صفحة الفروع تفصل company dashboard وbranch directory وaccess management باستخدام SummaryStrip وFormSection/FieldCue/WorkflowFooter وDetailSection وسياق Administration مترجم، مع بقاء assigned-branch scope والأوامر والروابط والصلاحيات. نجح 291 اختباراً والبناء و142 قالب وصول و122 صفحة. التالي الوحيد: شغّل بوابة FRD-H النهائية (Playwright + SecurityRegression + أدلة القبول وحدود live authenticated API)، ثم أغلق الموجة وحدد وحدة الهجرة التالية.
+> Branch Workspace وWarehouse Master وWarehouse Locations مهاجرة إلى V4 مع بقاء branch context والاختيار بالأسماء والـIDs الداخلية والصلاحيات والعقود. نجح 291 اختباراً والبناء و142 قالب وصول و122 صفحة وPlaywright 7/7 و1,668 فحصاً أمنياً. الدليل في `docs/frontend-redesign/acceptance/branches-warehouses-pilot-2026-11-25/`، ولا يوجد ادعاء live authenticated API E2E جديد.
 
 ## FRD-G — Contacts Customers/Suppliers Pilot
 
