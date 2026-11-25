@@ -59,6 +59,10 @@ export class ProductListPageComponent {
   protected search(value: string): void { this.changes.next(value.trim()); }
   protected status(value: string): void { this.update({ ...this.query, isActive: value === '' ? undefined : value === 'true', page: 1 }); }
   protected move(page: number): void { this.update({ ...this.query, page }); }
+  protected hasFilters(): boolean { return !!this.query.search || this.query.isActive !== undefined; }
+  protected clearFilters(): void { this.update({ ...this.contextSchema.defaults }); }
+  protected emptyTitle(): string { return this.i18n.text(this.hasFilters() ? 'filteredProductsEmpty' : 'noProducts'); }
+  protected emptyDescription(): string { return this.i18n.text(this.hasFilters() ? 'filteredProductsEmptyDescription' : 'noProductsDescription'); }
   protected load(): void { this.loading.set(true); this.problem.set(null); this.api.getPage(this.query).subscribe({ next: value => { this.page.set(value); this.loading.set(false); }, error: error => { this.problem.set(this.errors.normalize(error)); this.loading.set(false); } }); }
   private update(query: typeof this.query): void { void this.context.replace('products-list', this.route, this.contextSchema, query); }
 }

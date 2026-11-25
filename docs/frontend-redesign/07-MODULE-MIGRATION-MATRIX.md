@@ -28,7 +28,7 @@
 |---|---|---|---|---|---|---|
 | Shell / Launcher | Verified | Pilot | First slices | Existing | 259 + static | In Progress — visual acceptance |
 | Design System | Verified | Contract v1 | First slice | N/A | focused + build | In Progress — primitives |
-| Products / Catalog | Audited | Planned | Legacy V3 | Verified current APIs | existing specs | Planned pilot |
+| Products / Catalog | Audited | In Progress | FRD-F List pilot | Verified current APIs | 271 tests + Playwright 7/7 | List actions/empty states complete; density then Form/Record |
 | Contacts | Audited | Planned | Legacy V3 | Verified | existing specs | Planned wave 2 |
 | Branches / Warehouses | Audited | Planned | Legacy V3 | Verified | existing specs | Planned wave 3 |
 | Inventory | Audited | Planned | Legacy V3 | Verified | existing specs | Planned wave 4 |

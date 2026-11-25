@@ -16,6 +16,7 @@
   <app-filter-bar [label]="i18n.text('searchProducts')">
     <label><span>{{ i18n.text('searchProducts') }}</span><input #box type="search" [value]="query.search" (input)="search(box.value)" [placeholder]="i18n.text('searchProductsPlaceholder')" /></label>
     <label><span>{{ i18n.text('status') }}</span><select [value]="query.isActive === undefined ? '' : query.isActive" (change)="status($any($event.target).value)"><option value="">{{ i18n.text('all') }}</option><option value="true">{{ i18n.text('active') }}</option><option value="false">{{ i18n.text('inactive') }}</option></select></label>
+    @if (hasFilters()) { <button filter-actions type="button" class="ui-button secondary" (click)="clearFilters()">{{ i18n.text('clearFilters') }}</button> }
   </app-filter-bar>
   @if (loading()) { <app-feedback-state kind="loading" [title]="i18n.text('loading')" /> }
   @else if (problem(); as failure) { <app-api-recovery [problem]="failure" (retry)="load()" /> }
@@ -24,7 +25,7 @@
       { label: i18n.text('totalRecords'), value: result.totalCount },
       { label: i18n.text('status'), value: query.isActive === undefined ? i18n.text('all') : (query.isActive ? i18n.text('active') : i18n.text('inactive')) }
     ]" />
-    <app-data-table [label]="i18n.text('products')" [columns]="tableColumns()" [rows]="result.items" [emptyTitle]="i18n.text('noProducts')" [emptyDescription]="i18n.text('noProductsDescription')">
+    <app-data-table [label]="i18n.text('products')" [columns]="tableColumns()" [rows]="result.items" [emptyTitle]="emptyTitle()" [emptyDescription]="emptyDescription()">
       <ng-template appDataCell="productCode" let-product><code>{{ product.productCode }}</code></ng-template>
       <ng-template appDataCell="name" let-product><strong><a [routerLink]="['/products', product.id]">{{ product.name }}</a></strong><span>{{ product.barcode || '—' }}</span></ng-template>
       <ng-template appDataCell="category" let-product>{{ product.productCategoryName || '—' }}</ng-template>

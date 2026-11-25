@@ -9,7 +9,8 @@ import { ProductListPageComponent } from './product-list-page';
 import { ProductLocalizationService } from './product-localization.service';
 
 describe('ProductListPageComponent', () => {
-  it('keeps create primary and consolidates catalog destinations in one menu', async () => {
+  it('keeps create primary, consolidates catalog links, and explains filtered-empty results', async () => {
+    const replace = vi.fn();
     await TestBed.configureTestingModule({
       imports: [ProductListPageComponent],
       providers: [
@@ -17,7 +18,7 @@ describe('ProductListPageComponent', () => {
         { provide: ProductApiService, useValue: { getPage: () => of({ query: { page: 1, pageSize: 25, sortBy: 'name', sortDescending: false }, items: [], totalCount: 0, totalPages: 0, categories: [] }) } },
         { provide: ApiSessionService, useValue: { can: () => true } },
         { provide: ApiErrorService, useValue: { normalize: (error: unknown) => error } },
-        { provide: PageContextService, useValue: { watch: () => of({ page: 1, search: '', isActive: undefined }), replace: vi.fn() } },
+        { provide: PageContextService, useValue: { watch: () => of({ page: 1, search: 'coffee', isActive: true }), replace } },
         { provide: ProductLocalizationService, useValue: { text: (key: string) => key } },
       ],
     }).compileComponents();
@@ -30,5 +31,10 @@ describe('ProductListPageComponent', () => {
     expect(menu.querySelectorAll('nav a')).toHaveLength(6);
     expect(fixture.nativeElement.querySelectorAll('[primary-actions]')).toHaveLength(1);
     expect(fixture.nativeElement.textContent).not.toContain('CATALOG');
+    expect(fixture.nativeElement.querySelector('.table-state.empty')?.textContent).toContain('filteredProductsEmpty');
+    const clear = fixture.nativeElement.querySelector('[filter-actions]') as HTMLButtonElement;
+    expect(clear.textContent).toContain('clearFilters');
+    clear.click();
+    expect(replace).toHaveBeenCalledWith('products-list', expect.anything(), expect.anything(), { page: 1, search: '', isActive: undefined });
   });
 });

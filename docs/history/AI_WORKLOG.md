@@ -2529,3 +2529,7 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
   - Replaced the hard-coded CATALOG eyebrow with bilingual Product localization and consolidated six secondary catalog destinations in one responsive menu.
   - Kept Add Product as the sole primary action and preserved routes, permission checks, server search/paging and API contracts.
   - Added focused component coverage and verified 271/271 Angular tests across 126 files, production build, 140-template accessibility, 121-page consistency and Playwright 7 passed/0 failed/3 authenticated-API skips.
+- 2026-11-25: Completed the second FRD-F Products List slice.
+  - Distinguished the true empty catalog from filtered-empty results with bilingual guidance and a Clear filters action.
+  - Reset filters through the existing allowlisted PageContext defaults; server-side search, paging, routes, permissions and API contracts remain unchanged.
+  - Verified 271/271 Angular tests across 126 files, production build, 140-template accessibility, 121-page consistency and Playwright 7 passed/0 failed/3 authenticated-API skips.
