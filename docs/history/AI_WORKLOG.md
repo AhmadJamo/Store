@@ -2525,3 +2525,7 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
   - Preserved BranchContextService selection, dirty-work confirmation, session clearing, reload and logout authority; no API or business rule changed.
   - Added Shell coverage for the consolidated controls and verified 270/270 Angular tests, production build, 140-template accessibility, 121-page UI consistency and Playwright 7 passed/0 failed/3 authenticated-API skips.
   - Advanced the active frontend gate to the Products List/Form/Record pilot.
+- 2026-11-25: Started FRD-F with the first Products List slice.
+  - Replaced the hard-coded CATALOG eyebrow with bilingual Product localization and consolidated six secondary catalog destinations in one responsive menu.
+  - Kept Add Product as the sole primary action and preserved routes, permission checks, server search/paging and API contracts.
+  - Added focused component coverage and verified 271/271 Angular tests across 126 files, production build, 140-template accessibility, 121-page consistency and Playwright 7 passed/0 failed/3 authenticated-API skips.

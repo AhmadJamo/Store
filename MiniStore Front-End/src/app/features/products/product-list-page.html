@@ -1,13 +1,16 @@
 <section class="products-page">
-  <app-page-header eyebrow="CATALOG" [title]="i18n.text('products')" [description]="i18n.text('productsDescription')">
-    <div secondary-actions>
-      <a class="ui-button secondary" routerLink="/products/categories">{{ i18n.text('productCategories') }}</a>
-      <a class="ui-button secondary" routerLink="/products/attributes">{{ i18n.text('productAttributes') }}</a>
-      <a class="ui-button secondary" routerLink="/products/templates">{{ i18n.text('productTemplates') }}</a>
-      <a class="ui-button secondary" routerLink="/products/recipes">{{ i18n.text('recipes') }}</a>
-      @if (session.can('Administration.Access')) { <a class="ui-button secondary" routerLink="/products/catalog-masters">{{ i18n.text('catalogMasters') }}</a> }
-      @if (session.can('Warehouses.View')) { <a class="ui-button secondary" routerLink="/warehouses">{{ i18n.text('warehouses') }}</a> }
-    </div>
+  <app-page-header [eyebrow]="i18n.text('catalogNavigation')" [title]="i18n.text('products')" [description]="i18n.text('productsDescription')">
+    <details secondary-actions class="catalog-menu">
+      <summary class="ui-button secondary">{{ i18n.text('catalogNavigation') }} <span aria-hidden="true">⌄</span></summary>
+      <nav [attr.aria-label]="i18n.text('catalogNavigation')">
+        <a routerLink="/products/categories">{{ i18n.text('productCategories') }}</a>
+        <a routerLink="/products/attributes">{{ i18n.text('productAttributes') }}</a>
+        <a routerLink="/products/templates">{{ i18n.text('productTemplates') }}</a>
+        <a routerLink="/products/recipes">{{ i18n.text('recipes') }}</a>
+        @if (session.can('Administration.Access')) { <a routerLink="/products/catalog-masters">{{ i18n.text('catalogMasters') }}</a> }
+        @if (session.can('Warehouses.View')) { <a routerLink="/warehouses">{{ i18n.text('warehouses') }}</a> }
+      </nav>
+    </details>
     @if (session.can('Products.Create')) { <a primary-actions class="ui-button primary" routerLink="/products/new">{{ i18n.text('addProduct') }}</a> }
   </app-page-header>
   <app-filter-bar [label]="i18n.text('searchProducts')">
