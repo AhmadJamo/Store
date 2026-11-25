@@ -323,7 +323,7 @@ mutations and unknown actions remain on their existing protected endpoints, and 
 slice. `ProductsApiController` exposes explicit permission-separated form and mutation contracts with antiforgery and
 Problem Details, while `ProductService` remains the owner of barcode uniqueness, managed units, type/pricing/channel,
 supplier, tracking, shelf-life and logistics rules. The Application form-page DTO projects category, unit, supplier and
-expense-account options and product details expose display names rather than internal IDs. See
+expense-account options and product details expose display names rather than internal IDs. Focused `product-list-page.spec.ts`, `product-form-page.spec.ts` and `product-details-page.spec.ts` coverage protects the FRD-F List/Form/Record hierarchy and permission-aware actions. See
 `docs/modernization/PHASE_21_CATALOG.md`.
 
 `ProductCategoriesApiController` and Angular `/products/categories` complete category list/create/status parity over

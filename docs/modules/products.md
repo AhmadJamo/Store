@@ -7,7 +7,7 @@ workspaces and authenticated APIs retain Application-owned validation, permissio
 Razor views. Protected legacy GET/HEAD entry points navigate to the established Angular workspaces, with positive product
 identity required for attribute values. Attribute/template mutations remain in their authenticated APIs and Application
 services; legacy MVC mutations are never redirected or replayed.
-> Status: IMPLEMENTED | Last reviewed: 2026-11-05
+> Status: IMPLEMENTED | Last reviewed: 2026-11-25
 
 ## Angular migration foundation (2026-10-25)
 
@@ -26,6 +26,8 @@ feature/server-owned.
 UX-005 groups Product create/edit fields into semantic sections, adds localized required/optional cues to representative
 identity and commercial fields, keeps the existing save shortcut/lock in the shared workflow footer, and presents Product
 details through consistent detail sections. All validators, values, permissions and delete behavior are unchanged.
+
+FRD-F refines that product pilot into the approved Odoo-inspired hierarchy: the List keeps one primary create action and compact row actions, the Form separates identity from commercial controls, and the Record exposes localized status/type/category context above a two-column detail sheet. Edit, Attributes and Delete remain permission-gated; API contracts, validation and business rules are unchanged.
 
 `MOD-021A` completes product-master parity in Angular: server-paged list/search, details, create, edit and confirmed
 delete. The API delegates to `ProductService`, separates View/Create/Edit/Delete permissions and validates antiforgery

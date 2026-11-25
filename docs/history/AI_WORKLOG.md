@@ -2541,3 +2541,7 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
   - Split identity/classification from purchasing/pricing/channel controls, localized the catalog eyebrow and removed the duplicate header Cancel action.
   - Kept the sticky WorkflowFooter, validation, dirty tracking, conditional type rules and ProductCommand unchanged.
   - Verified 272/272 Angular tests, production build, 140-template accessibility, 121-page consistency and Playwright 7 passed/0 failed/3 authenticated-API skips.
+- 2026-11-25: Completed the first FRD-F Product Record slice.
+  - Replaced the hard-coded catalog eyebrow with bilingual localization and added concise status, type and category context to the record header.
+  - Reduced the detail sheet from three cramped columns to a responsive two-column hierarchy and made the destructive area compact and explanatory.
+  - Preserved Products.Edit/Products.Delete gates, Edit/Attributes routes, confirmation, API and business behavior. Added focused record coverage and verified 273/273 Angular tests across 127 files, production build, 140-template accessibility, 121-page consistency and Playwright 7 passed/0 failed/3 authenticated-API skips. The pre-existing 204.88 kB initial shared-chunk warning remains open.
