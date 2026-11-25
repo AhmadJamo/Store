@@ -2580,3 +2580,7 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
   - Replaced generic cards with four DetailSections and added localized Contacts context with status, customer type and code.
   - Preserved profile, commercial defaults, contacts, addresses, Customers.Edit and routes; added normalized recovery retry and focused hierarchy/retry coverage.
   - Verified 280/280 Angular tests across 130 files, production build, 141-template accessibility, 121-page consistency and Playwright 7 passed/0 failed/3 authenticated-API skips. The pre-existing 204.88 kB initial shared-chunk warning remains open.
+- 2026-11-25: Completed the sixth FRD-G Supplier Record slice.
+  - Replaced generic cards with two DetailSections, removed hard-coded P2P and added localized Contacts context with active state and assigned-product count.
+  - Preserved profile, commercial defaults, Suppliers.Edit and routes; added normalized recovery retry and focused hierarchy/retry coverage. No supplier code was invented because the API contract exposes none.
+  - Verified 282/282 Angular tests across 131 files, production build, 141-template accessibility, 121-page consistency and Playwright 7 passed/0 failed/3 authenticated-API skips. The pre-existing 204.88 kB initial shared-chunk warning remains open.

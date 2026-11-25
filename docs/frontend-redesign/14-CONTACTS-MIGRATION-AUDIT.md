@@ -1,6 +1,6 @@
 # 14 — Contacts Customers/Suppliers migration audit
 
-> Status: FRD-G implementation in progress — Customer Record complete; Supplier Record next
+> Status: FRD-G implementation complete — final parity and permission acceptance next
 > Date: 2026-11-25
 > Source of truth: Angular components, API clients, Application services, API controllers and existing regression coverage
 
@@ -13,7 +13,7 @@
 | Customer Record | `/customers/:id` | Profile, commercial defaults, contacts, addresses and permission-aware Edit | FRD-G slice 5 complete: localized PageHeader context, status/type/code, four DetailSections, recovery retry and component coverage |
 | Supplier List | `/suppliers` | Server search, inactive filter, paging and safe saved-view preferences | FRD-G slice 2 complete: shared FilterBar/SummaryStrip/typed DataTable, localized context, filtered-empty and component spec |
 | Supplier Form | `/suppliers/new`, `/suppliers/:id/edit` | Create/update, payable-account and named-product selection, row-version recovery and dirty guard | FRD-G slice 4 complete: FormSection/FieldCue/WorkflowFooter, localized context and one action zone |
-| Supplier Record | `/suppliers/:id` | Profile, commercial defaults, assigned-product count and permission-aware Edit | Generic cards, hard-coded `P2P` and no recovery retry |
+| Supplier Record | `/suppliers/:id` | Profile, commercial defaults, assigned-product count and permission-aware Edit | FRD-G slice 6 complete: localized PageHeader context, status/product count, two DetailSections, recovery retry and component coverage; no supplier code exists in the API contract |
 
 ## Contracts that must not change
 
@@ -32,7 +32,7 @@
 2. Supplier List: COMPLETE — proven list hierarchy reused while preserving inactive filtering, paging and preferences.
 3. Customer and Supplier Forms: COMPLETE — FormSection, FieldCue and WorkflowFooter adopted without changing commands, option identities or conditional fields.
 4. Customer Record: COMPLETE — DetailSection and record context adopted with recovery retry while retaining all facts and Customers.Edit.
-5. Supplier Record: adopt DetailSection and record context without inventing metrics or actions.
+5. Supplier Record: COMPLETE — DetailSection and record context adopted with recovery retry while retaining all facts and Suppliers.Edit; no nonexistent supplier code was invented.
 6. Run parity and permission acceptance for both surfaces, record the live-API limitation explicitly, then close FRD-G.
 
 ## First slice decision

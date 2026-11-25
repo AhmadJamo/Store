@@ -6,7 +6,7 @@
 >
 > الهدف هو نقل موجة Contacts التالية من Legacy V3 إلى نمط List/Form/Record المعتمد، بدءاً بجرد Customers وSuppliers الفعلي قبل أي تغيير بصري.
 
-اكتملت القائمتان والنموذجان وCustomer Record باستخدام primitives المشتركة، وبقيت العقود والصلاحيات والبيانات كما هي. التالي: نفّذ Supplier Record فقط باستخدام PageHeader page-context وDetailSection، أزل P2P المكتوب يدوياً، اعرض status/code/assigned-product count بوضوح وحافظ على profile/commercial وSuppliers.Edit. أضف recovery retry واختبار مكوّن، ولا تبدأ إغلاق FRD-G قبل كومت وبوابة كاملة.
+اكتملت القائمتان والنموذجان والسجلان باستخدام primitives المشتركة، وبقيت العقود والصلاحيات والبيانات كما هي؛ لم يُخترع supplier code غير موجود في العقد. التالي: نفّذ بوابة إغلاق FRD-G فقط: parity للصلاحيات والـroutes والبيانات، SecurityRegression، وثّق حدود live authenticated API، وأنشئ evidence نهائي قبل اختيار الموجة التالية.
 
 ## FRD-F — Products List/Form/Record Pilot
 

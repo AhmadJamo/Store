@@ -1,5 +1,7 @@
 # حالة المشروع / Project Status
 
+> تحديث 2026-11-25: اكتملت شريحة FRD-G السادسة: Supplier Record تستخدم PageHeader context وDetailSection، أزيل P2P وتظهر الحالة وعدد المنتجات مع recovery retry، وبقيت profile/commercial وSuppliers.Edit. لا يوجد supplier code في العقد فلم يُخترع. نجح 282 اختباراً والبناء و141 قالب وصول و121 صفحة وPlaywright 7/7.
+
 > تحديث 2026-11-25: اكتملت شريحة FRD-G الخامسة: Customer Record تستخدم PageHeader context وDetailSection، تعرض status/type/code وتحافظ على profile/commercial/contacts/addresses وCustomers.Edit مع recovery retry. نجح 280 اختباراً والبناء و141 قالب وصول و121 صفحة وPlaywright 7/7.
 
 > تحديث 2026-11-25: اكتملت شريحة FRD-G الرابعة: Supplier Form تستخدم FormSection وFieldCue وWorkflowFooter، أزيل P2P وCancel المكرر، وبقيت حسابات الدائنين والمنتجات بالأسماء/IDs وdirty/concurrency/recovery. نجح 278 اختباراً والبناء و140 قالب وصول و121 صفحة وPlaywright 7/7.

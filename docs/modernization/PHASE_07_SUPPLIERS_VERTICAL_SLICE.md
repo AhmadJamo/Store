@@ -29,7 +29,7 @@ Tenant isolation continues through the existing repositories and `AppDbContext` 
 
 ## Angular behavior
 
-The feature directory owns typed API models/client and isolated list, details and form pages. Only supplier name
+The feature directory owns typed API models/client and isolated list, details and form pages. FRD-G moves the details record to localized PageHeader context and two shared DetailSections, exposes active state and assigned-product count, and adds recoverable retry while preserving Suppliers.Edit and every displayed fact. The API contract has no supplier code, so the presentation does not invent one. Only supplier name
 and the existing payable-account business requirement are mandatory; profile, contact, tax, website, notes and
 product assignment fields remain optional. The form supports multi-product assignment, server field messages,
 dirty-workspace state and a navigation guard. Routes and actions are hidden according to the bootstrapped backend
