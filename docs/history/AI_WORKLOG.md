@@ -2619,3 +2619,7 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
   - Inventoried 19 Angular routes across 15 page templates and mapped read-only directories, stock masters, document workflows and operational command workspaces to their API/Application/repository authorities and independent permissions.
   - Confirmed that balance, reservation, valuation, tracking, adjustment, transfer, capacity, idempotency and branch/warehouse scope remain server-owned; Warehouse Locations is already migrated and excluded from restyling.
   - Selected GET-only Inventory Availability as the first bounded slice. Its existing component spec must first expand to named rows, server query, true-empty/filtered-empty/reset and hierarchy evidence. No runtime, API, schema or business behavior changed.
+- 2026-11-25: Added the FRD-I Inventory Availability pre-migration safety net.
+  - Expanded the page component spec from one query assertion to five tests protecting server-authored named rows and quantities, current shared hierarchy, debounced trimmed search, warehouse/paging query, bounded reset and empty behavior.
+  - Used Vitest-native timers because this Angular runner intentionally has no zone-testing fakeAsync module.
+  - The focused suite passed 5/5 before any presentation change; runtime, API, balance calculation and paging behavior are unchanged.

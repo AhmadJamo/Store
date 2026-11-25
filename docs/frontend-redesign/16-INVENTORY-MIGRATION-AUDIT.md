@@ -1,6 +1,6 @@
 # 16 — Inventory migration audit
 
-> Status: FRD-I audit complete — Inventory Availability safety net next  
+> Status: FRD-I implementation in progress — Inventory Availability safety net complete
 > Date: 2026-11-25  
 > Source of truth: Angular routes/components and clients, Internal API controllers, Application services/DTOs, repositories and inventory module documentation
 
@@ -49,7 +49,7 @@ The Inventory application currently exposes 19 Angular routes through 15 page te
 
 ## Migration order
 
-1. **Inventory Availability safety net and list migration.** Add named-row, server-query, true-empty/filtered-empty/reset and hierarchy coverage, then adopt localized Inventory context, FilterBar, SummaryStrip and typed DataTable without changing paging or calculations.
+1. **Inventory Availability safety net COMPLETE; list migration next.** Five focused tests protect named server rows, the existing hierarchy, debounced search, warehouse/paging query, bounded reset and empty behavior. Next adopt localized Inventory context, FilterBar, SummaryStrip and typed DataTable without changing paging or calculations.
 2. **Reservations and Stock Transactions read-only directories.** Establish missing component coverage first; preserve server paging, immutable evidence and independent permissions.
 3. **Insights and Reconciliation read-only analysis pair.** Split their shared presentation concerns only if it reduces risk; keep classifications and tolerances server-authored.
 4. **Adjustment List/Create/Record.** Add list/form/state-action matrices before any visual change; keep frozen count and separation-of-duties rules unchanged.
@@ -60,7 +60,7 @@ The Inventory application currently exposes 19 Angular routes through 15 page te
 
 ## First slice decision
 
-Inventory Availability is first because it is GET-only, independently permissioned, has an existing typed API client and focused component test, and cannot post or reserve stock. Its current page already displays server-authored quantities and named warehouses but still uses a hand-built filter card, projected table markup, hard-coded `INVENTORY` eyebrow and one generic empty state. The safety net must be committed before the visual migration.
+Inventory Availability is first because it is GET-only, independently permissioned, has an existing typed API client and focused component test, and cannot post or reserve stock. Its current page already displays server-authored quantities and named warehouses but still uses a hand-built filter card, projected table markup, hard-coded `INVENTORY` eyebrow and one generic empty state. The five-test safety net is committed before the visual migration.
 
 ## Exit criteria
 

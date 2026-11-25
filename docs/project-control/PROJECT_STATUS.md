@@ -1,5 +1,7 @@
 # حالة المشروع / Project Status
 
+> تحديث 2026-11-25: اكتمل safety net لأول شريحة FRD-I. تحمي 5 اختبارات Inventory Availability الأسماء والكميات القادمة من الخادم والبحث المؤجل وwarehouse/paging/reset والحالة الفارغة قبل تغيير العرض. لا تغيير runtime؛ التحويل البصري المحدود هو التالي.
+
 > تحديث 2026-11-25: اكتمل جرد FRD-I لـ19 مسار Inventory عبر 15 قالباً، مع تصنيف القراءة والـmasters والـworkflows وعقود الصلاحيات والـApplication والـbranch/warehouse context. اعتُمد Inventory Availability كأول شريحة GET-only بعد safety net؛ لا تغيير runtime في الجرد.
 
 > تحديث 2026-11-25: أُغلق FRD-H وصُنفت Branch Workspace وWarehouse Master وWarehouse Locations كأسطح V4 مهاجرة مع بقاء سلطة الفرع/المستودع والصلاحيات. نجح 291 اختباراً والبناء و142 قالب وصول و122 صفحة وPlaywright 7/7 و1,668 فحصاً أمنياً. انتقلت البوابة إلى جرد Inventory المحدود.

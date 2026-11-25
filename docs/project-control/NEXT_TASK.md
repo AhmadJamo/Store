@@ -4,7 +4,7 @@
 
 > الحالة: IN PROGRESS — اكتمل الجرد في 2026-11-25
 >
-> جُردت 19 route عبر 15 قالباً وثُبتت سلطات balance/reservation/valuation/tracking/transfer/adjustment/idempotency والصلاحيات المستقلة. Inventory Availability هي أول شريحة لأنها GET-only وتملك API/spec محدودين. التالي الوحيد: وسّع safety net ليحمي الصفوف المسماة، server query، true-empty/filtered-empty/reset والتسلسل الحالي، ثم اعمل commit قبل تطبيق FilterBar/SummaryStrip/typed DataTable والسياق المترجم. لا تغيّر API أو الحسابات أو branch/warehouse authority.
+> جُردت 19 route عبر 15 قالباً، واكتمل safety net لـInventory Availability بخمسة اختبارات تحمي الصفوف المسماة والكميات الخادمة والبحث المؤجل وwarehouse/paging/reset والحالة الفارغة. التالي الوحيد: حوّل الصفحة إلى سياق Inventory مترجم وFilterBar/SummaryStrip/typed DataTable مع true-empty وfiltered-empty واضحين، مع إبقاء server query/paging وكل حسابات OnHand/Reserved/Available والـIDs الداخلية كما هي. بعدها شغّل البوابة واعمل commit مستقل.
 
 ## FRD-H — Branches/Warehouses Migration
 
