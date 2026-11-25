@@ -2592,3 +2592,7 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
   - Inventoried Branch Workspace, Warehouse Master, Warehouse Locations, the verified Shell Branch Switcher and 45 warehouse-picker template references.
   - Confirmed the server-authoritative branch grant/context boundary, View/Create/Edit/Delete/status/access permissions, antiforgery and name-first branch/warehouse selection invariants.
   - Approved Warehouse Master List/Form as the first bounded slice before Locations and the mixed-responsibility Branch Workspace. No runtime, API, schema or business behavior changed.
+- 2026-11-25: Completed the first FRD-H Warehouse Master List/Form slice.
+  - Replaced the hard-coded Inventory eyebrow, legacy three-column form and projected table with localized context, three FormSections, required FieldCues, WorkflowFooter and typed DataTable; corrected the Product-derived Delete label.
+  - Preserved every operational setting, named branch/account option with internal IDs, dirty guard, create/edit/delete command, conflict recovery and Warehouses.View/Create/Edit/Delete gate.
+  - Extended focused coverage and verified 283/283 Angular tests across 131 files, production build, 141-template accessibility, 121-page consistency and Playwright 7 passed/0 failed/3 authenticated-API skips. The pre-existing 204.88 kB initial shared-chunk warning remains open.

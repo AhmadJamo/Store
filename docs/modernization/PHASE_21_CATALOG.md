@@ -109,6 +109,7 @@ creating a duplicate unit editor.
 
 - Angular `/warehouses` provides list/create/edit/delete with named branch and inventory-account options, all current
   operational type/control/picking/receiving/POS/capacity/location fields and dirty/rejected-form recovery.
+- FRD-H organizes that route with localized Inventory context, three shared FormSections, FieldCue, WorkflowFooter and a typed DataTable; the corrected Delete label is warehouse-specific while all behavior remains unchanged.
 - `WarehouseService` remains authoritative for SaaS limits, duplicate names, accounting assignments, unsafe Simple-mode
   transitions, POS-access dependencies and deletion constraints. Display DTOs now include names rather than exposing IDs.
 - API reads/forms/mutations preserve independent `Warehouses.View/Create/Edit/Delete` permissions; every mutation uses

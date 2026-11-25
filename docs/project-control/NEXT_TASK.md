@@ -4,7 +4,7 @@
 
 > الحالة: IN PROGRESS — اكتمل الجرد في 2026-11-25
 >
-> ثُبتت أربعة أسطح: Branch Workspace وWarehouse Master وWarehouse Locations وShell Branch Switcher، إضافة إلى 45 warehouse picker reference. التالي: نفّذ Warehouse Master List/Form فقط على `/warehouses` باستخدام PageHeader/FormSection/FieldCue/WorkflowFooter/DataTable، وصحح Delete localization. حافظ على كل settings والخيارات بالأسماء والـIDs وdirty/recovery وWarehouses.View/Create/Edit/Delete. لا تبدأ Locations قبل كومت وبوابة كاملة.
+> اكتمل Warehouse Master List/Form باستخدام PageHeader/FormSection/FieldCue/WorkflowFooter/typed DataTable وترجمة Delete الصحيحة، وبقيت settings والخيارات بالأسماء والـIDs وdirty/recovery والصلاحيات كما هي. التالي: نفّذ Warehouse Locations فقط على `/inventory/locations`: أضف component spec أولاً ثم نظّم form/filter/tree table بالمكوّنات المشتركة، مع الحفاظ على hierarchy/capabilities/status والاختيار باسم المستودع وWarehouses.View/Create/Edit. لا تبدأ Branch Workspace قبل كومت وبوابة كاملة.
 
 ## FRD-G — Contacts Customers/Suppliers Pilot
 
