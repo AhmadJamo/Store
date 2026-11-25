@@ -1,4 +1,5 @@
 # Project TODO
+# FRD-E completed (2026-11-25): branch, company, user and sign-out now share one contextual account menu while search remains directly available. The planned Application Shell layers are complete; 270 tests, build, 140 templates, 121 pages and Playwright 7/7 pass. Products pilot is next.
 # FRD-E fifth slice completed (2026-11-25): the topbar now shows the real destination title and the breadcrumb lives with history/Open Work in one context toolbar. 269 tests, build, 140 templates, 121 pages and Playwright 7/7 pass.
 # FRD-E fourth slice completed (2026-11-25): every registered destination now resolves App/Section/Archetype/Mobile priority metadata, mobile navigation consumes the priority contract, and registry coverage prevents unclassified destinations. 268 tests, build, 140 templates, 121 pages and Playwright 7/7 pass.
 # FRD-E third slice completed (2026-11-24): current-app navigation is a focused component and Open Work styles are globally scoped under app-shell; app-shell.scss fell from 8.47 kB to 4.79 kB and its build warning is closed. 265 tests, build, 140 templates, 121 pages and Playwright 7/7 pass.

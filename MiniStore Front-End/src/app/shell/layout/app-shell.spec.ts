@@ -8,12 +8,15 @@ import { WorkspaceService } from '../../workspace/state/workspace.service';
 import { AppShell } from './app-shell';
 import { AccountApiService } from '../../core/api/account-api.service';
 import { ApiSessionService } from '../../core/api/api-session.service';
+import { BranchContextService } from '../../core/branch-context/branch-context.service';
 
 @Component({ template: '' }) class EmptyRoute {}
 
 describe('AppShell accessibility', () => {
   const pending = signal<any>(null);
   const permittedItems = signal<any[]>([]);
+  const sessionState = signal<any>(null);
+  const branchChoices = signal<any[]>([]);
   const workspace = {
     tabs: signal<any[]>([]), activeTab: signal<any>(null), recentlyClosed: signal<any[]>([]), pendingCloseTab: pending,
     canGoBack: signal(false), canGoForward: signal(false), syncRoute: vi.fn(), cancelClose: vi.fn(() => pending.set(null)),
@@ -24,6 +27,8 @@ describe('AppShell accessibility', () => {
 
   beforeEach(async () => {
     vi.clearAllMocks(); pending.set(null);
+    sessionState.set({ tenant: { name: 'Northwind' }, user: { userName: 'alex', email: 'alex@example.test' } });
+    branchChoices.set([{ id: 7, code: 'AMM', name: 'Amman' }]);
     permittedItems.set([{ id: 'customers', route: '/customers', labelKey: 'customersTitle', icon: 'C' }]);
     await TestBed.configureTestingModule({
       imports: [AppShell],
@@ -33,7 +38,8 @@ describe('AppShell accessibility', () => {
         { provide: NavigationRegistryService, useValue: { visibleItems: permittedItems, visibleGroups: signal([]), visibleApplications: signal([]), visibleGroupsForApplication: vi.fn(() => []), findByRoute: vi.fn(() => permittedItems()[0]), applicationForRoute: vi.fn(() => ({ id: 'contacts', labelKey: 'appContacts' })), findById: vi.fn(), canAccess: vi.fn(() => true), groupForRoute: vi.fn(), groupForItem: vi.fn(() => 'partners') } },
         { provide: LocalizationService, useValue: { locale: signal('en-US'), direction: signal('ltr'), text: (key: string) => key, toggle: vi.fn(), switching: signal(false), switchError: signal(false) } },
         { provide: UiPreferencesService, useValue: { theme: signal('system'), density: signal('comfortable'), sidebar: signal('expanded'), contentWidth: signal('fluid'), reset: vi.fn(), setTheme: vi.fn(), setDensity: vi.fn(), setSidebar: vi.fn(), setContentWidth: vi.fn() } },
-        { provide: ApiSessionService, useValue: { session: signal(null), clear: vi.fn() } },
+        { provide: ApiSessionService, useValue: { session: sessionState, clear: vi.fn() } },
+        { provide: BranchContextService, useValue: { choices: branchChoices, selectedId: signal(7), select: vi.fn(), clear: vi.fn() } },
         { provide: AccountApiService, useValue: { logout: vi.fn() } },
       ],
     }).compileComponents();
@@ -55,6 +61,18 @@ describe('AppShell accessibility', () => {
     expect(breadcrumb.textContent).toContain('Contacts');
     expect(breadcrumb.querySelector('[aria-current="page"]')?.textContent).toContain('customersTitle');
     expect(fixture.nativeElement.querySelector('.topbar .breadcrumbs')).toBeNull();
+  });
+
+  it('consolidates company, user, branch, and sign-out controls in one account menu', () => {
+    const menu = fixture.nativeElement.querySelector('.account-menu') as HTMLDetailsElement;
+    expect(menu).toBeTruthy();
+    expect(menu.querySelector('summary')?.getAttribute('aria-label')).toBe('signedInUser');
+    expect(menu.textContent).toContain('Northwind');
+    expect(menu.textContent).toContain('alex');
+    expect(menu.querySelector('.branch-switcher select')).toBeTruthy();
+    expect(menu.querySelector('button')?.textContent).toContain('signOut');
+    expect(fixture.nativeElement.querySelector('.topbar > .branch-switcher')).toBeNull();
+    expect(fixture.nativeElement.querySelector('.topbar > .session-summary')).toBeNull();
   });
 
   it('provides a labelled mobile navigation trigger without duplicating navigation authority', () => {

@@ -30,9 +30,9 @@
 
 الأدلة محفوظة في `acceptance/design-system-2026-11-24/`.
 
-### بوابة FRD-E الحالية
+### بوابة FRD-E المكتملة
 
-أربع شرائح Shell مكتملة: App metadata، App Switcher، current-app navigation/CSS extraction، وSection/Archetype/Mobile priority metadata. البوابة الحالية: 125 ملف اختبار و268/268 اختبار، production build بلا `app-shell.scss` warning، 140 قالب وصول، 121 صفحة اتساق، وPlaywright ‏7 passed/0 failed/3 authenticated-API skips. يغطي الاختبار تصفية التطبيقات، اكتمال تصنيف كل destination، وعرض Desktop/Mobile. هذا لا يدّعي تكامل API حي.
+اكتملت شرائح Shell: App metadata، App Switcher، current-app navigation/CSS extraction، destination metadata، context hierarchy، وقائمة الحساب/الفرع الموحدة. البوابة النهائية: 125 ملف اختبار و270/270 اختبار، production build بلا `app-shell.scss` warning، 140 قالب وصول، 121 صفحة اتساق، وPlaywright ‏7 passed/0 failed/3 authenticated-API skips. يغطي الاختبار تصفية التطبيقات، اكتمال التصنيف، hierarchy وقائمة الحساب وعرض Desktop/Mobile. هذا لا يدّعي تكامل API حي.
 
 ## 3. بوابة كل migration slice
 

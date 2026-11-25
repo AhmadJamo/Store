@@ -12,17 +12,7 @@
       <app-current-app-navigation mode="mobile" [groups]="currentNavigationGroups()" (navigationSelected)="openCurrentNavigation($event)" />
       <app-application-switcher [currentApplicationId]="currentApplication()?.id ?? null" (applicationSelected)="openApplication($event)" />
       <div class="page-context"><span class="eyebrow">{{ currentApplication() ? navigationI18n.text(currentApplication()!.labelKey) : i18n.text('workspace') }}</span><strong>{{ currentNavigationItem() ? navigationI18n.text(currentNavigationItem()!.labelKey) : i18n.text('phaseTitle') }}</strong></div>
-      @if (branchContext.choices().length) {
-        <label class="branch-switcher">
-          <span>{{ i18n.text('activeBranch') }}</span>
-          <select [value]="branchContext.selectedId() ?? ''" (change)="switchBranch($event)">
-            <option value="">{{ i18n.text('allPermittedBranches') }}</option>
-            @for (branch of branchContext.choices(); track branch.id) {
-              <option [value]="branch.id">{{ branch.code }} — {{ branch.name }}</option>
-            }
-          </select>
-        </label>
-      }
+
       <div class="command-search" role="search" (focusout)="onSearchFocusOut($event)">
         <label class="search" for="workspace-command-search"><span aria-hidden="true">⌕</span><input id="workspace-command-search" autocomplete="off" [value]="searchQuery()" (input)="updateSearch($any($event.target).value)" (focus)="searchOpen.set(true)" (keydown)="onSearchKeydown($event)" [placeholder]="shellI18n.search('searchPages')" maxlength="80" /><kbd>Ctrl K</kbd></label>
         @if (searchOpen()) {
@@ -40,12 +30,32 @@
           </section>
         }
       </div>
-      @if (session.session(); as currentSession) {
-        <div class="session-summary">
-          <span><small>{{ i18n.text('signedInCompany') }}</small><strong>{{ currentSession.tenant.name }}</strong></span>
-          <span><small>{{ i18n.text('signedInUser') }}</small><strong>{{ currentSession.user.userName || currentSession.user.email }}</strong></span>
-          <button type="button" class="ui-button secondary" (click)="signOut()" [disabled]="signingOut()">{{ signingOut() ? i18n.text('signingOut') : i18n.text('signOut') }}</button>
-        </div>
+      @if (session.session() || branchContext.choices().length) {
+        <details class="account-menu">
+          <summary class="icon-action" [attr.aria-label]="session.session() ? i18n.text('signedInUser') : i18n.text('activeBranch')" [title]="session.session() ? i18n.text('signedInUser') : i18n.text('activeBranch')">♙</summary>
+          <div class="account-panel">
+            @if (session.session(); as currentSession) {
+              <div class="session-summary">
+                <span><small>{{ i18n.text('signedInCompany') }}</small><strong>{{ currentSession.tenant.name }}</strong></span>
+                <span><small>{{ i18n.text('signedInUser') }}</small><strong>{{ currentSession.user.userName || currentSession.user.email }}</strong></span>
+              </div>
+            }
+            @if (branchContext.choices().length) {
+              <label class="branch-switcher">
+                <span>{{ i18n.text('activeBranch') }}</span>
+                <select [value]="branchContext.selectedId() ?? ''" (change)="switchBranch($event)">
+                  <option value="">{{ i18n.text('allPermittedBranches') }}</option>
+                  @for (branch of branchContext.choices(); track branch.id) {
+                    <option [value]="branch.id">{{ branch.code }} — {{ branch.name }}</option>
+                  }
+                </select>
+              </label>
+            }
+            @if (session.session()) {
+              <button type="button" class="ui-button secondary" (click)="signOut()" [disabled]="signingOut()">{{ signingOut() ? i18n.text('signingOut') : i18n.text('signOut') }}</button>
+            }
+          </div>
+        </details>
       }
       <details class="preference-menu">
         <summary class="icon-action" [attr.aria-label]="i18n.text('displayPreferences')" [title]="i18n.text('displayPreferences')">⚙</summary>

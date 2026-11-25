@@ -2520,3 +2520,8 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
   - Replaced the generic phase title with the active destination title and moved the application/destination breadcrumb beside history and Open Work controls.
   - Preserved search, branch, session, routing and Workspace/dirty behavior; added a Shell hierarchy regression test.
   - Verified 269/269 Angular tests, production build, 140-template accessibility, 121-page UI consistency and Playwright 7 passed/0 failed/3 authenticated-API skips.
+- 2026-11-25: Closed FRD-E with the contextual account-menu slice.
+  - Consolidated current tenant, user, operational branch and sign-out into one responsive topbar menu while keeping command search directly visible.
+  - Preserved BranchContextService selection, dirty-work confirmation, session clearing, reload and logout authority; no API or business rule changed.
+  - Added Shell coverage for the consolidated controls and verified 270/270 Angular tests, production build, 140-template accessibility, 121-page UI consistency and Playwright 7 passed/0 failed/3 authenticated-API skips.
+  - Advanced the active frontend gate to the Products List/Form/Record pilot.

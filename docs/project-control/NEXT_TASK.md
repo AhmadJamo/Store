@@ -1,12 +1,18 @@
 # المهمة التالية الوحيدة / Next Task
 
+## FRD-F — Products List/Form/Record Pilot
+
+> الحالة: IN PROGRESS — بدأ بعد إغلاق FRD-E في 2026-11-25
+>
+> الهدف التالي هو أول تحويل كامل لنمط صفحات فعلي، وليس تجميلاً عاماً: Products List ثم Create/Edit ثم Record/Details، مع الحفاظ على CRUD والبحث بالاسم والباركود والصلاحيات وURLs وAPI الحالية.
+
+ابدأ بجرد ملفات Products الفعلية ومساراتها واختباراتها وعقود API، ثم طابقها مع `05-DESIGN-SYSTEM.md` و`07-MODULE-MIGRATION-MATRIX.md`. نفّذ List كأول slice باستعمال PageHeader/FilterBar/Summary/DataTable/Feedback الحالية أو حسّن primitives المشتركة بقدر الحاجة فقط. لا تغيّر قواعد المنتج أو DTOs أو API ما لم يكشف الجرد ضرورة موثقة. أثبت EN/AR وRTL/LTR وdesktop/mobile والبحث بالاسم والباركود والصلاحيات والحالات loading/empty/error قبل الانتقال إلى Form/Record.
+
 ## FRD-E — إعادة بناء Application Shell
 
-> الحالة: IN PROGRESS — اكتملت metadata التنفيذية في 2026-11-25
+> الحالة: COMPLETE — أُغلقت في 2026-11-25
 >
-> اكتملت App metadata وApp Switcher وcurrent-app navigation واستخراج CSS وSection/Archetype/Mobile priority coverage. انتقل breadcrumb إلى شريط السياق وأصبح العنوان هو الوجهة الفعلية. التالي: ضغط branch وsession/user في تحكم سياقي واضح، مع إبقاء search ظاهراً وسريعاً ودون تغيير authority أو URLs.
-
-أكمل تركيب Shell على أساس `04-UX-ARCHITECTURE.md`: راجع الشريط العلوي وworkspace toolbar وbreadcrumbs وOpen Work كمنظومة واحدة، واجعل البحث والفرع والجلسة قابلة للوصول من دون تكرار طبقات التنقل. حافظ على URLs وWorkspace/dirty/permission authority، ولا تغيّر API أو قواعد الأعمال. أضف اختبارات مكوّن/متصفح لأي سلوك يتغير، ثم أعد Angular tests والبناء والفحوص الثابتة وPlaywright RTL/LTR/theme/density/desktop/mobile.
+> اكتملت App metadata وApp Switcher وcurrent-app navigation واستخراج CSS وSection/Archetype/Mobile priority وcontext hierarchy وقائمة account/branch الموحدة. بقيت URLs وWorkspace/dirty/permission authority كما هي، ونجحت البوابة النهائية بـ270 اختباراً وPlaywright 7/7.
 
 ## FRD-D — نظام التصميم الوظيفي
 
