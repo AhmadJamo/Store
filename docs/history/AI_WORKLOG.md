@@ -2607,3 +2607,7 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
   - Extracted the 8 kB inline Branch Workspace markup to `branches-page.html`, bringing it into the HTML-only static accessibility inventory.
   - Added focused component coverage for server-returned assigned-branch scope, current operations/links, create/status commands and user-grant replacement with internal IDs.
   - The targeted suite passed 3/3 and static accessibility passed 142 templates before visual restructuring; business/API behavior is unchanged.
+- 2026-11-25: Completed the third FRD-H Branch Workspace slice.
+  - Replaced the hard-coded ADMIN context and mixed presentation with localized Administration context, a shared SummaryStrip, FormSection/FieldCue/WorkflowFooter and separate DetailSections for company metrics, branch directory and access administration.
+  - Preserved server-returned assigned-branch scope, operations, named warehouses/POS terminals, current-branch drill-downs, create/edit/status commands, grant replacement with internal IDs and every Branches permission boundary.
+  - Added hierarchy coverage and verified 291/291 Angular tests across 133 files, production build, 142-template accessibility and 122-page consistency. The pre-existing 204.88 kB initial shared-chunk warning remains open; final browser/security closure is the next FRD-H step.

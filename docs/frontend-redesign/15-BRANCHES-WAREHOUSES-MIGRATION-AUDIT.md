@@ -1,6 +1,6 @@
 # 15 — Branches/Warehouses migration audit
 
-> Status: FRD-H implementation in progress — Warehouse Master and Locations complete; Branch Workspace next
+> Status: FRD-H implementation complete — final acceptance and closure evidence next
 > Date: 2026-11-25
 > Source of truth: Angular routes/components, API clients, Application services, API controllers, permission definitions and branch-context ADRs
 
@@ -8,7 +8,7 @@
 
 | Surface | Route | Current behavior | Main presentation gap |
 |---|---|---|---|
-| Branch Workspace | `/branches` | Assigned-branch dashboard, company/branch operations, linked warehouses and POS terminals, inline create/edit/status actions, current-branch links and user grant management | One large template still mixes dashboard, master-data form, access administration and operational navigation with hard-coded `ADMIN`; FRD-H extracted it to external HTML, added component coverage and brought it into the static accessibility inventory |
+| Branch Workspace | `/branches` | Assigned-branch dashboard, company/branch operations, linked warehouses and POS terminals, inline create/edit/status actions, current-branch links and user grant management | FRD-H complete: localized Administration context, SummaryStrip, FormSection/FieldCue/WorkflowFooter and separate DetailSections now distinguish company metrics, branch directory and access administration while preserving every command and link |
 | Warehouse Master | `/warehouses` | Full warehouse list plus inline create/edit form, branch/account choices, operational settings, dirty guard and permission-aware delete | FRD-H slice 1 complete: localized Inventory context, three FormSections, FieldCue, WorkflowFooter, typed DataTable and corrected warehouse Delete label |
 | Warehouse Locations | `/inventory/locations` | Warehouse/search filters, hierarchical location table and inline create/edit form with capabilities | FRD-H slice 2 complete: localized Inventory context, FormSections/FieldCues/WorkflowFooter, FilterBar/SummaryStrip, typed hierarchical DataTable, filtered-empty reset and focused coverage |
 | Branch Switcher | Application Shell | Shows only active server-returned branch grants by name and sends the selected ID through `X-MiniStore-Branch-Id` after reload | Already migrated and verified in FRD-E; preserve it as a cross-cutting authority boundary rather than restyling it again |
@@ -31,8 +31,8 @@
 
 1. Warehouse Master List/Form: COMPLETE — shared PageHeader/FormSection/FieldCue/WorkflowFooter/typed DataTable adopted; every command, option, dirty guard, recovery state and permission preserved.
 2. Warehouse Locations: COMPLETE — focused coverage plus shared form/filter/summary/typed-tree hierarchy preserve named warehouse selection, hierarchy, capabilities and create/edit commands.
-3. Branch Workspace: SAFETY NET COMPLETE — external template and focused coverage protect server-returned scope, operations/links, master commands and grant replacement; next separate dashboard, branch master actions and access management visually without splitting authority or inventing routes.
-4. Run branch-context, picker-name, permission and presentation acceptance; record the live authenticated API limitation explicitly, then close FRD-H.
+3. Branch Workspace: COMPLETE — external template, localized context, shared form/summary/workflow hierarchy and separate company/directory/access sections preserve server-returned scope, operations/links, master commands and grant replacement without splitting authority or inventing routes.
+4. NEXT — run branch-context, picker-name, permission and presentation acceptance; record the live authenticated API limitation explicitly, then close FRD-H.
 
 ## First slice decision
 

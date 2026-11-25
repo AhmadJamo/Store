@@ -1,2 +1,206 @@
-.branches-page{display:grid;gap:1rem}.branch-form{display:grid;grid-template-columns:repeat(2,minmax(12rem,1fr));gap:1rem;padding:1rem;border:1px solid var(--ui-border);border-radius:var(--ui-radius);background:var(--ui-surface)}.branch-form h2,.branch-form .actions{grid-column:1/-1;margin:0}.branch-admin-actions{display:flex;gap:.5rem;flex-wrap:wrap}.branch-admin-actions button{border:1px solid var(--ui-border);background:transparent;border-radius:var(--ui-radius);padding:.4rem .65rem}@media(max-width:700px){.branch-form{grid-template-columns:1fr}}.operations{display:grid;gap:.6rem}.operations.company{padding:1rem;border:1px solid var(--ui-border);border-radius:var(--ui-radius);background:var(--ui-surface)}.operations h2{margin:0}.metric-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(8rem,1fr));gap:.55rem}.metric-grid span{display:grid;padding:.65rem;border-radius:var(--ui-radius);background:var(--ui-muted-surface);color:var(--ui-muted)}.metric-grid strong{font-size:1.15rem;color:var(--ui-text)}.metric-grid .alert{background:var(--ui-danger-soft)}.summary{display:grid;grid-template-columns:repeat(3,minmax(5rem,auto) 1fr);gap:.5rem 1rem;align-items:baseline;padding:1rem;border:1px solid var(--ui-border);border-radius:var(--ui-radius);background:var(--ui-surface)}
-    .summary strong{font-size:1.5rem}.branch-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(19rem,1fr));gap:1rem}.branch-card,.access-card{border:1px solid var(--ui-border);border-radius:var(--ui-radius);background:var(--ui-surface);padding:1rem;display:grid;gap:1rem}.branch-card.current{border-color:var(--erp-color-primary-strong);box-shadow:0 0 0 1px var(--erp-color-primary-strong)}.branch-card header,.row,footer{display:flex;justify-content:space-between;gap:1rem;align-items:center}.branch-card h2,.branch-card h3,.access-card h2{margin:.15rem 0}.branch-card h3{font-size:1rem}.status,.chips span,.current-label{border-radius:999px;padding:.2rem .55rem;background:var(--ui-success-soft)}.current-label{margin:0;width:max-content}.status.inactive,.chips span:not(.on){background:var(--ui-muted-surface);color:var(--ui-muted)}.chips,.branch-actions{display:flex;flex-wrap:wrap;gap:.35rem;margin-block:.45rem}.branch-actions a{padding:.45rem .65rem;border:1px solid var(--ui-border);border-radius:var(--ui-radius);text-decoration:none}.row span,.muted{color:var(--ui-muted);font-size:.85rem}.grant-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(16rem,1fr));gap:.5rem}.grant-row{display:flex;gap:.55rem;align-items:center;padding:.65rem;border:1px solid var(--ui-border);border-radius:var(--ui-radius)}footer{justify-content:flex-start;flex-wrap:wrap}@media(max-width:700px){.summary{grid-template-columns:auto 1fr}}
+.branches-page,
+.branch-form,
+.access-workspace {
+  display: grid;
+  gap: 1rem;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(12rem, 1fr));
+  gap: 1rem;
+}
+
+.metric-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr));
+  gap: .65rem;
+}
+
+.metric-grid span {
+  display: grid;
+  gap: .15rem;
+  min-block-size: 4.5rem;
+  padding: .75rem;
+  border: 1px solid var(--ui-border);
+  border-radius: var(--ui-radius);
+  background: var(--ui-muted-surface);
+  color: var(--ui-muted);
+}
+
+.metric-grid strong {
+  color: var(--ui-text);
+  font-size: 1.2rem;
+}
+
+.metric-grid .alert {
+  border-color: var(--ui-danger);
+  background: var(--ui-danger-soft);
+}
+
+.company-metrics {
+  grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+}
+
+.branch-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(19rem, 1fr));
+  gap: 1rem;
+}
+
+.branch-card {
+  display: grid;
+  align-content: start;
+  gap: 1rem;
+  min-inline-size: 0;
+  padding: 1rem;
+  border: 1px solid var(--ui-border);
+  border-radius: var(--ui-radius);
+  background: var(--ui-surface);
+}
+
+.branch-card.current {
+  border-color: var(--erp-color-primary-strong);
+  box-shadow: inset 3px 0 0 var(--erp-color-primary-strong);
+}
+
+:host-context([dir='rtl']) .branch-card.current {
+  box-shadow: inset -3px 0 0 var(--erp-color-primary-strong);
+}
+
+.branch-card-header,
+.record-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: center;
+}
+
+.branch-identity {
+  min-inline-size: 0;
+}
+
+.branch-identity small {
+  color: var(--ui-muted);
+  font-weight: 700;
+  letter-spacing: .08em;
+}
+
+.branch-card h2,
+.branch-card h3 {
+  margin: .15rem 0 0;
+}
+
+.branch-card h2 {
+  font-size: 1.15rem;
+}
+
+.branch-card h3 {
+  font-size: .95rem;
+}
+
+.branch-metrics {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.branch-admin-actions,
+.chips,
+.branch-actions,
+.workspace-footer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem;
+}
+
+.branch-admin-actions button,
+.branch-actions a {
+  padding: .45rem .7rem;
+  border: 1px solid var(--ui-border);
+  border-radius: var(--ui-radius);
+  background: transparent;
+  color: inherit;
+  text-decoration: none;
+}
+
+.branch-admin-actions button:hover,
+.branch-actions a:hover {
+  border-color: var(--erp-color-primary-strong);
+  color: var(--erp-color-primary-strong);
+}
+
+.status,
+.chips span,
+.current-label {
+  border-radius: 999px;
+  padding: .2rem .55rem;
+  background: var(--ui-success-soft);
+}
+
+.current-label {
+  width: max-content;
+  max-width: 100%;
+  margin: 0;
+}
+
+.status.inactive,
+.chips span:not(.on) {
+  background: var(--ui-muted-surface);
+  color: var(--ui-muted);
+}
+
+.linked-records {
+  display: grid;
+  gap: .55rem;
+  padding-block-start: .75rem;
+  border-block-start: 1px solid var(--ui-border);
+}
+
+.chips {
+  margin-block-end: .25rem;
+}
+
+.record-row span,
+.muted {
+  color: var(--ui-muted);
+  font-size: .85rem;
+}
+
+.access-workspace > .ui-field {
+  max-inline-size: 32rem;
+}
+
+.grant-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+  gap: .5rem;
+}
+
+.grant-row {
+  display: flex;
+  gap: .55rem;
+  align-items: center;
+  padding: .75rem;
+  border: 1px solid var(--ui-border);
+  border-radius: var(--ui-radius);
+  background: var(--ui-surface);
+}
+
+.workspace-footer {
+  justify-content: flex-start;
+}
+
+@media (max-width: 700px) {
+  .form-grid,
+  .branch-metrics {
+    grid-template-columns: 1fr;
+  }
+
+  .branch-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .branch-card-header,
+  .record-row {
+    align-items: flex-start;
+  }
+}

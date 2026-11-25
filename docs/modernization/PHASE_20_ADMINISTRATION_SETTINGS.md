@@ -42,6 +42,8 @@ Registration and login share Web services between MVC and API so cookie issuance
 - Static accessibility: 50 templates; external-SCSS policy passed.
 - Production bundles: 297,465 / 358,400 initial bytes; largest lazy chunk 80,866 / 81,920 bytes.
 
+FRD-H later reorganized /branches with localized Administration context, a shared SummaryStrip and explicit company, branch-directory and access-management sections. The branch create/edit form uses FormSection, required FieldCue and WorkflowFooter. Server-returned grants, current-branch links, status commands, internal IDs and permission authority remain unchanged.
+
 ## What remains
 
 - `MOD-021` completes catalog presentation, starting with the remaining Product create/edit/delete operations.

@@ -4,7 +4,7 @@
 
 > الحالة: IN PROGRESS — اكتمل الجرد في 2026-11-25
 >
-> اكتمل Warehouse Master وWarehouse Locations بالمكوّنات المشتركة، وبقيت settings/hierarchy/capabilities والخيارات بالأسماء والـIDs وdirty/recovery والصلاحيات كما هي. اكتمل استخراج Branch Workspace إلى HTML خارجي ودخل فحص الوصول، وأضيف component spec لنطاق الخادم والعمليات والأوامر والمنح. التالي: افصل بصرياً dashboard وbranch master actions وaccess management فقط باستخدام المكوّنات المشتركة وسياق مترجم، مع الحفاظ على assigned-branch scope وoperations/current-branch links وBranches.View/Create/Edit/SetActive/ViewOperations/ManageAccess. لا تبدأ إغلاق FRD-H قبل كومت وبوابة كاملة.
+> اكتمل تنفيذ Warehouse Master وWarehouse Locations وBranch Workspace. أصبحت صفحة الفروع تفصل company dashboard وbranch directory وaccess management باستخدام SummaryStrip وFormSection/FieldCue/WorkflowFooter وDetailSection وسياق Administration مترجم، مع بقاء assigned-branch scope والأوامر والروابط والصلاحيات. نجح 291 اختباراً والبناء و142 قالب وصول و122 صفحة. التالي الوحيد: شغّل بوابة FRD-H النهائية (Playwright + SecurityRegression + أدلة القبول وحدود live authenticated API)، ثم أغلق الموجة وحدد وحدة الهجرة التالية.
 
 ## FRD-G — Contacts Customers/Suppliers Pilot
 

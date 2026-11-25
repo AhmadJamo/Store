@@ -6,17 +6,22 @@ import { ApiErrorService } from '../../core/api/api-error.service';
 import { NormalizedApiProblem } from '../../core/api/api.models';
 import { BranchesLocalizationService } from './branches-localization.service';
 import { ApiSessionService } from '../../core/api/api-session.service';
+import { FieldCueComponent } from '../../shared/forms/field-cue/field-cue';
 import { FormErrorSummaryComponent } from '../../shared/forms/form-error-summary';
 import { FormFocusService } from '../../shared/forms/form-focus.service';
+import { FormSectionComponent } from '../../shared/forms/form-section/form-section';
 import { ApiRecoveryComponent } from '../../shared/ui/api-recovery/api-recovery';
+import { DetailSectionComponent } from '../../shared/ui/detail-section/detail-section';
 import { FeedbackStateComponent } from '../../shared/ui/feedback-state/feedback-state';
 import { PageHeaderComponent } from '../../shared/ui/page-header/page-header';
+import { SummaryStripComponent } from '../../shared/ui/summary-strip/summary-strip';
+import { WorkflowFooterComponent } from '../../shared/ui/workflow-footer/workflow-footer';
 import { BranchAccessManagement, BranchesApiService, BranchSummary } from './branches-api.service';
 import { BranchContextService } from '../../core/branch-context/branch-context.service';
 
 @Component({
   selector: 'app-branches-page',
-  imports: [DecimalPipe, ReactiveFormsModule, RouterLink, FormErrorSummaryComponent, ApiRecoveryComponent, FeedbackStateComponent, PageHeaderComponent],
+  imports: [DecimalPipe, ReactiveFormsModule, RouterLink, FormErrorSummaryComponent, ApiRecoveryComponent, FeedbackStateComponent, PageHeaderComponent, FieldCueComponent, FormSectionComponent, DetailSectionComponent, SummaryStripComponent, WorkflowFooterComponent],
   templateUrl: './branches-page.html',
   styleUrl: './branches-page.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

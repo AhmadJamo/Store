@@ -75,6 +75,23 @@ describe('BranchesPageComponent', () => {
     expect(fixture.nativeElement.querySelectorAll('.branch-actions a')).toHaveLength(4);
   });
 
+  it('renders the shared Odoo-inspired workspace hierarchy with localized context', () => {
+    const fixture = TestBed.createComponent(BranchesPageComponent);
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.textContent).toContain('administrationNavigation');
+    expect(fixture.nativeElement.textContent).not.toContain('ADMIN');
+    expect(fixture.nativeElement.querySelectorAll('app-summary-strip')).toHaveLength(1);
+    expect(fixture.nativeElement.querySelectorAll('app-detail-section')).toHaveLength(3);
+
+    (fixture.componentInstance as any).startCreate();
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.querySelectorAll('app-form-section')).toHaveLength(1);
+    expect(fixture.nativeElement.querySelectorAll('app-field-cue')).toHaveLength(2);
+    expect(fixture.nativeElement.querySelectorAll('app-workflow-footer')).toHaveLength(1);
+  });
+
   it('preserves branch create and active-state commands', () => {
     const component = TestBed.createComponent(BranchesPageComponent).componentInstance as any;
     component.startCreate();
