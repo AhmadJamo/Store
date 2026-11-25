@@ -1,10 +1,10 @@
 # المهمة التالية الوحيدة / Next Task
 
-## FRD-I — Inventory Migration Audit
+## FRD-I — Inventory Migration
 
-> الحالة: NEXT — تبدأ بعد إغلاق FRD-H في 2026-11-25
+> الحالة: IN PROGRESS — اكتمل الجرد في 2026-11-25
 >
-> راجع أسطح Inventory الفعلية ومساراتها ومكوّناتها وعقود API/Application والصلاحيات والـbranch/warehouse context قبل أي تعديل بصري. صنّف List/Form/Record/Workflow، وحدد أول شريحة محدودة منخفضة المخاطر لا تنقل stock authority إلى المتصفح ولا تغيّر posting/reservation/tracking rules. أنشئ وثيقة audit وخطة ترتيب واختبارات safety net، ثم اعمل commit للجرد قبل بدء أول UI slice.
+> جُردت 19 route عبر 15 قالباً وثُبتت سلطات balance/reservation/valuation/tracking/transfer/adjustment/idempotency والصلاحيات المستقلة. Inventory Availability هي أول شريحة لأنها GET-only وتملك API/spec محدودين. التالي الوحيد: وسّع safety net ليحمي الصفوف المسماة، server query، true-empty/filtered-empty/reset والتسلسل الحالي، ثم اعمل commit قبل تطبيق FilterBar/SummaryStrip/typed DataTable والسياق المترجم. لا تغيّر API أو الحسابات أو branch/warehouse authority.
 
 ## FRD-H — Branches/Warehouses Migration
 

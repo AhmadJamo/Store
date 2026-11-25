@@ -2615,3 +2615,7 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
   - Recorded parity for Branch Workspace, Warehouse Master and Warehouse Locations, including server-authoritative branch grants/context, named warehouse selection with internal IDs, permissions, recovery and unchanged API/Application/domain boundaries.
   - Verified 291/291 Angular tests across 133 files, production build, 142-template accessibility, 122-page consistency, Playwright 7 passed/0 failed/3 authenticated-API skips and 1,668 SecurityRegression checks.
   - Stored machine-readable browser evidence and the explicit live-API limitation in `docs/frontend-redesign/acceptance/branches-warehouses-pilot-2026-11-25/`; advanced the active gate to a bounded Inventory audit.
+- 2026-11-25: Completed the FRD-I Inventory migration audit.
+  - Inventoried 19 Angular routes across 15 page templates and mapped read-only directories, stock masters, document workflows and operational command workspaces to their API/Application/repository authorities and independent permissions.
+  - Confirmed that balance, reservation, valuation, tracking, adjustment, transfer, capacity, idempotency and branch/warehouse scope remain server-owned; Warehouse Locations is already migrated and excluded from restyling.
+  - Selected GET-only Inventory Availability as the first bounded slice. Its existing component spec must first expand to named rows, server query, true-empty/filtered-empty/reset and hierarchy evidence. No runtime, API, schema or business behavior changed.

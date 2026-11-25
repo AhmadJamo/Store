@@ -1,5 +1,7 @@
 # حالة المشروع / Project Status
 
+> تحديث 2026-11-25: اكتمل جرد FRD-I لـ19 مسار Inventory عبر 15 قالباً، مع تصنيف القراءة والـmasters والـworkflows وعقود الصلاحيات والـApplication والـbranch/warehouse context. اعتُمد Inventory Availability كأول شريحة GET-only بعد safety net؛ لا تغيير runtime في الجرد.
+
 > تحديث 2026-11-25: أُغلق FRD-H وصُنفت Branch Workspace وWarehouse Master وWarehouse Locations كأسطح V4 مهاجرة مع بقاء سلطة الفرع/المستودع والصلاحيات. نجح 291 اختباراً والبناء و142 قالب وصول و122 صفحة وPlaywright 7/7 و1,668 فحصاً أمنياً. انتقلت البوابة إلى جرد Inventory المحدود.
 
 > تحديث 2026-11-25: اكتملت شريحة FRD-H الثالثة: Branch Workspace تفصل dashboard ودليل الفروع وإدارة الصلاحيات بمكونات V4 المشتركة وسياق Administration مترجم، مع بقاء نطاق الخادم والروابط والأوامر والصلاحيات. نجح 291 اختباراً والبناء و142 قالب وصول وجرد 122 صفحة؛ بوابة الإغلاق النهائية هي التالية.

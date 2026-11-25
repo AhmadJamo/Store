@@ -1,7 +1,7 @@
 # 12 — تقدم إعادة بناء Frontend
 
 > آخر تحديث: 2026-11-25
-> الحالة العامة: Products, Contacts and Branches/Warehouses waves verified; Inventory audit next
+> الحالة العامة: Products, Contacts and Branches/Warehouses verified; Inventory audit complete, Availability safety net next
 > المصدر: الكود، الاختبارات، وثائق المشروع، والمراجع الرسمية التي تم التحقق منها
 
 ## بوابات المراحل
@@ -28,7 +28,7 @@
 | Customers / Suppliers | Audited | Verified | FRD-G List/Form/Record | Verified contracts/permissions | 282 + security 1,668 + Playwright 7/7 | Migrated |
 | Sales | Not Started | Not Started | Legacy V3 | Verified | Existing specs | Planned |
 | Purchases | Not Started | Not Started | Legacy V3 | Verified | Existing specs | Planned |
-| Inventory | Audited | Planned | Legacy V3 | Verified | Existing specs | Wave 4 audit next |
+| Inventory | Audited | Scoped | Legacy V3; Locations V4 | Verified services/APIs/permissions | Existing API/page specs | FRD-I Availability safety net next |
 | Accounting | Not Started | Not Started | Legacy V3 | Verified | Existing specs | Planned |
 | Branches / Warehouses | Audited | Verified | FRD-H Workspace/Master/Locations | Verified contracts/context | 291 + security 1,668 + Playwright 7/7 | Migrated |
 | Users / Roles / Settings | Not Started | Not Started | Legacy V3 | Verified | Existing specs | Planned |
