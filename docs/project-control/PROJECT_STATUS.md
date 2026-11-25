@@ -1,5 +1,7 @@
 # حالة المشروع / Project Status
 
+> تحديث 2026-11-25: اكتملت شريحة FRD-G الخامسة: Customer Record تستخدم PageHeader context وDetailSection، تعرض status/type/code وتحافظ على profile/commercial/contacts/addresses وCustomers.Edit مع recovery retry. نجح 280 اختباراً والبناء و141 قالب وصول و121 صفحة وPlaywright 7/7.
+
 > تحديث 2026-11-25: اكتملت شريحة FRD-G الرابعة: Supplier Form تستخدم FormSection وFieldCue وWorkflowFooter، أزيل P2P وCancel المكرر، وبقيت حسابات الدائنين والمنتجات بالأسماء/IDs وdirty/concurrency/recovery. نجح 278 اختباراً والبناء و140 قالب وصول و121 صفحة وPlaywright 7/7.
 
 > تحديث 2026-11-25: اكتملت شريحة FRD-G الثالثة: Customer Form تستخدم FormSection وFieldCue وWorkflowFooter، أزيل CRM وCancel المكرر، وبقيت كل الحقول والخيارات وdirty/concurrency/commands. نجح 277 اختباراً والبناء و140 قالب وصول و121 صفحة وPlaywright 7/7.

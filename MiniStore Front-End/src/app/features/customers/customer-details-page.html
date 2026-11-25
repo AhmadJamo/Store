@@ -1,12 +1,22 @@
 <section class="customer-page">
-  @if (problem()) { <app-feedback-state kind="error" [title]="problem()" /> }
+  @if (problem(); as failure) { <app-api-recovery [problem]="failure" (retry)="load()" /> }
   @else if (!customer()) { <app-feedback-state kind="loading" [title]="i18n.text('loading')" /> }
   @else if (customer(); as item) {
-    <app-page-header [eyebrow]="item.customerCode" [title]="item.name" [description]="item.legalName || (item.type === 1 ? i18n.text('company') : i18n.text('individual'))"><a class="ui-button secondary" routerLink="/customers">{{ i18n.text('backToCustomers') }}</a>@if (session.can('Customers.Edit')) { <a class="ui-button primary" [routerLink]="['/customers', item.id, 'edit']">{{ i18n.text('edit') }}</a> }</app-page-header>
-    <div class="details-grid"><article class="ui-card"><h2>{{ i18n.text('profile') }}</h2><dl><div><dt>{{ i18n.text('status') }}</dt><dd>{{ item.isActive ? i18n.text('active') : i18n.text('archived') }}</dd></div><div><dt>{{ i18n.text('phone') }}</dt><dd>{{ item.phone || '—' }}</dd></div><div><dt>{{ i18n.text('email') }}</dt><dd>{{ item.email || '—' }}</dd></div><div><dt>{{ i18n.text('website') }}</dt><dd>{{ item.website || '—' }}</dd></div><div><dt>{{ i18n.text('preferredLanguage') }}</dt><dd>{{ item.preferredLanguage }}</dd></div><div><dt>{{ i18n.text('timeZone') }}</dt><dd>{{ item.timeZoneId }}</dd></div></dl></article>
-      <article class="ui-card"><h2>{{ i18n.text('commercialDefaults') }}</h2><dl><div><dt>{{ i18n.text('receivableAccount') }}</dt><dd>{{ item.accountName }}</dd></div><div><dt>{{ i18n.text('paymentTermDays') }}</dt><dd>{{ item.paymentTermDays }}</dd></div><div><dt>{{ i18n.text('currency') }}</dt><dd>{{ item.preferredCurrencyCode || '—' }}</dd></div><div><dt>{{ i18n.text('taxRate') }}</dt><dd>{{ item.isTaxExempt ? i18n.text('taxExempt') : (item.defaultTaxRateName || '—') }}</dd></div><div><dt>{{ i18n.text('priceList') }}</dt><dd>{{ item.defaultSalesPriceListName || '—' }}</dd></div></dl></article>
-      <article class="ui-card"><h2>{{ i18n.text('contacts') }}</h2>@if (item.contacts.length === 0) { <p>—</p> } @for (contact of item.contacts; track contact.id) { <p><strong>{{ contact.name }}</strong><br />{{ contact.phone || contact.email || '—' }}</p> }</article>
-      <article class="ui-card"><h2>{{ i18n.text('addresses') }}</h2>@if (item.addresses.length === 0) { <p>—</p> } @for (address of item.addresses; track address.id) { <p><strong>{{ address.label }}</strong><br />{{ address.snapshot }}</p> }</article>
+    <app-page-header [eyebrow]="i18n.text('contactsNavigation')" [title]="item.name" [description]="item.legalName || ''">
+      <div page-context class="record-context">
+        <span class="ui-badge" [class.success]="item.isActive" [class.warning]="!item.isActive">{{ item.isActive ? i18n.text('active') : i18n.text('archived') }}</span>
+        <span>{{ item.type === 1 ? i18n.text('company') : i18n.text('individual') }}</span>
+        <span aria-hidden="true">·</span>
+        <code>{{ item.customerCode }}</code>
+      </div>
+      <div secondary-actions><a class="ui-button secondary" routerLink="/customers">{{ i18n.text('backToCustomers') }}</a></div>
+      @if (session.can('Customers.Edit')) { <a primary-actions class="ui-button primary" [routerLink]="['/customers', item.id, 'edit']">{{ i18n.text('edit') }}</a> }
+    </app-page-header>
+    <div class="details-grid">
+      <app-detail-section [title]="i18n.text('profile')"><dl><div><dt>{{ i18n.text('status') }}</dt><dd>{{ item.isActive ? i18n.text('active') : i18n.text('archived') }}</dd></div><div><dt>{{ i18n.text('phone') }}</dt><dd>{{ item.phone || '—' }}</dd></div><div><dt>{{ i18n.text('email') }}</dt><dd>{{ item.email || '—' }}</dd></div><div><dt>{{ i18n.text('website') }}</dt><dd>{{ item.website || '—' }}</dd></div><div><dt>{{ i18n.text('preferredLanguage') }}</dt><dd>{{ item.preferredLanguage }}</dd></div><div><dt>{{ i18n.text('timeZone') }}</dt><dd>{{ item.timeZoneId }}</dd></div></dl></app-detail-section>
+      <app-detail-section [title]="i18n.text('commercialDefaults')"><dl><div><dt>{{ i18n.text('receivableAccount') }}</dt><dd>{{ item.accountName }}</dd></div><div><dt>{{ i18n.text('paymentTermDays') }}</dt><dd>{{ item.paymentTermDays }}</dd></div><div><dt>{{ i18n.text('currency') }}</dt><dd>{{ item.preferredCurrencyCode || '—' }}</dd></div><div><dt>{{ i18n.text('taxRate') }}</dt><dd>{{ item.isTaxExempt ? i18n.text('taxExempt') : (item.defaultTaxRateName || '—') }}</dd></div><div><dt>{{ i18n.text('priceList') }}</dt><dd>{{ item.defaultSalesPriceListName || '—' }}</dd></div></dl></app-detail-section>
+      <app-detail-section [title]="i18n.text('contacts')">@if (item.contacts.length === 0) { <p>—</p> } @for (contact of item.contacts; track contact.id) { <p><strong>{{ contact.name }}</strong><br />{{ contact.phone || contact.email || '—' }}</p> }</app-detail-section>
+      <app-detail-section [title]="i18n.text('addresses')">@if (item.addresses.length === 0) { <p>—</p> } @for (address of item.addresses; track address.id) { <p><strong>{{ address.label }}</strong><br />{{ address.snapshot }}</p> }</app-detail-section>
     </div>
   }
 </section>
