@@ -2596,3 +2596,6 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
   - Replaced the hard-coded Inventory eyebrow, legacy three-column form and projected table with localized context, three FormSections, required FieldCues, WorkflowFooter and typed DataTable; corrected the Product-derived Delete label.
   - Preserved every operational setting, named branch/account option with internal IDs, dirty guard, create/edit/delete command, conflict recovery and Warehouses.View/Create/Edit/Delete gate.
   - Extended focused coverage and verified 283/283 Angular tests across 131 files, production build, 141-template accessibility, 121-page consistency and Playwright 7 passed/0 failed/3 authenticated-API skips. The pre-existing 204.88 kB initial shared-chunk warning remains open.
+- 2026-11-25: Added the FRD-H Warehouse Locations pre-migration safety net.
+  - Added focused component coverage for warehouse-name rendering, the two-level location hierarchy, the complete trimmed create command and parent-preserving edit updates.
+  - The targeted Warehouse Locations suite passed 3/3 before any presentation change; runtime behavior is unchanged.

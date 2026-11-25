@@ -4,7 +4,7 @@
 
 > الحالة: IN PROGRESS — اكتمل الجرد في 2026-11-25
 >
-> اكتمل Warehouse Master List/Form باستخدام PageHeader/FormSection/FieldCue/WorkflowFooter/typed DataTable وترجمة Delete الصحيحة، وبقيت settings والخيارات بالأسماء والـIDs وdirty/recovery والصلاحيات كما هي. التالي: نفّذ Warehouse Locations فقط على `/inventory/locations`: أضف component spec أولاً ثم نظّم form/filter/tree table بالمكوّنات المشتركة، مع الحفاظ على hierarchy/capabilities/status والاختيار باسم المستودع وWarehouses.View/Create/Edit. لا تبدأ Branch Workspace قبل كومت وبوابة كاملة.
+> اكتمل Warehouse Master List/Form باستخدام PageHeader/FormSection/FieldCue/WorkflowFooter/typed DataTable وترجمة Delete الصحيحة، وبقيت settings والخيارات بالأسماء والـIDs وdirty/recovery والصلاحيات كما هي. اكتمل component spec الذي يحمي الأسماء والشجرة وأوامر create/edit. التالي: نظّم Warehouse Locations فقط على `/inventory/locations` باستخدام المكوّنات المشتركة، مع الحفاظ على hierarchy/capabilities/status والاختيار باسم المستودع وWarehouses.View/Create/Edit. لا تبدأ Branch Workspace قبل كومت وبوابة كاملة.
 
 ## FRD-G — Contacts Customers/Suppliers Pilot
 
