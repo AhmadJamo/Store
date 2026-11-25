@@ -8,7 +8,7 @@ import { WarehouseLocationsPageComponent } from './warehouse-locations-page';
 import { WarehouseOperationsLocalizationService } from './warehouse-operations-localization.service';
 
 describe('WarehouseLocationsPageComponent', () => {
-  const page = {
+  const page: any = {
     result: {
       locations: [
         { id: 1, warehouseId: 7, code: 'ROOT', name: 'Main floor', type: 1, status: 1, isReceivable: true, isPickable: true, isReservable: true, isShippable: false, isCountable: true },
@@ -57,6 +57,10 @@ describe('WarehouseLocationsPageComponent', () => {
     expect(fixture.nativeElement.textContent).toContain('Main floor');
     expect(fixture.nativeElement.textContent).toContain('Rack A');
     expect(fixture.nativeElement.querySelectorAll('app-data-table tbody tr')).toHaveLength(2);
+    expect(fixture.nativeElement.textContent).not.toContain('INVENTORY');
+    expect(fixture.nativeElement.querySelectorAll('app-form-section')).toHaveLength(3);
+    expect(fixture.nativeElement.querySelectorAll('app-workflow-footer')).toHaveLength(1);
+    expect(fixture.nativeElement.querySelectorAll('app-filter-bar')).toHaveLength(1);
   });
 
   it('creates a location with the selected warehouse ID and all physical fields', () => {
@@ -69,6 +73,20 @@ describe('WarehouseLocationsPageComponent', () => {
     }));
   });
 
+  it('distinguishes a filtered empty result and clears both filters', () => {
+    const emptyPage = { ...page, result: { ...page.result, locations: [], locationDepths: {} } };
+    api.getLocations.mockReturnValue(of(emptyPage));
+    const fixture = TestBed.createComponent(WarehouseLocationsPageComponent);
+    const component = fixture.componentInstance as any;
+    component.filter.patchValue({ warehouseId: 7, query: 'missing' });
+    component.load();
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.textContent).toContain('No matching locations');
+    component.clearFilters();
+    expect(component.filter.getRawValue()).toEqual({ warehouseId: 0, query: '' });
+    expect(api.getLocations).toHaveBeenLastCalledWith(undefined, '');
+  });
   it('loads an edit form and preserves the parent relationship on update', () => {
     const component = TestBed.createComponent(WarehouseLocationsPageComponent).componentInstance as any;
     component.beginEdit(2);

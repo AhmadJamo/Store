@@ -1,5 +1,7 @@
 # حالة المشروع / Project Status
 
+> تحديث 2026-11-25: اكتملت شريحة FRD-H الثانية: Warehouse Locations تستخدم سياق Inventory مترجماً وFormSection/FieldCue/WorkflowFooter وFilterBar/SummaryStrip وtyped hierarchical DataTable، مع filtered-empty ومسح المرشحات وبقاء كل الحقول والشجرة والقدرات والاختيار بالاسم. نجح 287 اختباراً والبناء و141 قالب وصول و121 صفحة وPlaywright 7/7.
+
 > تحديث 2026-11-25: اكتملت أول شريحة FRD-H: Warehouse Master تستخدم سياق Inventory مترجماً وFormSection/FieldCue/WorkflowFooter/typed DataTable، وصُححت تسمية حذف المستودع مع بقاء settings والخيارات بالأسماء/IDs وdirty/recovery والصلاحيات. نجح 283 اختباراً والبناء و141 قالب وصول و121 صفحة وPlaywright 7/7.
 
 > تحديث 2026-11-25: اكتمل جرد FRD-H للفروع والمستودعات. ثُبت Branch Workspace وWarehouse Master وWarehouse Locations وShell Branch Switcher و45 مرجع picker، مع عقود الصلاحيات والـbranch context والاختيار بالاسم. اعتمد Warehouse Master كأول slice محدود؛ لا تغيير runtime في الجرد.

@@ -105,6 +105,7 @@ never recomputes authoritative quantity, cost or value.
   relocation history and the physical StockMovement ledger. Controllers delegate to existing Application services only.
 - Added permission-aware Angular `/inventory/locations`, `/inventory/putaway` and `/inventory/location-movements` routes covering
   location hierarchy/barcode/capabilities, suggested/manual putaway, rule create/activate/deactivate, relocation and both ledgers.
+- FRD-H organizes /inventory/locations with localized Inventory context, shared FormSections/FieldCues/WorkflowFooter, FilterBar/SummaryStrip and a typed hierarchical DataTable, including distinct true-empty and filtered-empty states without changing commands or hierarchy rules.
 - Every mutation preserves antiforgery and its existing permission. Putaway/relocation use retry-safe idempotency keys; warehouse,
   product and location names remain user-facing while identifiers stay internal transport values.
 - Capacity, receive/pick eligibility, hierarchy/cycle checks, dimensional balance, ProductStock totals and immutable movement facts

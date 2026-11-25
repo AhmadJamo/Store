@@ -862,7 +862,7 @@ For exact module relationships, use `modules/*.md`; for entity and service detai
   expiration, quarantine and recall workspace, typed client/models, dirty-form recovery and external responsive SCSS.
 - `MiniStore Front-End/src/app/features/inventory/{warehouse-locations-page,unassigned-stock-page,location-movements-page,warehouse-operations*}`
   and `data/warehouse-operations*`: typed, bilingual location master, putaway/rule and internal/physical movement Angular operations
-  with permission-aware commands, idempotency, dirty-form recovery and shared external responsive SCSS. `warehouse-locations-page.spec.ts` protects named warehouse rendering, hierarchical rows, the complete create command and parent-preserving edit updates before FRD-H presentation work.
+  with permission-aware commands, idempotency, dirty-form recovery and shared external responsive SCSS. `warehouse-locations-page.spec.ts` protects named warehouse rendering, hierarchical rows, the complete create command, parent-preserving edit updates, the shared FormSection/WorkflowFooter/FilterBar/SummaryStrip/typed DataTable hierarchy and filtered-empty reset behavior.
 - `docs/modernization/PHASE_22_INVENTORY.md`: inventory/WMS Angular migration scope, completed slices, evidence and next gate.
 - `MiniStore.Web/Controllers/Api/V1/PurchaseRequestsApiController.cs`: authenticated, permission-separated Purchase Request
   list/details/create/submit/cancel/approve/reject contract over Application services, with antiforgery and row-version evidence.
