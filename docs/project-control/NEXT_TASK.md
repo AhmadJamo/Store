@@ -4,7 +4,7 @@
 
 > الحالة: IN PROGRESS — اكتملت metadata التنفيذية في 2026-11-25
 >
-> اكتملت App metadata وApp Switcher وcurrent-app navigation واستخراج CSS وSection/Archetype/Mobile priority coverage. التالي: تبسيط hierarchy المرئية للـShell (search، branch، session/user، Open Work وbreadcrumbs) وإزالة أي صفوف/طبقات متكررة دون تغيير authority أو URLs.
+> اكتملت App metadata وApp Switcher وcurrent-app navigation واستخراج CSS وSection/Archetype/Mobile priority coverage. انتقل breadcrumb إلى شريط السياق وأصبح العنوان هو الوجهة الفعلية. التالي: ضغط branch وsession/user في تحكم سياقي واضح، مع إبقاء search ظاهراً وسريعاً ودون تغيير authority أو URLs.
 
 أكمل تركيب Shell على أساس `04-UX-ARCHITECTURE.md`: راجع الشريط العلوي وworkspace toolbar وbreadcrumbs وOpen Work كمنظومة واحدة، واجعل البحث والفرع والجلسة قابلة للوصول من دون تكرار طبقات التنقل. حافظ على URLs وWorkspace/dirty/permission authority، ولا تغيّر API أو قواعد الأعمال. أضف اختبارات مكوّن/متصفح لأي سلوك يتغير، ثم أعد Angular tests والبناء والفحوص الثابتة وPlaywright RTL/LTR/theme/density/desktop/mobile.
 

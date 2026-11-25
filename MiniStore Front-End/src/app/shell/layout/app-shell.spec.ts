@@ -30,7 +30,7 @@ describe('AppShell accessibility', () => {
       providers: [
         provideRouter([{ path: '', component: EmptyRoute }]),
         { provide: WorkspaceService, useValue: workspace },
-        { provide: NavigationRegistryService, useValue: { visibleItems: permittedItems, visibleGroups: signal([]), visibleApplications: signal([]), visibleGroupsForApplication: vi.fn(() => []), findByRoute: vi.fn(), applicationForRoute: vi.fn(), findById: vi.fn(), canAccess: vi.fn(() => true), groupForRoute: vi.fn(), groupForItem: vi.fn(() => 'partners') } },
+        { provide: NavigationRegistryService, useValue: { visibleItems: permittedItems, visibleGroups: signal([]), visibleApplications: signal([]), visibleGroupsForApplication: vi.fn(() => []), findByRoute: vi.fn(() => permittedItems()[0]), applicationForRoute: vi.fn(() => ({ id: 'contacts', labelKey: 'appContacts' })), findById: vi.fn(), canAccess: vi.fn(() => true), groupForRoute: vi.fn(), groupForItem: vi.fn(() => 'partners') } },
         { provide: LocalizationService, useValue: { locale: signal('en-US'), direction: signal('ltr'), text: (key: string) => key, toggle: vi.fn(), switching: signal(false), switchError: signal(false) } },
         { provide: UiPreferencesService, useValue: { theme: signal('system'), density: signal('comfortable'), sidebar: signal('expanded'), contentWidth: signal('fluid'), reset: vi.fn(), setTheme: vi.fn(), setDensity: vi.fn(), setSidebar: vi.fn(), setContentWidth: vi.fn() } },
         { provide: ApiSessionService, useValue: { session: signal(null), clear: vi.fn() } },
@@ -47,6 +47,14 @@ describe('AppShell accessibility', () => {
     expect(main.tabIndex).toBe(-1);
     skip.click(); await Promise.resolve();
     expect(document.activeElement).toBe(main);
+  });
+
+  it('keeps the destination title in the topbar and the navigation path in the context toolbar', () => {
+    expect(fixture.nativeElement.querySelector('.page-context strong')?.textContent).toContain('customersTitle');
+    const breadcrumb = fixture.nativeElement.querySelector('.workspace-toolbar .breadcrumbs') as HTMLElement;
+    expect(breadcrumb.textContent).toContain('Contacts');
+    expect(breadcrumb.querySelector('[aria-current="page"]')?.textContent).toContain('customersTitle');
+    expect(fixture.nativeElement.querySelector('.topbar .breadcrumbs')).toBeNull();
   });
 
   it('provides a labelled mobile navigation trigger without duplicating navigation authority', () => {

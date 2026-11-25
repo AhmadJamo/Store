@@ -2516,3 +2516,7 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
   - Wired current-app links to expose archetype/priority metadata and made the mobile drawer consume the hidden-priority rule; Desktop keeps its permission-filtered application navigation.
   - Added registry-wide classification coverage plus component coverage for metadata rendering and mobile filtering.
   - Verified 268/268 Angular tests across 125 files, production build, 140-template accessibility, 121-page UI consistency and Playwright 7 passed/0 failed/3 authenticated-API skips. The pre-existing 204.88 kB initial shared-chunk warning remains open.
+- 2026-11-25: Completed the fifth FRD-E Shell hierarchy slice.
+  - Replaced the generic phase title with the active destination title and moved the application/destination breadcrumb beside history and Open Work controls.
+  - Preserved search, branch, session, routing and Workspace/dirty behavior; added a Shell hierarchy regression test.
+  - Verified 269/269 Angular tests, production build, 140-template accessibility, 121-page UI consistency and Playwright 7 passed/0 failed/3 authenticated-API skips.

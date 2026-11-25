@@ -2,6 +2,8 @@ app-shell .workspace-toolbar { min-height: 2.65rem; display: flex; align-items: 
 app-shell .workspace-toolbar > button { width: 2rem; min-height: 2rem; color: var(--erp-color-text); border: 0; border-radius: var(--erp-radius-sm); background: transparent; cursor: pointer; }
 app-shell .workspace-toolbar > button:hover:not(:disabled) { color: #6f2d5c; background: #f3e8ef; }
 app-shell .workspace-toolbar > button:disabled { opacity: .4; cursor: not-allowed; }
+app-shell .workspace-toolbar .breadcrumbs { min-width: 0; display: flex; align-items: center; gap: var(--erp-space-2); margin-inline-start: var(--erp-space-2); color: var(--erp-color-text-muted); font-size: .78rem; }
+app-shell .workspace-toolbar .breadcrumbs [aria-current='page'] { overflow: hidden; color: var(--erp-color-text); font-weight: 700; text-overflow: ellipsis; white-space: nowrap; }
 app-shell .open-work-menu { position: relative; margin-inline-start: auto; }
 app-shell .open-work-menu > summary { display: flex; align-items: center; gap: var(--erp-space-2); min-height: 2.1rem; padding-inline: .7rem; border: 1px solid var(--erp-color-border); border-radius: .55rem; color: var(--erp-color-text-muted); background: var(--erp-color-surface); cursor: pointer; list-style: none; font-size: .78rem; }
 app-shell .open-work-menu > summary::-webkit-details-marker { display: none; }
