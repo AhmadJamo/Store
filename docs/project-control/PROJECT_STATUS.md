@@ -1,5 +1,7 @@
 # حالة المشروع / Project Status
 
+> تحديث 2026-11-26: اكتملت أول شريحة FRD-I: Inventory Availability تستخدم سياق Inventory مترجماً وFilterBar/SummaryStrip/typed DataTable وحالتي empty، مع بقاء البحث والفلترة والصفحات والكميات تحت سلطة الخادم. نجح 295 اختباراً والبناء و142 قالباً و122 صفحة وPlaywright 7/7؛ Reservations safety net هو التالي.
+
 > تحديث 2026-11-25: اكتمل safety net لأول شريحة FRD-I. تحمي 5 اختبارات Inventory Availability الأسماء والكميات القادمة من الخادم والبحث المؤجل وwarehouse/paging/reset والحالة الفارغة قبل تغيير العرض. لا تغيير runtime؛ التحويل البصري المحدود هو التالي.
 
 > تحديث 2026-11-25: اكتمل جرد FRD-I لـ19 مسار Inventory عبر 15 قالباً، مع تصنيف القراءة والـmasters والـworkflows وعقود الصلاحيات والـApplication والـbranch/warehouse context. اعتُمد Inventory Availability كأول شريحة GET-only بعد safety net؛ لا تغيير runtime في الجرد.

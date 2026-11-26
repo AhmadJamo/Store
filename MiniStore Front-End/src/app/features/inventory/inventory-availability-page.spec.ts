@@ -38,8 +38,10 @@ describe('InventoryAvailabilityPageComponent', () => {
     expect(fixture.nativeElement.textContent).toContain('Main warehouse');
     expect(fixture.nativeElement.textContent).toContain('A-01');
     expect(fixture.nativeElement.querySelectorAll('app-page-header')).toHaveLength(1);
-    expect(fixture.nativeElement.querySelectorAll('.filters')).toHaveLength(1);
+    expect(fixture.nativeElement.querySelectorAll('app-filter-bar')).toHaveLength(1);
+    expect(fixture.nativeElement.querySelectorAll('app-summary-strip')).toHaveLength(1);
     expect(fixture.nativeElement.querySelectorAll('app-data-table')).toHaveLength(1);
+    expect(fixture.nativeElement.querySelectorAll('app-data-table th')).toHaveLength(7);
   });
 
   it('keeps warehouse filtering and paging on the server contract', () => {
@@ -71,12 +73,17 @@ describe('InventoryAvailabilityPageComponent', () => {
     expect(api.getBalances).toHaveBeenLastCalledWith({ page: 1, pageSize: 50 });
   });
 
-  it('keeps the empty result recoverable without inventing client balances', () => {
+  it('distinguishes true empty from filtered empty without inventing client balances', () => {
     api.getBalances.mockReturnValue(of({ ...page, items: [], totalCount: 0 }));
     const fixture = TestBed.createComponent(InventoryAvailabilityPageComponent);
     fixture.detectChanges();
 
     expect(fixture.nativeElement.textContent).toContain('noBalances');
-    expect(fixture.nativeElement.querySelector('app-data-table')).toBeNull();
+    expect(fixture.nativeElement.textContent).not.toContain('filteredBalancesEmpty');
+    expect(fixture.nativeElement.querySelector('app-data-table')).not.toBeNull();
+
+    (fixture.componentInstance as any).filterWarehouse('3');
+    fixture.detectChanges();
+    expect(fixture.nativeElement.textContent).toContain('filteredBalancesEmpty');
   });
 });

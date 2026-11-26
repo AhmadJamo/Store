@@ -1,12 +1,28 @@
 <section class="inventory-read-page" aria-labelledby="inventory-availability-title">
-  <app-page-header eyebrow="INVENTORY" [title]="i18n.text('inventoryAvailability')" [description]="i18n.text('inventoryAvailabilityDescription')" />
-  <section class="filters ui-card" [attr.aria-label]="i18n.text('availabilityFilters')">
+  <app-page-header [eyebrow]="i18n.text('inventoryNavigation')" [title]="i18n.text('inventoryAvailability')" [description]="i18n.text('inventoryAvailabilityDescription')" />
+
+  <app-filter-bar [label]="i18n.text('availabilityFilters')">
     <label class="ui-field search-field"><span>{{ i18n.text('product') }}</span><input #searchBox type="search" [value]="query.search || ''" (input)="search(searchBox.value)" [placeholder]="i18n.text('productSearchPlaceholder')" /></label>
-    <label class="ui-field"><span>{{ i18n.text('warehouse') }}</span><select #warehouseSelect [value]="query.warehouseId || ''" (change)="filterWarehouse(warehouseSelect.value)"><option value="">{{ i18n.text('allWarehouses') }}</option>@for (warehouse of result()?.warehouses || []; track warehouse.id) { <option [value]="warehouse.id">{{ warehouse.name }}</option> }</select></label>
-    <label class="ui-field"><span>{{ i18n.text('rowsPerPage') }}</span><select #sizeSelect [value]="query.pageSize" (change)="resize(sizeSelect.value)">@for (size of [25, 50, 100, 250]; track size) { <option [value]="size">{{ size }}</option> }</select></label>
-    <button class="ui-button secondary" type="button" (click)="clearFilters()">{{ i18n.text('clearFilters') }}</button>
-  </section>
+    <label class="ui-field filter-field"><span>{{ i18n.text('warehouse') }}</span><select #warehouseSelect [value]="query.warehouseId || ''" (change)="filterWarehouse(warehouseSelect.value)"><option value="">{{ i18n.text('allWarehouses') }}</option>@for (warehouse of result()?.warehouses || []; track warehouse.id) { <option [value]="warehouse.id">{{ warehouse.name }}</option> }</select></label>
+    <label class="ui-field page-size-field"><span>{{ i18n.text('rowsPerPage') }}</span><select #sizeSelect [value]="query.pageSize" (change)="resize(sizeSelect.value)">@for (size of [25, 50, 100, 250]; track size) { <option [value]="size">{{ size }}</option> }</select></label>
+    @if (hasFilters()) { <button filter-actions class="ui-button secondary" type="button" (click)="clearFilters()">{{ i18n.text('clearFilters') }}</button> }
+  </app-filter-bar>
+
   @if (loading()) { <app-feedback-state kind="loading" [title]="i18n.text('loadingAvailability')" /> }
   @else if (problem(); as failure) { <app-api-recovery [problem]="failure" (retry)="load()" /> }
-  @else if (result(); as page) { @if (!page.items.length) { <app-feedback-state kind="empty" [title]="i18n.text('noBalances')" [description]="i18n.text('noBalancesDescription')" /> } @else { <app-data-table [label]="i18n.text('inventoryAvailability')"><table><thead><tr><th>{{ i18n.text('productCode') }}</th><th>{{ i18n.text('product') }}</th><th>{{ i18n.text('warehouse') }}</th><th>{{ i18n.text('location') }}</th><th>{{ i18n.text('onHand') }}</th><th>{{ i18n.text('reserved') }}</th><th>{{ i18n.text('available') }}</th></tr></thead><tbody>@for (row of page.items; track row.productCode + ':' + row.warehouseId + ':' + row.locationName) { <tr><td><code>{{ row.productCode }}</code></td><td><strong>{{ row.productName }}</strong></td><td>{{ row.warehouseName }}</td><td>{{ row.isUnassigned ? i18n.text('unassignedSystem') : row.locationName }}</td><td>{{ row.onHand | number:'1.0-6' }}</td><td>{{ row.reserved | number:'1.0-6' }}</td><td [class.negative]="row.available < 0"><strong>{{ row.available | number:'1.0-6' }}</strong></td></tr> }</tbody></table></app-data-table> } <app-pager [page]="page.page" [totalPages]="page.totalPages" [totalCount]="page.totalCount" [totalLabel]="i18n.text('totalBalances')" [previousLabel]="i18n.text('previous')" [nextLabel]="i18n.text('next')" (pageChange)="move($event)" /> }
+  @else if (result(); as page) {
+    <app-summary-strip [label]="i18n.text('inventoryAvailability')" [items]="[
+      { label: i18n.text('totalBalances'), value: page.totalCount },
+      { label: i18n.text('warehouse'), value: selectedWarehouseName() }
+    ]" />
+    <app-data-table [label]="i18n.text('inventoryAvailability')" [columns]="tableColumns()" [rows]="tableRows()" rowKey="rowKey" [emptyTitle]="emptyTitle()" [emptyDescription]="emptyDescription()">
+      <ng-template appDataCell="productCode" let-row><code>{{ row.productCode }}</code></ng-template>
+      <ng-template appDataCell="productName" let-row><strong>{{ row.productName }}</strong></ng-template>
+      <ng-template appDataCell="location" let-row>{{ row.isUnassigned ? i18n.text('unassignedSystem') : row.locationName }}</ng-template>
+      <ng-template appDataCell="onHand" let-row>{{ row.onHand | number:'1.0-6' }}</ng-template>
+      <ng-template appDataCell="reserved" let-row>{{ row.reserved | number:'1.0-6' }}</ng-template>
+      <ng-template appDataCell="available" let-row><strong [class.negative]="row.available < 0">{{ row.available | number:'1.0-6' }}</strong></ng-template>
+    </app-data-table>
+    <app-pager [page]="page.page" [totalPages]="page.totalPages" [totalCount]="page.totalCount" [totalLabel]="i18n.text('totalBalances')" [previousLabel]="i18n.text('previous')" [nextLabel]="i18n.text('next')" (pageChange)="move($event)" />
+  }
 </section>

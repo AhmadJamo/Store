@@ -153,3 +153,5 @@ approval, frozen-unit, numbering and server-owned state-transition rules. MVC re
   to restore lazy-budget headroom without raising limits.
 - Full gate passed: Release clean, 1,319 backend checks, 210/210 Angular tests, 120 templates, 325,647 initial bytes and
   81,537 largest-lazy bytes. MVC remains default.
+
+FRD-I later migrates /inventory/availability to localized V4 list hierarchy with FilterBar, SummaryStrip, typed DataTable and distinct true-empty/filtered-empty states. The GET-only API, InventoryBalances.View permission, named warehouse filter, server paging and all server-authored quantities remain unchanged.

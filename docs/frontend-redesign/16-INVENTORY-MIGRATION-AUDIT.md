@@ -1,6 +1,6 @@
 # 16 — Inventory migration audit
 
-> Status: FRD-I implementation in progress — Inventory Availability safety net complete
+> Status: FRD-I implementation in progress — Inventory Availability complete; Reservations safety net next
 > Date: 2026-11-25  
 > Source of truth: Angular routes/components and clients, Internal API controllers, Application services/DTOs, repositories and inventory module documentation
 
@@ -49,8 +49,8 @@ The Inventory application currently exposes 19 Angular routes through 15 page te
 
 ## Migration order
 
-1. **Inventory Availability safety net COMPLETE; list migration next.** Five focused tests protect named server rows, the existing hierarchy, debounced search, warehouse/paging query, bounded reset and empty behavior. Next adopt localized Inventory context, FilterBar, SummaryStrip and typed DataTable without changing paging or calculations.
-2. **Reservations and Stock Transactions read-only directories.** Establish missing component coverage first; preserve server paging, immutable evidence and independent permissions.
+1. **Inventory Availability COMPLETE.** Localized Inventory context, FilterBar, SummaryStrip and typed DataTable now distinguish true-empty/filtered-empty while preserving named server rows, debounced search, warehouse/paging query, bounded reset and all server-authored calculations.
+2. **Reservations and Stock Transactions read-only directories — NEXT.** Expand the existing Reservations spec before presentation changes, then establish missing Stock Transactions component coverage; preserve server paging, immutable evidence and independent permissions.
 3. **Insights and Reconciliation read-only analysis pair.** Split their shared presentation concerns only if it reduces risk; keep classifications and tolerances server-authored.
 4. **Adjustment List/Create/Record.** Add list/form/state-action matrices before any visual change; keep frozen count and separation-of-duties rules unchanged.
 5. **Product Stock.** Treat list, opening stock/edit and manual adjustment as separate presentation slices despite the current shared component.

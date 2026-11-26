@@ -2623,3 +2623,7 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
   - Expanded the page component spec from one query assertion to five tests protecting server-authored named rows and quantities, current shared hierarchy, debounced trimmed search, warehouse/paging query, bounded reset and empty behavior.
   - Used Vitest-native timers because this Angular runner intentionally has no zone-testing fakeAsync module.
   - The focused suite passed 5/5 before any presentation change; runtime, API, balance calculation and paging behavior are unchanged.
+- 2026-11-26: Completed the first FRD-I Inventory Availability slice.
+  - Replaced the hard-coded Inventory eyebrow, hand-built filter card and projected table with localized Inventory context, FilterBar, SummaryStrip and a typed seven-column DataTable.
+  - Added distinct true-empty/filtered-empty guidance and a composite rendering key while preserving server-authored names and OnHand/Reserved/Available, debounced server search, warehouse filter, bounded paging/reset, GET-only permission boundary and internal IDs.
+  - Preserved the legacy `.filters` CSS contract for the still-unmigrated Reservations consumer. Verified 295/295 Angular tests across 133 files, production build, 142-template accessibility, 122-page consistency and Playwright 7 passed/0 failed/3 authenticated-API skips. The pre-existing 204.88 kB warning remains open.
