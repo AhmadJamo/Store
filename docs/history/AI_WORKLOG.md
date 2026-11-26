@@ -2671,3 +2671,7 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
   - Added five focused form tests protecting server-returned named warehouse, countable-location and stocked-product choices plus the warehouse/location dependency.
   - Protected blind-count, reason and selected-product command data, invalid-form focus/guidance, workspace dirty state, unsaved-leave confirmation, exact POST command and record navigation after success.
   - The focused suite passed 5/5 before presentation changes; create-form/POST permissions, API/DTO/Application authority, frozen quantities and adjustment workflow are unchanged.
+- 2026-11-26: Completed the FRD-I Inventory Adjustment Create V4 form slice.
+  - Reorganized Create into localized Inventory context, three FormSections for count scope/instructions/products, required/optional FieldCues and one WorkflowFooter.
+  - Preserved named server options, warehouse/location reset, blind count, validation/focus, workspace dirty guard, exact POST command and record navigation; no API, DTO, Application, frozen-quantity or permission behavior changed.
+  - Verified 324/324 Angular tests across 138 files, production build, 142-template accessibility, 122-page consistency and Playwright 7 passed/0 failed/3 authenticated-API skips. FRD-ISS-012 remains the sole independent gate failure.

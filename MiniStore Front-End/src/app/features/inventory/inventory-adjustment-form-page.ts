@@ -4,15 +4,18 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { ApiErrorService } from '../../core/api/api-error.service';
 import { FormErrorSummaryComponent } from '../../shared/forms/form-error-summary';
+import { FieldCueComponent } from '../../shared/forms/field-cue/field-cue';
+import { FormSectionComponent } from '../../shared/forms/form-section/form-section';
 import { FormFocusService } from '../../shared/forms/form-focus.service';
 import { FeedbackStateComponent } from '../../shared/ui/feedback-state/feedback-state';
 import { PageHeaderComponent } from '../../shared/ui/page-header/page-header';
+import { WorkflowFooterComponent } from '../../shared/ui/workflow-footer/workflow-footer';
 import { WorkspaceService } from '../../workspace/state/workspace.service';
 import { InventoryAdjustmentApiService } from './data/inventory-adjustment-api.service';
 import { InventoryAdjustmentCreatePage } from './data/inventory-adjustment.models';
 import { InventoryLocalizationService } from './inventory-localization.service';
 
-@Component({ selector: 'app-inventory-adjustment-form-page', imports: [ReactiveFormsModule, RouterLink, PageHeaderComponent, FeedbackStateComponent, FormErrorSummaryComponent], templateUrl: './inventory-adjustment-form-page.html', styleUrl: './inventory-adjustments.scss', changeDetection: ChangeDetectionStrategy.OnPush })
+@Component({ selector: 'app-inventory-adjustment-form-page', imports: [ReactiveFormsModule, RouterLink, PageHeaderComponent, FeedbackStateComponent, FormErrorSummaryComponent, FormSectionComponent, FieldCueComponent, WorkflowFooterComponent], templateUrl: './inventory-adjustment-form-page.html', styleUrl: './inventory-adjustments.scss', changeDetection: ChangeDetectionStrategy.OnPush })
 export class InventoryAdjustmentFormPageComponent {
   protected readonly i18n = inject(InventoryLocalizationService); private readonly api = inject(InventoryAdjustmentApiService); private readonly errors = inject(ApiErrorService); private readonly router = inject(Router); private readonly workspace = inject(WorkspaceService); private readonly destroyRef = inject(DestroyRef); private readonly host = inject(ElementRef<HTMLElement>); private readonly focus = inject(FormFocusService);
   protected readonly page = signal<InventoryAdjustmentCreatePage | null>(null); protected readonly selectedProducts = signal<Set<number>>(new Set()); protected readonly saving = signal(false); protected readonly problem = signal('');

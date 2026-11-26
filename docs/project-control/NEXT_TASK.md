@@ -4,7 +4,7 @@
 
 > الحالة: IN PROGRESS — اكتمل الجرد في 2026-11-25
 >
-> اكتمل Adjustment Create safety net بخمسة اختبارات. التالي الوحيد: حوّل `/inventory/adjustments/new` إلى PageHeader مترجم وأقسام نموذج V4 وإشارات حقول وتذييل workflow موحد مع الحفاظ على named choices وترابط warehouse/location وblind count والتحقق والdirty guard والـPOST والتنقل. لا تغيّر API/DTO/Application أو فصل الصلاحيات. شغّل البوابة وحدّث الوثائق واعمل commit مستقل.
+> اكتمل Adjustment Create V4 مع 324/324 اختباراً وبناء ناجح وPlaywright 7/7. التالي الوحيد: وسّع safety net لسجل `/inventory/adjustments/:id` إلى مصفوفة حالات Draft/Counted/Approved/Posted/Cancelled تحمي إظهار الكمية المتوقعة في blind count، الأفعال المشروطة بالصلاحية والحالة، فصل المعتمد عن العادّ، أوامر count/approve/post/cancel، الحالات المكتملة والتنقل، من دون تغيير runtime. حدّث الوثائق واعمل commit مستقل قبل أي تحويل UI.
 
 ## FRD-H — Branches/Warehouses Migration
 

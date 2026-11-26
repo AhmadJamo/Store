@@ -50,6 +50,9 @@ describe('InventoryAdjustmentFormPageComponent', () => {
     expect(fixture.nativeElement.textContent).not.toContain('B-01 — Reserve rack');
     expect(fixture.nativeElement.textContent).toContain('Roasted coffee');
     expect(fixture.nativeElement.textContent).toContain('Green coffee');
+    expect(fixture.nativeElement.querySelectorAll('app-form-section')).toHaveLength(3);
+    expect(fixture.nativeElement.querySelectorAll('app-field-cue')).toHaveLength(3);
+    expect(fixture.nativeElement.querySelectorAll('app-workflow-footer')).toHaveLength(1);
   });
 
   it('filters named locations by warehouse and clears a stale location selection', () => {

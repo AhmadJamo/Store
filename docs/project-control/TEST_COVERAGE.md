@@ -238,3 +238,8 @@
 - Static accessibility: 142 templates; UI inventory 122 pages; SummaryStrip adoption is now 12. Production build completed.
 - Hosted presentation acceptance: 7 passed/0 failed/3 authenticated-API skips across states, RTL/LTR, keyboard, theme/density, app switcher and 390px responsive layout.
 - The full gate's only failure remains FRD-ISS-012: the unchanged core-localization lazy chunk is 84.55 kB against the 80 kB budget. No budget was relaxed.
+## FRD-I Inventory Adjustment Create V4 — 2026-11-26
+
+- Angular Vitest: 324/324 across 138 files; five focused form tests protect named options, dependency reset, validation/focus, dirty guard, exact command and success navigation.
+- Static accessibility: 142 templates; UI inventory 122 pages; FormSection adoption is 9 and WorkflowFooter 11. Production build completed.
+- Hosted presentation acceptance: 7 passed/0 failed/3 authenticated-API skips. FRD-ISS-012 remains the only full-gate failure at 84.55 kB versus 80 kB; no budget was relaxed.

@@ -1,7 +1,9 @@
 :host { display: block; }
 .adjustments-page { display: grid; gap: 1rem; }
-.adjustment-form, .count-form, .result-lines, .workflow-actions, .adjustment-summary { padding: 1rem; }
+.count-form, .result-lines, .workflow-actions, .adjustment-summary { padding: 1rem; }
 .adjustment-form { display: grid; gap: 1rem; }
+.adjustment-form app-form-section { display: block; }
+.product-selection { border: 0; padding: 0; }
 .form-grid, .adjustment-summary { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
 .adjustment-summary div { display: grid; gap: 0.3rem; }
 .adjustment-summary span, .count-line small { color: var(--ui-text-muted, #667085); }
