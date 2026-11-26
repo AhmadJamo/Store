@@ -2687,3 +2687,7 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
   - Replaced three broad checks with seven focused tests separating the list, opening-stock/create, current-quantity edit, deletion restriction and manual adjustment contracts.
   - Protected named rows, quantity/AVCO/value evidence, independent permissions, deep edit identity, movement types 6/7/8 with reason, validation focus, dirty confirmation and server-authored errors.
   - The focused suite passed 7/7; runtime, APIs, Application valuation/removal rules, permissions and inventory transactions are unchanged.
+- 2026-11-26: Completed the FRD-I Product Stock List V4 slice.
+  - Migrated only the directory to localized Inventory context, a two-item SummaryStrip and typed seven-column DataTable with integrated empty guidance.
+  - Preserved server names, quantities, AVCO/value, response order and independent Edit/Delete permissions; opening/edit and manual-adjustment forms and all backend authority remain unchanged.
+  - Verified 332/332 Angular tests across 138 files, production build, 142-template accessibility, 122-page consistency and Playwright 7 passed/0 failed/3 skips. FRD-ISS-012 remains independent.

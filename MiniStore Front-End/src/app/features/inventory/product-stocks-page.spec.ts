@@ -54,6 +54,8 @@ describe('ProductStocksPageComponent', () => {
     expect(fixture.nativeElement.textContent).toContain('Main warehouse');
     expect(fixture.nativeElement.textContent).toContain('2.25');
     expect(fixture.nativeElement.textContent).toContain('11.25');
+    expect(fixture.nativeElement.querySelectorAll('app-summary-strip')).toHaveLength(1);
+    expect(fixture.nativeElement.querySelectorAll('app-summary-strip article')).toHaveLength(2);
     expect(fixture.nativeElement.querySelectorAll('app-data-table th')).toHaveLength(7);
   });
 

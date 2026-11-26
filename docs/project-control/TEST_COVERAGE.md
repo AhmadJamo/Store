@@ -248,3 +248,8 @@
 - Angular Vitest: 328/328 across 138 files; the five-state matrix protects evidence, blind count, permissions, commands, validation and dirty state.
 - Static accessibility: 142 templates; UI inventory 122 pages; DataTable 43, FormSection 10, DetailSection 7, WorkflowProgress 5 and WorkflowFooter 12. Production build completed.
 - Hosted presentation acceptance: 7 passed/0 failed/3 authenticated-API skips. FRD-ISS-012 remains the only full-gate failure at 84.55 kB versus 80 kB.
+## FRD-I Product Stock List V4 — 2026-11-26
+
+- Angular Vitest: 332/332 across 138 files; seven focused Product Stock tests protect list and mutation contracts.
+- Static accessibility: 142 templates; UI inventory 122 pages; SummaryStrip adoption is 13. Production build and Playwright 7/7 passed.
+- FRD-ISS-012 remains the only full-gate failure at 84.55 kB versus 80 kB.

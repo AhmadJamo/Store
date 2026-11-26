@@ -1,5 +1,5 @@
 import { DecimalPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, DestroyRef, ElementRef, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, ElementRef, computed, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
@@ -9,20 +9,31 @@ import { ApiSessionService } from '../../core/api/api-session.service';
 import { FormErrorSummaryComponent } from '../../shared/forms/form-error-summary';
 import { FormFocusService } from '../../shared/forms/form-focus.service';
 import { ApiRecoveryComponent } from '../../shared/ui/api-recovery/api-recovery';
-import { DataTableComponent } from '../../shared/ui/data-table/data-table';
+import { DataTableCellDirective, DataTableColumn, DataTableComponent } from '../../shared/ui/data-table/data-table';
 import { FeedbackStateComponent } from '../../shared/ui/feedback-state/feedback-state';
 import { PageHeaderComponent } from '../../shared/ui/page-header/page-header';
+import { SummaryStripComponent } from '../../shared/ui/summary-strip/summary-strip';
 import { WorkspaceService } from '../../workspace/state/workspace.service';
 import { ProductStockApiService } from './data/product-stock-api.service';
 import { ManualStockAdjustmentFormPage, ProductStock, ProductStockFormPage } from './data/product-stock.models';
 import { InventoryLocalizationService } from './inventory-localization.service';
 
-@Component({ selector: 'app-product-stocks-page', imports: [DecimalPipe, ReactiveFormsModule, RouterLink, PageHeaderComponent, FeedbackStateComponent, ApiRecoveryComponent, DataTableComponent, FormErrorSummaryComponent], templateUrl: './product-stocks-page.html', styleUrl: './product-stocks-page.scss', changeDetection: ChangeDetectionStrategy.OnPush })
+@Component({ selector: 'app-product-stocks-page', imports: [DecimalPipe, ReactiveFormsModule, RouterLink, PageHeaderComponent, SummaryStripComponent, FeedbackStateComponent, ApiRecoveryComponent, DataTableComponent, DataTableCellDirective, FormErrorSummaryComponent], templateUrl: './product-stocks-page.html', styleUrl: './product-stocks-page.scss', changeDetection: ChangeDetectionStrategy.OnPush })
 export class ProductStocksPageComponent {
   protected readonly i18n = inject(InventoryLocalizationService); protected readonly session = inject(ApiSessionService);
   private readonly api = inject(ProductStockApiService); private readonly errors = inject(ApiErrorService); private readonly fb = inject(FormBuilder);
   private readonly destroyRef = inject(DestroyRef); private readonly workspace = inject(WorkspaceService); private readonly host = inject(ElementRef<HTMLElement>); private readonly focus = inject(FormFocusService); private readonly route = inject(ActivatedRoute);
-  protected readonly items = signal<readonly ProductStock[]>([]); protected readonly stockOptions = signal<ProductStockFormPage | null>(null); protected readonly adjustmentOptions = signal<ManualStockAdjustmentFormPage | null>(null);
+  protected readonly items = signal<readonly ProductStock[]>([]);
+  protected readonly tableColumns = computed<readonly DataTableColumn[]>(() => [
+    { key: 'id', header: this.i18n.text('id'), kind: 'code', width: '6rem' },
+    { key: 'productName', header: this.i18n.text('product'), width: '25%' },
+    { key: 'warehouseName', header: this.i18n.text('warehouse'), width: '20%' },
+    { key: 'quantity', header: this.i18n.text('quantity'), kind: 'number' },
+    { key: 'averageUnitCost', header: this.i18n.text('averageUnitCost'), kind: 'number' },
+    { key: 'inventoryValue', header: this.i18n.text('inventoryValue'), kind: 'number' },
+    { key: 'actions', header: this.i18n.text('actions'), kind: 'actions', width: '10rem' },
+  ]);
+  protected readonly totalInventoryValue = computed(() => this.items().reduce((total, item) => total + item.inventoryValue, 0)); protected readonly stockOptions = signal<ProductStockFormPage | null>(null); protected readonly adjustmentOptions = signal<ManualStockAdjustmentFormPage | null>(null);
   protected readonly editingId = signal<number | null>(null); protected readonly loading = signal(true); protected readonly loadingProblem = signal<NormalizedApiProblem | null>(null); protected readonly problem = signal(''); protected readonly success = signal(''); protected readonly saving = signal(false);
   protected readonly stockForm = this.fb.nonNullable.group({ productId: [0, Validators.min(1)], warehouseId: [0, Validators.min(1)], quantity: [0, Validators.min(0)] });
   protected readonly adjustmentForm = this.fb.nonNullable.group({ productId: [0, Validators.min(1)], warehouseId: [0, Validators.min(1)], type: [6, Validators.pattern(/^[678]$/)], quantity: [0, Validators.min(0.001)], reference: ['', [Validators.required, Validators.maxLength(100)]] });

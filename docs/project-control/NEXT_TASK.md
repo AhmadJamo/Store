@@ -4,7 +4,7 @@
 
 > الحالة: IN PROGRESS — اكتمل الجرد في 2026-11-25
 >
-> اكتمل Product Stock safety net بسبعة اختبارات. التالي الوحيد: حوّل دليل الأرصدة داخل `/inventory/stocks` إلى PageHeader مترجم وSummaryStrip وtyped DataTable مع empty داخل الجدول، مع الحفاظ على الأسماء والكميات وAVCO/value وأزرار Edit/Delete المشروطة وترتيب الخادم. لا تغيّر نماذج opening/edit/manual adjustment أو API/Application في هذه الشريحة. شغّل البوابة وحدّث الوثائق واعمل commit مستقل.
+> اكتمل Product Stock List V4 مع 332/332 اختباراً وبناء ناجح وPlaywright 7/7. التالي الوحيد: حوّل نموذج opening stock/current quantity داخل الشاشة المشتركة إلى FormSection وFieldCues وWorkflowFooter مع إبقاء product/warehouse مقفلين في edit، والتحقق والfocus والdirty guard وأوامر create/update كما هي. لا تغيّر manual adjustment أو API/Application. شغّل البوابة وحدّث الوثائق واعمل commit مستقل.
 
 ## FRD-H — Branches/Warehouses Migration
 
