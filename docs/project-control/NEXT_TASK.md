@@ -4,7 +4,7 @@
 
 > الحالة: IN PROGRESS — اكتمل الجرد في 2026-11-25
 >
-> اكتمل Scanning result evidence داخل DetailSection مترجم مع بقاء الهويات والحالات 0/1/2/3 والنصوص الثانوية من الخادم، ونجح 343/343 والبناء وPlaywright 7/7. التالي الوحيد: حسّن مساحات Putaway/Relocate/Count الشرطية؛ استخدم FormSection موصوفاً وFieldCue مطلوباً للكمية وWorkflowFooter لكل إجراء مع حفظ permission/state gates، quantity validation، idempotency keys، payloads، النجاح والخطأ والتحديث كما هي. لا تغيّر resolver أو result evidence أو balance table أو API/Application. شغّل البوابة وحدّث الوثائق واعمل commit مستقل.
+> اكتمل Inventory Scanning Workspace V4 ونجح 344/344 والبناء وPlaywright 7/7. التالي الوحيد: نفّذ Tracking safety audit قبل restyling؛ راجع route/component/API/Application والنماذج والصلاحيات، ووسّع الاختبارات المركزة لحماية البحث بالباركود/الرقم، حالات lot/serial، الأسماء والكميات والتواريخ، المرشحات، paging، validation والأخطاء. لا تغيّر runtime أو API/Application في شريحة التدقيق. شغّل الاختبارات وحدّث الوثائق واعمل commit مستقل.
 
 ## FRD-H — Branches/Warehouses Migration
 

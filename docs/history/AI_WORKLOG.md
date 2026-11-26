@@ -2736,3 +2736,8 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
   - Grouped the four adjustment/product/source/destination identities in a localized DetailSection and replaced nested generic panels with dedicated scan-result evidence cards.
   - Preserved server-authored statuses 0/1/2/3, display names, secondary text, operation gates and balance evidence; no API or Application contract changed.
   - Verified 343/343 Angular tests, production build, 142 templates, 122 pages and Playwright 7 passed/0 failed/3 skips. FRD-ISS-012 remains independent.
+
+- 2026-11-26: Completed the FRD-I Inventory Scanning operation workspaces and closed Scanning V4.
+  - Rebuilt conditional Putaway, Relocate and Count forms with described FormSections, one required quantity FieldCue and a dedicated WorkflowFooter per command.
+  - Preserved independent permissions and resolver-state gates, numeric rules, shared controls, server idempotency keys, exact payloads, success/error behavior and refresh; no backend contract changed.
+  - Added the sixth focused test and verified 344/344 Angular tests, production build, 142 templates, 122 pages and Playwright 7 passed/0 failed/3 skips. FRD-ISS-012 remains independent.

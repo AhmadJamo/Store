@@ -31,24 +31,27 @@
     </app-detail-section>
 
     @if (canPutaway(current)) {
-      <form class="action-card ui-panel" (ngSubmit)="putaway(current)">
-        <div><h2>{{ i18n.text('putaway') }}</h2><p>{{ i18n.text('putawayHelp') }}</p></div>
-        <label>{{ i18n.text('quantity') }}<input type="number" min="0.000001" step="0.000001" [formControl]="quantity" /></label>
-        <button class="ui-button primary" [disabled]="saving()">{{ saving() ? i18n.text('working') : i18n.text('postPutaway') }}</button>
+      <form class="action-card" data-operation="putaway" (ngSubmit)="putaway(current)">
+        <app-form-section [title]="i18n.text('putaway')" [description]="i18n.text('putawayHelp')">
+          <label class="ui-field"><app-field-cue [label]="i18n.text('quantity')" [required]="true" [requiredText]="i18n.text('requiredField')" [optionalText]="i18n.text('optionalField')" /><input type="number" min="0.000001" step="0.000001" [formControl]="quantity" /></label>
+        </app-form-section>
+        <app-workflow-footer [label]="i18n.text('operationActions')"><button type="submit" class="ui-button primary" [disabled]="saving()">{{ saving() ? i18n.text('working') : i18n.text('postPutaway') }}</button></app-workflow-footer>
       </form>
     }
     @if (canRelocate(current)) {
-      <form class="action-card ui-panel" (ngSubmit)="relocate(current)">
-        <div><h2>{{ i18n.text('relocate') }}</h2><p>{{ i18n.text('relocateHelp') }}</p></div>
-        <label>{{ i18n.text('quantity') }}<input type="number" min="0.000001" step="0.000001" [formControl]="quantity" /></label>
-        <button class="ui-button primary" [disabled]="saving()">{{ saving() ? i18n.text('working') : i18n.text('postRelocation') }}</button>
+      <form class="action-card" data-operation="relocate" (ngSubmit)="relocate(current)">
+        <app-form-section [title]="i18n.text('relocate')" [description]="i18n.text('relocateHelp')">
+          <label class="ui-field"><app-field-cue [label]="i18n.text('quantity')" [required]="true" [requiredText]="i18n.text('requiredField')" [optionalText]="i18n.text('optionalField')" /><input type="number" min="0.000001" step="0.000001" [formControl]="quantity" /></label>
+        </app-form-section>
+        <app-workflow-footer [label]="i18n.text('operationActions')"><button type="submit" class="ui-button primary" [disabled]="saving()">{{ saving() ? i18n.text('working') : i18n.text('postRelocation') }}</button></app-workflow-footer>
       </form>
     }
     @if (canCount(current)) {
-      <form class="action-card ui-panel" (ngSubmit)="count(current)">
-        <div><h2>{{ i18n.text('count') }}</h2><p>{{ i18n.text('countHelp') }}</p></div>
-        <label>{{ i18n.text('countedQuantity') }}<input type="number" min="0" step="0.000001" [formControl]="countedQuantity" /></label>
-        <button class="ui-button primary" [disabled]="saving()">{{ saving() ? i18n.text('working') : i18n.text('recordCount') }}</button>
+      <form class="action-card" data-operation="count" (ngSubmit)="count(current)">
+        <app-form-section [title]="i18n.text('count')" [description]="i18n.text('countHelp')">
+          <label class="ui-field"><app-field-cue [label]="i18n.text('countedQuantity')" [required]="true" [requiredText]="i18n.text('requiredField')" [optionalText]="i18n.text('optionalField')" /><input type="number" min="0" step="0.000001" [formControl]="countedQuantity" /></label>
+        </app-form-section>
+        <app-workflow-footer [label]="i18n.text('operationActions')"><button type="submit" class="ui-button primary" [disabled]="saving()">{{ saving() ? i18n.text('working') : i18n.text('recordCount') }}</button></app-workflow-footer>
       </form>
     }
 

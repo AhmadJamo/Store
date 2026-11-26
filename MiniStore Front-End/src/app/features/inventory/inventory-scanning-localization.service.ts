@@ -5,7 +5,7 @@ const messages = {
   'ar-JO': {
     inventoryNavigation: 'المخزون', title: 'المسح التشغيلي للمخزون', description: 'امسح المنتج والمواقع أو مستند الجرد أولًا؛ لا يتغير المخزون إلا بعد تنفيذ إجراء مصرح.',
     scanInputs: 'رموز المسح', scanInputsDescription: 'أدخل أي رمز متاح، ثم حلّل الرموز للتعرّف على المستند والمنتج والمواقع.',
-    requiredField: 'مطلوب', optionalField: 'اختياري', resolveActions: 'إجراءات التحليل',
+    requiredField: 'مطلوب', optionalField: 'اختياري', resolveActions: 'إجراءات التحليل', operationActions: 'إجراءات المخزون',
     adjustment: 'رقم مستند الجرد', product: 'باركود أو رمز المنتج', source: 'باركود أو رمز موقع المصدر', destination: 'باركود أو رمز موقع الوجهة',
     resolve: 'تحليل الرموز', resolving: 'جارٍ التحليل', waiting: 'بانتظار المسح', resolved: 'تم التعرّف', notFound: 'غير موجود', ambiguous: 'رمز ملتبس',
     resolutionEvidence: 'نتائج التعرّف', resolutionEvidenceDescription: 'راجع ما تعرّف عليه النظام من كل رمز قبل تنفيذ أي حركة مخزون.',
@@ -22,7 +22,7 @@ const messages = {
   'en-US': {
     inventoryNavigation: 'Inventory', title: 'Inventory scanning', description: 'Scan the product, positions, or count document first; inventory changes only after an authorized action.',
     scanInputs: 'Scan inputs', scanInputsDescription: 'Enter any available code, then resolve the scans to identify the document, product, and positions.',
-    requiredField: 'Required', optionalField: 'Optional', resolveActions: 'Resolution actions',
+    requiredField: 'Required', optionalField: 'Optional', resolveActions: 'Resolution actions', operationActions: 'Inventory actions',
     adjustment: 'Inventory count number', product: 'Product barcode or code', source: 'Source-position barcode or code', destination: 'Destination-position barcode or code',
     resolve: 'Resolve scans', resolving: 'Resolving', waiting: 'Waiting for scan', resolved: 'Resolved', notFound: 'Not found', ambiguous: 'Ambiguous scan',
     resolutionEvidence: 'Resolution evidence', resolutionEvidenceDescription: 'Review what the system resolved from every scan before posting an inventory movement.',

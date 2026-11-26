@@ -1,6 +1,6 @@
 # 16 — Inventory migration audit
 
-> Status: FRD-I implementation in progress — Scanning result evidence complete; operation workspaces next
+> Status: FRD-I implementation in progress — Scanning Workspace V4 complete; Tracking safety audit next
 > Date: 2026-11-26
 > Source of truth: Angular routes/components and clients, Internal API controllers, Application services/DTOs, repositories and inventory module documentation
 
@@ -41,8 +41,8 @@ The Inventory application currently exposes 19 Angular routes through 15 page te
 
 ## Test baseline and gaps
 
-- Current FRD-I baseline: 343 Angular tests across 140 files, production build, 142 templates, 122-page consistency and Playwright 7/7. The last security baseline remains 1,668 checks because these slices change presentation only; the independent 84.55 kB core-localization lazy-budget issue remains tracked as FRD-ISS-012.
-- Existing Inventory page component coverage: Availability 5, Reservations 5, Stock Transactions 5, Insights 5, Reconciliation 5, Adjustment List 5, Adjustment Create 5, Adjustment Record 5, Product Stock 7, Stock Transfer 6, Scanning 5, Tracking 2, Replenishment 2, Warehouse Locations 4.
+- Current FRD-I baseline: 344 Angular tests across 140 files, production build, 142 templates, 122-page consistency and Playwright 7/7. The last security baseline remains 1,668 checks because these slices change presentation only; the independent 84.55 kB core-localization lazy-budget issue remains tracked as FRD-ISS-012.
+- Existing Inventory page component coverage: Availability 5, Reservations 5, Stock Transactions 5, Insights 5, Reconciliation 5, Adjustment List 5, Adjustment Create 5, Adjustment Record 5, Product Stock 7, Stock Transfer 6, Scanning 6, Tracking 2, Replenishment 2, Warehouse Locations 4.
 - No page component spec currently protects Putaway or Location Movements.
 - API client specs already protect the principal HTTP methods and query parameters; they do not replace page-state and permission-aware action coverage.
 - Live authenticated API reconciliation remains external until an API URL and authenticated storage state are supplied.
@@ -56,7 +56,7 @@ The Inventory application currently exposes 19 Angular routes through 15 page te
 5. **Adjustment List + Create + Record COMPLETE.** Record now uses localized WorkflowProgress, DetailSection summary, FormSection count entry, typed result DataTable and WorkflowFooter actions. Five tests protect server evidence, all five states, blind expected-quantity hiding, independent permissions, completed evidence, exact commands, validation and dirty guard. Frozen count, stale-stock checks and separation of duties remain server-owned. **Product Stock safety audit is next.**
 6. **Product Stock workspace COMPLETE; Stock Transfers NEXT.** The localized list preserves named rows, quantity/AVCO/value, response order, empty state and Edit/Delete permissions. Both operation forms now use localized FormSections, required FieldCues and WorkflowFooters while preserving locked edit identity, separate create/update commands, manual types 6/7/8, positive quantity, required reason, validation/focus, dirty guard and independent permissions. API/Application valuation and location authority remain unchanged.
 7. **Stock Transfer Workspace COMPLETE; operational command workspaces NEXT.** Form, record evidence and receipt now use the shared hierarchy. Receipt states 7/8/9 expose described received/short/damaged cues and a dedicated footer while preserving remaining limits, destination, permission and exact receive payload. Six tests protect all ten states and commands; reservation, branch, tracking, valuation and posting authority remain server-owned.
-8. **Scanning resolve and result evidence COMPLETE; operation workspaces NEXT.** Five focused tests protect four resolver states, server identities/balances, independent Putaway/Relocate/Count permissions, exact commands and idempotency keys, quantity validation, blind count and server errors. The resolver now uses localized Inventory context, a described FormSection, four optional FieldCues and WorkflowFooter while preserving autofocus, four query values, GET normalization and recovery. The four server-resolved identities now sit inside a localized DetailSection while preserving statuses 0/1/2/3, display names and secondary evidence. Migrate only the conditional Putaway/Relocate/Count workspaces next.
+8. **Scanning Workspace COMPLETE; Tracking safety audit NEXT.** Six focused tests protect four resolver states, server identities/balances, independent Putaway/Relocate/Count permissions, exact commands and idempotency keys, quantity validation, blind count and server errors. The resolver now uses localized Inventory context, a described FormSection, four optional FieldCues and WorkflowFooter while preserving autofocus, four query values, GET normalization and recovery. The four server-resolved identities now sit inside a localized DetailSection while preserving statuses 0/1/2/3, display names and secondary evidence. The conditional Putaway/Relocate/Count workspaces now use described FormSections, required quantity FieldCues and WorkflowFooters while preserving permission/state gates, validation, idempotency, commands and refresh. Audit Tracking before restyling it.
 9. Warehouse Locations remains complete and is excluded from further FRD-I restyling unless a verified dependency regression requires a fix.
 
 ## First slice decision

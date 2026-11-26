@@ -5,13 +5,11 @@
 .result-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1rem; }
 .scan-result { display: grid; gap: .45rem; align-content: start; padding: .875rem; border: 1px solid var(--erp-color-border); border-radius: var(--erp-radius-sm); background: var(--erp-color-surface); }
 .result-grid .ui-badge { justify-self: start; }
-.result-grid small, .action-card p { color: var(--ui-text-muted); }
-.action-card { display: grid; grid-template-columns: minmax(0, 1fr) minmax(10rem, .35fr) auto; gap: 1rem; align-items: end; }
-.action-card h2, .action-card p { margin: 0; }
+.result-grid small { color: var(--ui-text-muted); }
+.action-card { display: grid; gap: 1rem; }
 .negative { color: var(--ui-danger); font-weight: 700; }
 @media (max-width: 1000px) {
   .scan-grid, .result-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .action-card { grid-template-columns: 1fr; }
 }
 @media (max-width: 620px) {
   .scan-grid, .result-grid { grid-template-columns: 1fr; }

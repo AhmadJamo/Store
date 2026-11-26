@@ -1,5 +1,7 @@
 # حالة المشروع / Project Status
 
+> تحديث 2026-11-26: اكتمل Inventory Scanning Workspace V4 بعد تنظيم Putaway/Relocate/Count بأقسام موصوفة وإشارات كمية مطلوبة وتذييلات إجراء، مع حفظ الصلاحيات والحالات والتحقق وidempotency والـpayload والتحديث. نجح 344/344 والبناء وPlaywright 7/7؛ Tracking safety audit هو التالي.
+
 > تحديث 2026-11-26: اكتمل Scanning result evidence داخل DetailSection مترجم يجمع هويات المستند والمنتج والمصدر والوجهة مع حفظ الحالات والأسماء والنصوص الثانوية من الخادم. نجح 343/343 والبناء و142 قالباً و122 صفحة وPlaywright 7/7؛ operation workspaces هي التالية.
 
 > تحديث 2026-11-26: اكتمل Scanning resolve workspace بسياق Inventory مترجم وقسم موصوف وأربع إشارات اختيارية وتذييل إجراء، مع حفظ autofocus والقيم الأربع وتطبيع GET والاسترجاع. نجح 343/343 والبناء و142 قالباً و122 صفحة وPlaywright 7/7؛ FRD-ISS-012 مستقل وresult evidence هو التالي.

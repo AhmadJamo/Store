@@ -60,6 +60,25 @@ describe('InventoryScanningPageComponent', () => {
     expect([0, 1, 2, 3].map(status => component.statusName(status))).toEqual(['waiting', 'resolved', 'notFound', 'ambiguous']);
   });
 
+  it('renders every permitted operation with the shared form hierarchy', () => {
+    const render = (page: any): HTMLElement => {
+      api.resolve.mockReturnValue(of(page));
+      const fixture = TestBed.createComponent(InventoryScanningPageComponent);
+      fixture.detectChanges();
+      return fixture.nativeElement;
+    };
+    const expectHierarchy = (host: HTMLElement, operation: string): void => {
+      const form = host.querySelector<HTMLElement>(`[data-operation="${operation}"]`);
+      expect(form).not.toBeNull();
+      expect(form!.querySelectorAll('app-form-section')).toHaveLength(1);
+      expect(form!.querySelectorAll('app-field-cue')).toHaveLength(1);
+      expect(form!.querySelectorAll('app-workflow-footer')).toHaveLength(1);
+    };
+
+    expectHierarchy(render(basePage), 'putaway');
+    expectHierarchy(render({ ...basePage, sourceLocation: { ...basePage.location, entityId: 11, displayName: 'Source rack' } }), 'relocate');
+    expectHierarchy(render({ ...basePage, adjustment: { status: 1, entityLongId: 41, displayName: 'ADJ-41' }, canRecordCount: true }), 'count');
+  });
   it('keeps putaway, relocation, and count independently permission and scan-state gated', () => {
     const component = TestBed.createComponent(InventoryScanningPageComponent).componentInstance as any;
     const relocation = { ...basePage, sourceLocation: { ...basePage.location, entityId: 11, displayName: 'Source rack' } };
