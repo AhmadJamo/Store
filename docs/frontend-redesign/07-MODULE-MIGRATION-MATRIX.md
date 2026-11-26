@@ -31,7 +31,7 @@
 | Products / Catalog | Audited | Verified | FRD-F List/Form/Record | Verified current APIs and permissions | 274 + security 1,668 + Playwright 7/7 | Migrated — `acceptance/products-pilot-2026-11-25/` |
 | Contacts | Audited | Verified | FRD-G List/Form/Record | Verified current APIs and permissions | 282 + security 1,668 + Playwright 7/7 | Migrated — `acceptance/contacts-pilot-2026-11-25/` |
 | Branches / Warehouses | Audited | Verified | FRD-H Workspace/Master/Locations | Verified current APIs, permissions and branch context | 291 + security 1,668 + Playwright 7/7 | Migrated — `acceptance/branches-warehouses-pilot-2026-11-25/` |
-| Inventory | Audited | Scoped | Availability + Reservations + Transactions + Insights + Reconciliation + Adjustment workflow + Product Stock List + Locations V4; remaining Legacy V3 | Verified services/APIs/permissions | 332 + focused specs + Playwright 7/7 | FRD-I — Product Stock opening/edit form next |
+| Inventory | Audited | Scoped | Availability + Reservations + Transactions + Insights + Reconciliation + Adjustment workflow + Product Stock List/Form + Locations V4; remaining Legacy V3 | Verified services/APIs/permissions | 332 + focused specs + Playwright 7/7 | FRD-I — Product Stock manual-adjustment form next |
 | Purchases | Audited | Planned | Legacy V3 | Verified | existing specs | Planned wave 5 |
 | Sales | Audited | Record concept | Legacy V3 | Verified | existing specs | Planned wave 6 |
 | Accounting | Audited | Planned | Legacy V3 | Verified | existing specs | Planned wave 7 |

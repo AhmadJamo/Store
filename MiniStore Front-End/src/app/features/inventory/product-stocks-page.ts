@@ -6,19 +6,22 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { ApiErrorService } from '../../core/api/api-error.service';
 import { NormalizedApiProblem } from '../../core/api/api.models';
 import { ApiSessionService } from '../../core/api/api-session.service';
+import { FieldCueComponent } from '../../shared/forms/field-cue/field-cue';
 import { FormErrorSummaryComponent } from '../../shared/forms/form-error-summary';
+import { FormSectionComponent } from '../../shared/forms/form-section/form-section';
 import { FormFocusService } from '../../shared/forms/form-focus.service';
 import { ApiRecoveryComponent } from '../../shared/ui/api-recovery/api-recovery';
 import { DataTableCellDirective, DataTableColumn, DataTableComponent } from '../../shared/ui/data-table/data-table';
 import { FeedbackStateComponent } from '../../shared/ui/feedback-state/feedback-state';
 import { PageHeaderComponent } from '../../shared/ui/page-header/page-header';
 import { SummaryStripComponent } from '../../shared/ui/summary-strip/summary-strip';
+import { WorkflowFooterComponent } from '../../shared/ui/workflow-footer/workflow-footer';
 import { WorkspaceService } from '../../workspace/state/workspace.service';
 import { ProductStockApiService } from './data/product-stock-api.service';
 import { ManualStockAdjustmentFormPage, ProductStock, ProductStockFormPage } from './data/product-stock.models';
 import { InventoryLocalizationService } from './inventory-localization.service';
 
-@Component({ selector: 'app-product-stocks-page', imports: [DecimalPipe, ReactiveFormsModule, RouterLink, PageHeaderComponent, SummaryStripComponent, FeedbackStateComponent, ApiRecoveryComponent, DataTableComponent, DataTableCellDirective, FormErrorSummaryComponent], templateUrl: './product-stocks-page.html', styleUrl: './product-stocks-page.scss', changeDetection: ChangeDetectionStrategy.OnPush })
+@Component({ selector: 'app-product-stocks-page', imports: [DecimalPipe, ReactiveFormsModule, RouterLink, PageHeaderComponent, SummaryStripComponent, FeedbackStateComponent, ApiRecoveryComponent, DataTableComponent, DataTableCellDirective, FormErrorSummaryComponent, FormSectionComponent, FieldCueComponent, WorkflowFooterComponent], templateUrl: './product-stocks-page.html', styleUrl: './product-stocks-page.scss', changeDetection: ChangeDetectionStrategy.OnPush })
 export class ProductStocksPageComponent {
   protected readonly i18n = inject(InventoryLocalizationService); protected readonly session = inject(ApiSessionService);
   private readonly api = inject(ProductStockApiService); private readonly errors = inject(ApiErrorService); private readonly fb = inject(FormBuilder);

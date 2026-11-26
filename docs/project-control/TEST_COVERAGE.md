@@ -253,3 +253,9 @@
 - Angular Vitest: 332/332 across 138 files; seven focused Product Stock tests protect list and mutation contracts.
 - Static accessibility: 142 templates; UI inventory 122 pages; SummaryStrip adoption is 13. Production build and Playwright 7/7 passed.
 - FRD-ISS-012 remains the only full-gate failure at 84.55 kB versus 80 kB.
+
+## FRD-I Product Stock opening/edit Form V4 — 2026-11-26
+
+- Angular Vitest: 332/332 across 138 files; seven focused Product Stock tests protect the form hierarchy plus locked identity, commands, validation/focus and dirty state.
+- Static accessibility: 142 templates; UI inventory 122 pages; FormSection adoption is 11 and WorkflowFooter 13. Production build and Playwright 7/7 passed.
+- FRD-ISS-012 remains the only full-gate failure at 84.55 kB versus 80 kB; no budget was relaxed.

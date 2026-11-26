@@ -4,7 +4,7 @@
 
 > الحالة: IN PROGRESS — اكتمل الجرد في 2026-11-25
 >
-> اكتمل Product Stock List V4 مع 332/332 اختباراً وبناء ناجح وPlaywright 7/7. التالي الوحيد: حوّل نموذج opening stock/current quantity داخل الشاشة المشتركة إلى FormSection وFieldCues وWorkflowFooter مع إبقاء product/warehouse مقفلين في edit، والتحقق والfocus والdirty guard وأوامر create/update كما هي. لا تغيّر manual adjustment أو API/Application. شغّل البوابة وحدّث الوثائق واعمل commit مستقل.
+> اكتمل Product Stock opening/edit Form V4 مع 332/332 اختباراً وبناء ناجح وPlaywright 7/7. التالي الوحيد: حوّل نموذج manual adjustment داخل الشاشة المشتركة إلى FormSection وFieldCues وWorkflowFooter مع إبقاء الأنواع 6/7/8 والسبب الإلزامي والكمية الموجبة وصلاحية StockTransactions.Create وأمر createAdjustment كما هي. لا تغيّر قائمة الأرصدة أو opening/edit أو API/Application. شغّل البوابة وحدّث الوثائق واعمل commit مستقل.
 
 ## FRD-H — Branches/Warehouses Migration
 
