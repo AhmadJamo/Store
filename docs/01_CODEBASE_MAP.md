@@ -148,7 +148,7 @@ and query strings. See `docs/modernization/MOD_030O_ANALYTICS_CENTER_RETIREMENT.
 
 `ReplenishmentApiController` exposes the reviewed inventory projection plus independently protected rule, transfer-draft
 and purchase-request-draft commands. Angular `features/inventory/replenishment*` owns bilingual filters, rule editing,
-server-authored forecast evidence and exact generated-document navigation. `ReplenishmentService` and
+server-authored forecast evidence and exact generated-document navigation. Its five-test FRD-I page safety matrix protects filter, rule, permission, command, navigation, error and dirty-state contracts before restyling. `ReplenishmentService` and
 `ReplenishmentPurchaseDemandService` retain all calculation and mutation authority. Branches, PaymentMethods and TaxRates
 now redirect their exact Index GET actions to the shared `/products/catalog-masters` workspace; their create/update/delete
 commands remain independently authorized, antiforgery-protected and outside the presentation catalog.

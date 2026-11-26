@@ -161,6 +161,8 @@ WMS-090B1 adds a live forecast from Approved stock transfers. Confirmed inbound 
 
 WMS-090B2 lets an operator with both replenishment-management and transfer-create permissions convert a still-needed suggestion with a preferred source into a Draft StockTransfer. Creation recalculates projected shortage and source Available, enforces branch replenishment/transfer access, selects one sufficient pickable source position when exact source is required, uses the capacity-aware putaway suggestion when exact destination is required, and refuses a duplicate open intent for the same rule. It never submits, approves, reserves or posts the draft.
 
+FRD-I now gives the Replenishment page a five-test safety matrix protecting named server evidence, filters, rule validation, dirty state, independent action permissions, exact draft commands/navigation and server errors before visual migration; runtime and Application authority are unchanged.
+
 `MOD-030E2G` adds the dedicated `/inventory/replenishment` Angular workspace and authenticated API over the same
 `ReplenishmentService` projection. View, rule management, transfer creation and purchase-request creation retain their
 independent permissions, and every mutation retains antiforgery. The existing `/purchases/replenishment` workspace remains

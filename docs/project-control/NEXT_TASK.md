@@ -2,9 +2,9 @@
 
 ## FRD-I — Inventory Migration
 
-> الحالة: IN PROGRESS — Tracking Workspace V4 مكتمل في 2026-11-27
+> الحالة: IN PROGRESS — Replenishment safety audit مكتمل في 2026-11-27
 >
-> اكتمل Tracking History بجدول typed من ستة أعمدة مع حفظ date/product/identifier/type/quantity/reference وترتيب الخادم وحالة empty؛ نجح 347/347 والبناء وPlaywright 7/7. التالي الوحيد: نفّذ Replenishment safety audit فقط قبل أي restyle. وسّع اختبارات الصفحة لحماية rows المسماة وكل on-hand/reserved/available/incoming/outgoing/projected/min/max/suggestion/source/open-request evidence، فلاتر warehouse/search/exceptions، نموذج القاعدة وقواعد التحقق وdirty guard، الصلاحيات المستقلة Manage/StockTransfers.Create/PurchaseRequests.Create، toggle، إنشاء draft والتنقل الدقيق، وأخطاء الخادم. لا تغيّر runtime أو API/Application في خطوة التدقيق؛ شغّل الاختبار المستهدف وحدّث الوثائق واعمل commit مستقل.
+> توسعت شبكة حماية Replenishment من اختبارين إلى خمسة وتحمي دليل الخادم الكامل والفلاتر والخيارات المسماة والصلاحيات المستقلة ونموذج القاعدة والتحقق وdirty guard وأوامر toggle/transfer/purchase والتنقل والأخطاء؛ نجح 350/350 والبناء وPlaywright 7/7. التالي الوحيد: حسّن Replenishment Rule Form فقط إلى V4؛ ترجم Inventory eyebrow، واستخدم FormSection موصوفاً وFieldCue لكل الحقول العشرة وWorkflowFooter للحفظ، مع حفظ product/destination/preferred-source بالأسماء وplanning/min/max/safety/lead/coverage/seasonality والتحقق وإعادة الضبط والصلاحية وdirty guard والـpayload. لا تغيّر filters/table أو API/Application في هذه الخطوة؛ شغّل البوابة وحدّث الوثائق واعمل commit مستقل.
 
 ## FRD-H — Branches/Warehouses Migration
 

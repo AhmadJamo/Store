@@ -2772,3 +2772,7 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
   - Replaced the last manual history table with a typed six-column DataTable and localized empty state while preserving server transaction order, date, product, identifier, movement-type mapping, quantity and reference evidence.
   - Extended the five-test tracking evidence contract and verified 347/347 Angular tests across 140 files, production build, 142-template accessibility, 122-page consistency and Playwright 7 passed/0 failed/3 authenticated-API skips.
   - FRD-ISS-012 remains the sole independent gate failure: the unchanged core-localization lazy chunk is 84.55 kB against the 80 kB budget. Replenishment safety audit is next; runtime/API/Application behavior remains unchanged.
+- 2026-11-27: Completed the FRD-I Inventory Replenishment pre-migration safety audit.
+  - Expanded two narrow tests into five focused contracts for named server evidence, all balance/projection/suggestion/open-request facts, warehouse/search/exception filters and named options.
+  - Protected rule validation and dirty guard, independent Manage/StockTransfers.Create/PurchaseRequests.Create gates, exact save/toggle/draft commands, generated-document navigation and server errors without changing runtime.
+  - Verified 350/350 Angular tests across 140 files, production build, 142 templates, 122 pages and Playwright 7 passed/0 failed/3 authenticated-API skips. FRD-ISS-012 remains the sole independent gate failure; Replenishment Rule Form V4 is next.

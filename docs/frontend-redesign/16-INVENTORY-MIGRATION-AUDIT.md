@@ -1,6 +1,6 @@
 # 16 — Inventory migration audit
 
-> Status: FRD-I implementation in progress — Tracking Workspace V4 complete; Replenishment safety audit next
+> Status: FRD-I implementation in progress — Replenishment safety audit complete; rule form next
 > Date: 2026-11-27
 > Source of truth: Angular routes/components and clients, Internal API controllers, Application services/DTOs, repositories and inventory module documentation
 
@@ -16,7 +16,7 @@ The Inventory application currently exposes 19 Angular routes through 15 page te
 | Reservations | `/inventory/reservations` | GET-only `InventoryReservations.View`; lifecycle facts are server-authored | V4 localized FilterBar/SummaryStrip/typed DataTable; five focused tests |
 | Stock Transfers | `/inventory/transfers`, `/new`, `/:id/edit`, `/:id` | View/Create/Edit/Submit/Approve/Reject/Dispatch/Receive/Cancel; reservations, locations, tracking, valuation and posting remain server-owned | Workspace V4: six-test matrix, localized form, typed record evidence and structured permission-gated receipt inputs |
 | Inventory Scanning | `/inventory/scanning` | `InventoryScanning.View` plus ProductStock.Edit, LocationMovements.Create or InventoryAdjustments.Count per command; server idempotency | Touch/keyboard command workspace; no component spec; high operational risk |
-| Replenishment | `/inventory/replenishment` | View/Manage plus StockTransfers.Create or PurchaseRequests.Create; server creates draft documents | Cross-module mutations and dirty settings; two focused tests |
+| Replenishment | `/inventory/replenishment` | View/Manage plus StockTransfers.Create or PurchaseRequests.Create; server creates draft documents | Safety audited: five tests protect evidence, filters, rule validation, independent actions, navigation, errors and dirty state |
 | Insights | `/inventory/insights` | GET-only `InventoryInsights.View`; classifications and KPIs are server-authored | V4 localized FilterBar/SummaryStrip/typed DataTable; five focused tests |
 | Reconciliation | `/inventory/reconciliation` | GET-only `InventoryReconciliation.View`; exceptions/tolerances/paging are server-authored | V4 localized FilterBar/SummaryStrip/typed DataTable/Pager; five focused tests |
 | Adjustment List | `/inventory/adjustments` | GET `InventoryAdjustments.View`; service returns the complete newest-first directory without filter/paging inputs | V4 localized header/three-item SummaryStrip/typed eight-column DataTable; five focused tests |
@@ -41,8 +41,8 @@ The Inventory application currently exposes 19 Angular routes through 15 page te
 
 ## Test baseline and gaps
 
-- Current FRD-I baseline: 347 Angular tests across 140 files, production build, 142 templates, 122-page consistency and Playwright 7/7. The last security baseline remains 1,668 checks because these slices change presentation only; the independent 84.55 kB core-localization lazy-budget issue remains tracked as FRD-ISS-012.
-- Existing Inventory page component coverage: Availability 5, Reservations 5, Stock Transactions 5, Insights 5, Reconciliation 5, Adjustment List 5, Adjustment Create 5, Adjustment Record 5, Product Stock 7, Stock Transfer 6, Scanning 6, Tracking 5, Replenishment 2, Warehouse Locations 4.
+- Current FRD-I baseline: 350 Angular tests across 140 files, production build, 142 templates, 122-page consistency and Playwright 7/7. The last security baseline remains 1,668 checks because these slices change presentation only; the independent 84.55 kB core-localization lazy-budget issue remains tracked as FRD-ISS-012.
+- Existing Inventory page component coverage: Availability 5, Reservations 5, Stock Transactions 5, Insights 5, Reconciliation 5, Adjustment List 5, Adjustment Create 5, Adjustment Record 5, Product Stock 7, Stock Transfer 6, Scanning 6, Tracking 5, Replenishment 5, Warehouse Locations 4.
 - No page component spec currently protects Putaway or Location Movements.
 - API client specs already protect the principal HTTP methods and query parameters; they do not replace page-state and permission-aware action coverage.
 - Live authenticated API reconciliation remains external until an API URL and authenticated storage state are supplied.
@@ -58,7 +58,8 @@ The Inventory application currently exposes 19 Angular routes through 15 page te
 7. **Stock Transfer Workspace COMPLETE; operational command workspaces NEXT.** Form, record evidence and receipt now use the shared hierarchy. Receipt states 7/8/9 expose described received/short/damaged cues and a dedicated footer while preserving remaining limits, destination, permission and exact receive payload. Six tests protect all ten states and commands; reservation, branch, tracking, valuation and posting authority remain server-owned.
 8. **Scanning Workspace COMPLETE.** Six focused tests protect four resolver states, server identities/balances, independent Putaway/Relocate/Count permissions, exact commands and idempotency keys, quantity validation, blind count and server errors. The resolver now uses localized Inventory context, a described FormSection, four optional FieldCues and WorkflowFooter while preserving autofocus, four query values, GET normalization and recovery. The four server-resolved identities now sit inside a localized DetailSection while preserving statuses 0/1/2/3, display names and secondary evidence. The conditional Putaway/Relocate/Count workspaces now use described FormSections, required quantity FieldCues and WorkflowFooters while preserving permission/state gates, validation, idempotency, commands and refresh. Tracking is audited separately in the next step.
 9. **Tracking Workspace COMPLETE; Replenishment safety audit NEXT.** Five focused tests protect server balance/expiration/recall/communication/transaction evidence, lot/serial mapping, complete opening allocation, four independent permissions, recall/quarantine/release/communication/close commands, validation, server errors and dirty navigation. Opening allocation uses localized Inventory context, two described FormSections, nine required/optional FieldCues and a WorkflowFooter. Expiration metrics use a two-item SummaryStrip and alerts use a typed nine-column DataTable. Recall creation and active record actions use the shared FormSection/FieldCue/WorkflowFooter hierarchy, and recall evidence uses DetailSection. Tracked balances use a typed permission-aware DataTable with the exact quarantine/release boundary. Tracking history now uses a typed six-column DataTable for date, product, identifier, type, quantity and reference, preserving server order and a localized empty state. API/Application authority is unchanged.
-10. Warehouse Locations remains complete and is excluded from further FRD-I restyling unless a verified dependency regression requires a fix.
+10. **Replenishment safety audit COMPLETE; Rule Form V4 NEXT.** Five focused tests protect named server rows and on-hand/reserved/available/incoming/outgoing/projected/min/max/suggestion/source/open-request evidence; warehouse/search/exception filters; named options; rule validation and dirty guard; independent Manage/transfer/purchase permissions; exact save/toggle/draft commands, navigation and server errors. The audit changes no runtime/API/Application behavior.
+11. Warehouse Locations remains complete and is excluded from further FRD-I restyling unless a verified dependency regression requires a fix.
 
 ## First slice decision
 
