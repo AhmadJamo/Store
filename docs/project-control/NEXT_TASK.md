@@ -4,7 +4,7 @@
 
 > الحالة: IN PROGRESS — اكتمل الجرد في 2026-11-25
 >
-> اكتمل Tracking Opening Allocation V4 بقسمين وتسع FieldCues وWorkflowFooter ونجح 347/347 والبناء وPlaywright 7/7. التالي الوحيد: حسّن expiration metrics وexpiration alerts فقط؛ استخدم SummaryStrip للعدادين وDetailSection أو typed DataTable للتنبيهات مع true-empty واضح، واحفظ expired/expiring counts، severity، product/identifier/warehouse/location، quantity/date/days/status من الخادم كما هي. لا تغيّر opening form أو recalls أو quarantine أو history أو API/Application. شغّل البوابة وحدّث الوثائق واعمل commit مستقل.
+> اكتمل Tracking Expiration Alerts V4 بـSummaryStrip وجدول typed من تسعة أعمدة ونجح 347/347 والبناء وPlaywright 7/7. التالي الوحيد: حسّن Recall Workspace فقط؛ نظّم create recall في FormSection مع أربع FieldCues وWorkflowFooter، واعرض كل recall في DetailSection يحفظ الحالة والمرجع والمنتج والidentifier والسبب وaffected documents والcommunication log، ثم نظّم communication/close actions دون تغيير الصلاحية أو التحقق أو الأوامر. لا تغيّر opening/expiration/quarantine/balances/history أو API/Application. شغّل البوابة وحدّث الوثائق واعمل commit مستقل.
 
 ## FRD-H — Branches/Warehouses Migration
 

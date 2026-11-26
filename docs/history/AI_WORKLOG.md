@@ -2751,3 +2751,8 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
   - Localized the Inventory context and split tracking identity from allocation lines with two described FormSections, nine required/optional cues for the first line and a dedicated WorkflowFooter.
   - Preserved named product/warehouse/location choices, lot/serial policy, add/remove/location reset, manufacture/expiration dates, validation, post-success reset, dirty guard and exact open payload.
   - Verified 347/347 Angular tests, production build, 142 templates, 122 pages and Playwright 7 passed/0 failed/3 skips. FRD-ISS-012 remains independent.
+
+- 2026-11-26: Completed the FRD-I Tracking Expiration Alerts V4 slice.
+  - Replaced bespoke metric cards with a two-item SummaryStrip and the manual alert table with a typed nine-column DataTable and true-empty state.
+  - Preserved server expired/expiring counts, severity, product, identifier, warehouse, location, quantity, expiration date, days and status.
+  - Verified 347/347 Angular tests, production build, 142 templates, 122 pages and Playwright 7 passed/0 failed/3 skips. FRD-ISS-012 remains independent.

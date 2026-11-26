@@ -58,6 +58,10 @@ describe('InventoryTrackingPageComponent', () => {
     fixture.detectChanges();
     const text = fixture.nativeElement.textContent;
     ['Milk', 'Main warehouse', 'Rack A', 'LOT-1', 'REC-1', 'Safety review', 'SALE-9', 'Customer A', 'Reached customer'].forEach(value => expect(text).toContain(value));
+    expect(fixture.nativeElement.querySelectorAll('app-summary-strip')).toHaveLength(1);
+    const alerts = fixture.nativeElement.querySelector('app-data-table.expiration-alert-table');
+    expect(alerts).not.toBeNull();
+    expect(alerts.querySelectorAll('thead th')).toHaveLength(9);
     const component = fixture.componentInstance as any;
     expect([1, 2].map(value => component.policyName(value))).toEqual(['lotTracking', 'serialTracking']);
     expect([1, 2, 3].map(value => component.statusName(value))).toEqual(['trackingAvailable', 'trackingDepleted', 'trackingQuarantined']);

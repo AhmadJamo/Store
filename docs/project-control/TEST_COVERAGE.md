@@ -318,3 +318,9 @@
 - Angular Vitest: 347/347 across 140 files; five focused tests now also protect localized context, two FormSections, nine first-line FieldCues and one WorkflowFooter.
 - Static accessibility: 142 templates; UI inventory 122 pages; FormSection 13 and WorkflowFooter 15. Production build and Playwright 7/7 passed.
 - FRD-ISS-012 remains the only full-gate failure at 84.55 kB versus 80 kB; no budget was relaxed.
+
+## FRD-I Inventory Tracking Expiration Alerts V4 — 2026-11-26
+
+- Angular Vitest: 347/347 across 140 files; five focused tests protect SummaryStrip plus the typed nine-column alert table and server evidence.
+- Static accessibility: 142 templates; UI inventory 122 pages; SummaryStrip 14. Production build and Playwright 7/7 passed.
+- FRD-ISS-012 remains the only full-gate failure at 84.55 kB versus 80 kB; no budget was relaxed.
