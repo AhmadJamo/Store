@@ -4,7 +4,7 @@
 
 > الحالة: IN PROGRESS — اكتمل الجرد في 2026-11-25
 >
-> اكتمل Product Stock opening/edit Form V4 مع 332/332 اختباراً وبناء ناجح وPlaywright 7/7. التالي الوحيد: حوّل نموذج manual adjustment داخل الشاشة المشتركة إلى FormSection وFieldCues وWorkflowFooter مع إبقاء الأنواع 6/7/8 والسبب الإلزامي والكمية الموجبة وصلاحية StockTransactions.Create وأمر createAdjustment كما هي. لا تغيّر قائمة الأرصدة أو opening/edit أو API/Application. شغّل البوابة وحدّث الوثائق واعمل commit مستقل.
+> اكتمل Product Stock Workspace V4 مع 332/332 اختباراً وبناء ناجح وPlaywright 7/7. التالي الوحيد: ابدأ Stock Transfer safety audit قبل أي restyling؛ راجع حالات Draft/Submitted/Approved/InTransit/Received/Rejected/Cancelled، الصلاحيات المستقلة، أوامر create/update/submit/approve/reject/dispatch/receive/cancel، locations/tracking/receipt exceptions وdirty guard، ثم وسّع الاختبارات المركزة فقط. لا تغيّر runtime أو API/Application في شريحة التدقيق. شغّل الاختبارات وحدّث الوثائق واعمل commit مستقل.
 
 ## FRD-H — Branches/Warehouses Migration
 

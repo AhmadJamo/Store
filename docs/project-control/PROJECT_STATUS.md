@@ -1,5 +1,7 @@
 # حالة المشروع / Project Status
 
+> تحديث 2026-11-26: اكتمل Product Stock Workspace V4 بعد تنظيم manual adjustment بقسم مترجم وخمس إشارات حقول مطلوبة وتذييل إجراء، مع حفظ صلاحية StockTransactions.Create والأنواع 6/7/8 والكمية الموجبة والسبب والتحقق وdirty guard. نجح 332/332 اختباراً والبناء وPlaywright 7/7؛ Stock Transfer safety audit هو التالي.
+
 > تحديث 2026-11-26: اكتمل Product Stock opening/edit Form V4 بقسم مترجم وثلاث إشارات حقول مطلوبة وتذييل إجراءات، مع حفظ الاختيار بالأسماء وقفل المنتج/المستودع في التحرير وفصل create/update والتحقق وfocus وdirty guard. نجح 332/332 اختباراً والبناء وPlaywright 7/7؛ نموذج manual adjustment هو التالي.
 
 > تحديث 2026-11-26: اكتمل Product Stock List V4 برأس Inventory مترجم ومؤشرين وجدول typed من سبعة أعمدة، مع حفظ الأسماء والكميات وAVCO/value والترتيب وصلاحيات Edit/Delete وترك النموذجين دون تغيير. نجح 332/332 اختباراً والبناء وPlaywright 7/7؛ نموذج opening/edit هو التالي.

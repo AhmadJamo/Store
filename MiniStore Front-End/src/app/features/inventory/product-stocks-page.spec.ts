@@ -60,6 +60,9 @@ describe('ProductStocksPageComponent', () => {
     expect(fixture.nativeElement.querySelectorAll('form.stock-operation app-form-section')).toHaveLength(1);
     expect(fixture.nativeElement.querySelectorAll('form.stock-operation app-field-cue')).toHaveLength(3);
     expect(fixture.nativeElement.querySelectorAll('form.stock-operation app-workflow-footer')).toHaveLength(1);
+    expect(fixture.nativeElement.querySelectorAll('form.adjustment-operation app-form-section')).toHaveLength(1);
+    expect(fixture.nativeElement.querySelectorAll('form.adjustment-operation app-field-cue')).toHaveLength(5);
+    expect(fixture.nativeElement.querySelectorAll('form.adjustment-operation app-workflow-footer')).toHaveLength(1);
   });
 
   it('keeps opening stock, edit, delete, and manual adjustment independently permission-gated', () => {

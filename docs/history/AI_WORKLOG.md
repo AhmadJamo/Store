@@ -2696,3 +2696,8 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
   - Replaced the dense stock operation card with a localized FormSection, three required FieldCues and WorkflowFooter; manual adjustment stayed unchanged.
   - Preserved named product/warehouse choices, locked edit identity, non-negative quantity, separate create/update commands, validation focus, dirty guard and independent permissions.
   - Verified 332/332 Angular tests across 138 files, production build, 142-template accessibility, 122-page consistency and Playwright 7 passed/0 failed/3 skips. FRD-ISS-012 remains independent.
+
+- 2026-11-26: Completed the FRD-I Product Stock manual-adjustment Form V4 slice and closed the Product Stock workspace.
+  - Replaced the dense manual card with a localized FormSection, five required FieldCues, contextual kitchen-variance help and WorkflowFooter.
+  - Preserved StockTransactions.Create, named options, movement types 6/7/8, positive quantity, required reason, createAdjustment, validation focus and dirty guard; no backend contract changed.
+  - Verified 332/332 Angular tests across 138 files, production build, 142-template accessibility, 122-page consistency and Playwright 7 passed/0 failed/3 skips. FRD-ISS-012 remains independent.

@@ -3,7 +3,8 @@
 .operation-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; align-items: start; }
 .operation-form { display: grid; gap: 0.9rem; }
 .operation-form.ui-card { padding: 1rem; }
-.stock-fields { display: grid; gap: 0.9rem; }
+.stock-fields, .adjustment-fields { display: grid; gap: 0.9rem; }
+.adjustment-help { display: block; margin-block-start: 0.9rem; color: var(--erp-color-text-muted); line-height: 1.5; }
 .operation-form h2, .operation-form p { margin: 0; }
 .form-actions, .row-actions { display: flex; flex-wrap: wrap; gap: 0.65rem; }
 .row-actions button { border: 0; background: transparent; color: var(--ui-link, #1456a0); cursor: pointer; text-decoration: underline; }
