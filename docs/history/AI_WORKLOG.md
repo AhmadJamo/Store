@@ -2776,3 +2776,7 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
   - Expanded two narrow tests into five focused contracts for named server evidence, all balance/projection/suggestion/open-request facts, warehouse/search/exception filters and named options.
   - Protected rule validation and dirty guard, independent Manage/StockTransfers.Create/PurchaseRequests.Create gates, exact save/toggle/draft commands, generated-document navigation and server errors without changing runtime.
   - Verified 350/350 Angular tests across 140 files, production build, 142 templates, 122 pages and Playwright 7 passed/0 failed/3 authenticated-API skips. FRD-ISS-012 remains the sole independent gate failure; Replenishment Rule Form V4 is next.
+- 2026-11-27: Completed the FRD-I Replenishment Rule Form V4 slice.
+  - Localized the Inventory eyebrow and rebuilt the Manage-only rule editor with one described FormSection, ten required/optional FieldCues and a WorkflowFooter.
+  - Preserved named product/destination/source options, planning method, min/max/safety/lead/coverage/seasonality, validation, reset, dirty guard and exact save payload; filters, evidence table and backend contracts are unchanged.
+  - Verified 350/350 Angular tests, production build, 142 templates, 122 pages and Playwright 7 passed/0 failed/3 skips. FRD-ISS-012 remains independent; Replenishment Filters V4 is next.

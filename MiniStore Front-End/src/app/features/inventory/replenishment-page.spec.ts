@@ -64,6 +64,10 @@ describe('ReplenishmentPageComponent', () => {
     expect(fixture.componentInstance['page']()?.rows[0]).toEqual(expect.objectContaining({ onHand: 11, reserved: 2, available: 9, confirmedIncoming: 1, confirmedOutgoing: 3, projectedOnHand: 12, projectedAvailable: 10, minimum: 12, maximum: 20, suggestedQuantity: 10, sourceAvailable: 30 }));
     expect(fixture.nativeElement.querySelectorAll('tbody tr')).toHaveLength(3);
     expect(fixture.nativeElement.querySelectorAll('thead th')).toHaveLength(11);
+    expect(fixture.nativeElement.textContent).toContain('inventoryNavigation');
+    expect(fixture.nativeElement.querySelectorAll('.rule-form app-form-section')).toHaveLength(1);
+    expect(fixture.nativeElement.querySelectorAll('.rule-form app-field-cue')).toHaveLength(10);
+    expect(fixture.nativeElement.querySelectorAll('.rule-form app-workflow-footer')).toHaveLength(1);
     expect(fixture.nativeElement.querySelector('a')).not.toBeNull();
   });
 

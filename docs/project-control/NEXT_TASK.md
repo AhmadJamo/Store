@@ -2,9 +2,9 @@
 
 ## FRD-I — Inventory Migration
 
-> الحالة: IN PROGRESS — Replenishment safety audit مكتمل في 2026-11-27
+> الحالة: IN PROGRESS — Replenishment Rule Form V4 مكتمل في 2026-11-27
 >
-> توسعت شبكة حماية Replenishment من اختبارين إلى خمسة وتحمي دليل الخادم الكامل والفلاتر والخيارات المسماة والصلاحيات المستقلة ونموذج القاعدة والتحقق وdirty guard وأوامر toggle/transfer/purchase والتنقل والأخطاء؛ نجح 350/350 والبناء وPlaywright 7/7. التالي الوحيد: حسّن Replenishment Rule Form فقط إلى V4؛ ترجم Inventory eyebrow، واستخدم FormSection موصوفاً وFieldCue لكل الحقول العشرة وWorkflowFooter للحفظ، مع حفظ product/destination/preferred-source بالأسماء وplanning/min/max/safety/lead/coverage/seasonality والتحقق وإعادة الضبط والصلاحية وdirty guard والـpayload. لا تغيّر filters/table أو API/Application في هذه الخطوة؛ شغّل البوابة وحدّث الوثائق واعمل commit مستقل.
+> اكتمل نموذج القاعدة بسياق Inventory مترجم وFormSection موصوف وعشر FieldCues وWorkflowFooter مع حفظ الخيارات المسماة والتخطيط والحدود والموسمية والتحقق وإعادة الضبط والصلاحية وdirty guard والـpayload؛ نجح 350/350 والبناء وPlaywright 7/7. التالي الوحيد: حسّن Replenishment Filters فقط إلى FilterBar V4 مع FieldCue للمستودع والبحث وexceptionsOnly وأزرار تطبيق/مسح واضحة، مع حفظ query params والتحميل والحالات وعدم تغيير rule form أو table أو API/Application. شغّل البوابة وحدّث الوثائق واعمل commit مستقل.
 
 ## FRD-H — Branches/Warehouses Migration
 
