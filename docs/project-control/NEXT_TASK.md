@@ -4,7 +4,7 @@
 
 > الحالة: IN PROGRESS — اكتمل الجرد في 2026-11-25
 >
-> اكتمل Inventory Insights بالكامل مع 309 اختبارات والبناء وفحوص 142 قالباً و122 صفحة وPlaywright 7/7. التالي الوحيد: أضف safety net مستقلاً لوضع Inventory Reconciliation داخل الصفحة المشتركة يحمي exceptionCount والتطابق/الاستثناءات السبعة والكميات والقيم وآخر حركة والwarehouse/search/exceptions/page contracts والرابط المشروط بالصلاحية، قبل أي تغيير عرض. وثّق واعمل commit مستقل.
+> اكتمل Inventory Reconciliation safety net بخمسة اختبارات تحمي العدادات والمنتج/المستودع والكميات والقيمة وآخر حركة والاستثناءات السبعة والحالة المتطابقة والمرشحات والصفحات والرابط المشروط بالصلاحية والحالة الفارغة. التالي الوحيد: حوّل وضع Reconciliation داخل الصفحة المشتركة إلى سياق Inventory مترجم وFilterBar/SummaryStrip/typed DataTable وPager وحالتي empty، من دون تغيير API/DTO/Application authority. شغّل البوابة واعمل commit مستقل.
 
 ## FRD-H — Branches/Warehouses Migration
 

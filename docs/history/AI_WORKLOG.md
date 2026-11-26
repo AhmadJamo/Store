@@ -2651,3 +2651,7 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
   - Migrated Insights mode only within the shared page to localized Inventory context, FilterBar, a five-item SummaryStrip and a typed seven-column DataTable with true-empty/filtered-empty guidance; Reconciliation presentation remains unchanged.
   - Preserved the GET-only InventoryInsights.View boundary, server-authored KPI totals, all five activity classifications, named product/warehouse rows, quantities/values/activity dates, thresholds and permission-aware Reconciliation link.
   - Verified 309/309 Angular tests across 135 files, production build, 142-template accessibility, 122-page consistency and Playwright 7 passed/0 failed/3 authenticated-API skips. FilterBar is now 10 and SummaryStrip 11; the unchanged 84.55 kB core-localization lazy-budget issue remains tracked.
+- 2026-11-26: Added the FRD-I Inventory Reconciliation pre-migration safety net.
+  - Added five focused shared-page tests in Reconciliation mode protecting server-authored counters, named product/warehouse rows, warehouse/assigned/unassigned/latest quantities, value and latest-movement evidence.
+  - Protected all seven issue mappings, consistent state, warehouse/search/exception/page contracts, permission-aware Insights link and empty behavior without deriving consistency in Angular.
+  - The focused suite passed 5/5 before presentation changes; the GET-only InventoryReconciliation.View boundary and Application-owned reconciliation remain unchanged.
