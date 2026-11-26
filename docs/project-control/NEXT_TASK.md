@@ -4,7 +4,7 @@
 
 > الحالة: IN PROGRESS — اكتمل الجرد في 2026-11-25
 >
-> اكتمل Stock Transfer Workspace V4 ونجح 338/338 والبناء وPlaywright 7/7. التالي الوحيد: ابدأ Scanning safety audit قبل restyling؛ راجع route/component/API/Application والـpermissions، واحمِ barcode/product/warehouse/location evidence وأوامر المسح/idempotency والتحقق والأخطاء وdirty state باختبارات مكوّن مركزة. لا تغيّر runtime أو API/Application في شريحة التدقيق. شغّل الاختبارات وحدّث الوثائق واعمل commit مستقل.
+> اكتمل Scanning safety audit بخمسة اختبارات ونجح 343/343 عبر 140 ملفاً. التالي الوحيد: حسّن scan/resolve workspace فقط؛ ترجم Inventory eyebrow، ضع حقول adjustment/product/source/destination في FormSection موصوف مع أربع FieldCues وWorkflowFooter لزر Resolve، مع حفظ autofocus والقيم الأربع والـGET normalization وحالات loading/recovery كما هي. لا تغيّر result cards أو Putaway/Relocate/Count أو API/Application. شغّل البوابة وحدّث الوثائق واعمل commit مستقل.
 
 ## FRD-H — Branches/Warehouses Migration
 

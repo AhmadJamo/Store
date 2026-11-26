@@ -288,3 +288,8 @@
 - Angular Vitest: 338/338 across 139 files; six focused tests protect receipt cues/footer, empty blocking and exact discrepancy payload across the ten-state matrix.
 - Static accessibility: 142 templates; UI inventory 122 pages. Production build and Playwright 7/7 passed.
 - FRD-ISS-012 remains the only full-gate failure at 84.55 kB versus 80 kB; no budget was relaxed.
+
+## FRD-I Inventory Scanning safety audit — 2026-11-26
+
+- Angular Vitest: 343/343 across 140 files; five new component tests cover resolver evidence/statuses, permissions, idempotent commands, validation, blind count and errors.
+- No runtime, API, permission or Application behavior changed; targeted suite passed 5/5.

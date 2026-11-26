@@ -2721,3 +2721,8 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
   - Added localized receipt guidance, three received/short/damaged FieldCues per line and a dedicated WorkflowFooter for states 7/8/9.
   - Preserved remaining max, destination, StockTransfers.Receive, empty-line blocking and exact discrepancy payload; server receipt, tracking, valuation and posting rules are unchanged.
   - Verified 338/338 Angular tests, production build, 142 templates, 122 pages and Playwright 7 passed/0 failed/3 skips. FRD-ISS-012 remains independent.
+
+- 2026-11-26: Completed the FRD-I Inventory Scanning pre-migration safety audit.
+  - Added five component tests protecting resolver identities, all four statuses, balance evidence and compound operation permissions.
+  - Protected exact Putaway/Relocate idempotency keys, Count payload, quantity validation, blind-count hiding and server-authored errors.
+  - Verified 343/343 Angular tests across 140 files; runtime, APIs and Application inventory rules are unchanged.
