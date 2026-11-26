@@ -4,7 +4,7 @@
 
 > الحالة: IN PROGRESS — اكتمل الجرد في 2026-11-25
 >
-> اكتمل Tracking Recall Create V4 بـFormSection وأربع FieldCues وWorkflowFooter ونجح 347/347 والبناء وPlaywright 7/7. التالي الوحيد: حسّن recall records/actions فقط؛ اعرض كل recall في DetailSection يحفظ الحالة والمرجع والمنتج والidentifier والسبب وaffected documents والcommunication log، ونظّم communication وclose actions مع FieldCues وWorkflowFooter دون تغيير ManageRecall أو شروط active status أو التحقق أو payloads. لا تغيّر opening/expiration/quarantine/balances/history أو API/Application. شغّل البوابة وحدّث الوثائق واعمل commit مستقل.
+> اكتمل Tracking Recall Workspace V4 بـDetailSection وقسمين وست FieldCues وتذييلين ونجح 347/347 والبناء وPlaywright 7/7. التالي الوحيد: حسّن Current Tracked Inventory وQuarantine فقط؛ حوّل الأرصدة إلى typed DataTable يحفظ product/warehouse/location/policy/identifier/quantity/expiration/status، ونظّم reason/action مع FieldCue وWorkflowFooter أو إجراء صف واضح مع بقاء ManageQuarantine، quantity/status gates، reason validation وquarantine/release payloads كما هي. لا تغيّر opening/expiration/recalls/history أو API/Application. شغّل البوابة وحدّث الوثائق واعمل commit مستقل.
 
 ## FRD-H — Branches/Warehouses Migration
 

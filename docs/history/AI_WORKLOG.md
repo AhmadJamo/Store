@@ -2761,3 +2761,8 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
   - Replaced the dense recall-create card with a described FormSection, four required FieldCues and a dedicated WorkflowFooter.
   - Preserved InventoryTracking.ManageRecall, named tracked-product choice, validation, post-success reset and exact createRecall payload.
   - Verified 347/347 Angular tests, production build, 142 templates, 122 pages and Playwright 7 passed/0 failed/3 skips. FRD-ISS-012 remains independent.
+
+- 2026-11-27: Completed the FRD-I Tracking Recall Records/Actions V4 slice.
+  - Replaced generic recall cards with DetailSections preserving status, identity, affected-document and communication evidence.
+  - Split active communication and close actions into two described FormSections with six FieldCues and two WorkflowFooters while preserving ManageRecall, validation and exact payloads.
+  - Verified 347/347 Angular tests, production build, 142 templates, 122 pages and Playwright 7 passed/0 failed/3 skips. FRD-ISS-012 remains independent.
