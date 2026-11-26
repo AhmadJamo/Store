@@ -2667,3 +2667,7 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
   - Replaced the hard-coded eyebrow and projected table with localized Inventory context, a three-item SummaryStrip and a typed eight-column DataTable with true-empty guidance.
   - Preserved the complete newest-first service response, document/warehouse/location/count/date evidence, all five workflow labels, detail links and independent Create permission; no filter, paging, API, DTO, workflow or posting behavior was added or changed.
   - Verified 319/319 Angular tests across 137 files, production build, 142-template accessibility, 122-page consistency and Playwright 7 passed/0 failed/3 authenticated-API skips. The only full-gate failure remains the independent FRD-ISS-012 84.55 kB localization chunk versus its 80 kB budget.
+- 2026-11-26: Added the FRD-I Inventory Adjustment Create pre-migration safety net.
+  - Added five focused form tests protecting server-returned named warehouse, countable-location and stocked-product choices plus the warehouse/location dependency.
+  - Protected blind-count, reason and selected-product command data, invalid-form focus/guidance, workspace dirty state, unsaved-leave confirmation, exact POST command and record navigation after success.
+  - The focused suite passed 5/5 before presentation changes; create-form/POST permissions, API/DTO/Application authority, frozen quantities and adjustment workflow are unchanged.
