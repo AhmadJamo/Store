@@ -2780,3 +2780,7 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
   - Localized the Inventory eyebrow and rebuilt the Manage-only rule editor with one described FormSection, ten required/optional FieldCues and a WorkflowFooter.
   - Preserved named product/destination/source options, planning method, min/max/safety/lead/coverage/seasonality, validation, reset, dirty guard and exact save payload; filters, evidence table and backend contracts are unchanged.
   - Verified 350/350 Angular tests, production build, 142 templates, 122 pages and Playwright 7 passed/0 failed/3 skips. FRD-ISS-012 remains independent; Replenishment Filters V4 is next.
+- 2026-11-27: Completed the FRD-I Replenishment Filters V4 slice.
+  - Replaced the generic filter panel with the shared FilterBar, three optional FieldCues and separate apply/reset actions.
+  - Preserved warehouse/search/exceptions query parameters, trim/reset behavior, router navigation and reload; rule editor, evidence table and backend contracts are unchanged.
+  - Verified 350/350 Angular tests, production build, 142 templates, 122 pages and Playwright 7 passed/0 failed/3 skips. FRD-ISS-012 remains independent; Suggestions DataTable is next.

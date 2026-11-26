@@ -68,6 +68,9 @@ describe('ReplenishmentPageComponent', () => {
     expect(fixture.nativeElement.querySelectorAll('.rule-form app-form-section')).toHaveLength(1);
     expect(fixture.nativeElement.querySelectorAll('.rule-form app-field-cue')).toHaveLength(10);
     expect(fixture.nativeElement.querySelectorAll('.rule-form app-workflow-footer')).toHaveLength(1);
+    expect(fixture.nativeElement.querySelectorAll('.filter-form app-filter-bar')).toHaveLength(1);
+    expect(fixture.nativeElement.querySelectorAll('.filter-form app-field-cue')).toHaveLength(3);
+    expect(fixture.nativeElement.querySelectorAll('.filter-form [filter-actions]')).toHaveLength(2);
     expect(fixture.nativeElement.querySelector('a')).not.toBeNull();
   });
 

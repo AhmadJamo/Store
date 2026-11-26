@@ -2,9 +2,9 @@
 
 ## FRD-I — Inventory Migration
 
-> الحالة: IN PROGRESS — Replenishment Rule Form V4 مكتمل في 2026-11-27
+> الحالة: IN PROGRESS — Replenishment Filters V4 مكتمل في 2026-11-27
 >
-> اكتمل نموذج القاعدة بسياق Inventory مترجم وFormSection موصوف وعشر FieldCues وWorkflowFooter مع حفظ الخيارات المسماة والتخطيط والحدود والموسمية والتحقق وإعادة الضبط والصلاحية وdirty guard والـpayload؛ نجح 350/350 والبناء وPlaywright 7/7. التالي الوحيد: حسّن Replenishment Filters فقط إلى FilterBar V4 مع FieldCue للمستودع والبحث وexceptionsOnly وأزرار تطبيق/مسح واضحة، مع حفظ query params والتحميل والحالات وعدم تغيير rule form أو table أو API/Application. شغّل البوابة وحدّث الوثائق واعمل commit مستقل.
+> اكتملت الفلاتر بـFilterBar وثلاث FieldCues وإجراءات تطبيق/مسح واضحة مع حفظ warehouse/search/exceptions query params والتحميل؛ نجح 350/350 والبناء وPlaywright 7/7. التالي الوحيد: حوّل Replenishment Suggestions Table فقط إلى typed DataTable من 11 عموداً يحفظ product/warehouse/available+reserved/incoming/outgoing/projected available+on-hand/min-max/suggested/source+available/status/actions وترتيب الخادم والحالة الفارغة. احفظ open purchase link وManage toggle وشرطي transfer/purchase permissions والتنقل، ولا تغيّر rule form أو filters أو API/Application. شغّل البوابة وحدّث الوثائق واعمل commit مستقل.
 
 ## FRD-H — Branches/Warehouses Migration
 
