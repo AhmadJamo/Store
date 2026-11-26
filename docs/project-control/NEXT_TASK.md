@@ -4,7 +4,7 @@
 
 > الحالة: IN PROGRESS — اكتمل الجرد في 2026-11-25
 >
-> اكتمل Stock Transfer Record Evidence V4 ونجح 338/338 والبناء وPlaywright 7/7. التالي الوحيد: نظّم receipt workspace للحالات 7/8/9 باستخدام FormSection أو DetailSection موصوف وFieldCues لحقول received/short/damaged وتذييل إجراء واضح، مع إبقاء remaining/max والوجهة والأمر receive والـpermission والحظر عند عدم وجود سطر كما هي. لا تغيّر جداول السجل أو workflow actions أو API/Application. شغّل البوابة وحدّث الوثائق واعمل commit مستقل.
+> اكتمل Stock Transfer Workspace V4 ونجح 338/338 والبناء وPlaywright 7/7. التالي الوحيد: ابدأ Scanning safety audit قبل restyling؛ راجع route/component/API/Application والـpermissions، واحمِ barcode/product/warehouse/location evidence وأوامر المسح/idempotency والتحقق والأخطاء وdirty state باختبارات مكوّن مركزة. لا تغيّر runtime أو API/Application في شريحة التدقيق. شغّل الاختبارات وحدّث الوثائق واعمل commit مستقل.
 
 ## FRD-H — Branches/Warehouses Migration
 

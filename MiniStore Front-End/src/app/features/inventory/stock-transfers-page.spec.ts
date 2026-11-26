@@ -147,10 +147,14 @@ describe('StockTransfersPageComponent', () => {
       api.getDetails.mockReturnValue(of({ ...details, status: testCase.status }));
       const fixture = TestBed.createComponent(StockTransfersPageComponent);
       fixture.detectChanges();
-      const actions = [...fixture.nativeElement.querySelectorAll('app-workflow-footer a, app-workflow-footer button')]
+      const actions = [...fixture.nativeElement.querySelectorAll('section.stock-transfers > app-workflow-footer a, section.stock-transfers > app-workflow-footer button')]
         .map((element: Element) => element.textContent?.trim());
       expect(actions).toEqual(testCase.actions);
       expect(fixture.nativeElement.textContent.includes('receiptEvidence')).toBe(testCase.receipt);
+      if (testCase.status === 7) {
+        expect(fixture.nativeElement.querySelectorAll('.receipt-grid app-field-cue')).toHaveLength(3);
+        expect(fixture.nativeElement.querySelectorAll('app-detail-section app-workflow-footer button')).toHaveLength(1);
+      }
       expect(fixture.nativeElement.querySelectorAll('app-workflow-progress')).toHaveLength(1);
       if (testCase.status === 1) {
         const component = fixture.componentInstance as any;
@@ -170,7 +174,7 @@ describe('StockTransfersPageComponent', () => {
     const fixture = TestBed.createComponent(StockTransfersPageComponent);
     fixture.detectChanges();
 
-    expect(fixture.nativeElement.querySelectorAll('app-workflow-footer a, app-workflow-footer button')).toHaveLength(0);
+    expect(fixture.nativeElement.querySelectorAll('section.stock-transfers > app-workflow-footer a, section.stock-transfers > app-workflow-footer button')).toHaveLength(0);
   });
 
   it('keeps submit, approve, reject, return, dispatch, and cancel as exact separate commands', () => {

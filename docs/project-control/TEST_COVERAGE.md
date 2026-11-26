@@ -282,3 +282,9 @@
 - Angular Vitest: 338/338 across 139 files; six focused tests protect seven item and five history columns plus all workflow contracts.
 - Static accessibility: 142 templates; UI inventory 122 pages. Production build and Playwright 7/7 passed.
 - FRD-ISS-012 remains the only full-gate failure at 84.55 kB versus 80 kB; no budget was relaxed.
+
+## FRD-I Stock Transfer Receipt V4 — 2026-11-26
+
+- Angular Vitest: 338/338 across 139 files; six focused tests protect receipt cues/footer, empty blocking and exact discrepancy payload across the ten-state matrix.
+- Static accessibility: 142 templates; UI inventory 122 pages. Production build and Playwright 7/7 passed.
+- FRD-ISS-012 remains the only full-gate failure at 84.55 kB versus 80 kB; no budget was relaxed.

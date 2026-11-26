@@ -1,5 +1,7 @@
 # حالة المشروع / Project Status
 
+> تحديث 2026-11-26: اكتمل Stock Transfer Workspace V4 بعد تنظيم receipt للحالات 7/8/9 بوصف وثلاث إشارات received/short/damaged وتذييل مستقل، مع حفظ المتبقي والوجهة والصلاحية والـpayload. نجح 338/338 والبناء وPlaywright 7/7؛ Scanning safety audit هو التالي.
+
 > تحديث 2026-11-26: اكتمل Stock Transfer Record Evidence V4 بجدول بنود typed من سبعة أعمدة وجدول تاريخ من خمسة، مع حفظ كل كميات ومواقع وانتقالات ومستخدم وسبب وتاريخ من الخادم. نجح 338/338 والبناء وPlaywright 7/7؛ receipt workspace هو التالي.
 
 > تحديث 2026-11-26: اكتمل Stock Transfer Form V4 بسياق Inventory مترجم وقسمين موصوفين وخمس إشارات حقول لكل بند وإلزام المواقع حسب سياسة المستودع، مع حفظ الأسماء والباركود والتتبع والمسودة والتحقق والأوامر. نجح 338/338 اختباراً والبناء وPlaywright 7/7؛ record evidence tables هي التالية.

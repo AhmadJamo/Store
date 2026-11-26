@@ -99,13 +99,13 @@
         <div class="receipt-grid">
           @for (item of transfer.items; track item.id) {
             <fieldset><legend>{{ item.productName }} — {{ i18n.text('remainingQuantity') }}: {{ item.remainingQuantity | number:'1.0-3' }}</legend>
-              <label>{{ i18n.text('receivedQuantity') }}<input type="number" min="0" [max]="item.remainingQuantity" step="0.001" [value]="receiptValue(item.id,'receivedQuantity')" (input)="setReceiptValue(item.id,'receivedQuantity',$any($event.target).value)" /></label>
-              <label>{{ i18n.text('shortQuantity') }}<input type="number" min="0" [max]="item.remainingQuantity" step="0.001" [value]="receiptValue(item.id,'shortQuantity')" (input)="setReceiptValue(item.id,'shortQuantity',$any($event.target).value)" /></label>
-              <label>{{ i18n.text('damagedQuantity') }}<input type="number" min="0" [max]="item.remainingQuantity" step="0.001" [value]="receiptValue(item.id,'damagedQuantity')" (input)="setReceiptValue(item.id,'damagedQuantity',$any($event.target).value)" /></label>
+              <label><app-field-cue [label]="i18n.text('receivedQuantity')" [required]="true" [requiredText]="i18n.text('requiredField')" [optionalText]="i18n.text('optionalField')" /><input type="number" min="0" [max]="item.remainingQuantity" step="0.001" [value]="receiptValue(item.id,'receivedQuantity')" (input)="setReceiptValue(item.id,'receivedQuantity',$any($event.target).value)" /></label>
+              <label><app-field-cue [label]="i18n.text('shortQuantity')" [requiredText]="i18n.text('requiredField')" [optionalText]="i18n.text('optionalField')" /><input type="number" min="0" [max]="item.remainingQuantity" step="0.001" [value]="receiptValue(item.id,'shortQuantity')" (input)="setReceiptValue(item.id,'shortQuantity',$any($event.target).value)" /></label>
+              <label><app-field-cue [label]="i18n.text('damagedQuantity')" [requiredText]="i18n.text('requiredField')" [optionalText]="i18n.text('optionalField')" /><input type="number" min="0" [max]="item.remainingQuantity" step="0.001" [value]="receiptValue(item.id,'damagedQuantity')" (input)="setReceiptValue(item.id,'damagedQuantity',$any($event.target).value)" /></label>
             </fieldset>
           }
         </div>
-        <button class="ui-button primary" type="button" (click)="receive()" [disabled]="saving()">{{ i18n.text('receive') }}</button>
+        <app-workflow-footer [label]="i18n.text('receiptActions')"><button class="ui-button primary" type="button" (click)="receive()" [disabled]="saving()">{{ i18n.text('receive') }}</button></app-workflow-footer>
       </app-detail-section>
     }
     <app-detail-section [title]="i18n.text('items')">

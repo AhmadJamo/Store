@@ -2716,3 +2716,8 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
   - Replaced manual item/history table markup with typed seven-column and five-column DataTables and explicit number/status/date/reason cells.
   - Preserved server order, product and destination evidence, all receipt quantities, status transitions, users, reasons and timestamps; workflow and receipt inputs are unchanged.
   - Verified 338/338 Angular tests, production build, 142 templates, 122 pages and Playwright 7 passed/0 failed/3 skips. FRD-ISS-012 remains independent.
+
+- 2026-11-26: Completed Stock Transfer Receipt V4 and closed the FRD-I Stock Transfer workspace.
+  - Added localized receipt guidance, three received/short/damaged FieldCues per line and a dedicated WorkflowFooter for states 7/8/9.
+  - Preserved remaining max, destination, StockTransfers.Receive, empty-line blocking and exact discrepancy payload; server receipt, tracking, valuation and posting rules are unchanged.
+  - Verified 338/338 Angular tests, production build, 142 templates, 122 pages and Playwright 7 passed/0 failed/3 skips. FRD-ISS-012 remains independent.
