@@ -2647,3 +2647,7 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
   - Added the first shared analysis page component spec in Insights mode with five tests protecting server-authored KPI totals, named product/warehouse rows, quantities, values, activity dates and all five classifications.
   - Protected warehouse/search/state/attention/threshold query input, invalid-threshold blocking, the independently permissioned Reconciliation link and empty behavior.
   - The focused suite passed 5/5 before presentation changes; the GET-only InventoryInsights.View boundary and Application-owned classification remain unchanged.
+- 2026-11-26: Completed the FRD-I Inventory Insights V4 analysis slice.
+  - Migrated Insights mode only within the shared page to localized Inventory context, FilterBar, a five-item SummaryStrip and a typed seven-column DataTable with true-empty/filtered-empty guidance; Reconciliation presentation remains unchanged.
+  - Preserved the GET-only InventoryInsights.View boundary, server-authored KPI totals, all five activity classifications, named product/warehouse rows, quantities/values/activity dates, thresholds and permission-aware Reconciliation link.
+  - Verified 309/309 Angular tests across 135 files, production build, 142-template accessibility, 122-page consistency and Playwright 7 passed/0 failed/3 authenticated-API skips. FilterBar is now 10 and SummaryStrip 11; the unchanged 84.55 kB core-localization lazy-budget issue remains tracked.

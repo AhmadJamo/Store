@@ -60,7 +60,9 @@ describe('InventoryAnalysisPageComponent insights mode', () => {
     expect(fixture.nativeElement.textContent).toContain('COF-12');
     expect(fixture.nativeElement.textContent).toContain('Main warehouse');
     expect(fixture.nativeElement.textContent).toContain('slow');
-    expect(fixture.nativeElement.querySelectorAll('.kpi-grid article')).toHaveLength(5);
+    expect(fixture.nativeElement.querySelectorAll('app-filter-bar')).toHaveLength(1);
+    expect(fixture.nativeElement.querySelectorAll('app-summary-strip')).toHaveLength(1);
+    expect(fixture.nativeElement.querySelectorAll('app-summary-strip article')).toHaveLength(5);
     expect(fixture.nativeElement.querySelectorAll('app-data-table th')).toHaveLength(7);
     expect(fixture.nativeElement.querySelector('a[href="/inventory/reconciliation"]')).not.toBeNull();
   });
@@ -95,6 +97,11 @@ describe('InventoryAnalysisPageComponent insights mode', () => {
     fixture.detectChanges();
 
     expect(fixture.nativeElement.textContent).toContain('noInsights');
-    expect(fixture.nativeElement.querySelectorAll('app-data-table tbody tr')).toHaveLength(1);
+    expect(fixture.nativeElement.querySelector('app-data-table')).not.toBeNull();
+    expect(fixture.nativeElement.querySelectorAll('app-data-table tbody tr')).toHaveLength(0);
+
+    const component = fixture.componentInstance as any;
+    component.insightsForm.controls.search.setValue('coffee');
+    expect(component.insightsEmptyTitle()).toBe('filteredInsightsEmpty');
   });
 });

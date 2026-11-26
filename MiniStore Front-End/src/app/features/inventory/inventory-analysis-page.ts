@@ -1,14 +1,16 @@
 import { DatePipe, DecimalPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { ApiErrorService } from '../../core/api/api-error.service';
 import { NormalizedApiProblem } from '../../core/api/api.models';
 import { ApiSessionService } from '../../core/api/api-session.service';
 import { ApiRecoveryComponent } from '../../shared/ui/api-recovery/api-recovery';
-import { DataTableComponent } from '../../shared/ui/data-table/data-table';
+import { DataTableCellDirective, DataTableColumn, DataTableComponent } from '../../shared/ui/data-table/data-table';
 import { FeedbackStateComponent } from '../../shared/ui/feedback-state/feedback-state';
+import { FilterBarComponent } from '../../shared/ui/filter-bar/filter-bar';
 import { PageHeaderComponent } from '../../shared/ui/page-header/page-header';
+import { SummaryStripComponent } from '../../shared/ui/summary-strip/summary-strip';
 import { InventoryAnalysisApiService } from './data/inventory-analysis-api.service';
 import {
   InventoryActivityState,
@@ -29,9 +31,12 @@ import {
     ReactiveFormsModule,
     RouterLink,
     PageHeaderComponent,
+    FilterBarComponent,
+    SummaryStripComponent,
     FeedbackStateComponent,
     ApiRecoveryComponent,
     DataTableComponent,
+    DataTableCellDirective,
   ],
   templateUrl: './inventory-analysis-page.html',
   styleUrl: './inventory-analysis-page.scss',
@@ -48,6 +53,15 @@ export class InventoryAnalysisPageComponent {
   protected readonly reconciliation = signal<InventoryReconciliationPage | null>(null);
   protected readonly loading = signal(true);
   protected readonly problem = signal<NormalizedApiProblem | null>(null);
+  protected readonly insightsColumns = computed<readonly DataTableColumn[]>(() => [
+    { key: 'productName', header: this.i18n.text('product'), width: '24%' },
+    { key: 'warehouseName', header: this.i18n.text('warehouse'), width: '17%' },
+    { key: 'onHand', header: this.i18n.text('onHand'), kind: 'number', width: '9rem' },
+    { key: 'inventoryValue', header: this.i18n.text('inventoryValue'), kind: 'number', width: '10rem' },
+    { key: 'lastOutboundAt', header: this.i18n.text('lastOutbound'), kind: 'date', width: '10rem' },
+    { key: 'daysSinceActivity', header: this.i18n.text('daysSinceActivity'), kind: 'number', width: '9rem' },
+    { key: 'state', header: this.i18n.text('status'), kind: 'status', width: '10rem' },
+  ]);
 
   protected readonly insightsForm = new FormGroup({
     warehouseId: new FormControl<number | null>(null),
@@ -65,6 +79,14 @@ export class InventoryAnalysisPageComponent {
   });
 
   constructor() { this.load(); }
+
+  protected insightsHasFilters(): boolean {
+    const value = this.insightsForm.getRawValue();
+    return !!value.search.trim() || value.warehouseId !== null || value.state !== null || value.attentionOnly;
+  }
+
+  protected insightsEmptyTitle(): string { return this.i18n.text(this.insightsHasFilters() ? 'filteredInsightsEmpty' : 'noInsights'); }
+  protected insightsEmptyDescription(): string { return this.i18n.text(this.insightsHasFilters() ? 'filteredInsightsEmptyDescription' : 'noInsightsDescription'); }
 
   protected load(page = 1): void {
     this.loading.set(true);
