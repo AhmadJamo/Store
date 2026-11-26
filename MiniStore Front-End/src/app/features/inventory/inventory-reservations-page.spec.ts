@@ -36,8 +36,10 @@ describe('InventoryReservationsPageComponent', () => {
     expect(fixture.nativeElement.textContent).toContain('stockTransfer');
     expect(fixture.nativeElement.textContent).toContain('reservationActive');
     expect(fixture.nativeElement.querySelectorAll('app-page-header')).toHaveLength(1);
-    expect(fixture.nativeElement.querySelectorAll('.filters')).toHaveLength(1);
+    expect(fixture.nativeElement.querySelectorAll('app-filter-bar')).toHaveLength(1);
+    expect(fixture.nativeElement.querySelectorAll('app-summary-strip')).toHaveLength(1);
     expect(fixture.nativeElement.querySelectorAll('app-data-table')).toHaveLength(1);
+    expect(fixture.nativeElement.querySelectorAll('app-data-table th')).toHaveLength(7);
   });
 
   it('keeps reservation status filtering and paging on the server contract', () => {
@@ -72,12 +74,17 @@ describe('InventoryReservationsPageComponent', () => {
     expect(api.getReservations).toHaveBeenLastCalledWith({ page: 1, pageSize: 50 });
   });
 
-  it('keeps an empty response free of invented reservation rows', () => {
+  it('distinguishes true empty from filtered empty without inventing reservation rows', () => {
     api.getReservations.mockReturnValue(of({ ...page, items: [], totalCount: 0 }));
     const fixture = TestBed.createComponent(InventoryReservationsPageComponent);
     fixture.detectChanges();
 
     expect(fixture.nativeElement.textContent).toContain('noReservations');
-    expect(fixture.nativeElement.querySelector('app-data-table')).toBeNull();
+    expect(fixture.nativeElement.textContent).not.toContain('filteredReservationsEmpty');
+    expect(fixture.nativeElement.querySelector('app-data-table')).not.toBeNull();
+
+    (fixture.componentInstance as any).filterStatus('2');
+    fixture.detectChanges();
+    expect(fixture.nativeElement.textContent).toContain('filteredReservationsEmpty');
   });
 });

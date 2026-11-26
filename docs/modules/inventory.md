@@ -59,7 +59,7 @@ through `InventoryBalanceService`. `/inventory/reservations` displays source ref
 line count, remaining quantity and lifecycle timestamps through `InventoryReservationService`, with reference/status filters and
 bounded paging. Both routes are GET-only and independently permission-protected. Angular does not calculate availability, reserve,
 consume or release stock. No schema, concurrency, valuation or accounting behavior changed.
-FRD-I reorganizes `/inventory/availability` with localized Inventory context, FilterBar, SummaryStrip and a typed DataTable. True-empty and filtered-empty guidance are distinct; product, warehouse and location names, server paging and server-authored OnHand/Reserved/Available values remain unchanged.
+FRD-I reorganizes /inventory/availability and /inventory/reservations with localized Inventory context, FilterBar, SummaryStrip and typed DataTables. Both lists distinguish true-empty from filtered-empty. Availability preserves product/warehouse/location names and server-authored OnHand/Reserved/Available; Reservations preserves source reference/type, lifecycle status/timestamps, line count, remaining quantity and server search/status/paging. Both remain GET-only and independently permission-protected.
 
 ## Angular inventory adjustments (`MOD-022D`)
 

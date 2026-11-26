@@ -1,7 +1,7 @@
 # 12 — تقدم إعادة بناء Frontend
 
 > آخر تحديث: 2026-11-25
-> الحالة العامة: Products, Contacts and Branches/Warehouses verified; Inventory Availability migrated, Reservations safety net next
+> الحالة العامة: Products, Contacts and Branches/Warehouses verified; Inventory Availability and Reservations migrated, Stock Transactions safety net next
 > المصدر: الكود، الاختبارات، وثائق المشروع، والمراجع الرسمية التي تم التحقق منها
 
 ## بوابات المراحل
@@ -28,7 +28,7 @@
 | Customers / Suppliers | Audited | Verified | FRD-G List/Form/Record | Verified contracts/permissions | 282 + security 1,668 + Playwright 7/7 | Migrated |
 | Sales | Not Started | Not Started | Legacy V3 | Verified | Existing specs | Planned |
 | Purchases | Not Started | Not Started | Legacy V3 | Verified | Existing specs | Planned |
-| Inventory | Audited | Scoped | Availability + Locations V4 | Verified services/APIs/permissions | 295 + focused specs + Playwright 7/7 | Reservations safety net next |
+| Inventory | Audited | Scoped | Availability + Reservations + Locations V4 | Verified services/APIs/permissions | 299 + focused specs + Playwright 7/7 | Stock Transactions safety net next |
 | Accounting | Not Started | Not Started | Legacy V3 | Verified | Existing specs | Planned |
 | Branches / Warehouses | Audited | Verified | FRD-H Workspace/Master/Locations | Verified contracts/context | 291 + security 1,668 + Playwright 7/7 | Migrated |
 | Users / Roles / Settings | Not Started | Not Started | Legacy V3 | Verified | Existing specs | Planned |

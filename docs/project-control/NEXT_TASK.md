@@ -4,7 +4,7 @@
 
 > الحالة: IN PROGRESS — اكتمل الجرد في 2026-11-25
 >
-> اكتمل safety net لـInventory Reservations بخمسة اختبارات تحمي reference/source/status/quantity/lifecycle، والبحث المؤجل وstatus/paging/reset والحالة الفارغة. التالي الوحيد: حوّل الصفحة إلى سياق Inventory مترجم وFilterBar/SummaryStrip/typed DataTable مع true-empty/filtered-empty، وحافظ على GET-only وInventoryReservations.View وserver search/status/paging وكل lifecycle evidence كما هي. شغّل البوابة واعمل commit مستقل.
+> اكتملت Inventory Reservations بالكامل مع 299 اختباراً والبناء وفحوص 142 قالباً و122 صفحة وPlaywright 7/7. التالي الوحيد: دقّق Stock Transactions ثم أضف safety net مستقلاً يحمي immutable transaction evidence، البحث/المرشحات/الصفحات، permission وGET-only قبل أي تغيير عرض. لا تغيّر API أو DTO أو سلطة Application، ووثّق واعمل commit مستقل.
 
 ## FRD-H — Branches/Warehouses Migration
 

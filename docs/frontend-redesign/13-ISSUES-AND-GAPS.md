@@ -1,7 +1,7 @@
 # 13 — المشاكل والفجوات
 
 > الحالة: Active issue register
-> آخر تحديث: 2026-11-25
+> آخر تحديث: 2026-11-26
 > المبدأ: المشكلة لا تغلق برسالة Success؛ يلزم دليل مناسب لنوعها
 
 | ID | المكان | السبب المثبت/المرجح | التأثير | الخطورة | طريقة الإصلاح | الحالة | دليل التحقق |
@@ -17,6 +17,7 @@
 | FRD-ISS-009 | Route coverage | 7 gaps مصنفة P2 في coverage الحالي | بعض المسارات تحتاج تعميق evidence قبل migration | Medium | إغلاق كل gap عند وصول موجته، دون تعطيل P0 pilot | Open | route/function coverage report |
 | FRD-ISS-010 | Solution entry files | `MiniStore.sln` فارغ و`MiniStore.slnx` هو الحل الفعلي | أدوات/مطورون قد يشغلون ملفاً خاطئاً | Low | توثيق entry الصحيح وعدم حذف أي ملف بلا قرار | Documented | `01-CURRENT-SYSTEM-AUDIT.md` |
 | FRD-ISS-011 | Generated concept images | mockups ليست متصلة بالـAPI وقد تحتوي قيماً تجريبية | خطر معاملتها كمتطلبات نهائية أو دليل تنفيذ | Medium | فهرس usage constraints ومقارنة كل عنصر بالmatrix | Controlled | `mockups/README.md` |
+| FRD-ISS-012 | Core localization lazy chunk | core/localization/localization.service.ts يشغل 77.00 kB داخل lazy chunk حجمه 84.55 kB مقابل ميزانية 80 kB | فشل bundle-budget رغم نجاح production build؛ لا ينتج عن شريحة Reservations | Medium | فصل حزم الترجمة المركزية أو تقليلها دون رفع الميزانية | Open | stats-json + gate 2026-11-26 |
 
 ## تعريف الحالات
 
