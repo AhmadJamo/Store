@@ -2683,3 +2683,7 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
   - Reorganized the record into localized WorkflowProgress, DetailSection summary, draft FormSection counting, typed four-column result DataTable and state/permission-aware WorkflowFooter.
   - Preserved all five server states, blind expected-quantity hiding, independent Count/Approve/Post/Cancel permissions, exact commands, validation, dirty guard, frozen quantity and separation of duties.
   - Verified 328/328 Angular tests across 138 files, production build, 142-template accessibility, 122-page consistency and Playwright 7 passed/0 failed/3 authenticated-API skips. FRD-ISS-012 remains independent.
+- 2026-11-26: Expanded the FRD-I Product Stock pre-migration safety net.
+  - Replaced three broad checks with seven focused tests separating the list, opening-stock/create, current-quantity edit, deletion restriction and manual adjustment contracts.
+  - Protected named rows, quantity/AVCO/value evidence, independent permissions, deep edit identity, movement types 6/7/8 with reason, validation focus, dirty confirmation and server-authored errors.
+  - The focused suite passed 7/7; runtime, APIs, Application valuation/removal rules, permissions and inventory transactions are unchanged.

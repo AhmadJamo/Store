@@ -4,7 +4,7 @@
 
 > الحالة: IN PROGRESS — اكتمل الجرد في 2026-11-25
 >
-> اكتملت مجموعة Inventory Adjustment List/Create/Record V4 مع 328/328 اختباراً وبناء ناجح وPlaywright 7/7. التالي الوحيد: راجع Product Stock المشترك لمسارات `/inventory/stocks` و`/new` و`/:id/edit` و`/adjustment` عبر DTO/API/Application/permissions، ثم أضف safety net يفصل القائمة والرصيد الافتتاحي/التعديل والتسوية اليدوية ويحمي الأسماء والكميات والتكلفة وقواعد أنواع الحركة والسبب والصلاحيات والdirty state، من دون تغيير runtime. حدّث الوثائق واعمل commit مستقل قبل UI.
+> اكتمل Product Stock safety net بسبعة اختبارات. التالي الوحيد: حوّل دليل الأرصدة داخل `/inventory/stocks` إلى PageHeader مترجم وSummaryStrip وtyped DataTable مع empty داخل الجدول، مع الحفاظ على الأسماء والكميات وAVCO/value وأزرار Edit/Delete المشروطة وترتيب الخادم. لا تغيّر نماذج opening/edit/manual adjustment أو API/Application في هذه الشريحة. شغّل البوابة وحدّث الوثائق واعمل commit مستقل.
 
 ## FRD-H — Branches/Warehouses Migration
 
