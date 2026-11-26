@@ -265,3 +265,8 @@
 - Angular Vitest: 332/332 across 138 files; seven focused Product Stock tests protect the manual hierarchy, independent permission, types 6/7/8, required reason, positive quantity, validation/focus and createAdjustment command.
 - Static accessibility: 142 templates; UI inventory 122 pages; FormSection adoption is 11 and WorkflowFooter 13. Production build and Playwright 7/7 passed.
 - FRD-ISS-012 remains the only full-gate failure at 84.55 kB versus 80 kB; no budget was relaxed.
+
+## FRD-I Stock Transfer safety audit — 2026-11-26
+
+- Angular Vitest: 338/338 across 139 files; six new component tests cover list/filter evidence, ten statuses, action/receipt matrix, permissions, form validation, commands, discrepancy evidence and dirty navigation.
+- No runtime, API, permission or Application behavior changed in this audit slice; the targeted suite passed 6/6.

@@ -2701,3 +2701,8 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
   - Replaced the dense manual card with a localized FormSection, five required FieldCues, contextual kitchen-variance help and WorkflowFooter.
   - Preserved StockTransactions.Create, named options, movement types 6/7/8, positive quantity, required reason, createAdjustment, validation focus and dirty guard; no backend contract changed.
   - Verified 332/332 Angular tests across 138 files, production build, 142-template accessibility, 122-page consistency and Playwright 7 passed/0 failed/3 skips. FRD-ISS-012 remains independent.
+
+- 2026-11-26: Completed the FRD-I Stock Transfer pre-migration safety audit.
+  - Added the first Stock Transfer page component spec with six focused tests covering list evidence, all ten statuses, exact action/receipt states and independent permissions.
+  - Protected named warehouses and conditional locations, distinct-warehouse validation, create and workflow commands, reason prompts, receipt quantities/discrepancies and dirty navigation.
+  - Verified 338/338 Angular tests across 139 files. Runtime, APIs, Application reservation/tracking/valuation rules and permissions are unchanged.
