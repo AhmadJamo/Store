@@ -1,5 +1,7 @@
 # حالة المشروع / Project Status
 
+> تحديث 2026-11-26: اكتملت Stock Transactions بواجهة V4 مترجمة وجدول typed قابل للفرز وFilterBar/SummaryStrip وحالتي empty، مع بقاء أدلة الكمية والتكلفة و18 نوع حركة والمرشحات والفرز والصفحات تحت سلطة الخادم. نجح 304 اختبارات والبناء و142 قالباً و122 صفحة وPlaywright 7/7؛ Inventory Insights safety net هو التالي.
+
 > تحديث 2026-11-26: اكتمل safety net لـStock Transactions بخمسة اختبارات تحمي أدلة الحركة المجمّدة وفلاتر النوع/الاتجاه/التاريخ والبحث والفرز والصفحات قبل تغيير العرض. لا تغيير runtime؛ تحويل القائمة المحدود هو التالي.
 
 > تحديث 2026-11-26: اكتملت شريحة Inventory Reservations بواجهة V4 مترجمة وFilterBar/SummaryStrip/typed DataTable وحالتي empty، مع بقاء المرجع والمصدر والحالة والكمية والتواريخ والبحث والصفحات من الخادم. نجح 299 اختباراً والبناء و142 قالباً و122 صفحة وPlaywright 7/7؛ تجاوز core-localization lazy budget المستقل موثق، وStock Transactions safety net هو التالي.

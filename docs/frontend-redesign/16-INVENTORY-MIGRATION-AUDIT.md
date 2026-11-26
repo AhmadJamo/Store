@@ -1,7 +1,7 @@
 # 16 — Inventory migration audit
 
-> Status: FRD-I implementation in progress — Stock Transactions safety net complete
-> Date: 2026-11-25  
+> Status: FRD-I implementation in progress — Stock Transactions complete; Inventory Insights safety net next
+> Date: 2026-11-26
 > Source of truth: Angular routes/components and clients, Internal API controllers, Application services/DTOs, repositories and inventory module documentation
 
 ## Scope inventory
@@ -10,10 +10,10 @@ The Inventory application currently exposes 19 Angular routes through 15 page te
 
 | Surface | Route(s) | Authority and permissions | Presentation state / risk |
 |---|---|---|---|
-| Stock Transactions | `/inventory/transactions` | GET-only immutable ledger; `StockTransactions.View`; server search/type/direction/date/sort/paging | Legacy filter hierarchy and hard-coded eyebrow; no component spec |
+| Stock Transactions | `/inventory/transactions` | GET-only immutable ledger; `StockTransactions.View`; server search/type/direction/date/sort/paging | V4 localized FilterBar/SummaryStrip/typed sortable DataTable; five focused tests |
 | Product Stock | `/inventory/stocks`, `/new`, `/adjustment`, `/:id/edit` | ProductStock View/Create/Edit/Delete plus `StockTransactions.Create`; server owns negative stock, valuation, tracking and exact-location removal | Mixed list/create/edit/manual-adjustment page; high mutation and dirty-state risk |
-| Inventory Availability | `/inventory/availability` | GET-only `InventoryBalances.View`; `InventoryBalanceService` owns product search, named warehouse filter, paging and OnHand/Reserved/Available | Best first slice: bounded read-only list, one focused spec, legacy filters/projected table |
-| Reservations | `/inventory/reservations` | GET-only `InventoryReservations.View`; lifecycle facts are server-authored | Read-only list with one focused spec; follows Availability |
+| Inventory Availability | `/inventory/availability` | GET-only `InventoryBalances.View`; `InventoryBalanceService` owns product search, named warehouse filter, paging and OnHand/Reserved/Available | V4 localized FilterBar/SummaryStrip/typed DataTable; five focused tests |
+| Reservations | `/inventory/reservations` | GET-only `InventoryReservations.View`; lifecycle facts are server-authored | V4 localized FilterBar/SummaryStrip/typed DataTable; five focused tests |
 | Stock Transfers | `/inventory/transfers`, `/new`, `/:id/edit`, `/:id` | View/Create/Edit/Submit/Approve/Reject/Dispatch/Receive/Cancel; reservations, locations, tracking, valuation and posting remain server-owned | Complex workflow; already uses many shared V4 primitives; migrate only after dedicated state/action evidence |
 | Inventory Scanning | `/inventory/scanning` | `InventoryScanning.View` plus ProductStock.Edit, LocationMovements.Create or InventoryAdjustments.Count per command; server idempotency | Touch/keyboard command workspace; no component spec; high operational risk |
 | Replenishment | `/inventory/replenishment` | View/Manage plus StockTransfers.Create or PurchaseRequests.Create; server creates draft documents | Cross-module mutations and dirty settings; two focused tests |
@@ -41,26 +41,27 @@ The Inventory application currently exposes 19 Angular routes through 15 page te
 
 ## Test baseline and gaps
 
-- Current baseline after FRD-H: 291 Angular tests across 133 files, production build, 142 templates, 122-page consistency, Playwright 7/7 and 1,668 SecurityRegression checks.
-- Existing Inventory page component coverage: Availability 1, Reservations 1, Product Stock 3, Adjustment Record 1, Tracking 2, Replenishment 2, Warehouse Locations 4.
-- No page component spec currently protects Stock Transactions, Adjustments List/Create, Insights/Reconciliation, Scanning, Putaway or Location Movements.
+- Current FRD-I baseline: 304 Angular tests across 134 files, production build, 142 templates, 122-page consistency and Playwright 7/7. The last security baseline remains 1,668 checks because these slices change presentation only.
+- Existing Inventory page component coverage: Availability 5, Reservations 5, Stock Transactions 5, Product Stock 3, Adjustment Record 1, Tracking 2, Replenishment 2, Warehouse Locations 4.
+- No page component spec currently protects Adjustments List/Create, Insights/Reconciliation, Scanning, Putaway or Location Movements.
 - API client specs already protect the principal HTTP methods and query parameters; they do not replace page-state and permission-aware action coverage.
 - Live authenticated API reconciliation remains external until an API URL and authenticated storage state are supplied.
 
 ## Migration order
 
 1. **Inventory Availability COMPLETE.** Localized Inventory context, FilterBar, SummaryStrip and typed DataTable now distinguish true-empty/filtered-empty while preserving named server rows, debounced search, warehouse/paging query, bounded reset and all server-authored calculations.
-2. **Inventory Reservations COMPLETE.** Localized Inventory context, FilterBar, SummaryStrip and a typed seven-column DataTable distinguish true-empty/filtered-empty while preserving server-authored reference/source/status/quantity/lifecycle evidence and search/status/paging/reset. **Stock Transactions safety net COMPLETE.** Five focused tests now protect the ten displayed immutable evidence columns, all filter dimensions, debounced search, sorting, bounded paging/reset and empty behavior; list migration is next and must preserve its independent permission.
-3. **Insights and Reconciliation read-only analysis pair.** Split their shared presentation concerns only if it reduces risk; keep classifications and tolerances server-authored.
-4. **Adjustment List/Create/Record.** Add list/form/state-action matrices before any visual change; keep frozen count and separation-of-duties rules unchanged.
-5. **Product Stock.** Treat list, opening stock/edit and manual adjustment as separate presentation slices despite the current shared component.
-6. **Stock Transfers.** Audit the already-adopted shared primitives against every workflow state and receipt exception before additional restyling.
-7. **Operational command workspaces.** Scanning, Tracking, Replenishment, Putaway and Location Movements require dedicated command/idempotency/permission evidence and browser scenarios before migration.
-8. Warehouse Locations remains complete and is excluded from further FRD-I restyling unless a verified dependency regression requires a fix.
+2. **Inventory Reservations COMPLETE.** Localized Inventory context, FilterBar, SummaryStrip and a typed seven-column DataTable distinguish true-empty/filtered-empty while preserving server-authored reference/source/status/quantity/lifecycle evidence and search/status/paging/reset.
+3. **Stock Transactions COMPLETE.** Localized Inventory context, FilterBar, SummaryStrip and a typed sortable ten-column DataTable preserve immutable identity/name/quantity/cost/type/reference/date evidence, all server filter/sort/page contracts and distinct true-empty/filtered-empty behavior.
+4. **Insights and Reconciliation read-only analysis pair — NEXT.** Add safety coverage before presentation changes; split their shared presentation concerns only if it reduces risk and keep classifications and tolerances server-authored.
+5. **Adjustment List/Create/Record.** Add list/form/state-action matrices before any visual change; keep frozen count and separation-of-duties rules unchanged.
+6. **Product Stock.** Treat list, opening stock/edit and manual adjustment as separate presentation slices despite the current shared component.
+7. **Stock Transfers.** Audit the already-adopted shared primitives against every workflow state and receipt exception before additional restyling.
+8. **Operational command workspaces.** Scanning, Tracking, Replenishment, Putaway and Location Movements require dedicated command/idempotency/permission evidence and browser scenarios before migration.
+9. Warehouse Locations remains complete and is excluded from further FRD-I restyling unless a verified dependency regression requires a fix.
 
 ## First slice decision
 
-Inventory Availability is first because it is GET-only, independently permissioned, has an existing typed API client and focused component test, and cannot post or reserve stock. Its current page already displays server-authored quantities and named warehouses but still uses a hand-built filter card, projected table markup, hard-coded `INVENTORY` eyebrow and one generic empty state. The five-test safety net is committed before the visual migration.
+Inventory Availability was selected first because it is GET-only, independently permissioned, has an existing typed API client and cannot post or reserve stock. Its safety net and V4 migration established the bounded pattern now reused by Reservations and Stock Transactions; all three retain their server and permission authorities.
 
 ## Exit criteria
 

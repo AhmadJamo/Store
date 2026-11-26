@@ -2639,3 +2639,7 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
   - Added the first page component spec with five tests protecting the ten displayed server-authored identity/name/quantity/cost/type/reference/date fields and current hierarchy.
   - Protected type/movement/date/page-size filters, debounced trimmed search, server sorting, bounded paging/reset and empty behavior without changing runtime code.
   - The focused suite passed 5/5; the GET-only StockTransactions.View boundary and Application-owned immutable ledger remain unchanged.
+- 2026-11-26: Completed the FRD-I Stock Transactions V4 list slice.
+  - Replaced the hard-coded eyebrow, hand-built filter grid and projected sortable table with localized Inventory context, FilterBar, SummaryStrip and a typed sortable ten-column DataTable; added distinct true-empty/filtered-empty guidance.
+  - Preserved the GET-only StockTransactions.View boundary, all 18 movement mappings, immutable identity/name/quantity/cost/type/reference/date evidence and server search/type/movement/date/sort/paging/reset authority.
+  - Verified 304/304 Angular tests across 134 files, production build, 142-template accessibility, 122-page consistency and Playwright 7 passed/0 failed/3 authenticated-API skips. FilterBar is now 9 and SummaryStrip 10; the unchanged 84.55 kB core-localization lazy-budget issue remains tracked.

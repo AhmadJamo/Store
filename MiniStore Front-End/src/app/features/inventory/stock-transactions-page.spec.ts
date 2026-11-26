@@ -57,7 +57,8 @@ describe('StockTransactionsPageComponent', () => {
     expect(fixture.nativeElement.textContent).toContain('SALE-2026-008');
     expect(fixture.nativeElement.textContent).toContain('sale');
     expect(fixture.nativeElement.querySelectorAll('app-page-header')).toHaveLength(1);
-    expect(fixture.nativeElement.querySelectorAll('.filters')).toHaveLength(1);
+    expect(fixture.nativeElement.querySelectorAll('app-filter-bar')).toHaveLength(1);
+    expect(fixture.nativeElement.querySelectorAll('app-summary-strip')).toHaveLength(1);
     expect(fixture.nativeElement.querySelectorAll('app-data-table')).toHaveLength(1);
     expect(fixture.nativeElement.querySelectorAll('app-data-table th')).toHaveLength(10);
   });
@@ -106,12 +107,17 @@ describe('StockTransactionsPageComponent', () => {
     expect(api.getPage).toHaveBeenLastCalledWith({ page: 1, pageSize: 50, sortColumn: 'date', sortDescending: true, movement: '' });
   });
 
-  it('keeps an empty response free of invented ledger rows', () => {
+  it('distinguishes true empty from filtered empty without inventing ledger rows', () => {
     api.getPage.mockReturnValue(of({ ...page, items: [], totalCount: 0, totalPages: 0 }));
     const fixture = TestBed.createComponent(StockTransactionsPageComponent);
     fixture.detectChanges();
 
     expect(fixture.nativeElement.textContent).toContain('noTransactions');
-    expect(fixture.nativeElement.querySelector('app-data-table')).toBeNull();
+    expect(fixture.nativeElement.textContent).not.toContain('filteredTransactionsEmpty');
+    expect(fixture.nativeElement.querySelector('app-data-table')).not.toBeNull();
+
+    (fixture.componentInstance as any).filterMovement('outgoing');
+    fixture.detectChanges();
+    expect(fixture.nativeElement.textContent).toContain('filteredTransactionsEmpty');
   });
 });
