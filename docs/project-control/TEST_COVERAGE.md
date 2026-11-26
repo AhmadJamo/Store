@@ -313,3 +313,8 @@
 - Angular Vitest: 347/347 across 140 files; five focused tests replace the previous two-test baseline.
 - Coverage protects server evidence and mappings, full opening allocation, four permissions, recall/quarantine/release/communication/close commands, validation, server errors and dirty navigation.
 - Runtime, API, permission and Application tracking rules are unchanged in this audit slice.
+## FRD-I Inventory Tracking Opening Allocation V4 — 2026-11-26
+
+- Angular Vitest: 347/347 across 140 files; five focused tests now also protect localized context, two FormSections, nine first-line FieldCues and one WorkflowFooter.
+- Static accessibility: 142 templates; UI inventory 122 pages; FormSection 13 and WorkflowFooter 15. Production build and Playwright 7/7 passed.
+- FRD-ISS-012 remains the only full-gate failure at 84.55 kB versus 80 kB; no budget was relaxed.

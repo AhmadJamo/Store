@@ -4,7 +4,7 @@
 
 > الحالة: IN PROGRESS — اكتمل الجرد في 2026-11-25
 >
-> اكتمل Tracking safety audit بخمسة اختبارات ونجح 347/347 عبر 140 ملفاً دون تغيير runtime. التالي الوحيد: حسّن opening tracking allocation form فقط؛ ترجم Inventory eyebrow، استخدم FormSection موصوفاً للهوية والسياسة والمرجع والتخصيصات، FieldCues للحقول المطلوبة/الاختيارية وWorkflowFooter للتفعيل، مع حفظ product/warehouse/location names، lot/serial، add/remove/reset، التواريخ، validation، dirty guard والـopen payload كما هي. لا تغيّر expiration alerts أو recalls أو quarantine أو history أو API/Application. شغّل البوابة وحدّث الوثائق واعمل commit مستقل.
+> اكتمل Tracking Opening Allocation V4 بقسمين وتسع FieldCues وWorkflowFooter ونجح 347/347 والبناء وPlaywright 7/7. التالي الوحيد: حسّن expiration metrics وexpiration alerts فقط؛ استخدم SummaryStrip للعدادين وDetailSection أو typed DataTable للتنبيهات مع true-empty واضح، واحفظ expired/expiring counts، severity، product/identifier/warehouse/location، quantity/date/days/status من الخادم كما هي. لا تغيّر opening form أو recalls أو quarantine أو history أو API/Application. شغّل البوابة وحدّث الوثائق واعمل commit مستقل.
 
 ## FRD-H — Branches/Warehouses Migration
 

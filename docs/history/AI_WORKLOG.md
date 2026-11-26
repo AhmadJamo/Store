@@ -2746,3 +2746,8 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
   - Replaced two narrow tests with five focused tests covering balance, expiration, recall, communication and transaction evidence plus all enum mappings.
   - Protected complete lot/serial opening allocation, independent View/Open/ManageQuarantine/ManageRecall surfaces, exact management commands, validation, server errors and dirty navigation.
   - Verified 347/347 Angular tests across 140 files; runtime, APIs, permissions and Application tracking rules are unchanged.
+
+- 2026-11-26: Completed the FRD-I Inventory Tracking Opening Allocation V4 slice.
+  - Localized the Inventory context and split tracking identity from allocation lines with two described FormSections, nine required/optional cues for the first line and a dedicated WorkflowFooter.
+  - Preserved named product/warehouse/location choices, lot/serial policy, add/remove/location reset, manufacture/expiration dates, validation, post-success reset, dirty guard and exact open payload.
+  - Verified 347/347 Angular tests, production build, 142 templates, 122 pages and Playwright 7 passed/0 failed/3 skips. FRD-ISS-012 remains independent.

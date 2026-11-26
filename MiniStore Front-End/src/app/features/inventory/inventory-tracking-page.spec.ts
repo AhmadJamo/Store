@@ -65,7 +65,13 @@ describe('InventoryTrackingPageComponent', () => {
   });
 
   it('opens lot or serial tracking with the complete named allocation command', () => {
-    const component = TestBed.createComponent(InventoryTrackingPageComponent).componentInstance as any;
+    const fixture = TestBed.createComponent(InventoryTrackingPageComponent);
+    fixture.detectChanges();
+    expect(fixture.nativeElement.textContent).toContain('inventoryNavigation');
+    expect(fixture.nativeElement.querySelectorAll('.tracking-open-form app-form-section')).toHaveLength(2);
+    expect(fixture.nativeElement.querySelectorAll('.tracking-open-form app-field-cue')).toHaveLength(9);
+    expect(fixture.nativeElement.querySelectorAll('.tracking-open-form app-workflow-footer')).toHaveLength(1);
+    const component = fixture.componentInstance as any;
     component.openForm.patchValue({ productId: 1, policy: 2, sourceReference: 'OPEN-1' });
     component.lines.at(0).patchValue({ warehouseId: 3, storageLocationId: 4, identifier: 'SER-1', quantity: 1, manufactureDate: '2026-01-01', expirationDate: '2027-01-01' });
     component.openTracking();
