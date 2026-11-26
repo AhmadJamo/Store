@@ -1,5 +1,8 @@
 # حالة المشروع / Project Status
 
+> تحديث 2026-11-26: اكتمل safety net لسجل Inventory Adjustment بخمسة اختبارات تحمي الحالات الخمس، العدّ الأعمى، الصلاحيات المستقلة، دلائل اكتمال الخطوات، أوامر count/approve/post/cancel، التحقق وdirty guard. لا تغيير runtime؛ تحويل السجل V4 هو التالي.
+
+
 > تحديث 2026-11-26: اكتمل نموذج إنشاء Inventory Adjustment V4 بثلاثة أقسام مترجمة وإشارات حقول وتذييل workflow، مع حفظ الخيارات المسماة وترابط الموقع وblind count والتحقق وdirty guard والـPOST والتنقل. نجح 324/324 اختباراً والبناء وPlaywright 7/7؛ safety net لسجل التسوية هو التالي.
 
 
