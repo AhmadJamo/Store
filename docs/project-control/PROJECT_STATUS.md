@@ -1,5 +1,7 @@
 # حالة المشروع / Project Status
 
+> تحديث 2026-11-26: اكتمل Scanning resolve workspace بسياق Inventory مترجم وقسم موصوف وأربع إشارات اختيارية وتذييل إجراء، مع حفظ autofocus والقيم الأربع وتطبيع GET والاسترجاع. نجح 343/343 والبناء و142 قالباً و122 صفحة وPlaywright 7/7؛ FRD-ISS-012 مستقل وresult evidence هو التالي.
+
 > تحديث 2026-11-26: اكتمل Inventory Scanning safety audit بخمسة اختبارات تحمي الحالات الأربع ودليل المسح/الأرصدة والصلاحيات المركبة وأوامر Putaway/Relocate/Count ومفاتيح idempotency والتحقق والblind count والأخطاء. نجح 343/343 عبر 140 ملفاً دون تغيير runtime؛ resolve workspace هو التالي.
 
 > تحديث 2026-11-26: اكتمل Stock Transfer Workspace V4 بعد تنظيم receipt للحالات 7/8/9 بوصف وثلاث إشارات received/short/damaged وتذييل مستقل، مع حفظ المتبقي والوجهة والصلاحية والـpayload. نجح 338/338 والبناء وPlaywright 7/7؛ Scanning safety audit هو التالي.

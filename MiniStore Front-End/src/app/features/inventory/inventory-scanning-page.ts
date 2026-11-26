@@ -5,10 +5,13 @@ import { Observable } from 'rxjs';
 import { ApiErrorService } from '../../core/api/api-error.service';
 import { NormalizedApiProblem } from '../../core/api/api.models';
 import { ApiSessionService } from '../../core/api/api-session.service';
+import { FieldCueComponent } from '../../shared/forms/field-cue/field-cue';
+import { FormSectionComponent } from '../../shared/forms/form-section/form-section';
 import { ApiRecoveryComponent } from '../../shared/ui/api-recovery/api-recovery';
 import { DataTableComponent } from '../../shared/ui/data-table/data-table';
 import { FeedbackStateComponent } from '../../shared/ui/feedback-state/feedback-state';
 import { PageHeaderComponent } from '../../shared/ui/page-header/page-header';
+import { WorkflowFooterComponent } from '../../shared/ui/workflow-footer/workflow-footer';
 import { InventoryScanningApiService } from './data/inventory-scanning-api.service';
 import {
   InventoryScanPage,
@@ -25,10 +28,13 @@ import {
   imports: [
     DecimalPipe,
     ReactiveFormsModule,
+    FieldCueComponent,
+    FormSectionComponent,
     PageHeaderComponent,
     FeedbackStateComponent,
     ApiRecoveryComponent,
     DataTableComponent,
+    WorkflowFooterComponent,
   ],
   templateUrl: './inventory-scanning-page.html',
   styleUrl: './inventory-scanning-page.scss',

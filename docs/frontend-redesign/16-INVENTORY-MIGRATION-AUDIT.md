@@ -1,6 +1,6 @@
 # 16 — Inventory migration audit
 
-> Status: FRD-I implementation in progress — Scanning five-test safety audit complete; resolve workspace next
+> Status: FRD-I implementation in progress — Scanning resolve workspace complete; result evidence next
 > Date: 2026-11-26
 > Source of truth: Angular routes/components and clients, Internal API controllers, Application services/DTOs, repositories and inventory module documentation
 
@@ -56,7 +56,7 @@ The Inventory application currently exposes 19 Angular routes through 15 page te
 5. **Adjustment List + Create + Record COMPLETE.** Record now uses localized WorkflowProgress, DetailSection summary, FormSection count entry, typed result DataTable and WorkflowFooter actions. Five tests protect server evidence, all five states, blind expected-quantity hiding, independent permissions, completed evidence, exact commands, validation and dirty guard. Frozen count, stale-stock checks and separation of duties remain server-owned. **Product Stock safety audit is next.**
 6. **Product Stock workspace COMPLETE; Stock Transfers NEXT.** The localized list preserves named rows, quantity/AVCO/value, response order, empty state and Edit/Delete permissions. Both operation forms now use localized FormSections, required FieldCues and WorkflowFooters while preserving locked edit identity, separate create/update commands, manual types 6/7/8, positive quantity, required reason, validation/focus, dirty guard and independent permissions. API/Application valuation and location authority remain unchanged.
 7. **Stock Transfer Workspace COMPLETE; operational command workspaces NEXT.** Form, record evidence and receipt now use the shared hierarchy. Receipt states 7/8/9 expose described received/short/damaged cues and a dedicated footer while preserving remaining limits, destination, permission and exact receive payload. Six tests protect all ten states and commands; reservation, branch, tracking, valuation and posting authority remain server-owned.
-8. **Scanning safety audit COMPLETE; resolve workspace NEXT.** Five focused tests protect four resolver states, server identities/balances, independent Putaway/Relocate/Count permissions, exact commands and idempotency keys, quantity validation, blind count and server errors. Migrate only the scan/resolve form hierarchy next; action workspaces remain separate.
+8. **Scanning resolve workspace COMPLETE; result evidence NEXT.** Five focused tests protect four resolver states, server identities/balances, independent Putaway/Relocate/Count permissions, exact commands and idempotency keys, quantity validation, blind count and server errors. The resolver now uses localized Inventory context, a described FormSection, four optional FieldCues and WorkflowFooter while preserving autofocus, four query values, GET normalization and recovery. Migrate only the four result identities next; action workspaces remain separate.
 9. Warehouse Locations remains complete and is excluded from further FRD-I restyling unless a verified dependency regression requires a fix.
 
 ## First slice decision

@@ -3,7 +3,9 @@ import { LocalizationService } from '../../core/localization/localization.servic
 
 const messages = {
   'ar-JO': {
-    title: 'المسح التشغيلي للمخزون', description: 'امسح المنتج والمواقع أو مستند الجرد أولًا؛ لا يتغير المخزون إلا بعد تنفيذ إجراء مصرح.',
+    inventoryNavigation: 'المخزون', title: 'المسح التشغيلي للمخزون', description: 'امسح المنتج والمواقع أو مستند الجرد أولًا؛ لا يتغير المخزون إلا بعد تنفيذ إجراء مصرح.',
+    scanInputs: 'رموز المسح', scanInputsDescription: 'أدخل أي رمز متاح، ثم حلّل الرموز للتعرّف على المستند والمنتج والمواقع.',
+    requiredField: 'مطلوب', optionalField: 'اختياري', resolveActions: 'إجراءات التحليل',
     adjustment: 'رقم مستند الجرد', product: 'باركود أو رمز المنتج', source: 'باركود أو رمز موقع المصدر', destination: 'باركود أو رمز موقع الوجهة',
     resolve: 'تحليل الرموز', resolving: 'جارٍ التحليل', waiting: 'بانتظار المسح', resolved: 'تم التعرّف', notFound: 'غير موجود', ambiguous: 'رمز ملتبس',
     countDocument: 'مستند الجرد', productScan: 'المنتج', sourceScan: 'موقع المصدر', destinationScan: 'موقع الوجهة',
@@ -17,7 +19,9 @@ const messages = {
     successCount: 'تم تسجيل العدّ.', error: 'تعذر إكمال العملية.', invalidQuantity: 'أدخل كمية صالحة.', status: 'حالة التحليل',
   },
   'en-US': {
-    title: 'Inventory scanning', description: 'Scan the product, positions, or count document first; inventory changes only after an authorized action.',
+    inventoryNavigation: 'Inventory', title: 'Inventory scanning', description: 'Scan the product, positions, or count document first; inventory changes only after an authorized action.',
+    scanInputs: 'Scan inputs', scanInputsDescription: 'Enter any available code, then resolve the scans to identify the document, product, and positions.',
+    requiredField: 'Required', optionalField: 'Optional', resolveActions: 'Resolution actions',
     adjustment: 'Inventory count number', product: 'Product barcode or code', source: 'Source-position barcode or code', destination: 'Destination-position barcode or code',
     resolve: 'Resolve scans', resolving: 'Resolving', waiting: 'Waiting for scan', resolved: 'Resolved', notFound: 'Not found', ambiguous: 'Ambiguous scan',
     countDocument: 'Count document', productScan: 'Product', sourceScan: 'Source position', destinationScan: 'Destination position',

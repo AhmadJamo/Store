@@ -1,12 +1,16 @@
 <section class="scanning-page" [attr.aria-label]="i18n.text('title')">
-  <app-page-header eyebrow="INVENTORY" [title]="i18n.text('title')" [description]="i18n.text('description')" />
+  <app-page-header [eyebrow]="i18n.text('inventoryNavigation')" [title]="i18n.text('title')" [description]="i18n.text('description')" />
 
-  <form class="scan-form ui-panel" [formGroup]="queryForm" (ngSubmit)="resolve()">
-    <label>{{ i18n.text('adjustment') }}<input formControlName="adjustmentScan" autocomplete="off" /></label>
-    <label>{{ i18n.text('product') }}<input formControlName="productScan" autocomplete="off" autofocus /></label>
-    <label>{{ i18n.text('source') }}<input formControlName="sourceLocationScan" autocomplete="off" /></label>
-    <label>{{ i18n.text('destination') }}<input formControlName="locationScan" autocomplete="off" /></label>
-    <button class="ui-button primary" [disabled]="loading() || saving()">{{ loading() ? i18n.text('resolving') : i18n.text('resolve') }}</button>
+  <form class="scan-form" [formGroup]="queryForm" (ngSubmit)="resolve()">
+    <app-form-section [title]="i18n.text('scanInputs')" [description]="i18n.text('scanInputsDescription')">
+      <div class="scan-grid">
+        <label class="ui-field"><app-field-cue [label]="i18n.text('adjustment')" [requiredText]="i18n.text('requiredField')" [optionalText]="i18n.text('optionalField')" /><input formControlName="adjustmentScan" autocomplete="off" /></label>
+        <label class="ui-field"><app-field-cue [label]="i18n.text('product')" [requiredText]="i18n.text('requiredField')" [optionalText]="i18n.text('optionalField')" /><input formControlName="productScan" autocomplete="off" autofocus /></label>
+        <label class="ui-field"><app-field-cue [label]="i18n.text('source')" [requiredText]="i18n.text('requiredField')" [optionalText]="i18n.text('optionalField')" /><input formControlName="sourceLocationScan" autocomplete="off" /></label>
+        <label class="ui-field"><app-field-cue [label]="i18n.text('destination')" [requiredText]="i18n.text('requiredField')" [optionalText]="i18n.text('optionalField')" /><input formControlName="locationScan" autocomplete="off" /></label>
+      </div>
+    </app-form-section>
+    <app-workflow-footer [label]="i18n.text('resolveActions')"><button type="submit" class="ui-button primary" [disabled]="loading() || saving()">{{ loading() ? i18n.text('resolving') : i18n.text('resolve') }}</button></app-workflow-footer>
   </form>
 
   @if (loading()) {

@@ -4,7 +4,7 @@
 
 > الحالة: IN PROGRESS — اكتمل الجرد في 2026-11-25
 >
-> اكتمل Scanning safety audit بخمسة اختبارات ونجح 343/343 عبر 140 ملفاً. التالي الوحيد: حسّن scan/resolve workspace فقط؛ ترجم Inventory eyebrow، ضع حقول adjustment/product/source/destination في FormSection موصوف مع أربع FieldCues وWorkflowFooter لزر Resolve، مع حفظ autofocus والقيم الأربع والـGET normalization وحالات loading/recovery كما هي. لا تغيّر result cards أو Putaway/Relocate/Count أو API/Application. شغّل البوابة وحدّث الوثائق واعمل commit مستقل.
+> اكتمل Scanning resolve workspace بسياق Inventory مترجم وFormSection موصوف وأربع FieldCues اختيارية وWorkflowFooter، ونجح 343/343 والبناء وPlaywright 7/7. التالي الوحيد: حسّن result evidence فقط؛ ضع هويات adjustment/product/source/destination الأربع وحالاتها ونصوصها الثانوية داخل DetailSection مترجم وواضح مع إبقاء القيم والأسماء والحالات 0/1/2/3 من الخادم كما هي. لا تغيّر Putaway/Relocate/Count أو balance table أو API/Application. شغّل البوابة وحدّث الوثائق واعمل commit مستقل.
 
 ## FRD-H — Branches/Warehouses Migration
 

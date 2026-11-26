@@ -2726,3 +2726,8 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
   - Added five component tests protecting resolver identities, all four statuses, balance evidence and compound operation permissions.
   - Protected exact Putaway/Relocate idempotency keys, Count payload, quantity validation, blind-count hiding and server-authored errors.
   - Verified 343/343 Angular tests across 140 files; runtime, APIs and Application inventory rules are unchanged.
+
+- 2026-11-26: Completed the FRD-I Inventory Scanning resolve workspace V4 slice.
+  - Replaced the flat five-column scan bar with localized Inventory context, one described FormSection, four optional FieldCues and a dedicated WorkflowFooter.
+  - Preserved product autofocus, adjustment/product/source/destination values, GET resolution, server-normalized values, loading and recovery; operation cards and backend contracts are unchanged.
+  - Verified 343/343 Angular tests across 140 files, production build, 142-template accessibility, 122-page consistency and Playwright 7 passed/0 failed/3 skips. FRD-ISS-012 remains independent.
