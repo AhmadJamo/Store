@@ -2,9 +2,9 @@
 
 ## FRD-I — Inventory Migration
 
-> الحالة: IN PROGRESS — اكتمل الجرد في 2026-11-25
+> الحالة: IN PROGRESS — Tracking Workspace V4 مكتمل في 2026-11-27
 >
-> اكتمل Tracking Balances/Quarantine V4 بجدول typed وصلاحية ديناميكية وFieldCue للسبب ونجح 347/347 والبناء وPlaywright 7/7. التالي الوحيد: حسّن Tracking History فقط؛ حوّل transactions إلى typed DataTable يحفظ date/product/identifier/type/quantity/reference وترتيب الخادم وحالة empty، ولا تغيّر أي workspace آخر أو API/Application. شغّل البوابة وحدّث الوثائق واعمل commit مستقل.
+> اكتمل Tracking History بجدول typed من ستة أعمدة مع حفظ date/product/identifier/type/quantity/reference وترتيب الخادم وحالة empty؛ نجح 347/347 والبناء وPlaywright 7/7. التالي الوحيد: نفّذ Replenishment safety audit فقط قبل أي restyle. وسّع اختبارات الصفحة لحماية rows المسماة وكل on-hand/reserved/available/incoming/outgoing/projected/min/max/suggestion/source/open-request evidence، فلاتر warehouse/search/exceptions، نموذج القاعدة وقواعد التحقق وdirty guard، الصلاحيات المستقلة Manage/StockTransfers.Create/PurchaseRequests.Create، toggle، إنشاء draft والتنقل الدقيق، وأخطاء الخادم. لا تغيّر runtime أو API/Application في خطوة التدقيق؛ شغّل الاختبار المستهدف وحدّث الوثائق واعمل commit مستقل.
 
 ## FRD-H — Branches/Warehouses Migration
 

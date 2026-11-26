@@ -70,6 +70,9 @@ describe('InventoryTrackingPageComponent', () => {
     expect(balances).not.toBeNull();
     expect(balances.querySelectorAll('thead th')).toHaveLength(10);
     expect(balances.querySelectorAll('app-field-cue')).toHaveLength(1);
+    const history = fixture.nativeElement.querySelector('app-data-table.tracking-history-table');
+    expect(history).not.toBeNull();
+    expect(history.querySelectorAll('thead th')).toHaveLength(6);
     const component = fixture.componentInstance as any;
     expect([1, 2].map(value => component.policyName(value))).toEqual(['lotTracking', 'serialTracking']);
     expect([1, 2, 3].map(value => component.statusName(value))).toEqual(['trackingAvailable', 'trackingDepleted', 'trackingQuarantined']);

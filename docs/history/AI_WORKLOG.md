@@ -2768,3 +2768,7 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
   - Verified 347/347 Angular tests, production build, 142 templates, 122 pages and Playwright 7 passed/0 failed/3 skips. FRD-ISS-012 remains independent.
 
 - 2026-11-27: Completed Tracking Balances/Quarantine V4 with a typed permission-aware DataTable and required reason cue. Preserved all server evidence, gates, validation and exact commands. Verified 347/347 tests, build and Playwright 7/7; FRD-ISS-012 remains independent.
+- 2026-11-27: Completed Tracking History V4 and closed the FRD-I Inventory Tracking workspace.
+  - Replaced the last manual history table with a typed six-column DataTable and localized empty state while preserving server transaction order, date, product, identifier, movement-type mapping, quantity and reference evidence.
+  - Extended the five-test tracking evidence contract and verified 347/347 Angular tests across 140 files, production build, 142-template accessibility, 122-page consistency and Playwright 7 passed/0 failed/3 authenticated-API skips.
+  - FRD-ISS-012 remains the sole independent gate failure: the unchanged core-localization lazy chunk is 84.55 kB against the 80 kB budget. Replenishment safety audit is next; runtime/API/Application behavior remains unchanged.

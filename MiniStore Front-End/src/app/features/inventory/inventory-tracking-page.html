@@ -96,6 +96,12 @@
    }
   </ng-template>
  </app-data-table>
- <section class="ui-card table-section"><h2>{{i18n.text('trackingHistory')}}</h2><app-data-table [label]="i18n.text('trackingHistory')"><table><thead><tr><th>{{i18n.text('date')}}</th><th>{{i18n.text('product')}}</th><th>{{i18n.text('lotOrSerial')}}</th><th>{{i18n.text('type')}}</th><th>{{i18n.text('quantity')}}</th><th>{{i18n.text('reference')}}</th></tr></thead><tbody>@for(item of data.transactions;track item.createdAt+item.identifier+item.reference){<tr><td>{{item.createdAt|date:'dd/MM/yyyy HH:mm'}}</td><td>{{item.product}}</td><td><code>{{item.identifier}}</code></td><td>{{transactionName(item.type)}}</td><td [class.negative]="item.quantity<0">{{item.quantity|number:'1.0-6'}}</td><td>{{item.reference}}</td></tr>}</tbody></table></app-data-table></section>
+ <app-data-table class="tracking-history-table" [label]="i18n.text('trackingHistory')" [columns]="historyColumns()" [rows]="data.transactions" rowKey="createdAt" [emptyTitle]="i18n.text('noTrackingHistory')">
+  <ng-template appDataCell="createdAt" let-item>{{item.createdAt|date:'dd/MM/yyyy HH:mm'}}</ng-template>
+  <ng-template appDataCell="identifier" let-item><code>{{item.identifier}}</code></ng-template>
+  <ng-template appDataCell="type" let-item>{{transactionName(item.type)}}</ng-template>
+  <ng-template appDataCell="quantity" let-item><span [class.negative]="item.quantity<0">{{item.quantity|number:'1.0-6'}}</span></ng-template>
+  <ng-template appDataCell="reference" let-item><code>{{item.reference}}</code></ng-template>
+ </app-data-table>
  }
 </section>

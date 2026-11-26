@@ -1,5 +1,7 @@
 # حالة المشروع / Project Status
 
+> تحديث 2026-11-27: اكتملت Tracking Workspace V4 بعد تحويل سجل الحركات إلى typed DataTable من ستة أعمدة مع حفظ ترتيب وأدلة الخادم والحالة الفارغة. نجح 347/347 والبناء وPlaywright 7/7؛ Replenishment safety audit هو التالي.
+
 > تحديث 2026-11-27: اكتملت Tracking Balances/Quarantine بجدول typed وإجراء سبب مطلوب مع حفظ الأدلة والصلاحية والشروط والأوامر. نجح 347/347 والبناء وPlaywright 7/7؛ Tracking History هو التالي.
 
 > تحديث 2026-11-27: اكتمل Tracking Recall Workspace بـDetailSection وقسمين وست إشارات وتذييلين مع حفظ دليل الخادم والصلاحية والحالة والتحقق والأوامر. نجح 347/347 والبناء وPlaywright 7/7؛ balances/quarantine هي التالية.
