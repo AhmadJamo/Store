@@ -55,6 +55,10 @@ describe('InventoryAdjustmentDetailsPageComponent', () => {
     expect(fixture.nativeElement.textContent).toContain('Roasted coffee');
     expect(fixture.nativeElement.textContent).toContain('expectedQuantity: hidden');
     expect(fixture.nativeElement.querySelector('form.count-form')).not.toBeNull();
+    expect(fixture.nativeElement.querySelectorAll('app-workflow-progress')).toHaveLength(1);
+    expect(fixture.nativeElement.querySelectorAll('app-detail-section')).toHaveLength(1);
+    expect(fixture.nativeElement.querySelectorAll('app-form-section')).toHaveLength(1);
+    expect(fixture.nativeElement.querySelectorAll('app-workflow-footer')).toHaveLength(2);
   });
 
   it('renders the exact workflow action and completed-state matrix for every server status', () => {
@@ -71,6 +75,7 @@ describe('InventoryAdjustmentDetailsPageComponent', () => {
       const fixture = TestBed.createComponent(InventoryAdjustmentDetailsPageComponent);
       fixture.detectChanges();
       const text = fixture.nativeElement.textContent as string;
+      if (testCase.status !== 1) expect(fixture.nativeElement.querySelectorAll('app-data-table')).toHaveLength(1);
       testCase.expected.forEach(value => expect(text).toContain(value));
       testCase.absent.forEach(value => expect(text).not.toContain(value));
       fixture.destroy();

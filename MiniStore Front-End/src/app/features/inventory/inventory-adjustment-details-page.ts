@@ -1,5 +1,5 @@
 import { DatePipe, DecimalPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, DestroyRef, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, computed, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormArray, FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
@@ -8,22 +8,45 @@ import { ApiErrorService } from '../../core/api/api-error.service';
 import { NormalizedApiProblem } from '../../core/api/api.models';
 import { ApiSessionService } from '../../core/api/api-session.service';
 import { FormErrorSummaryComponent } from '../../shared/forms/form-error-summary';
+import { FormSectionComponent } from '../../shared/forms/form-section/form-section';
 import { ApiRecoveryComponent } from '../../shared/ui/api-recovery/api-recovery';
+import { DataTableCellDirective, DataTableColumn, DataTableComponent } from '../../shared/ui/data-table/data-table';
+import { DetailSectionComponent } from '../../shared/ui/detail-section/detail-section';
 import { FeedbackStateComponent } from '../../shared/ui/feedback-state/feedback-state';
 import { PageHeaderComponent } from '../../shared/ui/page-header/page-header';
+import { WorkflowFooterComponent } from '../../shared/ui/workflow-footer/workflow-footer';
+import { WorkflowProgressComponent, WorkflowStep } from '../../shared/ui/workflow-progress/workflow-progress';
 import { WorkspaceService } from '../../workspace/state/workspace.service';
 import { InventoryAdjustmentApiService } from './data/inventory-adjustment-api.service';
 import { InventoryAdjustmentDetails } from './data/inventory-adjustment.models';
 import { InventoryLocalizationService, InventoryMessageKey } from './inventory-localization.service';
 
-@Component({ selector: 'app-inventory-adjustment-details-page', imports: [DatePipe, DecimalPipe, ReactiveFormsModule, RouterLink, PageHeaderComponent, FeedbackStateComponent, ApiRecoveryComponent, FormErrorSummaryComponent], templateUrl: './inventory-adjustment-details-page.html', styleUrl: './inventory-adjustments.scss', changeDetection: ChangeDetectionStrategy.OnPush })
+@Component({ selector: 'app-inventory-adjustment-details-page', imports: [DatePipe, DecimalPipe, ReactiveFormsModule, RouterLink, PageHeaderComponent, FeedbackStateComponent, ApiRecoveryComponent, FormErrorSummaryComponent, FormSectionComponent, DetailSectionComponent, WorkflowProgressComponent, WorkflowFooterComponent, DataTableComponent, DataTableCellDirective], templateUrl: './inventory-adjustment-details-page.html', styleUrl: './inventory-adjustments.scss', changeDetection: ChangeDetectionStrategy.OnPush })
 export class InventoryAdjustmentDetailsPageComponent {
   protected readonly i18n = inject(InventoryLocalizationService); protected readonly session = inject(ApiSessionService); private readonly api = inject(InventoryAdjustmentApiService); private readonly errors = inject(ApiErrorService); private readonly workspace = inject(WorkspaceService); private readonly destroyRef = inject(DestroyRef); private readonly fb = inject(FormBuilder); protected readonly id = Number(inject(ActivatedRoute).snapshot.paramMap.get('id'));
-  protected readonly details = signal<InventoryAdjustmentDetails | null>(null); protected readonly loading = signal(true); protected readonly loadingProblem = signal<NormalizedApiProblem | null>(null); protected readonly problem = signal(''); protected readonly success = signal(''); protected readonly saving = signal(false); protected readonly form = this.fb.group({ lines: this.fb.array([]) });
+  protected readonly details = signal<InventoryAdjustmentDetails | null>(null);
+  protected readonly resultColumns = computed<readonly DataTableColumn[]>(() => [
+    { key: 'productName', header: this.i18n.text('product'), width: '35%' },
+    { key: 'expectedQuantity', header: this.i18n.text('expectedQuantity'), kind: 'number' },
+    { key: 'countedQuantity', header: this.i18n.text('countedQuantity'), kind: 'number' },
+    { key: 'varianceQuantity', header: this.i18n.text('variance'), kind: 'number' },
+  ]); protected readonly loading = signal(true); protected readonly loadingProblem = signal<NormalizedApiProblem | null>(null); protected readonly problem = signal(''); protected readonly success = signal(''); protected readonly saving = signal(false); protected readonly form = this.fb.group({ lines: this.fb.array([]) });
   constructor() { this.load(); this.form.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => this.setDirty(this.form.dirty)); }
   canDeactivate(): boolean { return !this.form.dirty || globalThis.confirm(this.i18n.text('unsavedDescription')); }
   protected get lines(): FormArray { return this.form.controls.lines; }
   protected statusName(status: number): string { return this.i18n.text(({ 1: 'adjustmentDraft', 2: 'adjustmentCounted', 3: 'adjustmentApproved', 4: 'adjustmentPosted', 5: 'adjustmentCancelled' } as Record<number, InventoryMessageKey>)[status] || 'adjustmentDraft'); }
+  protected workflowSteps(status: number): readonly WorkflowStep[] {
+    if (status === 5) return [
+      { label: this.i18n.text('adjustmentDraft'), state: 'complete' },
+      { label: this.i18n.text('adjustmentCancelled'), state: 'stopped' },
+    ];
+    const labels = ['adjustmentDraft', 'adjustmentCounted', 'adjustmentApproved', 'adjustmentPosted'] as const;
+    const current = Math.max(0, Math.min(status - 1, labels.length - 1));
+    return labels.map((label, index) => ({ label: this.i18n.text(label), state: index < current ? 'complete' : index === current ? 'current' : 'upcoming' }));
+  }
+  protected workflowGuidance(status: number): string {
+    return this.i18n.text(({ 1: 'nextRecordCount', 2: 'nextRecordApprove', 3: 'nextRecordPost', 4: 'recordPostedGuidance', 5: 'recordCancelledGuidance' } as Record<number, InventoryMessageKey>)[status] || 'nextRecordCount');
+  }
   protected recordCount(): void { if (this.saving() || this.form.invalid) { this.form.markAllAsTouched(); this.problem.set(this.i18n.text('countEveryLine')); return; } const lines = this.lines.getRawValue() as { productId: number; countedQuantity: number }[]; this.execute(() => this.api.count(this.id, { lines }), 'confirmCompleteCount', 'countSaved'); }
   protected approve(): void { this.execute(() => this.api.approve(this.id), 'confirmApproveAdjustment', 'adjustmentApprovedSuccess'); }
   protected post(): void { this.execute(() => this.api.post(this.id), 'confirmPostAdjustment', 'adjustmentPostedSuccess'); }

@@ -2679,3 +2679,7 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
   - Replaced the single command assertion with five focused tests covering server record evidence and Draft, Counted, Approved, Posted and Cancelled presentation/action states.
   - Protected blind expected-quantity hiding, independent Count/Approve/Post/Cancel permissions, completed-state evidence, exact commands, invalid-count blocking and dirty leave confirmation.
   - The focused suite passed 5/5; record runtime, frozen expected quantities, stale-stock checks, separation of duties, posting and permissions are unchanged.
+- 2026-11-26: Completed the FRD-I Inventory Adjustment Record V4 slice.
+  - Reorganized the record into localized WorkflowProgress, DetailSection summary, draft FormSection counting, typed four-column result DataTable and state/permission-aware WorkflowFooter.
+  - Preserved all five server states, blind expected-quantity hiding, independent Count/Approve/Post/Cancel permissions, exact commands, validation, dirty guard, frozen quantity and separation of duties.
+  - Verified 328/328 Angular tests across 138 files, production build, 142-template accessibility, 122-page consistency and Playwright 7 passed/0 failed/3 authenticated-API skips. FRD-ISS-012 remains independent.

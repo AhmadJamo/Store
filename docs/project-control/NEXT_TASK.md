@@ -4,7 +4,7 @@
 
 > الحالة: IN PROGRESS — اكتمل الجرد في 2026-11-25
 >
-> اكتمل Adjustment Record safety net بخمسة اختبارات. التالي الوحيد: حوّل `/inventory/adjustments/:id` إلى Record Header مترجم وDetailSection لملخص المستند وWorkflowProgress للحالات وFormSection للعدّ أو DataTable للنتائج وWorkflowFooter للأفعال المتاحة فقط، مع الحفاظ على blind count والصلاحيات والأوامر وdirty guard وسلطة الخادم. شغّل البوابة وحدّث الوثائق واعمل commit مستقل.
+> اكتملت مجموعة Inventory Adjustment List/Create/Record V4 مع 328/328 اختباراً وبناء ناجح وPlaywright 7/7. التالي الوحيد: راجع Product Stock المشترك لمسارات `/inventory/stocks` و`/new` و`/:id/edit` و`/adjustment` عبر DTO/API/Application/permissions، ثم أضف safety net يفصل القائمة والرصيد الافتتاحي/التعديل والتسوية اليدوية ويحمي الأسماء والكميات والتكلفة وقواعد أنواع الحركة والسبب والصلاحيات والdirty state، من دون تغيير runtime. حدّث الوثائق واعمل commit مستقل قبل UI.
 
 ## FRD-H — Branches/Warehouses Migration
 
