@@ -108,16 +108,26 @@
         <button class="ui-button primary" type="button" (click)="receive()" [disabled]="saving()">{{ i18n.text('receive') }}</button>
       </app-detail-section>
     }
-    <app-detail-section [title]="i18n.text('items')"><app-data-table [label]="i18n.text('items')">
-      <table><thead><tr><th>{{ i18n.text('product') }}</th><th>{{ i18n.text('quantity') }}</th><th>{{ i18n.text('receivedQuantity') }}</th><th>{{ i18n.text('remainingQuantity') }}</th><th>{{ i18n.text('shortQuantity') }}</th><th>{{ i18n.text('damagedQuantity') }}</th><th>{{ i18n.text('destinationLocation') }}</th></tr></thead>
-      <tbody>@for (item of transfer.items; track item.id) { <tr><td>{{ item.productName }}</td><td>{{ item.quantity | number:'1.0-3' }}</td><td>{{ item.receivedQuantity | number:'1.0-3' }}</td><td>{{ item.remainingQuantity | number:'1.0-3' }}</td><td>{{ item.reportedShortQuantity | number:'1.0-3' }}</td><td>{{ item.reportedDamagedQuantity | number:'1.0-3' }}</td><td>{{ item.destinationLocationCode }}</td></tr> }</tbody></table>
-    </app-data-table></app-detail-section>
+    <app-detail-section [title]="i18n.text('items')">
+      <app-data-table [label]="i18n.text('items')" [columns]="itemColumns()" [rows]="transfer.items">
+        <ng-template appDataCell="productName" let-item><strong>{{ item.productName }}</strong></ng-template>
+        <ng-template appDataCell="quantity" let-item>{{ item.quantity | number:'1.0-3' }}</ng-template>
+        <ng-template appDataCell="receivedQuantity" let-item>{{ item.receivedQuantity | number:'1.0-3' }}</ng-template>
+        <ng-template appDataCell="remainingQuantity" let-item>{{ item.remainingQuantity | number:'1.0-3' }}</ng-template>
+        <ng-template appDataCell="reportedShortQuantity" let-item>{{ item.reportedShortQuantity | number:'1.0-3' }}</ng-template>
+        <ng-template appDataCell="reportedDamagedQuantity" let-item>{{ item.reportedDamagedQuantity | number:'1.0-3' }}</ng-template>
+      </app-data-table>
+    </app-detail-section>
     <app-detail-section [title]="i18n.text('history')">
-    @if (!transfer.history.length) { <p>{{ i18n.text('noHistory') }}</p> }
-    @else {
-      <app-data-table [label]="i18n.text('history')"><table><thead><tr><th>{{ i18n.text('fromStatus') }}</th><th>{{ i18n.text('toStatus') }}</th><th>{{ i18n.text('user') }}</th><th>{{ i18n.text('reason') }}</th><th>{{ i18n.text('createdAt') }}</th></tr></thead>
-      <tbody>@for (entry of transfer.history; track entry.id) { <tr><td>{{ statusName(entry.fromStatus) }}</td><td>{{ statusName(entry.toStatus) }}</td><td>{{ entry.userName }}</td><td>{{ entry.reason || '—' }}</td><td>{{ entry.createdAt | date:'dd/MM/yyyy HH:mm' }}</td></tr> }</tbody></table></app-data-table>
-    }
+      @if (!transfer.history.length) { <p>{{ i18n.text('noHistory') }}</p> }
+      @else {
+        <app-data-table [label]="i18n.text('history')" [columns]="historyColumns()" [rows]="transfer.history">
+          <ng-template appDataCell="fromStatus" let-entry>{{ statusName(entry.fromStatus) }}</ng-template>
+          <ng-template appDataCell="toStatus" let-entry>{{ statusName(entry.toStatus) }}</ng-template>
+          <ng-template appDataCell="reason" let-entry>{{ entry.reason || '—' }}</ng-template>
+          <ng-template appDataCell="createdAt" let-entry>{{ entry.createdAt | date:'dd/MM/yyyy HH:mm' }}</ng-template>
+        </app-data-table>
+      }
     </app-detail-section>
   } @else {
     <form (ngSubmit)="applyFilters()">

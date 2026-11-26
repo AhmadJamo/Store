@@ -276,3 +276,9 @@
 - Angular Vitest: 338/338 across 139 files; the six-test Stock Transfer matrix now also protects localized context, two FormSections and five line FieldCues.
 - Static accessibility: 142 templates; UI inventory 122 pages. Production build and Playwright 7/7 passed.
 - FRD-ISS-012 remains the only full-gate failure at 84.55 kB versus 80 kB; no budget was relaxed.
+
+## FRD-I Stock Transfer Record Evidence V4 — 2026-11-26
+
+- Angular Vitest: 338/338 across 139 files; six focused tests protect seven item and five history columns plus all workflow contracts.
+- Static accessibility: 142 templates; UI inventory 122 pages. Production build and Playwright 7/7 passed.
+- FRD-ISS-012 remains the only full-gate failure at 84.55 kB versus 80 kB; no budget was relaxed.

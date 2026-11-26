@@ -101,6 +101,22 @@ export class StockTransfersPageComponent {
     { key: 'createdAt', header: this.i18n.text('createdAt'), kind: 'date' },
     { key: 'actions', header: this.i18n.text('actions'), kind: 'actions' },
   ]);
+  protected readonly itemColumns = computed<readonly DataTableColumn[]>(() => [
+    { key: 'productName', header: this.i18n.text('product'), width: '24%' },
+    { key: 'quantity', header: this.i18n.text('quantity'), kind: 'number' },
+    { key: 'receivedQuantity', header: this.i18n.text('receivedQuantity'), kind: 'number' },
+    { key: 'remainingQuantity', header: this.i18n.text('remainingQuantity'), kind: 'number' },
+    { key: 'reportedShortQuantity', header: this.i18n.text('shortQuantity'), kind: 'number' },
+    { key: 'reportedDamagedQuantity', header: this.i18n.text('damagedQuantity'), kind: 'number' },
+    { key: 'destinationLocationCode', header: this.i18n.text('destinationLocation') },
+  ]);
+  protected readonly historyColumns = computed<readonly DataTableColumn[]>(() => [
+    { key: 'fromStatus', header: this.i18n.text('fromStatus'), kind: 'status' },
+    { key: 'toStatus', header: this.i18n.text('toStatus'), kind: 'status' },
+    { key: 'userName', header: this.i18n.text('user') },
+    { key: 'reason', header: this.i18n.text('reason'), width: '28%' },
+    { key: 'createdAt', header: this.i18n.text('createdAt'), kind: 'date' },
+  ]);
   protected readonly details = signal<StockTransferDetails | null>(null);
   protected readonly page = signal<StockTransferFormPage | null>(null);
   protected readonly loading = signal(true);

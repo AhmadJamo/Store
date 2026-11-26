@@ -2711,3 +2711,8 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
   - Localized the Inventory context and separated transfer identity from line items with two described FormSections.
   - Added five FieldCues per line, including conditional source/destination requirements derived from server warehouse policy; preserved names, barcode, tracking, add/remove, draft recovery, validation and create/update commands.
   - Verified 338/338 Angular tests across 139 files, production build, 142-template accessibility, 122-page consistency and Playwright 7 passed/0 failed/3 skips. FRD-ISS-012 remains independent.
+
+- 2026-11-26: Completed the FRD-I Stock Transfer Record Evidence V4 slice.
+  - Replaced manual item/history table markup with typed seven-column and five-column DataTables and explicit number/status/date/reason cells.
+  - Preserved server order, product and destination evidence, all receipt quantities, status transitions, users, reasons and timestamps; workflow and receipt inputs are unchanged.
+  - Verified 338/338 Angular tests, production build, 142 templates, 122 pages and Playwright 7 passed/0 failed/3 skips. FRD-ISS-012 remains independent.

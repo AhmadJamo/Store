@@ -4,7 +4,7 @@
 
 > الحالة: IN PROGRESS — اكتمل الجرد في 2026-11-25
 >
-> اكتمل Stock Transfer Form V4 ونجح 338/338 والبناء وPlaywright 7/7. التالي الوحيد: حوّل جدولي items وhistory في record إلى typed DataTables مع أعمدة صريحة وقوالب quantity/status/date، مع حفظ أسماء المنتجات والكميات/المستلم/المتبقي/الناقص/التالف/الموقع وكل انتقال حالة والمستخدم والسبب والتاريخ من الخادم. لا تغيّر workflow actions أو receipt inputs أو API/Application. شغّل البوابة وحدّث الوثائق واعمل commit مستقل.
+> اكتمل Stock Transfer Record Evidence V4 ونجح 338/338 والبناء وPlaywright 7/7. التالي الوحيد: نظّم receipt workspace للحالات 7/8/9 باستخدام FormSection أو DetailSection موصوف وFieldCues لحقول received/short/damaged وتذييل إجراء واضح، مع إبقاء remaining/max والوجهة والأمر receive والـpermission والحظر عند عدم وجود سطر كما هي. لا تغيّر جداول السجل أو workflow actions أو API/Application. شغّل البوابة وحدّث الوثائق واعمل commit مستقل.
 
 ## FRD-H — Branches/Warehouses Migration
 

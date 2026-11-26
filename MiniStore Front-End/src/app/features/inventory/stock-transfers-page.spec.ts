@@ -152,6 +152,12 @@ describe('StockTransfersPageComponent', () => {
       expect(actions).toEqual(testCase.actions);
       expect(fixture.nativeElement.textContent.includes('receiptEvidence')).toBe(testCase.receipt);
       expect(fixture.nativeElement.querySelectorAll('app-workflow-progress')).toHaveLength(1);
+      if (testCase.status === 1) {
+        const component = fixture.componentInstance as any;
+        expect(component.itemColumns()).toHaveLength(7);
+        expect(component.historyColumns()).toHaveLength(5);
+        expect(fixture.nativeElement.querySelectorAll('app-detail-section app-data-table th')).toHaveLength(12);
+      }
       fixture.destroy();
     }
   });
