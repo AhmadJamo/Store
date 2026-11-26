@@ -4,7 +4,7 @@
 
 > الحالة: IN PROGRESS — اكتمل الجرد في 2026-11-25
 >
-> اكتمل Inventory Reconciliation V4 مع 314/314 اختباراً وبناء ناجح وPlaywright 7/7؛ بقيت FRD-ISS-012 مستقلة. التالي الوحيد: راجع عقود Adjustment List من DTO/API/Application والمكوّن الحالي، ثم أضف safety net مستقل يحمي الصفوف المسماة والحالة والتواريخ والمرشحات/الصفحات والصلاحيات والفراغ من دون تغيير runtime. حدّث الوثائق واعمل commit مستقل قبل أي تحويل UI.
+> اكتمل Adjustment List safety net بخمسة اختبارات، وثبت أن GET يعيد الدليل كاملاً بترتيب الخادم ولا يملك filter/paging inputs. التالي الوحيد: حوّل قائمة `/inventory/adjustments` إلى سياق Inventory مترجم وtyped DataTable وحالات موحدة مع الحفاظ على الأعمدة الثمانية والترتيب ورابط التفاصيل وصلاحية Create؛ لا تضف فلاتر أو صفحات وهمية ولا تغيّر Create/Record أو API/DTO/Application authority. شغّل البوابة وحدّث الوثائق واعمل commit مستقل.
 
 ## FRD-H — Branches/Warehouses Migration
 
