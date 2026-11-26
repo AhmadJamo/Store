@@ -2784,3 +2784,7 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
   - Replaced the generic filter panel with the shared FilterBar, three optional FieldCues and separate apply/reset actions.
   - Preserved warehouse/search/exceptions query parameters, trim/reset behavior, router navigation and reload; rule editor, evidence table and backend contracts are unchanged.
   - Verified 350/350 Angular tests, production build, 142 templates, 122 pages and Playwright 7 passed/0 failed/3 skips. FRD-ISS-012 remains independent; Suggestions DataTable is next.
+- 2026-11-27: Completed the FRD-I Replenishment Suggestions DataTable and closed the workspace V4 slice.
+  - Replaced the manual 11-column table with typed columns and explicit templates for grouped availability, projection, min/max, suggested quantity, source availability, status and actions.
+  - Preserved server order and empty state, the existing purchase-request link, Manage toggle and conditional transfer/purchase permissions, commands and navigation; rule/filter/backend contracts are unchanged.
+  - Verified 350/350 Angular tests, production build, 142 templates, 122 pages and Playwright 7 passed/0 failed/3 skips. FRD-ISS-012 remains independent; Putaway safety audit is next.

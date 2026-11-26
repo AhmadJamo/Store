@@ -2,9 +2,9 @@
 
 ## FRD-I — Inventory Migration
 
-> الحالة: IN PROGRESS — Replenishment Filters V4 مكتمل في 2026-11-27
+> الحالة: IN PROGRESS — Replenishment Workspace V4 مكتمل في 2026-11-27
 >
-> اكتملت الفلاتر بـFilterBar وثلاث FieldCues وإجراءات تطبيق/مسح واضحة مع حفظ warehouse/search/exceptions query params والتحميل؛ نجح 350/350 والبناء وPlaywright 7/7. التالي الوحيد: حوّل Replenishment Suggestions Table فقط إلى typed DataTable من 11 عموداً يحفظ product/warehouse/available+reserved/incoming/outgoing/projected available+on-hand/min-max/suggested/source+available/status/actions وترتيب الخادم والحالة الفارغة. احفظ open purchase link وManage toggle وشرطي transfer/purchase permissions والتنقل، ولا تغيّر rule form أو filters أو API/Application. شغّل البوابة وحدّث الوثائق واعمل commit مستقل.
+> اكتمل Suggestions Table كـtyped DataTable من 11 عموداً مع حفظ كل أدلة الخادم وترتيبه والحالة الفارغة وopen-request link وManage toggle وشرطي transfer/purchase والتنقل؛ نجح 350/350 والبناء وPlaywright 7/7. التالي الوحيد: نفّذ Putaway / Unassigned Stock safety audit فقط قبل أي restyle. أضف page component spec يحمي rows وأسماء product/warehouse والكميات warehouse/assigned/unassigned والاقتراح، فلاتر warehouse/query/sort، ProductStock.Edit، اختيار الصف وتعبئة destination/quantity ومفتاح idempotency، assign payload، قواعد default/product/category والـpriority، toggle، الخيارات المسماة، التحقق وأخطاء الخادم وdirty guard. لا تغيّر runtime أو API/Application؛ شغّل الاختبار وحدّث الوثائق واعمل commit مستقل.
 
 ## FRD-H — Branches/Warehouses Migration
 

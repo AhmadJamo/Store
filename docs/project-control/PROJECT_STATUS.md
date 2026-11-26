@@ -1,5 +1,7 @@
 # حالة المشروع / Project Status
 
+> تحديث 2026-11-27: اكتملت Replenishment Workspace V4 بعد تحويل الاقتراحات إلى typed DataTable من 11 عموداً مع حفظ الأدلة والإجراءات والصلاحيات. نجح 350/350 والبناء وPlaywright 7/7؛ Putaway safety audit هو التالي.
+
 > تحديث 2026-11-27: اكتملت Replenishment Filters V4 بـFilterBar وثلاث إشارات حقول مع حفظ query contracts وسلوك التطبيق والمسح. نجح 350/350 والبناء وPlaywright 7/7؛ Suggestions DataTable هو التالي.
 
 > تحديث 2026-11-27: اكتمل Replenishment Rule Form V4 بسياق مترجم وقسم موصوف وعشر إشارات حقول وتذييل حفظ مع حفظ العقود والصلاحية والتحقق. نجح 350/350 والبناء وPlaywright 7/7؛ Filters V4 هو التالي.
