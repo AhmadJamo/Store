@@ -10,6 +10,7 @@ import { DataTableCellDirective, DataTableColumn, DataTableComponent } from '../
 import { FeedbackStateComponent } from '../../shared/ui/feedback-state/feedback-state';
 import { FilterBarComponent } from '../../shared/ui/filter-bar/filter-bar';
 import { PageHeaderComponent } from '../../shared/ui/page-header/page-header';
+import { PagerComponent } from '../../shared/ui/pager/pager';
 import { SummaryStripComponent } from '../../shared/ui/summary-strip/summary-strip';
 import { InventoryAnalysisApiService } from './data/inventory-analysis-api.service';
 import {
@@ -33,6 +34,7 @@ import {
     PageHeaderComponent,
     FilterBarComponent,
     SummaryStripComponent,
+    PagerComponent,
     FeedbackStateComponent,
     ApiRecoveryComponent,
     DataTableComponent,
@@ -62,6 +64,21 @@ export class InventoryAnalysisPageComponent {
     { key: 'daysSinceActivity', header: this.i18n.text('daysSinceActivity'), kind: 'number', width: '9rem' },
     { key: 'state', header: this.i18n.text('status'), kind: 'status', width: '10rem' },
   ]);
+  protected readonly reconciliationColumns = computed<readonly DataTableColumn[]>(() => [
+    { key: 'status', header: this.i18n.text('status'), kind: 'status', width: '13rem' },
+    { key: 'productName', header: this.i18n.text('product'), width: '20%' },
+    { key: 'warehouseName', header: this.i18n.text('warehouse'), width: '14%' },
+    { key: 'warehouseQuantity', header: this.i18n.text('warehouseQuantity'), kind: 'number', width: '9rem' },
+    { key: 'assignedLocationQuantity', header: this.i18n.text('assignedQuantity'), kind: 'number', width: '9rem' },
+    { key: 'unassignedQuantity', header: this.i18n.text('unassignedQuantity'), kind: 'number', width: '9rem' },
+    { key: 'latestQuantityAfter', header: this.i18n.text('latestQuantity'), kind: 'number', width: '9rem' },
+    { key: 'inventoryValue', header: this.i18n.text('inventoryValue'), kind: 'number', width: '10rem' },
+    { key: 'latestTransactionId', header: this.i18n.text('latestMovement'), width: '11rem' },
+  ]);
+  protected readonly reconciliationRows = computed(() => (this.reconciliation()?.items ?? []).map(row => ({
+    ...row,
+    rowKey: row.productId + ':' + row.warehouseId,
+  })));
 
   protected readonly insightsForm = new FormGroup({
     warehouseId: new FormControl<number | null>(null),
@@ -87,6 +104,14 @@ export class InventoryAnalysisPageComponent {
 
   protected insightsEmptyTitle(): string { return this.i18n.text(this.insightsHasFilters() ? 'filteredInsightsEmpty' : 'noInsights'); }
   protected insightsEmptyDescription(): string { return this.i18n.text(this.insightsHasFilters() ? 'filteredInsightsEmptyDescription' : 'noInsightsDescription'); }
+
+  protected reconciliationHasFilters(): boolean {
+    const value = this.reconciliationForm.getRawValue();
+    return !!value.search.trim() || value.warehouseId !== null || value.exceptionsOnly;
+  }
+
+  protected reconciliationEmptyTitle(): string { return this.i18n.text(this.reconciliationHasFilters() ? 'filteredReconciliationEmpty' : 'noReconciliation'); }
+  protected reconciliationEmptyDescription(): string { return this.i18n.text(this.reconciliationHasFilters() ? 'filteredReconciliationEmptyDescription' : 'noReconciliationDescription'); }
 
   protected load(page = 1): void {
     this.loading.set(true);

@@ -2655,3 +2655,7 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
   - Added five focused shared-page tests in Reconciliation mode protecting server-authored counters, named product/warehouse rows, warehouse/assigned/unassigned/latest quantities, value and latest-movement evidence.
   - Protected all seven issue mappings, consistent state, warehouse/search/exception/page contracts, permission-aware Insights link and empty behavior without deriving consistency in Angular.
   - The focused suite passed 5/5 before presentation changes; the GET-only InventoryReconciliation.View boundary and Application-owned reconciliation remain unchanged.
+- 2026-11-26: Completed the FRD-I Inventory Reconciliation V4 analysis slice.
+  - Migrated Reconciliation mode within the shared analysis page to localized Inventory context, FilterBar, a two-item SummaryStrip, typed nine-column DataTable and shared Pager with distinct true-empty/filtered-empty guidance.
+  - Preserved the GET-only InventoryReconciliation.View boundary, server-authored counters, named product/warehouse evidence, quantities, value, latest movement, all seven issue mappings, consistency, filters/paging and the independently permissioned Insights link.
+  - Verified 314/314 Angular tests across 136 files, production build, 142-template accessibility, 122-page consistency and Playwright 7 passed/0 failed/3 authenticated-API skips. The full gate's only failure remains FRD-ISS-012: the unchanged 84.55 kB core-localization lazy chunk against its 80 kB budget.

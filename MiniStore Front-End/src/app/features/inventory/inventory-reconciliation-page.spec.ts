@@ -102,12 +102,16 @@ describe('InventoryAnalysisPageComponent reconciliation mode', () => {
     expect(fixture.nativeElement.querySelectorAll('.issue')).toHaveLength(0);
   });
 
-  it('keeps an empty response free of invented reconciliation rows', () => {
-    api.getReconciliation.mockReturnValue(of({ ...report, items: [], totalCount: 0, exceptionCount: 0, totalPages: 0 }));
+  it('distinguishes a true empty response from filtered emptiness without inventing rows', () => {
+    (api.getReconciliation as any).mockReturnValue(of({ ...report, items: [], warehouseId: null, search: '', exceptionsOnly: false, totalCount: 0, exceptionCount: 0, totalPages: 0 }));
     const fixture = TestBed.createComponent(InventoryAnalysisPageComponent);
     fixture.detectChanges();
 
     expect(fixture.nativeElement.textContent).toContain('noReconciliation');
-    expect(fixture.nativeElement.querySelectorAll('app-data-table tbody tr')).toHaveLength(1);
+    expect(fixture.nativeElement.querySelectorAll('app-data-table tbody tr')).toHaveLength(0);
+
+    const component = fixture.componentInstance as any;
+    component.reconciliationForm.controls.exceptionsOnly.setValue(true);
+    expect(component.reconciliationEmptyTitle()).toBe('filteredReconciliationEmpty');
   });
 });

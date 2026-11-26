@@ -4,7 +4,7 @@
 
 > الحالة: IN PROGRESS — اكتمل الجرد في 2026-11-25
 >
-> اكتمل Inventory Reconciliation safety net بخمسة اختبارات تحمي العدادات والمنتج/المستودع والكميات والقيمة وآخر حركة والاستثناءات السبعة والحالة المتطابقة والمرشحات والصفحات والرابط المشروط بالصلاحية والحالة الفارغة. التالي الوحيد: حوّل وضع Reconciliation داخل الصفحة المشتركة إلى سياق Inventory مترجم وFilterBar/SummaryStrip/typed DataTable وPager وحالتي empty، من دون تغيير API/DTO/Application authority. شغّل البوابة واعمل commit مستقل.
+> اكتمل Inventory Reconciliation V4 مع 314/314 اختباراً وبناء ناجح وPlaywright 7/7؛ بقيت FRD-ISS-012 مستقلة. التالي الوحيد: راجع عقود Adjustment List من DTO/API/Application والمكوّن الحالي، ثم أضف safety net مستقل يحمي الصفوف المسماة والحالة والتواريخ والمرشحات/الصفحات والصلاحيات والفراغ من دون تغيير runtime. حدّث الوثائق واعمل commit مستقل قبل أي تحويل UI.
 
 ## FRD-H — Branches/Warehouses Migration
 

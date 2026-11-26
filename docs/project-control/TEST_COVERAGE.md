@@ -226,3 +226,9 @@
 - Hosted presentation acceptance: 6 passed/0 failed for states, RTL/LTR, keyboard and 390px layout; two authenticated checks
   skipped without storage state. The broader legacy dual-run gate still expects MVC Login HTTP 200 although Login now
   correctly redirects to Angular, and is recorded as a pre-existing harness mismatch.
+## FRD-I Inventory Reconciliation V4 — 2026-11-26
+
+- Angular Vitest: 314/314 across 136 files; five focused Reconciliation tests protect server-authored evidence, all seven issue mappings, consistency, filters/paging, permission navigation and true/filtered empty states.
+- Static accessibility: 142 templates; UI inventory 122 pages. Production build completed.
+- Hosted presentation acceptance: 7 passed/0 failed/3 authenticated-API skips for bounded session, states, RTL/LTR, keyboard, theme/density, app switcher and responsive layout.
+- The full gate has one independent open failure: core localization lazy chunk 84.55 kB versus the 80 kB budget (FRD-ISS-012). No budget was relaxed.
