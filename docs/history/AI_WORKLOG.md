@@ -2741,3 +2741,8 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
   - Rebuilt conditional Putaway, Relocate and Count forms with described FormSections, one required quantity FieldCue and a dedicated WorkflowFooter per command.
   - Preserved independent permissions and resolver-state gates, numeric rules, shared controls, server idempotency keys, exact payloads, success/error behavior and refresh; no backend contract changed.
   - Added the sixth focused test and verified 344/344 Angular tests, production build, 142 templates, 122 pages and Playwright 7 passed/0 failed/3 skips. FRD-ISS-012 remains independent.
+
+- 2026-11-26: Completed the FRD-I Inventory Tracking pre-migration safety audit.
+  - Replaced two narrow tests with five focused tests covering balance, expiration, recall, communication and transaction evidence plus all enum mappings.
+  - Protected complete lot/serial opening allocation, independent View/Open/ManageQuarantine/ManageRecall surfaces, exact management commands, validation, server errors and dirty navigation.
+  - Verified 347/347 Angular tests across 140 files; runtime, APIs, permissions and Application tracking rules are unchanged.

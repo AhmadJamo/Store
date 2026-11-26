@@ -1,5 +1,7 @@
 # حالة المشروع / Project Status
 
+> تحديث 2026-11-26: اكتمل Inventory Tracking safety audit بخمسة اختبارات تحمي أدلة الرصيد والصلاحية والاستدعاء والاتصال والحركة، فتح lot/serial، الصلاحيات الأربع، كل الأوامر والتحقق والأخطاء وdirty guard. نجح 347/347 دون تغيير runtime؛ opening allocation workspace هو التالي.
+
 > تحديث 2026-11-26: اكتمل Inventory Scanning Workspace V4 بعد تنظيم Putaway/Relocate/Count بأقسام موصوفة وإشارات كمية مطلوبة وتذييلات إجراء، مع حفظ الصلاحيات والحالات والتحقق وidempotency والـpayload والتحديث. نجح 344/344 والبناء وPlaywright 7/7؛ Tracking safety audit هو التالي.
 
 > تحديث 2026-11-26: اكتمل Scanning result evidence داخل DetailSection مترجم يجمع هويات المستند والمنتج والمصدر والوجهة مع حفظ الحالات والأسماء والنصوص الثانوية من الخادم. نجح 343/343 والبناء و142 قالباً و122 صفحة وPlaywright 7/7؛ operation workspaces هي التالية.

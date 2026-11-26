@@ -4,7 +4,7 @@
 
 > الحالة: IN PROGRESS — اكتمل الجرد في 2026-11-25
 >
-> اكتمل Inventory Scanning Workspace V4 ونجح 344/344 والبناء وPlaywright 7/7. التالي الوحيد: نفّذ Tracking safety audit قبل restyling؛ راجع route/component/API/Application والنماذج والصلاحيات، ووسّع الاختبارات المركزة لحماية البحث بالباركود/الرقم، حالات lot/serial، الأسماء والكميات والتواريخ، المرشحات، paging، validation والأخطاء. لا تغيّر runtime أو API/Application في شريحة التدقيق. شغّل الاختبارات وحدّث الوثائق واعمل commit مستقل.
+> اكتمل Tracking safety audit بخمسة اختبارات ونجح 347/347 عبر 140 ملفاً دون تغيير runtime. التالي الوحيد: حسّن opening tracking allocation form فقط؛ ترجم Inventory eyebrow، استخدم FormSection موصوفاً للهوية والسياسة والمرجع والتخصيصات، FieldCues للحقول المطلوبة/الاختيارية وWorkflowFooter للتفعيل، مع حفظ product/warehouse/location names، lot/serial، add/remove/reset، التواريخ، validation، dirty guard والـopen payload كما هي. لا تغيّر expiration alerts أو recalls أو quarantine أو history أو API/Application. شغّل البوابة وحدّث الوثائق واعمل commit مستقل.
 
 ## FRD-H — Branches/Warehouses Migration
 
