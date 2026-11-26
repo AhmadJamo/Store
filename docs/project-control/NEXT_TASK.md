@@ -4,7 +4,7 @@
 
 > الحالة: IN PROGRESS — اكتمل الجرد في 2026-11-25
 >
-> اكتمل Scanning resolve workspace بسياق Inventory مترجم وFormSection موصوف وأربع FieldCues اختيارية وWorkflowFooter، ونجح 343/343 والبناء وPlaywright 7/7. التالي الوحيد: حسّن result evidence فقط؛ ضع هويات adjustment/product/source/destination الأربع وحالاتها ونصوصها الثانوية داخل DetailSection مترجم وواضح مع إبقاء القيم والأسماء والحالات 0/1/2/3 من الخادم كما هي. لا تغيّر Putaway/Relocate/Count أو balance table أو API/Application. شغّل البوابة وحدّث الوثائق واعمل commit مستقل.
+> اكتمل Scanning result evidence داخل DetailSection مترجم مع بقاء الهويات والحالات 0/1/2/3 والنصوص الثانوية من الخادم، ونجح 343/343 والبناء وPlaywright 7/7. التالي الوحيد: حسّن مساحات Putaway/Relocate/Count الشرطية؛ استخدم FormSection موصوفاً وFieldCue مطلوباً للكمية وWorkflowFooter لكل إجراء مع حفظ permission/state gates، quantity validation، idempotency keys، payloads، النجاح والخطأ والتحديث كما هي. لا تغيّر resolver أو result evidence أو balance table أو API/Application. شغّل البوابة وحدّث الوثائق واعمل commit مستقل.
 
 ## FRD-H — Branches/Warehouses Migration
 

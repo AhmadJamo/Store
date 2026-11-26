@@ -9,6 +9,7 @@ import { FieldCueComponent } from '../../shared/forms/field-cue/field-cue';
 import { FormSectionComponent } from '../../shared/forms/form-section/form-section';
 import { ApiRecoveryComponent } from '../../shared/ui/api-recovery/api-recovery';
 import { DataTableComponent } from '../../shared/ui/data-table/data-table';
+import { DetailSectionComponent } from '../../shared/ui/detail-section/detail-section';
 import { FeedbackStateComponent } from '../../shared/ui/feedback-state/feedback-state';
 import { PageHeaderComponent } from '../../shared/ui/page-header/page-header';
 import { WorkflowFooterComponent } from '../../shared/ui/workflow-footer/workflow-footer';
@@ -34,6 +35,7 @@ import {
     FeedbackStateComponent,
     ApiRecoveryComponent,
     DataTableComponent,
+    DetailSectionComponent,
     WorkflowFooterComponent,
   ],
   templateUrl: './inventory-scanning-page.html',

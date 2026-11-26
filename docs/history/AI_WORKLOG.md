@@ -2731,3 +2731,8 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
   - Replaced the flat five-column scan bar with localized Inventory context, one described FormSection, four optional FieldCues and a dedicated WorkflowFooter.
   - Preserved product autofocus, adjustment/product/source/destination values, GET resolution, server-normalized values, loading and recovery; operation cards and backend contracts are unchanged.
   - Verified 343/343 Angular tests across 140 files, production build, 142-template accessibility, 122-page consistency and Playwright 7 passed/0 failed/3 skips. FRD-ISS-012 remains independent.
+
+- 2026-11-26: Completed the FRD-I Inventory Scanning result-evidence V4 slice.
+  - Grouped the four adjustment/product/source/destination identities in a localized DetailSection and replaced nested generic panels with dedicated scan-result evidence cards.
+  - Preserved server-authored statuses 0/1/2/3, display names, secondary text, operation gates and balance evidence; no API or Application contract changed.
+  - Verified 343/343 Angular tests, production build, 142 templates, 122 pages and Playwright 7 passed/0 failed/3 skips. FRD-ISS-012 remains independent.

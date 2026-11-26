@@ -3,7 +3,7 @@
 .scan-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: .75rem; align-items: end; }
 .scan-grid label, .action-card label { display: grid; gap: .4rem; }
 .result-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1rem; }
-.result-grid article { display: grid; gap: .45rem; align-content: start; }
+.scan-result { display: grid; gap: .45rem; align-content: start; padding: .875rem; border: 1px solid var(--erp-color-border); border-radius: var(--erp-radius-sm); background: var(--erp-color-surface); }
 .result-grid .ui-badge { justify-self: start; }
 .result-grid small, .action-card p { color: var(--ui-text-muted); }
 .action-card { display: grid; grid-template-columns: minmax(0, 1fr) minmax(10rem, .35fr) auto; gap: 1rem; align-items: end; }

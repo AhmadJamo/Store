@@ -53,6 +53,9 @@ describe('InventoryScanningPageComponent', () => {
     expect(fixture.nativeElement.querySelectorAll('.scan-form app-form-section')).toHaveLength(1);
     expect(fixture.nativeElement.querySelectorAll('.scan-form app-field-cue')).toHaveLength(4);
     expect(fixture.nativeElement.querySelectorAll('.scan-form app-workflow-footer')).toHaveLength(1);
+    expect(fixture.nativeElement.textContent).toContain('resolutionEvidence');
+    expect(fixture.nativeElement.querySelectorAll('app-detail-section')).toHaveLength(1);
+    expect(fixture.nativeElement.querySelectorAll('.scan-result')).toHaveLength(4);
     const component = fixture.componentInstance as any;
     expect([0, 1, 2, 3].map(status => component.statusName(status))).toEqual(['waiting', 'resolved', 'notFound', 'ambiguous']);
   });

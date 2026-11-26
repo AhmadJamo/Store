@@ -21,12 +21,14 @@
     @if (problem()) { <div class="ui-alert danger" role="alert">{{ problem() }}</div> }
     @if (success()) { <div class="ui-alert success" role="status">{{ success() }}</div> }
 
-    <div class="result-grid">
-      <article class="ui-panel"><strong>{{ i18n.text('countDocument') }}</strong><span class="ui-badge" [class.success]="current.adjustment.status === 1" [class.danger]="current.adjustment.status === 2" [class.warning]="current.adjustment.status === 3">{{ statusName(current.adjustment.status) }}</span><b>{{ current.adjustment.displayName }}</b><small>{{ current.adjustment.secondaryText }}</small></article>
-      <article class="ui-panel"><strong>{{ i18n.text('productScan') }}</strong><span class="ui-badge" [class.success]="current.product.status === 1" [class.danger]="current.product.status === 2" [class.warning]="current.product.status === 3">{{ statusName(current.product.status) }}</span><b>{{ current.product.displayName }}</b><small>{{ current.product.secondaryText }}</small></article>
-      <article class="ui-panel"><strong>{{ i18n.text('sourceScan') }}</strong><span class="ui-badge" [class.success]="current.sourceLocation.status === 1" [class.danger]="current.sourceLocation.status === 2" [class.warning]="current.sourceLocation.status === 3">{{ statusName(current.sourceLocation.status) }}</span><b>{{ current.sourceLocation.displayName }}</b><small>{{ current.sourceLocation.secondaryText }}</small></article>
-      <article class="ui-panel"><strong>{{ i18n.text('destinationScan') }}</strong><span class="ui-badge" [class.success]="current.location.status === 1" [class.danger]="current.location.status === 2" [class.warning]="current.location.status === 3">{{ statusName(current.location.status) }}</span><b>{{ current.location.displayName }}</b><small>{{ current.location.secondaryText }}</small></article>
-    </div>
+    <app-detail-section [title]="i18n.text('resolutionEvidence')" [description]="i18n.text('resolutionEvidenceDescription')">
+      <div class="result-grid">
+        <article class="scan-result"><strong>{{ i18n.text('countDocument') }}</strong><span class="ui-badge" [class.success]="current.adjustment.status === 1" [class.danger]="current.adjustment.status === 2" [class.warning]="current.adjustment.status === 3">{{ statusName(current.adjustment.status) }}</span><b>{{ current.adjustment.displayName }}</b><small>{{ current.adjustment.secondaryText }}</small></article>
+        <article class="scan-result"><strong>{{ i18n.text('productScan') }}</strong><span class="ui-badge" [class.success]="current.product.status === 1" [class.danger]="current.product.status === 2" [class.warning]="current.product.status === 3">{{ statusName(current.product.status) }}</span><b>{{ current.product.displayName }}</b><small>{{ current.product.secondaryText }}</small></article>
+        <article class="scan-result"><strong>{{ i18n.text('sourceScan') }}</strong><span class="ui-badge" [class.success]="current.sourceLocation.status === 1" [class.danger]="current.sourceLocation.status === 2" [class.warning]="current.sourceLocation.status === 3">{{ statusName(current.sourceLocation.status) }}</span><b>{{ current.sourceLocation.displayName }}</b><small>{{ current.sourceLocation.secondaryText }}</small></article>
+        <article class="scan-result"><strong>{{ i18n.text('destinationScan') }}</strong><span class="ui-badge" [class.success]="current.location.status === 1" [class.danger]="current.location.status === 2" [class.warning]="current.location.status === 3">{{ statusName(current.location.status) }}</span><b>{{ current.location.displayName }}</b><small>{{ current.location.secondaryText }}</small></article>
+      </div>
+    </app-detail-section>
 
     @if (canPutaway(current)) {
       <form class="action-card ui-panel" (ngSubmit)="putaway(current)">

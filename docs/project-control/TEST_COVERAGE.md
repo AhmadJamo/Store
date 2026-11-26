@@ -298,3 +298,8 @@
 - Angular Vitest: 343/343 across 140 files; the five-test scanning matrix now also protects localized context, one FormSection, four FieldCues and one WorkflowFooter.
 - Static accessibility: 142 templates; UI inventory 122 pages; FormSection 12 and WorkflowFooter 14. Production build and Playwright 7/7 passed.
 - FRD-ISS-012 remains the only full-gate failure at 84.55 kB versus 80 kB; no budget was relaxed.
+## FRD-I Inventory Scanning result evidence V4 — 2026-11-26
+
+- Angular Vitest: 343/343 across 140 files; five focused tests now also protect one localized DetailSection and exactly four result identities.
+- Static accessibility: 142 templates; UI inventory 122 pages; DetailSection 8. Production build and Playwright 7/7 passed.
+- FRD-ISS-012 remains the only full-gate failure at 84.55 kB versus 80 kB; no budget was relaxed.
