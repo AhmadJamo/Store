@@ -1,5 +1,5 @@
 <section class="stock-transfers" [attr.aria-label]="i18n.text('title')">
-  <app-page-header eyebrow="INVENTORY" [title]="isForm ? (page()?.transferNumber || i18n.text('newTransfer')) : (details()?.transferNumber || i18n.text('title'))" [description]="isForm ? i18n.text('formDescription') : (isDetails ? i18n.text('detailDescription') : i18n.text('description'))">
+  <app-page-header [eyebrow]="i18n.text('inventoryNavigation')" [title]="isForm ? (page()?.transferNumber || i18n.text('newTransfer')) : (details()?.transferNumber || i18n.text('title'))" [description]="isForm ? i18n.text('formDescription') : (isDetails ? i18n.text('detailDescription') : i18n.text('description'))">
     @if (isForm || isDetails) {
       <a secondary-actions class="ui-button secondary" routerLink="/inventory/transfers">{{ i18n.text('back') }}</a>
     } @else if (session.can('StockTransfers.Create')) {
@@ -14,7 +14,7 @@
   } @else if (isForm) {
     <form class="transfer-form ui-panel" [formGroup]="form" (ngSubmit)="save()">
       @if (problem()) { <app-form-error-summary [title]="problem()" [errors]="{}" /> }
-      <app-form-section [title]="i18n.text('transferDetails')">
+      <app-form-section [title]="i18n.text('transferDetails')" [description]="i18n.text('transferDetailsDescription')">
       <div class="form-grid">
         <label><app-field-cue [label]="i18n.text('sourceWarehouse')" [required]="true" [requiredText]="i18n.text('requiredField')" [optionalText]="i18n.text('optionalField')" />
           <select formControlName="fromWarehouseId">
@@ -33,35 +33,34 @@
       </div>
       </app-form-section>
 
-      <app-section-header [title]="i18n.text('items')">
-        <button class="ui-button secondary" type="button" (click)="addItem()">{{ i18n.text('addItem') }}</button>
-      </app-section-header>
-      <div formArrayName="items" class="line-list">
+      <app-form-section [title]="i18n.text('items')" [description]="i18n.text('transferItemsDescription')">
+        <div class="line-section-actions"><button class="ui-button secondary" type="button" (click)="addItem()">{{ i18n.text('addItem') }}</button></div>
+        <div formArrayName="items" class="line-list">
         @for (item of items.controls; track $index; let index = $index) {
           <fieldset [formGroupName]="index" class="line-card">
             <legend>{{ i18n.text('product') }} {{ index + 1 }}</legend>
             <div class="line-grid">
-              <label>{{ i18n.text('product') }}
+              <label><app-field-cue [label]="i18n.text('product')" [required]="true" [requiredText]="i18n.text('requiredField')" [optionalText]="i18n.text('optionalField')" />
                 <select formControlName="productId">
                   <option [ngValue]="0">—</option>
                   @for (product of page()?.products; track product.id) { <option [ngValue]="product.id">{{ product.name }}</option> }
                 </select>
               </label>
               <label>{{ i18n.text('barcode') }}<output>{{ barcode(item.get('productId')?.value) }}</output></label>
-              <label>{{ i18n.text('quantity') }}<input type="number" min="0.001" step="0.001" formControlName="quantity" /></label>
-              <label>{{ i18n.text('sourceLocation') }}
+              <label><app-field-cue [label]="i18n.text('quantity')" [required]="true" [requiredText]="i18n.text('requiredField')" [optionalText]="i18n.text('optionalField')" /><input type="number" min="0.001" step="0.001" formControlName="quantity" /></label>
+              <label><app-field-cue [label]="i18n.text('sourceLocation')" [required]="sourceLocationRequired()" [requiredText]="i18n.text('requiredField')" [optionalText]="i18n.text('optionalField')" />
                 <select formControlName="sourceLocationId">
                   <option [ngValue]="null">{{ i18n.text('automatic') }}</option>
                   @for (location of sourceLocations(); track location.id) { <option [ngValue]="location.id">{{ location.code }}</option> }
                 </select>
               </label>
-              <label>{{ i18n.text('destinationLocation') }}
+              <label><app-field-cue [label]="i18n.text('destinationLocation')" [required]="destinationLocationRequired()" [requiredText]="i18n.text('requiredField')" [optionalText]="i18n.text('optionalField')" />
                 <select formControlName="destinationLocationId">
                   <option [ngValue]="null">{{ i18n.text('automatic') }}</option>
                   @for (location of destinationLocations(); track location.id) { <option [ngValue]="location.id">{{ location.code }}</option> }
                 </select>
               </label>
-              <label class="wide">{{ i18n.text('tracking') }}
+              <label class="wide"><app-field-cue [label]="i18n.text('tracking')" [requiredText]="i18n.text('requiredField')" [optionalText]="i18n.text('optionalField')" />
                 <textarea rows="2" formControlName="trackingAllocations"></textarea>
                 <small>{{ i18n.text('trackingHelp') }}</small>
               </label>
@@ -69,7 +68,8 @@
             <button class="ui-button danger" type="button" (click)="removeItem(index)">{{ i18n.text('remove') }}</button>
           </fieldset>
         }
-      </div>
+        </div>
+      </app-form-section>
       <app-workflow-footer [label]="i18n.text('workflowActions')">
         <a secondary-actions class="ui-button secondary" routerLink="/inventory/transfers">{{ i18n.text('back') }}</a>
         <button class="ui-button primary" [disabled]="saving()">{{ saving() ? i18n.text('saving') : i18n.text('save') }}</button>

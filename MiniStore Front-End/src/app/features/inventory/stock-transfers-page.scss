@@ -5,7 +5,7 @@ label { display: grid; gap: .4rem; }
 input, select, textarea, output { inline-size: 100%; }
 output { min-block-size: 2.5rem; padding: .65rem; border: 1px solid var(--ui-border); border-radius: .5rem; }
 .wide { grid-column: 1 / -1; }
-app-section-header { margin-block: 1rem; }
+.line-section-actions { display: flex; justify-content: flex-end; margin-block-end: 1rem; }
 .line-list { display: grid; gap: 1rem; }
 .line-card { border: 1px solid var(--ui-border); border-radius: .75rem; padding: 1rem; }
 .line-card legend { padding-inline: .4rem; font-weight: 700; }

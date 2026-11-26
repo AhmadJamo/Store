@@ -4,7 +4,7 @@
 
 > الحالة: IN PROGRESS — اكتمل الجرد في 2026-11-25
 >
-> اكتمل Stock Transfer safety audit بستة اختبارات ونجح 338/338 عبر 139 ملفاً. التالي الوحيد: حسّن create/edit form line editor؛ ترجم Inventory eyebrow، أضف وصفاً لقسم البيانات والبنود، واستخدم FieldCues للمنتج والكمية ومواقع المصدر/الوجهة المشروطة وtracking، مع إبقاء الخيارات بالأسماء والباركود وadd/remove وlocation reset وdraft recovery والتحقق وcreate/update وdirty guard كما هي. لا تغيّر detail workflow أو API/Application. شغّل البوابة وحدّث الوثائق واعمل commit مستقل.
+> اكتمل Stock Transfer Form V4 ونجح 338/338 والبناء وPlaywright 7/7. التالي الوحيد: حوّل جدولي items وhistory في record إلى typed DataTables مع أعمدة صريحة وقوالب quantity/status/date، مع حفظ أسماء المنتجات والكميات/المستلم/المتبقي/الناقص/التالف/الموقع وكل انتقال حالة والمستخدم والسبب والتاريخ من الخادم. لا تغيّر workflow actions أو receipt inputs أو API/Application. شغّل البوابة وحدّث الوثائق واعمل commit مستقل.
 
 ## FRD-H — Branches/Warehouses Migration
 

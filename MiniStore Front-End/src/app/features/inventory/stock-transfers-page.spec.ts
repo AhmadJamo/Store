@@ -100,6 +100,10 @@ describe('StockTransfersPageComponent', () => {
     routePath = 'inventory/transfers/new';
     const fixture = TestBed.createComponent(StockTransfersPageComponent);
     const component = fixture.componentInstance as any;
+    fixture.detectChanges();
+    expect(fixture.nativeElement.textContent).toContain('inventoryNavigation');
+    expect(fixture.nativeElement.querySelectorAll('form.transfer-form app-form-section')).toHaveLength(2);
+    expect(fixture.nativeElement.querySelectorAll('.line-card app-field-cue')).toHaveLength(5);
     const router = TestBed.inject(Router);
     const navigate = vi.spyOn(router, 'navigate');
     const line = component.items.at(0);

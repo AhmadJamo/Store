@@ -15,7 +15,6 @@ import { DataTableCellDirective, DataTableColumn, DataTableComponent } from '../
 import { FeedbackStateComponent } from '../../shared/ui/feedback-state/feedback-state';
 import { PageHeaderComponent } from '../../shared/ui/page-header/page-header';
 import { FilterBarComponent } from '../../shared/ui/filter-bar/filter-bar';
-import { SectionHeaderComponent } from '../../shared/ui/section-header/section-header';
 import { SummaryStripComponent } from '../../shared/ui/summary-strip/summary-strip';
 import { WorkflowFooterComponent } from '../../shared/ui/workflow-footer/workflow-footer';
 import { WorkflowProgressComponent, WorkflowStep } from '../../shared/ui/workflow-progress/workflow-progress';
@@ -56,7 +55,6 @@ interface StockTransferDraft {
     RouterLink,
     PageHeaderComponent,
     FilterBarComponent,
-    SectionHeaderComponent,
     SummaryStripComponent,
     WorkflowFooterComponent,
     FeedbackStateComponent,
@@ -256,6 +254,16 @@ export class StockTransfersPageComponent {
   protected destinationLocations() {
     const warehouseId = this.form.controls.toWarehouseId.value;
     return this.page()?.locations.filter(x => x.warehouseId === warehouseId && x.isReceivable) ?? [];
+  }
+
+  protected sourceLocationRequired(): boolean {
+    const warehouseId = this.form.controls.fromWarehouseId.value;
+    return this.page()?.warehouses.find(x => x.id === warehouseId)?.requireSourceLocation ?? false;
+  }
+
+  protected destinationLocationRequired(): boolean {
+    const warehouseId = this.form.controls.toWarehouseId.value;
+    return this.page()?.warehouses.find(x => x.id === warehouseId)?.requireDestinationLocation ?? false;
   }
 
   protected barcode(productId: number): string {

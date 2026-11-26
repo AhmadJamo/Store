@@ -2706,3 +2706,8 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
   - Added the first Stock Transfer page component spec with six focused tests covering list evidence, all ten statuses, exact action/receipt states and independent permissions.
   - Protected named warehouses and conditional locations, distinct-warehouse validation, create and workflow commands, reason prompts, receipt quantities/discrepancies and dirty navigation.
   - Verified 338/338 Angular tests across 139 files. Runtime, APIs, Application reservation/tracking/valuation rules and permissions are unchanged.
+
+- 2026-11-26: Completed the FRD-I Stock Transfer Form V4 slice.
+  - Localized the Inventory context and separated transfer identity from line items with two described FormSections.
+  - Added five FieldCues per line, including conditional source/destination requirements derived from server warehouse policy; preserved names, barcode, tracking, add/remove, draft recovery, validation and create/update commands.
+  - Verified 338/338 Angular tests across 139 files, production build, 142-template accessibility, 122-page consistency and Playwright 7 passed/0 failed/3 skips. FRD-ISS-012 remains independent.

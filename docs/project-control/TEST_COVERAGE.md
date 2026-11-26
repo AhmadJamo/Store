@@ -270,3 +270,9 @@
 
 - Angular Vitest: 338/338 across 139 files; six new component tests cover list/filter evidence, ten statuses, action/receipt matrix, permissions, form validation, commands, discrepancy evidence and dirty navigation.
 - No runtime, API, permission or Application behavior changed in this audit slice; the targeted suite passed 6/6.
+
+## FRD-I Stock Transfer Form V4 — 2026-11-26
+
+- Angular Vitest: 338/338 across 139 files; the six-test Stock Transfer matrix now also protects localized context, two FormSections and five line FieldCues.
+- Static accessibility: 142 templates; UI inventory 122 pages. Production build and Playwright 7/7 passed.
+- FRD-ISS-012 remains the only full-gate failure at 84.55 kB versus 80 kB; no budget was relaxed.
