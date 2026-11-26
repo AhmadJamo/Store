@@ -66,6 +66,10 @@ describe('InventoryTrackingPageComponent', () => {
     expect(fixture.nativeElement.querySelectorAll('.recall-actions app-form-section')).toHaveLength(2);
     expect(fixture.nativeElement.querySelectorAll('.recall-actions app-field-cue')).toHaveLength(6);
     expect(fixture.nativeElement.querySelectorAll('.recall-actions app-workflow-footer')).toHaveLength(2);
+    const balances = fixture.nativeElement.querySelector('app-data-table.tracking-balance-table');
+    expect(balances).not.toBeNull();
+    expect(balances.querySelectorAll('thead th')).toHaveLength(10);
+    expect(balances.querySelectorAll('app-field-cue')).toHaveLength(1);
     const component = fixture.componentInstance as any;
     expect([1, 2].map(value => component.policyName(value))).toEqual(['lotTracking', 'serialTracking']);
     expect([1, 2, 3].map(value => component.statusName(value))).toEqual(['trackingAvailable', 'trackingDepleted', 'trackingQuarantined']);

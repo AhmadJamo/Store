@@ -336,3 +336,6 @@
 - Angular Vitest: 347/347 across 140 files; focused tests protect one DetailSection, two action FormSections, six FieldCues, two WorkflowFooters and exact commands.
 - Static accessibility: 142 templates; UI inventory 122 pages; DetailSection 9. Production build and Playwright 7/7 passed.
 - FRD-ISS-012 remains the only full-gate failure at 84.55 kB versus 80 kB; no budget was relaxed.
+
+## FRD-I Tracking Balances/Quarantine V4 — 2026-11-27
+- Angular Vitest 347/347; typed ten-column permission-aware balance table and required reason action protected. Build and Playwright 7/7 passed; FRD-ISS-012 remains independent.

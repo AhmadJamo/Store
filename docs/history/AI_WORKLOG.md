@@ -2766,3 +2766,5 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
   - Replaced generic recall cards with DetailSections preserving status, identity, affected-document and communication evidence.
   - Split active communication and close actions into two described FormSections with six FieldCues and two WorkflowFooters while preserving ManageRecall, validation and exact payloads.
   - Verified 347/347 Angular tests, production build, 142 templates, 122 pages and Playwright 7 passed/0 failed/3 skips. FRD-ISS-012 remains independent.
+
+- 2026-11-27: Completed Tracking Balances/Quarantine V4 with a typed permission-aware DataTable and required reason cue. Preserved all server evidence, gates, validation and exact commands. Verified 347/347 tests, build and Playwright 7/7; FRD-ISS-012 remains independent.

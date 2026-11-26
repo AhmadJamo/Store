@@ -1,5 +1,7 @@
 # حالة المشروع / Project Status
 
+> تحديث 2026-11-27: اكتملت Tracking Balances/Quarantine بجدول typed وإجراء سبب مطلوب مع حفظ الأدلة والصلاحية والشروط والأوامر. نجح 347/347 والبناء وPlaywright 7/7؛ Tracking History هو التالي.
+
 > تحديث 2026-11-27: اكتمل Tracking Recall Workspace بـDetailSection وقسمين وست إشارات وتذييلين مع حفظ دليل الخادم والصلاحية والحالة والتحقق والأوامر. نجح 347/347 والبناء وPlaywright 7/7؛ balances/quarantine هي التالية.
 
 > تحديث 2026-11-26: اكتمل Tracking Recall Create V4 بقسم موصوف وأربع إشارات مطلوبة وتذييل إجراء مع حفظ الصلاحية والتحقق والمنتجات المسماة والأمر. نجح 347/347 والبناء وPlaywright 7/7؛ recall records/actions هي التالية.
