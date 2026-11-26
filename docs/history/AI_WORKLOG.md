@@ -2663,3 +2663,7 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
   - Added five focused component tests protecting server-returned document number, named warehouse/location, blind-count flag, line count, creation evidence, detail links and all five workflow labels.
   - Protected independent Create permission, newest-first service response order and distinct loading/recovery/true-empty states; confirmed the GET directory contract has no filter or paging input and Angular must not invent either.
   - The focused suite passed 5/5 before presentation changes; runtime, InventoryAdjustments.View/Create boundaries, API/DTO/Application workflow and stock posting behavior are unchanged.
+- 2026-11-26: Completed the FRD-I Inventory Adjustment List V4 slice.
+  - Replaced the hard-coded eyebrow and projected table with localized Inventory context, a three-item SummaryStrip and a typed eight-column DataTable with true-empty guidance.
+  - Preserved the complete newest-first service response, document/warehouse/location/count/date evidence, all five workflow labels, detail links and independent Create permission; no filter, paging, API, DTO, workflow or posting behavior was added or changed.
+  - Verified 319/319 Angular tests across 137 files, production build, 142-template accessibility, 122-page consistency and Playwright 7 passed/0 failed/3 authenticated-API skips. The only full-gate failure remains the independent FRD-ISS-012 84.55 kB localization chunk versus its 80 kB budget.

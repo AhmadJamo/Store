@@ -4,7 +4,7 @@
 
 > الحالة: IN PROGRESS — اكتمل الجرد في 2026-11-25
 >
-> اكتمل Adjustment List safety net بخمسة اختبارات، وثبت أن GET يعيد الدليل كاملاً بترتيب الخادم ولا يملك filter/paging inputs. التالي الوحيد: حوّل قائمة `/inventory/adjustments` إلى سياق Inventory مترجم وtyped DataTable وحالات موحدة مع الحفاظ على الأعمدة الثمانية والترتيب ورابط التفاصيل وصلاحية Create؛ لا تضف فلاتر أو صفحات وهمية ولا تغيّر Create/Record أو API/DTO/Application authority. شغّل البوابة وحدّث الوثائق واعمل commit مستقل.
+> اكتملت Adjustment List V4 مع 319/319 اختباراً وبناء ناجح وPlaywright 7/7؛ FRD-ISS-012 مستقلة. التالي الوحيد: راجع شاشة `/inventory/adjustments/new` وعقد create-form/POST، ثم أضف safety net مستقلاً يحمي خيارات المستودع/الموقع/المنتج المسماة، ترابط الموقع بالمستودع، blind count، التحقق، dirty state، أمر الإنشاء والتنقل بعد النجاح والصلاحية، من دون تغيير runtime. حدّث الوثائق واعمل commit مستقل قبل أي تحويل UI.
 
 ## FRD-H — Branches/Warehouses Migration
 

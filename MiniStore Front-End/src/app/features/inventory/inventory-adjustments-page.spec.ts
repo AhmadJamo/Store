@@ -42,6 +42,8 @@ describe('InventoryAdjustmentsPageComponent', () => {
     expect(fixture.nativeElement.textContent).toContain('yes');
     expect(fixture.nativeElement.textContent).toContain('3');
     expect(fixture.nativeElement.querySelectorAll('app-page-header')).toHaveLength(1);
+    expect(fixture.nativeElement.querySelectorAll('app-summary-strip')).toHaveLength(1);
+    expect(fixture.nativeElement.querySelectorAll('app-summary-strip article')).toHaveLength(3);
     expect(fixture.nativeElement.querySelectorAll('app-data-table th')).toHaveLength(8);
     expect(fixture.nativeElement.querySelector('a[href="/inventory/adjustments/42"]')).not.toBeNull();
   });
