@@ -4,7 +4,7 @@
 
 > الحالة: IN PROGRESS — اكتمل الجرد في 2026-11-25
 >
-> اكتملت Inventory Availability كسطح V4 بسياق Inventory مترجم وFilterBar/SummaryStrip/typed DataTable وtrue-empty/filtered-empty، مع بقاء query/paging والكميات تحت سلطة الخادم. نجح 295 اختباراً والبناء و142 قالباً و122 صفحة وPlaywright 7/7. التالي الوحيد: وسّع safety net لـInventory Reservations ليحمي الصفوف والحالات والمراجع والتواريخ وserver search/status/paging/reset والتسلسل الحالي، واعمل commit قبل أي تغيير بصري.
+> اكتمل safety net لـInventory Reservations بخمسة اختبارات تحمي reference/source/status/quantity/lifecycle، والبحث المؤجل وstatus/paging/reset والحالة الفارغة. التالي الوحيد: حوّل الصفحة إلى سياق Inventory مترجم وFilterBar/SummaryStrip/typed DataTable مع true-empty/filtered-empty، وحافظ على GET-only وInventoryReservations.View وserver search/status/paging وكل lifecycle evidence كما هي. شغّل البوابة واعمل commit مستقل.
 
 ## FRD-H — Branches/Warehouses Migration
 

@@ -1,6 +1,6 @@
 # 16 — Inventory migration audit
 
-> Status: FRD-I implementation in progress — Inventory Availability complete; Reservations safety net next
+> Status: FRD-I implementation in progress — Reservations safety net complete
 > Date: 2026-11-25  
 > Source of truth: Angular routes/components and clients, Internal API controllers, Application services/DTOs, repositories and inventory module documentation
 
@@ -50,7 +50,7 @@ The Inventory application currently exposes 19 Angular routes through 15 page te
 ## Migration order
 
 1. **Inventory Availability COMPLETE.** Localized Inventory context, FilterBar, SummaryStrip and typed DataTable now distinguish true-empty/filtered-empty while preserving named server rows, debounced search, warehouse/paging query, bounded reset and all server-authored calculations.
-2. **Reservations and Stock Transactions read-only directories — NEXT.** Expand the existing Reservations spec before presentation changes, then establish missing Stock Transactions component coverage; preserve server paging, immutable evidence and independent permissions.
+2. **Reservations safety net COMPLETE; list migration next.** Five focused tests protect server-authored reference/source/status/quantity/lifecycle evidence, search/status/paging/reset and empty behavior. Stock Transactions coverage follows after the Reservations UI slice; preserve server paging, immutable evidence and independent permissions.
 3. **Insights and Reconciliation read-only analysis pair.** Split their shared presentation concerns only if it reduces risk; keep classifications and tolerances server-authored.
 4. **Adjustment List/Create/Record.** Add list/form/state-action matrices before any visual change; keep frozen count and separation-of-duties rules unchanged.
 5. **Product Stock.** Treat list, opening stock/edit and manual adjustment as separate presentation slices despite the current shared component.

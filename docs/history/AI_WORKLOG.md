@@ -2627,3 +2627,7 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
   - Replaced the hard-coded Inventory eyebrow, hand-built filter card and projected table with localized Inventory context, FilterBar, SummaryStrip and a typed seven-column DataTable.
   - Added distinct true-empty/filtered-empty guidance and a composite rendering key while preserving server-authored names and OnHand/Reserved/Available, debounced server search, warehouse filter, bounded paging/reset, GET-only permission boundary and internal IDs.
   - Preserved the legacy `.filters` CSS contract for the still-unmigrated Reservations consumer. Verified 295/295 Angular tests across 133 files, production build, 142-template accessibility, 122-page consistency and Playwright 7 passed/0 failed/3 authenticated-API skips. The pre-existing 204.88 kB warning remains open.
+- 2026-11-26: Added the FRD-I Inventory Reservations pre-migration safety net.
+  - Expanded the page component spec from one status assertion to five tests protecting server-authored reference/source/status/quantity/lifecycle evidence, current hierarchy, debounced trimmed search, status/paging query, bounded reset and empty behavior.
+  - Verified the Stock Transfer/Sales Order and Active/Consumed/Released presentation mappings without moving lifecycle authority into Angular.
+  - The focused suite passed 5/5 before any presentation change; runtime, GET-only API, reservation lifecycle and paging behavior are unchanged.
