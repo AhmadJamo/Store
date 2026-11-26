@@ -1,5 +1,7 @@
 # حالة المشروع / Project Status
 
+> تحديث 2026-11-26: اكتمل Tracking Recall Create V4 بقسم موصوف وأربع إشارات مطلوبة وتذييل إجراء مع حفظ الصلاحية والتحقق والمنتجات المسماة والأمر. نجح 347/347 والبناء وPlaywright 7/7؛ recall records/actions هي التالية.
+
 > تحديث 2026-11-26: اكتملت Tracking Expiration Alerts بـSummaryStrip وجدول typed من تسعة أعمدة مع حفظ العدادات وكل أدلة الخادم والحالة الفارغة. نجح 347/347 والبناء وPlaywright 7/7؛ Recall Workspace هو التالي.
 
 > تحديث 2026-11-26: اكتمل Tracking Opening Allocation V4 بسياق Inventory مترجم وقسمين وتسع إشارات حقول وتذييل تفعيل، مع حفظ الخيارات المسماة وlot/serial والسطور والتواريخ والتحقق والـpayload. نجح 347/347 والبناء وPlaywright 7/7؛ expiration alerts هي التالية.

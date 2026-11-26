@@ -2756,3 +2756,8 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
   - Replaced bespoke metric cards with a two-item SummaryStrip and the manual alert table with a typed nine-column DataTable and true-empty state.
   - Preserved server expired/expiring counts, severity, product, identifier, warehouse, location, quantity, expiration date, days and status.
   - Verified 347/347 Angular tests, production build, 142 templates, 122 pages and Playwright 7 passed/0 failed/3 skips. FRD-ISS-012 remains independent.
+
+- 2026-11-26: Completed the FRD-I Tracking Recall Create V4 slice.
+  - Replaced the dense recall-create card with a described FormSection, four required FieldCues and a dedicated WorkflowFooter.
+  - Preserved InventoryTracking.ManageRecall, named tracked-product choice, validation, post-success reset and exact createRecall payload.
+  - Verified 347/347 Angular tests, production build, 142 templates, 122 pages and Playwright 7 passed/0 failed/3 skips. FRD-ISS-012 remains independent.

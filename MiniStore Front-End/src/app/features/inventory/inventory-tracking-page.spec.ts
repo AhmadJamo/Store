@@ -96,6 +96,9 @@ describe('InventoryTrackingPageComponent', () => {
     permissions.clear(); permissions.add('InventoryTracking.ManageRecall');
     const recall = TestBed.createComponent(InventoryTrackingPageComponent); recall.detectChanges();
     expect(recall.nativeElement.querySelectorAll('form.section-form')).toHaveLength(1);
+    expect(recall.nativeElement.querySelectorAll('.recall-create-form app-form-section')).toHaveLength(1);
+    expect(recall.nativeElement.querySelectorAll('.recall-create-form app-field-cue')).toHaveLength(4);
+    expect(recall.nativeElement.querySelectorAll('.recall-create-form app-workflow-footer')).toHaveLength(1);
     expect(recall.nativeElement.textContent).toContain('recordCommunication');
 
     permissions.clear(); permissions.add('InventoryTracking.ManageQuarantine');

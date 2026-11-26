@@ -324,3 +324,9 @@
 - Angular Vitest: 347/347 across 140 files; five focused tests protect SummaryStrip plus the typed nine-column alert table and server evidence.
 - Static accessibility: 142 templates; UI inventory 122 pages; SummaryStrip 14. Production build and Playwright 7/7 passed.
 - FRD-ISS-012 remains the only full-gate failure at 84.55 kB versus 80 kB; no budget was relaxed.
+
+## FRD-I Inventory Tracking Recall Create V4 — 2026-11-26
+
+- Angular Vitest: 347/347 across 140 files; focused permission tests protect one FormSection, four FieldCues and one WorkflowFooter plus the exact create command.
+- Static accessibility: 142 templates; UI inventory 122 pages. Production build and Playwright 7/7 passed.
+- FRD-ISS-012 remains the only full-gate failure at 84.55 kB versus 80 kB; no budget was relaxed.

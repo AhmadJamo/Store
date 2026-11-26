@@ -4,7 +4,7 @@
 
 > الحالة: IN PROGRESS — اكتمل الجرد في 2026-11-25
 >
-> اكتمل Tracking Expiration Alerts V4 بـSummaryStrip وجدول typed من تسعة أعمدة ونجح 347/347 والبناء وPlaywright 7/7. التالي الوحيد: حسّن Recall Workspace فقط؛ نظّم create recall في FormSection مع أربع FieldCues وWorkflowFooter، واعرض كل recall في DetailSection يحفظ الحالة والمرجع والمنتج والidentifier والسبب وaffected documents والcommunication log، ثم نظّم communication/close actions دون تغيير الصلاحية أو التحقق أو الأوامر. لا تغيّر opening/expiration/quarantine/balances/history أو API/Application. شغّل البوابة وحدّث الوثائق واعمل commit مستقل.
+> اكتمل Tracking Recall Create V4 بـFormSection وأربع FieldCues وWorkflowFooter ونجح 347/347 والبناء وPlaywright 7/7. التالي الوحيد: حسّن recall records/actions فقط؛ اعرض كل recall في DetailSection يحفظ الحالة والمرجع والمنتج والidentifier والسبب وaffected documents والcommunication log، ونظّم communication وclose actions مع FieldCues وWorkflowFooter دون تغيير ManageRecall أو شروط active status أو التحقق أو payloads. لا تغيّر opening/expiration/quarantine/balances/history أو API/Application. شغّل البوابة وحدّث الوثائق واعمل commit مستقل.
 
 ## FRD-H — Branches/Warehouses Migration
 
