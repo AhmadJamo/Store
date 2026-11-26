@@ -4,7 +4,7 @@
 
 > الحالة: IN PROGRESS — اكتمل الجرد في 2026-11-25
 >
-> اكتملت Inventory Reservations بالكامل مع 299 اختباراً والبناء وفحوص 142 قالباً و122 صفحة وPlaywright 7/7. التالي الوحيد: دقّق Stock Transactions ثم أضف safety net مستقلاً يحمي immutable transaction evidence، البحث/المرشحات/الصفحات، permission وGET-only قبل أي تغيير عرض. لا تغيّر API أو DTO أو سلطة Application، ووثّق واعمل commit مستقل.
+> اكتمل Stock Transactions safety net بخمسة اختبارات تحمي أدلة الهوية والأسماء والكمية والتكلفة والنوع والمرجع والتاريخ، مع فلاتر النوع/الاتجاه/التاريخ والبحث والفرز والصفحات/reset. التالي الوحيد: حوّل القائمة إلى سياق Inventory مترجم وFilterBar/SummaryStrip/typed sortable DataTable مع true-empty/filtered-empty، وحافظ على GET-only وStockTransactions.View وكل سلطة Application والخادم. شغّل البوابة واعمل commit مستقل.
 
 ## FRD-H — Branches/Warehouses Migration
 

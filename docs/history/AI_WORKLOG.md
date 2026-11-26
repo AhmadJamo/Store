@@ -2635,3 +2635,7 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
   - Replaced the hard-coded eyebrow, hand-built filter card and projected table with localized Inventory context, FilterBar, SummaryStrip and a typed seven-column DataTable; added distinct true-empty/filtered-empty guidance.
   - Preserved the GET-only InventoryReservations.View boundary and server-authored reference/source/status/quantity/lifecycle evidence, debounced search, status filter, paging and reset. Removed the now-unused legacy shared filter-grid CSS.
   - Verified 299/299 Angular tests across 133 files, production build, 142-template accessibility, 122-page consistency and Playwright 7 passed/0 failed/3 authenticated-API skips. The full gate separately exposed the pre-existing core localization lazy chunk at 84.55 kB against its 80 kB budget; no budget was relaxed.
+- 2026-11-26: Added the FRD-I Stock Transactions pre-migration safety net.
+  - Added the first page component spec with five tests protecting the ten displayed server-authored identity/name/quantity/cost/type/reference/date fields and current hierarchy.
+  - Protected type/movement/date/page-size filters, debounced trimmed search, server sorting, bounded paging/reset and empty behavior without changing runtime code.
+  - The focused suite passed 5/5; the GET-only StockTransactions.View boundary and Application-owned immutable ledger remain unchanged.
