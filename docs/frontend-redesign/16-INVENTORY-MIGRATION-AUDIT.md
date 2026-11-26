@@ -1,6 +1,6 @@
 # 16 — Inventory migration audit
 
-> Status: FRD-I implementation in progress — Stock Transactions complete; Inventory Insights safety net next
+> Status: FRD-I implementation in progress — Inventory Insights safety net complete
 > Date: 2026-11-26
 > Source of truth: Angular routes/components and clients, Internal API controllers, Application services/DTOs, repositories and inventory module documentation
 
@@ -17,7 +17,7 @@ The Inventory application currently exposes 19 Angular routes through 15 page te
 | Stock Transfers | `/inventory/transfers`, `/new`, `/:id/edit`, `/:id` | View/Create/Edit/Submit/Approve/Reject/Dispatch/Receive/Cancel; reservations, locations, tracking, valuation and posting remain server-owned | Complex workflow; already uses many shared V4 primitives; migrate only after dedicated state/action evidence |
 | Inventory Scanning | `/inventory/scanning` | `InventoryScanning.View` plus ProductStock.Edit, LocationMovements.Create or InventoryAdjustments.Count per command; server idempotency | Touch/keyboard command workspace; no component spec; high operational risk |
 | Replenishment | `/inventory/replenishment` | View/Manage plus StockTransfers.Create or PurchaseRequests.Create; server creates draft documents | Cross-module mutations and dirty settings; two focused tests |
-| Insights | `/inventory/insights` | GET-only `InventoryInsights.View`; classifications and KPIs are server-authored | Shares one large analysis component with Reconciliation; no component spec |
+| Insights | `/inventory/insights` | GET-only `InventoryInsights.View`; classifications and KPIs are server-authored | Five-test safety net complete; shared analysis component still uses legacy presentation |
 | Reconciliation | `/inventory/reconciliation` | GET-only `InventoryReconciliation.View`; exceptions/tolerances/paging are server-authored | Shared analysis component; no component spec |
 | Adjustment List | `/inventory/adjustments` | GET `InventoryAdjustments.View` | Read-only directory but no component spec; depends on workflow terminology |
 | Adjustment Create | `/inventory/adjustments/new` | Create form/POST under `InventoryAdjustments.Create`; named warehouse/location/product choices | Dirty form and blind-count semantics; no component spec |
@@ -52,7 +52,7 @@ The Inventory application currently exposes 19 Angular routes through 15 page te
 1. **Inventory Availability COMPLETE.** Localized Inventory context, FilterBar, SummaryStrip and typed DataTable now distinguish true-empty/filtered-empty while preserving named server rows, debounced search, warehouse/paging query, bounded reset and all server-authored calculations.
 2. **Inventory Reservations COMPLETE.** Localized Inventory context, FilterBar, SummaryStrip and a typed seven-column DataTable distinguish true-empty/filtered-empty while preserving server-authored reference/source/status/quantity/lifecycle evidence and search/status/paging/reset.
 3. **Stock Transactions COMPLETE.** Localized Inventory context, FilterBar, SummaryStrip and a typed sortable ten-column DataTable preserve immutable identity/name/quantity/cost/type/reference/date evidence, all server filter/sort/page contracts and distinct true-empty/filtered-empty behavior.
-4. **Insights and Reconciliation read-only analysis pair — NEXT.** Add safety coverage before presentation changes; split their shared presentation concerns only if it reduces risk and keep classifications and tolerances server-authored.
+4. **Inventory Insights safety net COMPLETE; list migration next.** Five focused tests protect server-authored KPIs, named rows, quantities/values/activity classifications, all filters/threshold validation, permission-aware Reconciliation link and empty behavior. Reconciliation safety coverage follows the Insights UI slice.
 5. **Adjustment List/Create/Record.** Add list/form/state-action matrices before any visual change; keep frozen count and separation-of-duties rules unchanged.
 6. **Product Stock.** Treat list, opening stock/edit and manual adjustment as separate presentation slices despite the current shared component.
 7. **Stock Transfers.** Audit the already-adopted shared primitives against every workflow state and receipt exception before additional restyling.

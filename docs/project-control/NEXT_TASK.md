@@ -4,7 +4,7 @@
 
 > الحالة: IN PROGRESS — اكتمل الجرد في 2026-11-25
 >
-> اكتملت Stock Transactions بالكامل مع 304 اختبارات والبناء وفحوص 142 قالباً و122 صفحة وPlaywright 7/7. التالي الوحيد: دقّق Inventory Insights عبر الصفحة والـAPI وApplication DTO/service والصلاحية، ثم أضف safety net مستقلاً يحمي التصنيفات والمؤشرات والقيم server-authored والمرشحات والحالات قبل أي تغيير عرض. وثّق واعمل commit مستقل.
+> اكتمل Inventory Insights safety net بخمسة اختبارات تحمي KPIs والمنتج/المستودع والكميات والقيم والنشاط والتصنيفات الخمسة والمرشحات والthreshold validation والرابط المشروط بالصلاحية والحالة الفارغة. التالي الوحيد: حوّل وضع Insights داخل الصفحة المشتركة إلى سياق Inventory مترجم وFilterBar/SummaryStrip/typed DataTable مع empty واضحة، من دون تغيير وضع Reconciliation أو API/DTO/Application authority. شغّل البوابة واعمل commit مستقل.
 
 ## FRD-H — Branches/Warehouses Migration
 
