@@ -364,3 +364,10 @@
 - Angular: 376/376 across 143 files; production build passed.
 - Backend Release: 0 warnings/errors; SecurityRegression: 1,668 passed; static accessibility: 142 templates; UI consistency: 122 pages; Playwright: 7/7.
 - Unified gate: 10 passed, 1 failed, 4 skipped. Only FRD-ISS-012 failed at 84.55 kB versus 80 kB; live API/performance checks were skipped without URL/authenticated state.
+
+## FRD-J Reconciliation context/filter/summary V4 — 2026-11-27
+
+- Focused component: 7/7; protects localized Purchasing context, FilterBar, four SummaryStrip items and all prior server evidence/query/permission/empty/error contracts.
+- Angular: 377/377 across 143 files; production build passed.
+- Backend Release: 0 warnings/errors; SecurityRegression: 1,668; static accessibility: 142 templates; UI consistency: 122 pages with FilterBar 14 and SummaryStrip 16; Playwright: 7/7.
+- Unified gate: 10 passed, 1 failed, 4 skipped. Only FRD-ISS-012 failed at 84.55 kB versus 80 kB; live API/performance checks were skipped without URL/authenticated state.

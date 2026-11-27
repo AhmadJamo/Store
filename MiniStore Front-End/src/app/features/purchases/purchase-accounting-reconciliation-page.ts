@@ -6,7 +6,9 @@ import { ApiErrorService } from '../../core/api/api-error.service';
 import { ApiSessionService } from '../../core/api/api-session.service';
 import { ApiRecoveryComponent } from '../../shared/ui/api-recovery/api-recovery';
 import { FeedbackStateComponent } from '../../shared/ui/feedback-state/feedback-state';
+import { FilterBarComponent } from '../../shared/ui/filter-bar/filter-bar';
 import { PageHeaderComponent } from '../../shared/ui/page-header/page-header';
+import { SummaryStripComponent } from '../../shared/ui/summary-strip/summary-strip';
 import { PurchaseAccountingReconciliationApiService } from './purchase-accounting-reconciliation-api.service';
 import { PurchaseAccountingReconciliationLocalizationService } from './purchase-accounting-reconciliation-localization.service';
 
@@ -19,7 +21,9 @@ import { PurchaseAccountingReconciliationLocalizationService } from './purchase-
     RouterLink,
     ApiRecoveryComponent,
     FeedbackStateComponent,
+    FilterBarComponent,
     PageHeaderComponent,
+    SummaryStripComponent,
   ],
   templateUrl: './purchase-accounting-reconciliation-page.html',
   styleUrl: './purchase-accounting-reconciliation-page.scss',

@@ -2,9 +2,9 @@
 
 ## FRD-J — Purchases Migration
 
-> الحالة: IN PROGRESS — reconciliation safety net complete; V4 context/filter/summary next
+> الحالة: IN PROGRESS — reconciliation context/filter/summary complete; inventory evidence table next
 >
-> اكتمل safety net لصفحة Purchase Accounting Reconciliation بستة اختبارات تحمي أدلة inventory/GL وGRNI، query، الصلاحيات والروابط والحالات الفارغة/الأخطاء دون تغيير runtime. نجح 376/376 والبناء وPlaywright 7/7؛ بقي FRD-ISS-012 مستقلاً. التالي الوحيد: نفّذ أول شريحة عرض محدودة للصفحة نفسها فقط — سياق Purchasing مترجم، FilterBar للاستعلام الحالي، وSummaryStrip للمؤشرات الأربعة — مع حفظ قيم الخادم والصلاحيات والعقود. لا تحول جداول الأدلة بعد.
+> اكتمل سياق Purchasing المترجم وFilterBar للاستعلام الحالي وSummaryStrip بأربعة مؤشرات خادمية. نجح 377/377 والبناء وPlaywright 7/7؛ بقي FRD-ISS-012 مستقلاً. التالي الوحيد: حوّل قسم Inventory-to-Ledger وحده إلى DetailSection وDataTable typed يحفظ warehouse/account/operational/ledger/difference/status وروابط stock/warehouse المشروطة والحالة الفارغة وترتيب الخادم. لا تغيّر قسم GRNI بعد ولا API أو الحسابات.
 
 ## FRD-I — Inventory Migration
 

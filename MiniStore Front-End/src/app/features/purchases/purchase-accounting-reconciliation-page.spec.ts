@@ -138,6 +138,20 @@ describe('PurchaseAccountingReconciliationPageComponent', () => {
     expect(text).toContain('475.25');
   });
 
+  it('uses localized Purchasing context, V4 filters, and four server summary items', () => {
+    const fixture = TestBed.createComponent(PurchaseAccountingReconciliationPageComponent);
+    fixture.detectChanges();
+    const element = fixture.nativeElement as HTMLElement;
+
+    expect(element.querySelector('.page-header .eyebrow')?.textContent).toContain(
+      'purchasingNavigation',
+    );
+    expect(element.querySelector('app-filter-bar')).not.toBeNull();
+    expect(element.querySelectorAll('app-summary-strip article')).toHaveLength(4);
+    expect(element.querySelector('app-summary-strip')?.textContent).toContain('1,234.56');
+    expect(element.querySelector('app-summary-strip')?.textContent).toContain('475.25');
+    expect(element.querySelector('.metrics')).toBeNull();
+  });
   it('sends only the selected as-of date and exception flag to the read API', () => {
     const fixture = TestBed.createComponent(PurchaseAccountingReconciliationPageComponent);
     const component = fixture.componentInstance as any;

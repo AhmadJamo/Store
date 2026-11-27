@@ -413,3 +413,7 @@ The 2026-11-27 source audit reconciles 59 authenticated Purchasing routes, inclu
 ### Purchase Accounting Reconciliation safety net
 
 Six focused Angular component tests now protect server-authored inventory/ledger/GRNI totals, named warehouse/account/receipt/order/supplier/settlement evidence, the exact as-of/exception query, independent source and remediation link permissions, honest empty/error states and read-only guidance. No runtime, API, Application, repository, permission or accounting behavior changed. The full gate passed 376/376 Angular tests across 143 files, Backend Release with zero warnings/errors, 1,668 SecurityRegression checks, build and Playwright 7/7; FRD-ISS-012 remains independently open at 84.55 kB versus 80 kB.
+
+### Purchase Accounting Reconciliation context/filter/summary V4
+
+The first presentation slice replaces the hard-coded eyebrow, ad-hoc filter card and four legacy metric cards with bilingual Purchasing context, the shared FilterBar and a four-item SummaryStrip. The existing as-of/exception GET inputs, server-authored inventory/ledger/GRNI values and reconciliation booleans remain authoritative; evidence cards and permission-gated links are unchanged. Seven focused tests and the full gate pass: 377/377 Angular across 143 files, Backend Release with zero warnings/errors, 1,668 SecurityRegression checks, build and Playwright 7/7. FRD-ISS-012 remains independently open at 84.55 kB versus 80 kB.

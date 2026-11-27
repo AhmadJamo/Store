@@ -2,12 +2,6 @@
   display: grid;
   gap: 1.25rem;
 }
-.filters {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: end;
-  gap: 1rem;
-}
 .checkbox {
   display: flex;
   align-items: center;
@@ -28,23 +22,13 @@
 .warning {
   border-inline-start-color: var(--color-warning, #d97706);
 }
-.metrics,
 .cards {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr));
   gap: 1rem;
 }
-.metrics article {
-  display: grid;
-  gap: 0.35rem;
-  border-block-start: 0.25rem solid var(--color-danger, #b91c1c);
-}
-.metrics article.ok,
 .evidence.ok {
   border-block-start-color: var(--color-success, #15803d);
-}
-.metrics strong {
-  font-size: 1.7rem;
 }
 .section-header,
 .evidence > header {

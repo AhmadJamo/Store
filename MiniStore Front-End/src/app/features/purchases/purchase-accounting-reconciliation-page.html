@@ -1,19 +1,21 @@
 <section class="reconciliation-page" [attr.aria-label]="i18n.text('title')">
   <app-page-header
-    eyebrow="PURCHASING"
+    [eyebrow]="i18n.text('purchasingNavigation')"
     [title]="i18n.text('title')"
     [description]="i18n.text('description')"
   />
-  <form class="ui-card filters" [formGroup]="form" (ngSubmit)="load()">
-    <label class="ui-field"
-      ><span>{{ i18n.text('asOf') }}</span
-      ><input type="date" formControlName="asOfDate" [max]="today"
-    /></label>
-    <label class="checkbox"
-      ><input type="checkbox" formControlName="exceptionsOnly" />
-      <span>{{ i18n.text('exceptionsOnly') }}</span></label
-    >
-    <button class="ui-button primary">{{ i18n.text('apply') }}</button>
+  <form [formGroup]="form" (ngSubmit)="load()">
+    <app-filter-bar [label]="i18n.text('filters')">
+      <label class="ui-field"
+        ><span>{{ i18n.text('asOf') }}</span
+        ><input type="date" formControlName="asOfDate" [max]="today"
+      /></label>
+      <label class="checkbox"
+        ><input type="checkbox" formControlName="exceptionsOnly" />
+        <span>{{ i18n.text('exceptionsOnly') }}</span></label
+      >
+      <button filter-actions class="ui-button primary">{{ i18n.text('apply') }}</button>
+    </app-filter-bar>
   </form>
   @if (loading()) {
     <app-feedback-state kind="loading" [title]="i18n.text('loading')" />
@@ -28,28 +30,36 @@
         </p>
       }
     </aside>
-    <div class="metrics">
-      <article class="ui-card" [class.ok]="p.inventoryIsReconciled">
-        <span>{{ i18n.text('operationalInventory') }}</span
-        ><strong>{{ p.operationalInventoryValue | number: '1.2-2' }}</strong
-        ><small>{{ i18n.text('warehouseSnapshots') }}</small>
-      </article>
-      <article class="ui-card" [class.ok]="p.inventoryIsReconciled">
-        <span>{{ i18n.text('inventoryLedger') }}</span
-        ><strong>{{ p.ledgerInventoryBalance | number: '1.2-2' }}</strong
-        ><small>{{ i18n.text('difference') }}: {{ p.inventoryDifference | number: '1.2-2' }}</small>
-      </article>
-      <article class="ui-card" [class.ok]="p.grniIsReconciled">
-        <span>{{ i18n.text('operationalGrni') }}</span
-        ><strong>{{ p.operationalGrniBalance | number: '1.2-2' }}</strong
-        ><small>{{ i18n.text('openReceipts') }}: {{ p.grniOpenReceiptCount }}</small>
-      </article>
-      <article class="ui-card" [class.ok]="p.grniIsReconciled">
-        <span>{{ i18n.text('grniLedger') }}</span
-        ><strong>{{ p.ledgerGrniBalance | number: '1.2-2' }}</strong
-        ><small>{{ i18n.text('difference') }}: {{ p.grniDifference | number: '1.2-2' }}</small>
-      </article>
-    </div>
+    <app-summary-strip
+      [label]="i18n.text('summary')"
+      [items]="[
+        {
+          label: i18n.text('operationalInventory'),
+          value: (p.operationalInventoryValue | number: '1.2-2') || '0',
+          detail: i18n.text('warehouseSnapshots'),
+          tone: p.inventoryIsReconciled ? 'success' : 'warning',
+        },
+        {
+          label: i18n.text('inventoryLedger'),
+          value: (p.ledgerInventoryBalance | number: '1.2-2') || '0',
+          detail:
+            i18n.text('difference') + ': ' + ((p.inventoryDifference | number: '1.2-2') || '0'),
+          tone: p.inventoryIsReconciled ? 'success' : 'warning',
+        },
+        {
+          label: i18n.text('operationalGrni'),
+          value: (p.operationalGrniBalance | number: '1.2-2') || '0',
+          detail: i18n.text('openReceipts') + ': ' + p.grniOpenReceiptCount,
+          tone: p.grniIsReconciled ? 'success' : 'warning',
+        },
+        {
+          label: i18n.text('grniLedger'),
+          value: (p.ledgerGrniBalance | number: '1.2-2') || '0',
+          detail: i18n.text('difference') + ': ' + ((p.grniDifference | number: '1.2-2') || '0'),
+          tone: p.grniIsReconciled ? 'success' : 'warning',
+        },
+      ]"
+    />
     @if (!p.hasGrniAccount) {
       <aside class="ui-card warning">
         <span>{{ i18n.text('configureGrni') }}</span>

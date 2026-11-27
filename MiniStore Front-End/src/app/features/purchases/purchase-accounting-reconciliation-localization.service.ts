@@ -6,6 +6,9 @@ const copy = {
     title: 'Purchase accounting reconciliation',
     description:
       'Read-only comparison of inventory and GRNI operational values with the general ledger.',
+    purchasingNavigation: 'Purchasing',
+    filters: 'Reconciliation filters',
+    summary: 'Reconciliation summary',
     asOf: 'As of date',
     exceptionsOnly: 'Exceptions and open receipts only',
     apply: 'Apply',
@@ -54,6 +57,9 @@ const copy = {
     title: 'مطابقة محاسبة المشتريات',
     description:
       'مقارنة للقراءة فقط بين القيم التشغيلية للمخزون والبضاعة المستلمة غير المفوترة ودفتر الأستاذ العام.',
+    purchasingNavigation: 'المشتريات',
+    filters: 'فلاتر المطابقة',
+    summary: 'ملخص المطابقة',
     asOf: 'كما في تاريخ',
     exceptionsOnly: 'الفروقات والاستلامات المفتوحة فقط',
     apply: 'تطبيق',
