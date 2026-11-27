@@ -1,6 +1,6 @@
 # 17 — Purchases migration audit
 
-> Status: FRD-J in progress — Reconciliation workspace V4 complete; Purchase Analytics safety net next
+> Status: FRD-J in progress — Purchase Analytics safety net complete; context/filter/summary V4 next
 > Date: 2026-11-27
 > Source of truth: Angular routes/components and clients, Internal API controllers, Application services/DTOs, repositories and purchasing module documentation
 
@@ -39,7 +39,7 @@ The authenticated Purchasing workspace exposes 59 Angular routes, including the 
 - Purchase Requests already uses FilterBar, SummaryStrip, FormSection, FieldCue, DetailSection, WorkflowProgress and WorkflowFooter. Purchase Orders uses WorkflowProgress and WorkflowFooter. Other pages remain mixed card/form/table layouts and must be migrated in bounded slices rather than by a feature-wide rewrite.
 - English and Arabic localization services exist for every surface; Purchase Templates intentionally reuses Purchase Agreement localization. Any changed copy must remain bilingual and RTL-safe.
 - At audit time, the purchasing feature had 20 API-client spec files but zero `*page.spec.ts` component files. API request coverage alone does not protect rendered server evidence, permission-gated actions, empty/error states, form payloads or dirty recovery.
-- The completed Reconciliation pilot has nine component tests. The current baseline is 379 Angular tests across 143 files, Backend Release with zero warnings/errors, 1,668 SecurityRegression checks, production build and Playwright 7/7. Static gates report 44 DataTable pages, 14 FilterBars, 16 SummaryStrips and 10 DetailSection pages. FRD-ISS-012 remains independently open at 84.55 kB versus 80 kB; live API/performance checks remain skipped without an external URL and authenticated state.
+- The completed Reconciliation pilot has nine component tests, and Purchase Analytics now has seven focused component tests. The current baseline is 386 Angular tests across 144 files, Backend Release with zero warnings/errors, 1,668 SecurityRegression checks, production build and Playwright 7/7. Static gates report 44 DataTable pages, 14 FilterBars, 16 SummaryStrips and 10 DetailSection pages. FRD-ISS-012 remains independently open at 84.55 kB versus 80 kB; live API/performance checks remain skipped without an external URL and authenticated state.
 
 ## Cross-layer contracts that must not change
 
@@ -65,7 +65,7 @@ Before any presentation change, add a focused component safety net that proves:
 4. Settings, stock, warehouse, receipt, order, bill and return links remain independently permission-gated;
 5. empty/error states do not invent evidence and the report remains explicitly read-only.
 
-Purchase Accounting Reconciliation V4 is complete. Localized context, FilterBar, SummaryStrip and two DetailSections now present Inventory-to-Ledger in a seven-column typed table and GRNI in an eleven-column typed table. Server order, values, status, account evidence, settlements, empty states and independent stock/warehouse/receipt/order/bill/return permissions remain unchanged. The next bounded task is a component safety net for the single-route GET-only Purchase Analytics page before any restyle. Do not change the API, Application service, repository, DTOs, permissions or accounting calculations.
+Purchase Accounting Reconciliation V4 is complete. Localized context, FilterBar, SummaryStrip and two DetailSections now present Inventory-to-Ledger in a seven-column typed table and GRNI in an eleven-column typed table. Server order, values, status, account evidence, settlements, empty states and independent stock/warehouse/receipt/order/bill/return permissions remain unchanged. The Purchase Analytics safety net is complete: seven focused component tests protect the selected read query, server options and summaries, trends, buyer workload, open exceptions and Vendor Bill drill-through, supplier performance, localized KPI evidence, server-required acceptance-journey permissions, honest empty state and shared recovery. The next bounded task is its localized Purchasing context, shared FilterBar and four-item SummaryStrip V4 slice. Do not change the API, Application service, repository, DTOs, permissions or accounting calculations.
 
 ## Deferred ordering
 

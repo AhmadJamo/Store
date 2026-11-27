@@ -2,9 +2,9 @@
 
 ## FRD-J — Purchases Migration
 
-> الحالة: IN PROGRESS — reconciliation workspace V4 complete; Purchase Analytics safety net next
+> الحالة: IN PROGRESS — Purchase Analytics safety net complete; context/filter/summary V4 next
 >
-> اكتملت صفحة Purchase Accounting Reconciliation V4 بعد تحويل GRNI إلى DetailSection وجدول typed من 11 عموداً يحفظ الإيصال والتاريخ والمورد والمستودع والأمر والقيم والحالة والتسويات وروابط المستندات حسب الصلاحية وترتيب الخادم والحالة الفارغة. نجح 379/379 والبناء وPlaywright 7/7؛ بقي FRD-ISS-012 مستقلاً. التالي الوحيد: أضف safety net مركزاً لصفحة Purchase Analytics للقراءة فقط يحمي query/options/KPIs/trends/workload/exceptions/suppliers/acceptance journey، وروابطها حسب الصلاحية والحالات الفارغة/الأخطاء، دون تغيير runtime أو restyle.
+> اكتمل safety net لصفحة Purchase Analytics بسبعة اختبارات تحمي query/options والملخصات والاتجاهات وعبء المشترين والاستثناءات والموردين وتعريفات KPI ورحلة القبول وروابطها حسب صلاحية الخادم والحالات الفارغة/الأخطاء، دون تغيير runtime. نجح 386/386 والبناء وPlaywright 7/7؛ بقي FRD-ISS-012 مستقلاً. التالي الوحيد: حوّل سياق الصفحة والفلاتر وبطاقات الملخص الأربع إلى Purchasing context مترجم وFilterBar وSummaryStrip V4 مع إبقاء query/options والقيم الخادمية كما هي، دون تغيير API أو Application أو الحسابات.
 
 ## FRD-I — Inventory Migration
 

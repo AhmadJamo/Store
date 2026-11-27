@@ -32,7 +32,7 @@
 | Contacts | Audited | Verified | FRD-G List/Form/Record | Verified current APIs and permissions | 282 + security 1,668 + Playwright 7/7 | Migrated — `acceptance/contacts-pilot-2026-11-25/` |
 | Branches / Warehouses | Audited | Verified | FRD-H Workspace/Master/Locations | Verified current APIs, permissions and branch context | 291 + security 1,668 + Playwright 7/7 | Migrated — `acceptance/branches-warehouses-pilot-2026-11-25/` |
 | Inventory | Audited | Verified | All 22 routes / 15 templates migrated to scoped V4 patterns | Verified services/APIs/permissions | 370 + security 1,668 + Playwright 7/7 | Migrated — `acceptance/inventory-2026-11-27/` |
-| Purchases | Audited | Scoped | Reconciliation workspace V4 complete; remaining wave mixed + separate supplier portal | Verified services/APIs/permissions | 20 API specs + 9 reconciliation page tests | Purchase Analytics safety net next |
+| Purchases | Audited | Scoped | Reconciliation workspace V4 complete; Analytics safety net complete; remaining wave mixed + separate supplier portal | Verified services/APIs/permissions | 20 API specs + 9 reconciliation + 7 analytics page tests | Purchase Analytics context/filter/summary V4 next |
 | Sales | Audited | Record concept | Legacy V3 | Verified | existing specs | Planned wave 6 |
 | Accounting | Audited | Planned | Legacy V3 | Verified | existing specs | Planned wave 7 |
 | Administration / Settings | Audited | Planned | Legacy V3 | Verified | existing specs | Planned wave 8 |

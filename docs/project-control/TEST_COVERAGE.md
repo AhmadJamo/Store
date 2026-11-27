@@ -385,3 +385,11 @@
 - Angular: 379/379 across 143 files; production build passed.
 - Backend Release: 0 warnings/errors; SecurityRegression: 1,668; static accessibility: 142 templates; UI consistency: 122 pages; Playwright: 7/7.
 - Unified gate: 10 passed, 1 failed, 4 skipped. Only FRD-ISS-012 failed at 84.55 kB versus 80 kB; live API/performance checks were skipped without URL/authenticated state.
+
+## FRD-J Purchase Analytics safety net — 2026-11-27
+
+- Seven focused component tests cover query/options and summary evidence, trends, buyer workload, open exceptions and Vendor Bill drill-through, supplier performance, KPI definitions, server-required acceptance-journey permission filtering, empty evidence and shared recovery.
+- Angular: 386/386 across 144 files; production build passed.
+- Backend Release: zero warnings/errors; SecurityRegression: 1,668 passed; static accessibility: 142 templates; Playwright/browser: 7/7.
+- Unified gate: 10 passed, 1 failed and 4 skipped. The only failure remains independent FRD-ISS-012 at 84.55 kB versus 80 kB; live API/performance stayed skipped without external URL and authenticated state.
+- Runtime, API, Application, repository, permission and calculation behavior did not change.
