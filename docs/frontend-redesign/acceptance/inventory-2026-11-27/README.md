@@ -1,7 +1,9 @@
 # FRD-I Inventory acceptance
 
-> Date: 2026-11-27  
-> Result: Accepted for presentation, existing contracts, backend build and security regression with one independent open bundle-budget issue  
+> Date: 2026-11-27
+>
+> Result: Accepted for presentation, existing contracts, backend build and security regression with one independent open bundle-budget issue
+>
 > Scope: 22 Angular Inventory routes across 15 page templates
 
 ## Scope reconciliation
