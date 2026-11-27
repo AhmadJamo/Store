@@ -43,6 +43,10 @@ const copy = {
     assignAccount: 'Assign inventory account',
     noInventoryExceptions: 'No inventory reconciliation exceptions were found.',
     grniDetails: 'GRNI receipt details',
+    receipt: 'Receipt',
+    date: 'Date',
+    supplier: 'Supplier',
+    warehouse: 'Warehouse',
     grniDescription:
       'Receipt value less unbilled returns and vendor bill clearing equals the expected GRNI balance.',
     grniAccount: 'GRNI account',
@@ -97,6 +101,10 @@ const copy = {
     assignAccount: 'تعيين حساب المخزون',
     noInventoryExceptions: 'لم يتم العثور على فروقات في مطابقة المخزون.',
     grniDetails: 'تفاصيل الاستلامات غير المفوترة',
+    receipt: 'الاستلام',
+    date: 'التاريخ',
+    supplier: 'المورد',
+    warehouse: 'المستودع',
     grniDescription:
       'قيمة الاستلام ناقص المرتجعات غير المفوترة وتسويات فواتير المورد تساوي الرصيد المتوقع.',
     grniAccount: 'حساب البضاعة المستلمة غير المفوترة',

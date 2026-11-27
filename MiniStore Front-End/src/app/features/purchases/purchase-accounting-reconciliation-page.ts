@@ -60,6 +60,25 @@ export class PurchaseAccountingReconciliationPageComponent {
   protected readonly inventoryRows = computed(() =>
     (this.page()?.inventory ?? []).map((row: any) => ({ ...row, rowKey: row.warehouseId })),
   );
+  protected readonly grniColumns = computed<readonly DataTableColumn[]>(() => [
+    { key: 'receiptNumber', header: this.i18n.text('receipt'), kind: 'code' },
+    { key: 'receiptDate', header: this.i18n.text('date'), kind: 'date' },
+    { key: 'supplierName', header: this.i18n.text('supplier'), width: '16%' },
+    { key: 'warehouseName', header: this.i18n.text('warehouse'), width: '14%' },
+    { key: 'purchaseOrderNumber', header: this.i18n.text('purchaseOrder'), kind: 'code' },
+    { key: 'receiptValue', header: this.i18n.text('receiptValue'), kind: 'number' },
+    { key: 'returnedValue', header: this.i18n.text('returned'), kind: 'number' },
+    { key: 'billedClearingValue', header: this.i18n.text('billedClearing'), kind: 'number' },
+    { key: 'outstandingValue', header: this.i18n.text('outstanding'), kind: 'number' },
+    { key: 'status', header: this.i18n.text('status'), kind: 'status' },
+    { key: 'settlements', header: this.i18n.text('settlements'), kind: 'actions' },
+  ]);
+  protected readonly grniRows = computed(() =>
+    (this.page()?.grniReceipts ?? []).map((row: any) => ({
+      ...row,
+      rowKey: row.goodsReceiptId,
+    })),
+  );
   protected readonly today = new Date().toISOString().slice(0, 10);
   protected readonly form = this.fb.nonNullable.group({
     asOfDate: [this.today],

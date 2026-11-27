@@ -2,9 +2,9 @@
 
 ## FRD-J — Purchases Migration
 
-> الحالة: IN PROGRESS — reconciliation inventory evidence complete; GRNI evidence table next
+> الحالة: IN PROGRESS — reconciliation workspace V4 complete; Purchase Analytics safety net next
 >
-> اكتمل Inventory-to-Ledger ضمن DetailSection وجدول typed من سبعة أعمدة يحفظ warehouse/account/operational/ledger/difference/status وروابط الإصلاح المشروطة والحالة الفارغة وترتيب الخادم. نجح 378/378 والبناء وPlaywright 7/7؛ بقي FRD-ISS-012 مستقلاً. التالي الوحيد: حوّل قسم GRNI وحده إلى DetailSection وDataTable typed يحفظ receipt/date/supplier/warehouse/order/receipt-returned-billed/outstanding/settlements وروابط المستندات حسب الصلاحية وترتيب الخادم والحالة الفارغة. لا تغيّر API أو الحسابات.
+> اكتملت صفحة Purchase Accounting Reconciliation V4 بعد تحويل GRNI إلى DetailSection وجدول typed من 11 عموداً يحفظ الإيصال والتاريخ والمورد والمستودع والأمر والقيم والحالة والتسويات وروابط المستندات حسب الصلاحية وترتيب الخادم والحالة الفارغة. نجح 379/379 والبناء وPlaywright 7/7؛ بقي FRD-ISS-012 مستقلاً. التالي الوحيد: أضف safety net مركزاً لصفحة Purchase Analytics للقراءة فقط يحمي query/options/KPIs/trends/workload/exceptions/suppliers/acceptance journey، وروابطها حسب الصلاحية والحالات الفارغة/الأخطاء، دون تغيير runtime أو restyle.
 
 ## FRD-I — Inventory Migration
 

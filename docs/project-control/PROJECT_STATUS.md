@@ -1,5 +1,7 @@
 # حالة المشروع / Project Status
 
+> تحديث 2026-11-27: اكتملت Purchase Accounting Reconciliation V4 بعد تحويل GRNI إلى DetailSection وجدول typed من 11 عموداً يحفظ الأدلة والقيم والتسويات والصلاحيات. نجح 379/379 والبناء وPlaywright 7/7 و1,668 فحصاً أمنياً؛ بقي FRD-ISS-012 مستقلاً. safety net لـPurchase Analytics هو التالي.
+
 > تحديث 2026-11-27: اكتمل Inventory-to-Ledger في مطابقة المشتريات ضمن DetailSection وجدول typed من سبعة أعمدة يحفظ الأدلة والقيم والحالة والصلاحيات. نجح 378/378 والبناء وPlaywright 7/7 و1,668 فحصاً أمنياً؛ بقي FRD-ISS-012 مستقلاً. جدول GRNI typed هو التالي.
 
 > تحديث 2026-11-27: اكتملت أول شريحة عرض FRD-J لمطابقة المشتريات بسياق Purchasing مترجم وFilterBar وSummaryStrip من أربعة مؤشرات خادمية. نجح 377/377 والبناء وPlaywright 7/7 و1,668 فحصاً أمنياً؛ بقي FRD-ISS-012 مستقلاً. جدول Inventory-to-Ledger typed هو التالي.

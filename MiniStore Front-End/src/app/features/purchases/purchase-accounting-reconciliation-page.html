@@ -128,93 +128,79 @@
         </ng-template>
       </app-data-table>
     </app-detail-section>
-    <section>
-      <header class="section-header">
-        <div>
-          <h2>{{ i18n.text('grniDetails') }}</h2>
-          <p>{{ i18n.text('grniDescription') }}</p>
-        </div>
-        @if (p.hasGrniAccount) {
-          <small>{{ i18n.text('grniAccount') }}: {{ p.grniAccountDisplay }}</small>
-        }
-      </header>
-      <div class="cards">
-        @for (row of p.grniReceipts; track row.goodsReceiptId) {
-          <article class="ui-card evidence" [class.ok]="Math.abs(row.outstandingValue) <= 0.01">
-            <header>
-              <div>
-                @if (session.can('GoodsReceipts.View')) {
-                  <a [routerLink]="['/purchases/receipts', row.goodsReceiptId]"
-                    ><strong>{{ row.receiptNumber }}</strong></a
-                  >
-                } @else {
-                  <strong>{{ row.receiptNumber }}</strong>
-                }
-                <small
-                  >{{ row.receiptDate | date: 'mediumDate' }} · {{ row.supplierName }} ·
-                  {{ row.warehouseName }}</small
+    <app-detail-section
+      [title]="i18n.text('grniDetails')"
+      [description]="i18n.text('grniDescription')"
+    >
+      @if (p.hasGrniAccount) {
+        <small detail-actions>{{ i18n.text('grniAccount') }}: {{ p.grniAccountDisplay }}</small>
+      }
+      <app-data-table
+        [label]="i18n.text('grniDetails')"
+        [columns]="grniColumns()"
+        [rows]="grniRows()"
+        rowKey="rowKey"
+        [emptyTitle]="i18n.text('noOpenReceipts')"
+      >
+        <ng-template appDataCell="receiptNumber" let-row>
+          @if (session.can('GoodsReceipts.View')) {
+            <a [routerLink]="['/purchases/receipts', row.goodsReceiptId]"
+              ><strong>{{ row.receiptNumber }}</strong></a
+            >
+          } @else {
+            <strong>{{ row.receiptNumber }}</strong>
+          }
+        </ng-template>
+        <ng-template appDataCell="receiptDate" let-row>
+          {{ row.receiptDate | date: 'mediumDate' }}
+        </ng-template>
+        <ng-template appDataCell="supplierName" let-row>{{ row.supplierName }}</ng-template>
+        <ng-template appDataCell="warehouseName" let-row>{{ row.warehouseName }}</ng-template>
+        <ng-template appDataCell="purchaseOrderNumber" let-row>
+          @if (session.can('PurchaseOrders.View')) {
+            <a [routerLink]="['/purchases/orders', row.purchaseOrderId]">{{
+              row.purchaseOrderNumber
+            }}</a>
+          } @else {
+            {{ row.purchaseOrderNumber }}
+          }
+        </ng-template>
+        <ng-template appDataCell="receiptValue" let-row>
+          {{ row.receiptValue | number: '1.2-2' }}
+        </ng-template>
+        <ng-template appDataCell="returnedValue" let-row>
+          {{ row.returnedValue | number: '1.2-2' }}
+        </ng-template>
+        <ng-template appDataCell="billedClearingValue" let-row>
+          {{ row.billedClearingValue | number: '1.2-2' }}
+        </ng-template>
+        <ng-template appDataCell="outstandingValue" let-row>
+          <strong>{{ row.outstandingValue | number: '1.2-2' }}</strong>
+        </ng-template>
+        <ng-template appDataCell="status" let-row>
+          <span class="ui-badge">{{
+            Math.abs(row.outstandingValue) > 0.01 ? i18n.text('open') : i18n.text('cleared')
+          }}</span>
+        </ng-template>
+        <ng-template appDataCell="settlements" let-row>
+          <div class="row-actions">
+            @for (document of row.settlements; track document.documentType + document.documentId) {
+              @if (
+                (document.documentType === 'VendorBill' && session.can('VendorBills.View')) ||
+                (document.documentType !== 'VendorBill' && session.can('GoodsReceiptReturns.View'))
+              ) {
+                <a class="ui-button secondary" [routerLink]="settlementRoute(document)"
+                  >{{ document.documentNumber }} · {{ document.amount | number: '1.2-2' }}</a
                 >
-              </div>
-              <span class="ui-badge">{{
-                Math.abs(row.outstandingValue) > 0.01 ? i18n.text('open') : i18n.text('cleared')
-              }}</span>
-            </header>
-            <p>
-              {{ i18n.text('purchaseOrder') }}:
-              @if (session.can('PurchaseOrders.View')) {
-                <a [routerLink]="['/purchases/orders', row.purchaseOrderId]">{{
-                  row.purchaseOrderNumber
-                }}</a>
               } @else {
-                <span>{{ row.purchaseOrderNumber }}</span>
+                <span class="ui-badge"
+                  >{{ document.documentNumber }} · {{ document.amount | number: '1.2-2' }}</span
+                >
               }
-            </p>
-            <dl>
-              <div>
-                <dt>{{ i18n.text('receiptValue') }}</dt>
-                <dd>{{ row.receiptValue | number: '1.2-2' }}</dd>
-              </div>
-              <div>
-                <dt>{{ i18n.text('returned') }}</dt>
-                <dd>{{ row.returnedValue | number: '1.2-2' }}</dd>
-              </div>
-              <div>
-                <dt>{{ i18n.text('billedClearing') }}</dt>
-                <dd>{{ row.billedClearingValue | number: '1.2-2' }}</dd>
-              </div>
-              <div>
-                <dt>{{ i18n.text('outstanding') }}</dt>
-                <dd>{{ row.outstandingValue | number: '1.2-2' }}</dd>
-              </div>
-            </dl>
-            @if (row.settlements.length) {
-              <footer class="settlements">
-                <span>{{ i18n.text('settlements') }}</span>
-                @for (
-                  document of row.settlements;
-                  track document.documentType + document.documentId
-                ) {
-                  @if (
-                    (document.documentType === 'VendorBill' && session.can('VendorBills.View')) ||
-                    (document.documentType !== 'VendorBill' &&
-                      session.can('GoodsReceiptReturns.View'))
-                  ) {
-                    <a class="ui-button secondary" [routerLink]="settlementRoute(document)"
-                      >{{ document.documentNumber }} · {{ document.amount | number: '1.2-2' }}</a
-                    >
-                  } @else {
-                    <span class="ui-badge"
-                      >{{ document.documentNumber }} · {{ document.amount | number: '1.2-2' }}</span
-                    >
-                  }
-                }
-              </footer>
             }
-          </article>
-        } @empty {
-          <p class="ui-card empty">{{ i18n.text('noOpenReceipts') }}</p>
-        }
-      </div>
-    </section>
+          </div>
+        </ng-template>
+      </app-data-table>
+    </app-detail-section>
   }
 </section>

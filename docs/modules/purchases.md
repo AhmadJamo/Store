@@ -421,3 +421,7 @@ The first presentation slice replaces the hard-coded eyebrow, ad-hoc filter card
 ### Purchase Accounting Reconciliation inventory evidence V4
 
 Inventory-to-Ledger evidence now uses DetailSection and a seven-column typed DataTable for warehouse, inventory account, operational value, ledger balance, difference, server reconciliation status and permission-gated actions. Source order, named evidence, empty behavior and ProductStock.View/Warehouses.Edit boundaries are preserved. GRNI cards remain unchanged. Eight focused tests and the full gate pass: 378/378 Angular across 143 files, Backend Release with zero warnings/errors, 1,668 SecurityRegression checks, build and Playwright 7/7. FRD-ISS-012 remains independently open at 84.55 kB versus 80 kB.
+
+### Purchase Accounting Reconciliation GRNI evidence V4
+
+GRNI evidence now uses a second DetailSection and an eleven-column typed DataTable for receipt, date, supplier, warehouse, purchase order, receipt/returned/billed/outstanding values, server-derived status and settlement documents. GoodsReceipts.View, PurchaseOrders.View, VendorBills.View and GoodsReceiptReturns.View continue to gate their links independently; source order and empty behavior remain server-led. Legacy evidence-card CSS is removed. Nine focused tests and the full gate pass: 379/379 Angular across 143 files, Backend Release with zero warnings/errors, 1,668 SecurityRegression checks, build and Playwright 7/7. FRD-ISS-012 remains independently open at 84.55 kB versus 80 kB.

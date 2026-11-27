@@ -164,7 +164,23 @@ describe('PurchaseAccountingReconciliationPageComponent', () => {
     expect(inventorySection?.textContent).toContain('Main warehouse');
     expect(inventorySection?.textContent).toContain('1310 — Inventory asset');
     expect(inventorySection?.textContent).toContain('1,234.56');
-    expect(element.querySelectorAll('.cards .evidence')).toHaveLength(1);
+  });
+  it('renders GRNI as one eleven-column typed table with source-document evidence', () => {
+    const fixture = TestBed.createComponent(PurchaseAccountingReconciliationPageComponent);
+    fixture.detectChanges();
+    const element = fixture.nativeElement as HTMLElement;
+    const detailSections = element.querySelectorAll('app-detail-section');
+    const grniSection = detailSections.item(1);
+
+    expect(detailSections).toHaveLength(2);
+    expect(grniSection.querySelectorAll('app-data-table th')).toHaveLength(11);
+    expect(grniSection.querySelectorAll('app-data-table tbody tr')).toHaveLength(1);
+    expect(grniSection.textContent).toContain('GR-2026-0071');
+    expect(grniSection.textContent).toContain('PO-2026-0041');
+    expect(grniSection.textContent).toContain('Levant Coffee Supplies');
+    expect(grniSection.textContent).toContain('VB-2026-0081');
+    expect(grniSection.textContent).toContain('GRR-2026-0091');
+    expect(element.querySelectorAll('.cards .evidence')).toHaveLength(0);
   });
   it('sends only the selected as-of date and exception flag to the read API', () => {
     const fixture = TestBed.createComponent(PurchaseAccountingReconciliationPageComponent);
