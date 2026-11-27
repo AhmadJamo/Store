@@ -129,6 +129,17 @@ describe('LocationMovementsPageComponent', () => {
     expect(table.textContent).toContain('COF-1');
     expect(table.textContent).toContain('MOVE-11');
   });
+  it('renders the four server-authored reconciliation metrics through SummaryStrip', () => {
+    const fixture = TestBed.createComponent(LocationMovementsPageComponent);
+    fixture.detectChanges();
+    const strip = fixture.nativeElement.querySelector('app-summary-strip');
+    expect(strip.querySelectorAll('article')).toHaveLength(4);
+    expect(strip.textContent).toContain('5');
+    expect(strip.textContent).toContain('1');
+    expect(strip.textContent).toContain('4');
+    expect(strip.textContent).toContain('reconciled');
+    expect(strip.querySelector('article.success')).not.toBeNull();
+  });
   it('blocks invalid moves, preserves server errors, and guards dirty work', () => {
     const component = TestBed.createComponent(LocationMovementsPageComponent).componentInstance as any;
     component.form.patchValue({ warehouseId: 2, productId: 1, fromStorageLocationId: 4, toStorageLocationId: 4, quantity: 3 });

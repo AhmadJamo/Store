@@ -1,5 +1,7 @@
 # حالة المشروع / Project Status
 
+> تحديث 2026-11-27: اكتملت Location Movements Reconciliation Summary بأربعة مؤشرات تحفظ total/linked/legacy وحالة المطابقة المترجمة ونبرتها. نجح 369/369 والبناء وPlaywright 7/7؛ Physical Ledger DataTable هو التالي.
+
 > تحديث 2026-11-27: اكتمل Location Movements Operational History بجدول typed من سبعة أعمدة يحفظ التاريخ والمنتج/الباركود والمستودع والمصدر/الوجهة والكمية والمرجع والترتيب والفراغ. نجح 368/368 والبناء وPlaywright 7/7؛ reconciliation SummaryStrip هو التالي.
 
 > تحديث 2026-11-27: اكتملت Location Movements Filters V4 بـFilterBar وإشارتين وتطبيق ومسح مع حفظ warehouse/query وصلاحية العرض وتحميل السجلين. نجح 367/367 والبناء وPlaywright 7/7؛ Operational History DataTable هو التالي.
