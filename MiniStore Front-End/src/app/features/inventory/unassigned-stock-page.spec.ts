@@ -145,6 +145,22 @@ describe('UnassignedStockPageComponent', () => {
     expect(table.textContent).toContain('6');
     expect(table.querySelector('button')).not.toBeNull();
   });
+  it('defines the complete typed rules evidence and permission-gated toggle table', () => {
+    const fixture = TestBed.createComponent(UnassignedStockPageComponent);
+    fixture.detectChanges();
+    const component = fixture.componentInstance as any;
+    expect(component.ruleColumns().map((column: any) => column.key)).toEqual([
+      'warehouseName', 'storageLocationCode', 'target', 'priority', 'isActive', 'actions',
+    ]);
+    const table = fixture.nativeElement.querySelector('app-data-table.rules-table');
+    expect(table.textContent).toContain('Main warehouse');
+    expect(table.textContent).toContain('A-01');
+    expect(table.querySelector('button').disabled).toBe(false);
+    permissions.delete('ProductStock.Edit');
+    const viewOnly = TestBed.createComponent(UnassignedStockPageComponent);
+    viewOnly.detectChanges();
+    expect(viewOnly.nativeElement.querySelector('app-data-table.rules-table button').disabled).toBe(true);
+  });
   it('blocks invalid commands, preserves server errors, and guards dirty work', () => {
     const component = TestBed.createComponent(UnassignedStockPageComponent).componentInstance as any;
     component.assignForm.patchValue({ productId: 0, warehouseId: 0, storageLocationId: 0, quantity: 0 });

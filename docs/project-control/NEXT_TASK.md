@@ -2,9 +2,9 @@
 
 ## FRD-I — Inventory Migration
 
-> الحالة: IN PROGRESS — Putaway Unassigned Stock Table V4 مكتمل في 2026-11-27
+> الحالة: IN PROGRESS — Putaway Workspace V4 مكتمل في 2026-11-27
 >
-> اكتمل Unassigned Stock typed DataTable من ثمانية أعمدة يعرض product/barcode/warehouse وwarehouseQuantity/assignedQuantity/unassignedQuantity والاقتراح وإجراء assign المشروط، مع حفظ ترتيب الخادم والحالة الفارغة واختيار الصف. نجح 359/359 والبناء وPlaywright 7/7. التالي الوحيد: حوّل Rules Table فقط إلى typed DataTable يعرض warehouse/destination/target/priority/status وإجراء toggle المشروط بالصلاحية والحفظ، مع حفظ ترتيب الخادم والحالة الفارغة وأمر setRuleActive. لا تغيّر API/Application في هذه الشريحة.
+> اكتمل Rules typed DataTable من ستة أعمدة يعرض warehouse/destination/target/priority/status وإجراء toggle المشروط بالصلاحية والحفظ، مع حفظ ترتيب الخادم والحالة الفارغة وأمر setRuleActive. اكتملت Putaway Workspace V4 ونجح 360/360 والبناء وPlaywright 7/7. التالي الوحيد: نفّذ Location Movements safety audit فقط قبل أي restyle؛ احمِ الصفوف المسماة والكميات والمصدر/الوجهة، فلاتر warehouse/query، صلاحيات View/Create وStockMovements.View، الخيارات، idempotency، payload النقل، سجلي الحركة، reconciliation evidence، التحقق والأخطاء وdirty guard. لا تغيّر runtime أو API/Application.
 
 ## FRD-H — Branches/Warehouses Migration
 

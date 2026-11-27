@@ -1,5 +1,7 @@
 # حالة المشروع / Project Status
 
+> تحديث 2026-11-27: اكتملت Putaway Workspace V4 بعد تحويل جدول القواعد إلى ستة أعمدة typed تحفظ الأدلة والحالة والترتيب والفراغ والتفعيل المشروط. نجح 360/360 والبناء وPlaywright 7/7؛ Location Movements safety audit هو التالي.
+
 > تحديث 2026-11-27: اكتمل Putaway Unassigned Stock بجدول typed من ثمانية أعمدة يحفظ الهوية وكميات المستودع/المسكّن/غير المسكّن والاقتراح والترتيب والفراغ وإجراء التسكين المشروط. نجح 359/359 والبناء وPlaywright 7/7؛ Rules DataTable هو التالي.
 
 > تحديث 2026-11-27: اكتملت Putaway Filters V4 بـFilterBar وثلاث إشارات وإجرائي تطبيق ومسح مع حفظ warehouse/query وترتيب product/barcode/warehouse وسلوك التحميل والخطأ. نجح 358/358 والبناء وPlaywright 7/7؛ Unassigned Stock DataTable هو التالي.
