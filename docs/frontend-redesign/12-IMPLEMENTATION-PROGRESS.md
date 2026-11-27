@@ -1,7 +1,7 @@
 # 12 — تقدم إعادة بناء Frontend
 
 > آخر تحديث: 2026-11-27
-> الحالة العامة: Location Movements safety audit complete; Move Form V4 next
+> الحالة العامة: Location Movements Move Form V4 complete; Filters V4 next
 > المصدر: الكود، الاختبارات، وثائق المشروع، والمراجع الرسمية التي تم التحقق منها
 
 ## بوابات المراحل
@@ -16,7 +16,7 @@
 | F — Core Views | Verified pilots | Products, Contacts and Branches/Warehouses acceptance records | Inventory wave |
 | G — Module Migration | In Progress | Products, Contacts and Branches/Warehouses migrated | Inventory audit then bounded pilot |
 | H — POS Reconstruction | Not Started | — | بعد core patterns |
-| I — System Quality | In Progress continuously | 365 tests/build/142-template gate + security 1,668 + Playwright 7/7 | authenticated workflow E2E لاحقاً |
+| I — System Quality | In Progress continuously | 366 tests/build/142-template gate + security 1,668 + Playwright 7/7 | authenticated workflow E2E لاحقاً |
 | J — Cleanup & Handover | Not Started | — | بعد اكتمال routes |
 
 ## تقدم الوحدات
@@ -28,7 +28,7 @@
 | Customers / Suppliers | Audited | Verified | FRD-G List/Form/Record | Verified contracts/permissions | 282 + security 1,668 + Playwright 7/7 | Migrated |
 | Sales | Not Started | Not Started | Legacy V3 | Verified | Existing specs | Planned |
 | Purchases | Not Started | Not Started | Legacy V3 | Verified | Existing specs | Planned |
-| Inventory | Audited | Scoped | Availability + Reservations + Transactions + Insights + Reconciliation + Adjustment workflow + Product Stock + Stock Transfer + Scanning + Tracking Workspace + Locations V4; Replenishment Workspace V4; Putaway Workspace V4; Location Movements safety audited | Verified services/APIs/permissions | 365 + focused specs + Playwright 7/7 | Location Movements Move Form V4 next |
+| Inventory | Audited | Scoped | Availability + Reservations + Transactions + Insights + Reconciliation + Adjustment workflow + Product Stock + Stock Transfer + Scanning + Tracking Workspace + Locations V4; Replenishment Workspace V4; Putaway Workspace V4; Location Movements safety + Move Form V4 | Verified services/APIs/permissions | 366 + focused specs + Playwright 7/7 | Location Movements Filters V4 next |
 | Accounting | Not Started | Not Started | Legacy V3 | Verified | Existing specs | Planned |
 | Branches / Warehouses | Audited | Verified | FRD-H Workspace/Master/Locations | Verified contracts/context | 291 + security 1,668 + Playwright 7/7 | Migrated |
 | Users / Roles / Settings | Not Started | Not Started | Legacy V3 | Verified | Existing specs | Planned |

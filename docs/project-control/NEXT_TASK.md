@@ -2,9 +2,9 @@
 
 ## FRD-I — Inventory Migration
 
-> الحالة: IN PROGRESS — Location Movements safety audit مكتمل في 2026-11-27
+> الحالة: IN PROGRESS — Location Movements Move Form V4 مكتمل في 2026-11-27
 >
-> اكتمل Location Movements safety audit بخمسة اختبارات تحمي صفوف السجلين والكميات والمصدر/الوجهة، فلاتر warehouse/query، صلاحيات View/Create وStockMovements.View، الخيارات المسماة، idempotency، payload النقل، reconciliation evidence، التحقق والأخطاء وdirty guard. نجح 365/365 والبناء وPlaywright 7/7. التالي الوحيد: حوّل Move Form فقط إلى V4 بسياق Inventory مترجم وFormSection وسبع FieldCues وWorkflowFooter، مع حفظ source quantity والخيارات المسماة والصلاحية وidempotency والتحقق والـpayload. لا تغيّر filters أو السجلين أو API/Application.
+> اكتمل Location Movements Move Form V4 بسياق Inventory مترجم وFormSection وسبع FieldCues وWorkflowFooter، مع حفظ source quantity والخيارات المسماة والصلاحية وidempotency والتحقق والـpayload. نجح 366/366 والبناء وPlaywright 7/7. التالي الوحيد: حوّل filters فقط إلى FilterBar مع FieldCue للمستودع والبحث وإجرائي تطبيق ومسح، مع حفظ warehouse/query وLocationMovements.View وسلوك تحميل السجلين. لا تغيّر السجلين أو API/Application.
 
 ## FRD-H — Branches/Warehouses Migration
 

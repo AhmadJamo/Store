@@ -96,6 +96,15 @@ describe('LocationMovementsPageComponent', () => {
     expect(component.form.pristine).toBe(true);
   });
 
+  it('uses the shared V4 hierarchy for the relocation form only', () => {
+    const fixture = TestBed.createComponent(LocationMovementsPageComponent);
+    fixture.detectChanges();
+    const form = fixture.nativeElement.querySelector('form.movement-form');
+    expect(fixture.nativeElement.textContent).toContain('inventoryNavigation');
+    expect(form.querySelectorAll('app-form-section')).toHaveLength(1);
+    expect(form.querySelectorAll('app-field-cue')).toHaveLength(7);
+    expect(form.querySelectorAll('app-workflow-footer')).toHaveLength(1);
+  });
   it('blocks invalid moves, preserves server errors, and guards dirty work', () => {
     const component = TestBed.createComponent(LocationMovementsPageComponent).componentInstance as any;
     component.form.patchValue({ warehouseId: 2, productId: 1, fromStorageLocationId: 4, toStorageLocationId: 4, quantity: 3 });
