@@ -2,9 +2,9 @@
 
 ## FRD-J — Purchases Migration
 
-> الحالة: IN PROGRESS — source/contract audit next
+> الحالة: IN PROGRESS — source/contract audit complete; reconciliation safety net next
 >
-> أُغلق FRD-I Inventory في 2026-11-27 بعد مطابقة 22 route عبر 15 template ونجاح Backend Release بلا تحذيرات، 1,668 فحص SecurityRegression، و370/370 Angular وPlaywright 7/7. التالي الوحيد: نفّذ Purchases source/contract audit دون تغيير runtime؛ اجرد routes/templates/archetypes وrequest-to-pay workflows والصلاحيات المستقلة وAPI/Application/accounting/inventory authority والاختبارات، وصنّف المخاطر وحدد أول شريحة bounded مع safety net. لا تبدأ restyle قبل تسجيل قرار الشريحة.
+> اكتمل جرد FRD-J: 59 route داخلية (بما فيها module hub) عبر 21 template، إضافة إلى supplier portal عام مستقل. توجد 20 API spec ولا يوجد أي page component spec. التالي الوحيد: أضف safety net مركزاً لصفحة Purchase Accounting Reconciliation للقراءة فقط، يحمي أدلة inventory/GL وGRNI، query، الصلاحيات المستقلة، الروابط والحالات الفارغة/الأخطاء، بدون تغيير runtime أو restyle. القرار الكامل في `docs/frontend-redesign/17-PURCHASES-MIGRATION-AUDIT.md`.
 
 ## FRD-I — Inventory Migration
 

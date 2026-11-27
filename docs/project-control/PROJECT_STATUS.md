@@ -1,5 +1,7 @@
 # حالة المشروع / Project Status
 
+> تحديث 2026-11-27: اكتمل تدقيق FRD-J Purchases من المصدر: 59 مساراً داخلياً عبر 21 قالباً، ومسار Supplier Portal عام مستقل. تم تثبيت حدود الصلاحيات وسلطة Application والمحاسبة والمخزون؛ يوجد 20 API spec ولا يوجد page component spec. safety net لمطابقة محاسبة المشتريات للقراءة فقط هو التالي، دون تغيير runtime.
+
 > تحديث 2026-11-27: أُغلق FRD-I Inventory بعد تصحيح الجرد إلى 22 مساراً/15 قالباً ونجاح Backend بلا تحذيرات و1,668 فحصاً أمنياً و370/370 وPlaywright 7/7. بقي FRD-ISS-012 مستقلاً، ولم تُدّعَ اختبارات API/أداء حية دون البيئة. FRD-J Purchases audit هو التالي.
 
 > تحديث 2026-11-27: اكتملت Location Movements Workspace V4 بعد تحويل Physical Ledger إلى جدول typed من سبعة أعمدة يحفظ الدليل والترتيب والفراغ. نجح 370/370 والبناء وPlaywright 7/7؛ FRD-I acceptance closeout هو التالي.

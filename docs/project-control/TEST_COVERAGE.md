@@ -350,3 +350,10 @@
 - Performance skipped without an API URL; no performance claim is made.
 - Unified gate: 10 passed, 1 failed, 4 skipped. The only failure is FRD-ISS-012 at 84.55 kB versus 80 kB; no budget was relaxed.
 - Evidence: docs/frontend-redesign/acceptance/inventory-2026-11-27/.
+
+## FRD-J Purchases audit baseline — 2026-11-27
+
+- Source scope: 59 authenticated Purchasing routes including the hub across 21 templates; one separate anonymous supplier-portal route.
+- Existing frontend coverage: 20 API-client specs and 0 page component specs.
+- First required safety net: Purchase Accounting Reconciliation component coverage for server evidence, query, permission-gated links, empty/error states and read-only semantics.
+- Documentation-only audit; the accepted runtime baseline remains 370/370 Angular, Backend Release 0 warnings/errors, SecurityRegression 1,668 and Playwright 7/7. No new runtime gate is claimed.

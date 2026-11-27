@@ -405,3 +405,7 @@ and resolve to the exact Angular pages; legacy Create POSTs return 405. Existing
 stock movements, posting, immutable evidence and transactions.
 
 REC-004B3: purchase-request missing request/master data returns 404, duplicate replenishment demand returns `409/duplicate`, stale rowversion returns `409/concurrency`, and changed purchasability/unit state returns `409/conflict`. Approval and request lifecycle rules are unchanged.
+
+## FRD-J frontend migration audit
+
+The 2026-11-27 source audit reconciles 59 authenticated Purchasing routes, including the module hub, across 21 page templates and one separate anonymous supplier-portal route. Existing Application services retain all commercial, inventory, accounting, permission, idempotency, concurrency and external-boundary authority. The feature has 20 API-client specs but no page component specs. Purchase Accounting Reconciliation is the first bounded slice because it is one GET-only route under `PurchaseAccountingReconciliation.View`; its component safety net must be committed before presentation changes. See `../frontend-redesign/17-PURCHASES-MIGRATION-AUDIT.md`.
