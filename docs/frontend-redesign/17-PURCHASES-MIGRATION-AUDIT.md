@@ -1,6 +1,6 @@
 # 17 — Purchases migration audit
 
-> Status: FRD-J audit complete — Purchase Accounting Reconciliation safety net next
+> Status: FRD-J in progress — Purchase Accounting Reconciliation safety net complete; V4 context/filter/summary next
 > Date: 2026-11-27
 > Source of truth: Angular routes/components and clients, Internal API controllers, Application services/DTOs, repositories and purchasing module documentation
 
@@ -38,8 +38,8 @@ The authenticated Purchasing workspace exposes 59 Angular routes, including the 
 - All 21 templates use the shared `PageHeader`; 11 currently use the shared typed `DataTable`.
 - Purchase Requests already uses FilterBar, SummaryStrip, FormSection, FieldCue, DetailSection, WorkflowProgress and WorkflowFooter. Purchase Orders uses WorkflowProgress and WorkflowFooter. Other pages remain mixed card/form/table layouts and must be migrated in bounded slices rather than by a feature-wide rewrite.
 - English and Arabic localization services exist for every surface; Purchase Templates intentionally reuses Purchase Agreement localization. Any changed copy must remain bilingual and RTL-safe.
-- The purchasing feature has 20 API-client spec files but zero `*page.spec.ts` component files. API request coverage does not protect rendered server evidence, permission-gated actions, empty/error states, form payloads or dirty recovery.
-- The accepted FRD-I baseline remains 370 Angular tests across 142 files, Backend Release with zero warnings/errors, 1,668 SecurityRegression checks and Playwright 7/7. FRD-J audit changes documentation only and does not claim a new runtime gate.
+- At audit time, the purchasing feature had 20 API-client spec files but zero `*page.spec.ts` component files. API request coverage alone does not protect rendered server evidence, permission-gated actions, empty/error states, form payloads or dirty recovery.
+- The first FRD-J safety net adds six Purchase Accounting Reconciliation component tests. The current baseline is 376 Angular tests across 143 files, Backend Release with zero warnings/errors, 1,668 SecurityRegression checks, production build and Playwright 7/7. FRD-ISS-012 remains independently open at 84.55 kB versus 80 kB; live API/performance checks remain skipped without an external URL and authenticated state.
 
 ## Cross-layer contracts that must not change
 
@@ -65,7 +65,7 @@ Before any presentation change, add a focused component safety net that proves:
 4. Settings, stock, warehouse, receipt, order, bill and return links remain independently permission-gated;
 5. empty/error states do not invent evidence and the report remains explicitly read-only.
 
-After that safety-net commit, migrate only this page to the scoped V4 report pattern: localized Purchasing context, FilterBar, SummaryStrip, DetailSection and typed tables where evidence density benefits. Do not change the API, Application service, repository, DTOs, permissions or accounting calculations.
+The six-test safety net is complete. Migrate only this page in bounded presentation slices. First add localized Purchasing context, a FilterBar over the existing as-of/exception query and a four-item SummaryStrip using server-returned totals/status. Keep evidence cards unchanged in that slice. DetailSection and typed evidence tables follow separately where density benefits. Do not change the API, Application service, repository, DTOs, permissions or accounting calculations.
 
 ## Deferred ordering
 

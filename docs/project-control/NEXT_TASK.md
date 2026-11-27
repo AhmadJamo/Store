@@ -2,9 +2,9 @@
 
 ## FRD-J — Purchases Migration
 
-> الحالة: IN PROGRESS — source/contract audit complete; reconciliation safety net next
+> الحالة: IN PROGRESS — reconciliation safety net complete; V4 context/filter/summary next
 >
-> اكتمل جرد FRD-J: 59 route داخلية (بما فيها module hub) عبر 21 template، إضافة إلى supplier portal عام مستقل. توجد 20 API spec ولا يوجد أي page component spec. التالي الوحيد: أضف safety net مركزاً لصفحة Purchase Accounting Reconciliation للقراءة فقط، يحمي أدلة inventory/GL وGRNI، query، الصلاحيات المستقلة، الروابط والحالات الفارغة/الأخطاء، بدون تغيير runtime أو restyle. القرار الكامل في `docs/frontend-redesign/17-PURCHASES-MIGRATION-AUDIT.md`.
+> اكتمل safety net لصفحة Purchase Accounting Reconciliation بستة اختبارات تحمي أدلة inventory/GL وGRNI، query، الصلاحيات والروابط والحالات الفارغة/الأخطاء دون تغيير runtime. نجح 376/376 والبناء وPlaywright 7/7؛ بقي FRD-ISS-012 مستقلاً. التالي الوحيد: نفّذ أول شريحة عرض محدودة للصفحة نفسها فقط — سياق Purchasing مترجم، FilterBar للاستعلام الحالي، وSummaryStrip للمؤشرات الأربعة — مع حفظ قيم الخادم والصلاحيات والعقود. لا تحول جداول الأدلة بعد.
 
 ## FRD-I — Inventory Migration
 

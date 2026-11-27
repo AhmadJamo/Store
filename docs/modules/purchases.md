@@ -409,3 +409,7 @@ REC-004B3: purchase-request missing request/master data returns 404, duplicate r
 ## FRD-J frontend migration audit
 
 The 2026-11-27 source audit reconciles 59 authenticated Purchasing routes, including the module hub, across 21 page templates and one separate anonymous supplier-portal route. Existing Application services retain all commercial, inventory, accounting, permission, idempotency, concurrency and external-boundary authority. The feature has 20 API-client specs but no page component specs. Purchase Accounting Reconciliation is the first bounded slice because it is one GET-only route under `PurchaseAccountingReconciliation.View`; its component safety net must be committed before presentation changes. See `../frontend-redesign/17-PURCHASES-MIGRATION-AUDIT.md`.
+
+### Purchase Accounting Reconciliation safety net
+
+Six focused Angular component tests now protect server-authored inventory/ledger/GRNI totals, named warehouse/account/receipt/order/supplier/settlement evidence, the exact as-of/exception query, independent source and remediation link permissions, honest empty/error states and read-only guidance. No runtime, API, Application, repository, permission or accounting behavior changed. The full gate passed 376/376 Angular tests across 143 files, Backend Release with zero warnings/errors, 1,668 SecurityRegression checks, build and Playwright 7/7; FRD-ISS-012 remains independently open at 84.55 kB versus 80 kB.

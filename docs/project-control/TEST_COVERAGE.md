@@ -357,3 +357,10 @@
 - Existing frontend coverage: 20 API-client specs and 0 page component specs.
 - First required safety net: Purchase Accounting Reconciliation component coverage for server evidence, query, permission-gated links, empty/error states and read-only semantics.
 - Documentation-only audit; the accepted runtime baseline remains 370/370 Angular, Backend Release 0 warnings/errors, SecurityRegression 1,668 and Playwright 7/7. No new runtime gate is claimed.
+
+## FRD-J Purchase Accounting Reconciliation safety net — 2026-11-27
+
+- Focused component: 6/6 tests for server-authored inventory/ledger/GRNI evidence, exact query, independent source/remediation links, empty/error states and read-only semantics.
+- Angular: 376/376 across 143 files; production build passed.
+- Backend Release: 0 warnings/errors; SecurityRegression: 1,668 passed; static accessibility: 142 templates; UI consistency: 122 pages; Playwright: 7/7.
+- Unified gate: 10 passed, 1 failed, 4 skipped. Only FRD-ISS-012 failed at 84.55 kB versus 80 kB; live API/performance checks were skipped without URL/authenticated state.
