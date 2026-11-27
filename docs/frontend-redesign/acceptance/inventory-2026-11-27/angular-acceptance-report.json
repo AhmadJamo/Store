@@ -1,0 +1,83 @@
+{
+  "generatedAtUtc": "2026-11-27T09:57:56.949327+00:00",
+  "passed": 10,
+  "failed": 1,
+  "skipped": 4,
+  "results": [
+    {
+      "name": "migration-reconciliation",
+      "status": "passed",
+      "detail": "Generated MVC/Angular registry and dual-run matrix"
+    },
+    {
+      "name": "mvc-presentation-invariant",
+      "status": "passed",
+      "detail": "Zero ordinary MVC presentation surfaces"
+    },
+    {
+      "name": "backend-build",
+      "status": "passed",
+      "detail": "Backend release build"
+    },
+    {
+      "name": "security-regression",
+      "status": "passed",
+      "detail": "Security regression suite"
+    },
+    {
+      "name": "external-scss",
+      "status": "passed",
+      "detail": "External SCSS policy"
+    },
+    {
+      "name": "static-accessibility",
+      "status": "passed",
+      "detail": "Static Angular accessibility contracts"
+    },
+    {
+      "name": "ui-ux-consistency",
+      "status": "passed",
+      "detail": "UI/UX consistency inventory"
+    },
+    {
+      "name": "angular-tests",
+      "status": "passed",
+      "detail": "Angular tests"
+    },
+    {
+      "name": "angular-build",
+      "status": "passed",
+      "detail": "Angular production build with statistics"
+    },
+    {
+      "name": "bundle-budget",
+      "status": "failed",
+      "detail": "Largest lazy Angular chunk 'chunk-CmAS9-ra.js' is 84549 bytes; budget is 81920 bytes."
+    },
+    {
+      "name": "browser-acceptance",
+      "status": "passed",
+      "detail": "Browser RTL/LTR, keyboard, state and responsive acceptance"
+    },
+    {
+      "name": "api-session-anonymous",
+      "status": "skipped",
+      "detail": "No API base URL was supplied."
+    },
+    {
+      "name": "api-session-authenticated",
+      "status": "skipped",
+      "detail": "No API base URL was supplied."
+    },
+    {
+      "name": "dual-run-read-only",
+      "status": "skipped",
+      "detail": "No API base URL was supplied; no live dual-run boundary claim was made."
+    },
+    {
+      "name": "performance",
+      "status": "skipped",
+      "detail": "No API base URL was supplied; no performance claim was made."
+    }
+  ]
+}

@@ -1,12 +1,12 @@
 # 16 — Inventory migration audit
 
-> Status: FRD-I implementation in progress — All scoped Inventory workspaces V4 complete; FRD-I acceptance closeout next
+> Status: FRD-I COMPLETE — accepted 2026-11-27; Purchases audit next
 > Date: 2026-11-27
 > Source of truth: Angular routes/components and clients, Internal API controllers, Application services/DTOs, repositories and inventory module documentation
 
 ## Scope inventory
 
-The Inventory application currently exposes 19 Angular routes through 15 page templates. Warehouse Locations is already migrated by FRD-H and remains in this inventory only as a protected dependency/reference surface.
+The Inventory application currently exposes 22 Angular routes through 15 page templates. Warehouse Locations is already migrated by FRD-H and remains in this inventory only as a protected dependency/reference surface.
 
 | Surface | Route(s) | Authority and permissions | Presentation state / risk |
 |---|---|---|---|
@@ -41,7 +41,7 @@ The Inventory application currently exposes 19 Angular routes through 15 page te
 
 ## Test baseline and gaps
 
-- Current FRD-I baseline: 370 Angular tests across 142 files, production build, 142 templates, 122-page consistency and Playwright 7/7. The last security baseline remains 1,668 checks because these slices change presentation only; the independent 84.55 kB core-localization lazy-budget issue remains tracked as FRD-ISS-012.
+- Final FRD-I baseline: Backend Release passed with 0 warnings/errors; 1,668 SecurityRegression checks, 370 Angular tests across 142 files, production build, 142 templates, 122-page consistency and Playwright 7/7 passed. Live API/session/performance checks were skipped because no API URL or authenticated storage state was supplied. The independent 84.55 kB core-localization lazy-budget issue remains tracked as FRD-ISS-012 and no budget was relaxed.
 - Existing Inventory page component coverage: Availability 5, Reservations 5, Stock Transactions 5, Insights 5, Reconciliation 5, Adjustment List 5, Adjustment Create 5, Adjustment Record 5, Product Stock 7, Stock Transfer 6, Scanning 6, Tracking 5, Replenishment 5, Putaway 10, Location Movements 5, Warehouse Locations 4.
 - All remaining FRD-I operational pages now have focused component safety coverage.
 - API client specs already protect the principal HTTP methods and query parameters; they do not replace page-state and permission-aware action coverage.
@@ -63,6 +63,9 @@ The Inventory application currently exposes 19 Angular routes through 15 page te
 12. **Location Movements Workspace V4 COMPLETE; FRD-I acceptance closeout NEXT.** Five focused tests protect named operational and physical-ledger evidence, reconciliation counters/status, warehouse/query requests, independent View/Create/StockMovements.View permissions, named options, source quantity, idempotency, exact relocation payload, validation, server errors and dirty navigation. The Move form uses localized Inventory context, a described FormSection, five required and two optional FieldCues and WorkflowFooter while preserving source quantity, named options, idempotency and the exact command. Filters use FilterBar, two FieldCues and explicit apply/reset while preserving warehouse/query and independent permissions. Operational History uses a typed seven-column DataTable preserving date, product/barcode, warehouse, source/destination, quantity, reference, server order and empty state. Reconciliation uses a four-item SummaryStrip preserving total/linked/legacy counts, isReconciled and localized status tone. Physical Ledger uses a typed seven-column DataTable preserving date, product, warehouse, source/destination, quantity, reference, server order and empty state. Runtime/API/Application authority is unchanged.
 13. Warehouse Locations remains complete and is excluded from further FRD-I restyling unless a verified dependency regression requires a fix.
 
+## Acceptance decision
+
+FRD-I is closed for its authorized presentation and existing-contract scope. Source reconciliation corrected the initial route count from 19 to 22; no runtime surface was missing. The acceptance record and machine-readable gate output are in `acceptance/inventory-2026-11-27/`. Purchases is the next migration wave and begins with a read-only source/contract audit.
 ## First slice decision
 
 Inventory Availability was selected first because it is GET-only, independently permissioned, has an existing typed API client and cannot post or reserve stock. Its safety net and V4 migration established the bounded pattern now reused by Reservations and Stock Transactions; all three retain their server and permission authorities.

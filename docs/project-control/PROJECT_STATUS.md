@@ -1,5 +1,7 @@
 # حالة المشروع / Project Status
 
+> تحديث 2026-11-27: أُغلق FRD-I Inventory بعد تصحيح الجرد إلى 22 مساراً/15 قالباً ونجاح Backend بلا تحذيرات و1,668 فحصاً أمنياً و370/370 وPlaywright 7/7. بقي FRD-ISS-012 مستقلاً، ولم تُدّعَ اختبارات API/أداء حية دون البيئة. FRD-J Purchases audit هو التالي.
+
 > تحديث 2026-11-27: اكتملت Location Movements Workspace V4 بعد تحويل Physical Ledger إلى جدول typed من سبعة أعمدة يحفظ الدليل والترتيب والفراغ. نجح 370/370 والبناء وPlaywright 7/7؛ FRD-I acceptance closeout هو التالي.
 
 > تحديث 2026-11-27: اكتملت Location Movements Reconciliation Summary بأربعة مؤشرات تحفظ total/linked/legacy وحالة المطابقة المترجمة ونبرتها. نجح 369/369 والبناء وPlaywright 7/7؛ Physical Ledger DataTable هو التالي.
@@ -110,7 +112,7 @@
 
 > تحديث 2026-11-25: اكتمل safety net لأول شريحة FRD-I. تحمي 5 اختبارات Inventory Availability الأسماء والكميات القادمة من الخادم والبحث المؤجل وwarehouse/paging/reset والحالة الفارغة قبل تغيير العرض. لا تغيير runtime؛ التحويل البصري المحدود هو التالي.
 
-> تحديث 2026-11-25: اكتمل جرد FRD-I لـ19 مسار Inventory عبر 15 قالباً، مع تصنيف القراءة والـmasters والـworkflows وعقود الصلاحيات والـApplication والـbranch/warehouse context. اعتُمد Inventory Availability كأول شريحة GET-only بعد safety net؛ لا تغيير runtime في الجرد.
+> تحديث 2026-11-25: اكتمل جرد FRD-I لـ22 مسار Inventory عبر 15 قالباً، مع تصنيف القراءة والـmasters والـworkflows وعقود الصلاحيات والـApplication والـbranch/warehouse context. اعتُمد Inventory Availability كأول شريحة GET-only بعد safety net؛ لا تغيير runtime في الجرد.
 
 > تحديث 2026-11-25: أُغلق FRD-H وصُنفت Branch Workspace وWarehouse Master وWarehouse Locations كأسطح V4 مهاجرة مع بقاء سلطة الفرع/المستودع والصلاحيات. نجح 291 اختباراً والبناء و142 قالب وصول و122 صفحة وPlaywright 7/7 و1,668 فحصاً أمنياً. انتقلت البوابة إلى جرد Inventory المحدود.
 

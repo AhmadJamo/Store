@@ -339,3 +339,14 @@
 
 ## FRD-I Tracking Balances/Quarantine V4 — 2026-11-27
 - Angular Vitest 347/347; typed ten-column permission-aware balance table and required reason action protected. Build and Playwright 7/7 passed; FRD-ISS-012 remains independent.
+
+## FRD-I Inventory acceptance closeout — 2026-11-27
+
+- Backend Release: passed with 0 warnings/errors.
+- Security and inventory regression: 1,668 checks passed.
+- Angular Vitest: 370/370 across 142 files; 22 Inventory routes reconciled across 15 page templates.
+- Static accessibility: 142 templates; UI consistency: 122 pages; production build passed.
+- Browser presentation: 7 passed, 0 failed; authenticated API checks skipped without URL/storage state.
+- Performance skipped without an API URL; no performance claim is made.
+- Unified gate: 10 passed, 1 failed, 4 skipped. The only failure is FRD-ISS-012 at 84.55 kB versus 80 kB; no budget was relaxed.
+- Evidence: docs/frontend-redesign/acceptance/inventory-2026-11-27/.

@@ -1,10 +1,16 @@
 # المهمة التالية الوحيدة / Next Task
 
+## FRD-J — Purchases Migration
+
+> الحالة: IN PROGRESS — source/contract audit next
+>
+> أُغلق FRD-I Inventory في 2026-11-27 بعد مطابقة 22 route عبر 15 template ونجاح Backend Release بلا تحذيرات، 1,668 فحص SecurityRegression، و370/370 Angular وPlaywright 7/7. التالي الوحيد: نفّذ Purchases source/contract audit دون تغيير runtime؛ اجرد routes/templates/archetypes وrequest-to-pay workflows والصلاحيات المستقلة وAPI/Application/accounting/inventory authority والاختبارات، وصنّف المخاطر وحدد أول شريحة bounded مع safety net. لا تبدأ restyle قبل تسجيل قرار الشريحة.
+
 ## FRD-I — Inventory Migration
 
-> الحالة: IN PROGRESS — Location Movements Workspace V4 مكتمل في 2026-11-27
+> الحالة: COMPLETE — أُغلق في 2026-11-27
 >
-> اكتمل Physical Ledger typed DataTable من سبعة أعمدة يحفظ date/product/warehouse/from/to/quantity/reference وترتيب الخادم والحالة الفارغة؛ اكتملت Location Movements Workspace V4. نجح 370/370 والبناء وPlaywright 7/7. التالي الوحيد: نفّذ FRD-I Inventory acceptance closeout بدون تغيير runtime؛ شغّل البوابة الكاملة بما فيها backend وSecurityRegression، راجع مصفوفة 19 route/15 template مقابل المصدر، أنشئ سجل acceptance مؤرخاً، حدّث حالة FRD-I والخطة، واعمل commit مستقل. لا تدّعِ live authenticated API E2E من دون URL وstorage state.
+> اكتملت كل أسطح Inventory V4 ضمن النطاق. الدليل في `docs/frontend-redesign/acceptance/inventory-2026-11-27/`: 22 route، 15 template، Backend Release ناجح، 1,668 فحص SecurityRegression، 370/370 Angular، build، وPlaywright 7/7. `FRD-ISS-012` يبقى مستقلاً ومفتوحاً، ولا يوجد ادعاء live authenticated API أو performance لغياب URL وstorage state.
 
 ## FRD-H — Branches/Warehouses Migration
 

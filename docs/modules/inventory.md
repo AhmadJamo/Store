@@ -232,3 +232,7 @@ Warehouses now choose either direct one-step purchase receiving or Receive/Inspe
 PUR-250B adds an explicit no-stock boundary for Dropship purchase orders. Supplier-to-customer delivery evidence is owned by Purchasing; Goods Receipt creation rejects the route and no ProductStock, InventoryBalance, tracking transaction, StockTransaction or StockMovement is created. Internal Warehouse remains an organizational dimension on the order, not a claim that the goods entered that warehouse.
 
 REC-004B3: stock-transfer missing resources now produce 404; duplicate replenishment transfers use `409/duplicate`; insufficient stock, capacity, branch access and reversal-state failures use `409/conflict`; structural input validation remains 400. No stock quantity, reservation, valuation or receipt rule changed.
+
+## FRD-I presentation acceptance
+
+FRD-I closed on 2026-11-27 for 22 Angular routes across 15 templates. Backend Release built with zero warnings/errors; 1,668 SecurityRegression checks, 370/370 Angular tests, production build and Playwright 7/7 passed. Live authenticated API and performance checks remain external because no API URL or storage state was supplied. FRD-ISS-012 remains an independent open localization-chunk budget issue. Evidence is in ../frontend-redesign/acceptance/inventory-2026-11-27/.
