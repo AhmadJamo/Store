@@ -1,5 +1,7 @@
 # حالة المشروع / Project Status
 
+> تحديث 2026-11-27: اكتمل Location Movements Operational History بجدول typed من سبعة أعمدة يحفظ التاريخ والمنتج/الباركود والمستودع والمصدر/الوجهة والكمية والمرجع والترتيب والفراغ. نجح 368/368 والبناء وPlaywright 7/7؛ reconciliation SummaryStrip هو التالي.
+
 > تحديث 2026-11-27: اكتملت Location Movements Filters V4 بـFilterBar وإشارتين وتطبيق ومسح مع حفظ warehouse/query وصلاحية العرض وتحميل السجلين. نجح 367/367 والبناء وPlaywright 7/7؛ Operational History DataTable هو التالي.
 
 > تحديث 2026-11-27: اكتمل Location Movements Move Form V4 بسياق Inventory مترجم وقسم موصوف وسبع إشارات وتذييل إجراء مع حفظ الخيارات والكمية والصلاحية وidempotency والتحقق والـpayload. نجح 366/366 والبناء وPlaywright 7/7؛ Filters V4 هي التالية.

@@ -2,9 +2,9 @@
 
 ## FRD-I — Inventory Migration
 
-> الحالة: IN PROGRESS — Location Movements Filters V4 مكتملة في 2026-11-27
+> الحالة: IN PROGRESS — Location Movements Operational History V4 مكتمل في 2026-11-27
 >
-> اكتملت Location Movements Filters V4 بـFilterBar وFieldCue للمستودع والبحث وإجرائي تطبيق ومسح، مع حفظ warehouse/query وLocationMovements.View وسلوك تحميل السجلين. نجح 367/367 والبناء وPlaywright 7/7. التالي الوحيد: حوّل Operational History فقط إلى typed DataTable من سبعة أعمدة يحفظ date/product+barcode/warehouse/from/to/quantity/reference وترتيب الخادم والحالة الفارغة. لا تغيّر Physical Ledger أو المؤشرات أو API/Application.
+> اكتمل Operational History typed DataTable من سبعة أعمدة يحفظ date/product+barcode/warehouse/from/to/quantity/reference وترتيب الخادم والحالة الفارغة. نجح 368/368 والبناء وPlaywright 7/7. التالي الوحيد: حوّل reconciliation metrics فقط إلى SummaryStrip من أربعة مؤشرات total/linked/legacy/status مع حفظ أرقام الخادم وisReconciled والترجمة. لا تغيّر Physical Ledger أو API/Application.
 
 ## FRD-H — Branches/Warehouses Migration
 

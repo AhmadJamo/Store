@@ -116,6 +116,19 @@ describe('LocationMovementsPageComponent', () => {
     expect(component.filter.getRawValue()).toEqual({ warehouseId: 0, query: '' });
     expect(api.getLocationMovements).toHaveBeenLastCalledWith(undefined, '');
   });
+  it('defines the complete typed operational history evidence table', () => {
+    const fixture = TestBed.createComponent(LocationMovementsPageComponent);
+    fixture.detectChanges();
+    const component = fixture.componentInstance as any;
+    expect(component.historyColumns().map((column: any) => column.key)).toEqual([
+      'createdAt', 'product', 'warehouseName', 'fromLocationCode',
+      'toLocationCode', 'quantity', 'reference',
+    ]);
+    const table = fixture.nativeElement.querySelector('app-data-table.operational-history-table');
+    expect(table.textContent).toContain('Coffee');
+    expect(table.textContent).toContain('COF-1');
+    expect(table.textContent).toContain('MOVE-11');
+  });
   it('blocks invalid moves, preserves server errors, and guards dirty work', () => {
     const component = TestBed.createComponent(LocationMovementsPageComponent).componentInstance as any;
     component.form.patchValue({ warehouseId: 2, productId: 1, fromStorageLocationId: 4, toStorageLocationId: 4, quantity: 3 });
