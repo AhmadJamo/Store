@@ -2,9 +2,9 @@
 
 ## FRD-I — Inventory Migration
 
-> الحالة: IN PROGRESS — Putaway Workspace V4 مكتمل في 2026-11-27
+> الحالة: IN PROGRESS — Location Movements safety audit مكتمل في 2026-11-27
 >
-> اكتمل Rules typed DataTable من ستة أعمدة يعرض warehouse/destination/target/priority/status وإجراء toggle المشروط بالصلاحية والحفظ، مع حفظ ترتيب الخادم والحالة الفارغة وأمر setRuleActive. اكتملت Putaway Workspace V4 ونجح 360/360 والبناء وPlaywright 7/7. التالي الوحيد: نفّذ Location Movements safety audit فقط قبل أي restyle؛ احمِ الصفوف المسماة والكميات والمصدر/الوجهة، فلاتر warehouse/query، صلاحيات View/Create وStockMovements.View، الخيارات، idempotency، payload النقل، سجلي الحركة، reconciliation evidence، التحقق والأخطاء وdirty guard. لا تغيّر runtime أو API/Application.
+> اكتمل Location Movements safety audit بخمسة اختبارات تحمي صفوف السجلين والكميات والمصدر/الوجهة، فلاتر warehouse/query، صلاحيات View/Create وStockMovements.View، الخيارات المسماة، idempotency، payload النقل، reconciliation evidence، التحقق والأخطاء وdirty guard. نجح 365/365 والبناء وPlaywright 7/7. التالي الوحيد: حوّل Move Form فقط إلى V4 بسياق Inventory مترجم وFormSection وسبع FieldCues وWorkflowFooter، مع حفظ source quantity والخيارات المسماة والصلاحية وidempotency والتحقق والـpayload. لا تغيّر filters أو السجلين أو API/Application.
 
 ## FRD-H — Branches/Warehouses Migration
 

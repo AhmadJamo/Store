@@ -1,5 +1,7 @@
 # حالة المشروع / Project Status
 
+> تحديث 2026-11-27: اكتمل Location Movements safety audit بخمسة اختبارات تحمي السجلين والمطابقة والصلاحيات والفلاتر والخيارات والكمية وidempotency والـpayload والتحقق والأخطاء وdirty guard دون تغيير runtime. نجح 365/365 والبناء وPlaywright 7/7؛ Move Form V4 هو التالي.
+
 > تحديث 2026-11-27: اكتملت Putaway Workspace V4 بعد تحويل جدول القواعد إلى ستة أعمدة typed تحفظ الأدلة والحالة والترتيب والفراغ والتفعيل المشروط. نجح 360/360 والبناء وPlaywright 7/7؛ Location Movements safety audit هو التالي.
 
 > تحديث 2026-11-27: اكتمل Putaway Unassigned Stock بجدول typed من ثمانية أعمدة يحفظ الهوية وكميات المستودع/المسكّن/غير المسكّن والاقتراح والترتيب والفراغ وإجراء التسكين المشروط. نجح 359/359 والبناء وPlaywright 7/7؛ Rules DataTable هو التالي.
