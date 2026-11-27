@@ -371,3 +371,10 @@
 - Angular: 377/377 across 143 files; production build passed.
 - Backend Release: 0 warnings/errors; SecurityRegression: 1,668; static accessibility: 142 templates; UI consistency: 122 pages with FilterBar 14 and SummaryStrip 16; Playwright: 7/7.
 - Unified gate: 10 passed, 1 failed, 4 skipped. Only FRD-ISS-012 failed at 84.55 kB versus 80 kB; live API/performance checks were skipped without URL/authenticated state.
+
+## FRD-J Reconciliation Inventory-to-Ledger V4 — 2026-11-27
+
+- Focused component: 8/8; protects the seven-column typed inventory table, DetailSection, server order/evidence and all prior query/permission/state contracts.
+- Angular: 378/378 across 143 files; production build passed.
+- Backend Release: 0 warnings/errors; SecurityRegression: 1,668; static accessibility: 142 templates; UI consistency: 122 pages with DataTable 44 and DetailSection 10; Playwright: 7/7.
+- Unified gate: 10 passed, 1 failed, 4 skipped. Only FRD-ISS-012 failed at 84.55 kB versus 80 kB; live API/performance checks were skipped without URL/authenticated state.

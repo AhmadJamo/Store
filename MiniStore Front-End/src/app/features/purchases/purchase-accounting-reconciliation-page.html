@@ -72,68 +72,62 @@
         }
       </aside>
     }
-    <section>
-      <header class="section-header">
-        <div>
-          <h2>{{ i18n.text('inventoryToLedger') }}</h2>
-          <p>{{ i18n.text('inventoryDescription') }}</p>
-        </div>
-        <span class="ui-badge">{{ i18n.text('exceptions') }}: {{ p.inventoryExceptionCount }}</span>
-      </header>
-      <div class="cards">
-        @for (row of p.inventory; track row.warehouseId) {
-          <article class="ui-card evidence" [class.ok]="row.isReconciled">
-            <header>
-              <div>
-                <strong>{{ row.warehouseName }}</strong
-                ><small>{{
-                  row.hasInventoryAccount
-                    ? row.inventoryAccountDisplay
-                    : i18n.text('accountMissing')
-                }}</small>
-              </div>
-              <span class="ui-badge">{{
-                row.isReconciled ? i18n.text('matched') : i18n.text('review')
-              }}</span>
-            </header>
-            <dl>
-              <div>
-                <dt>{{ i18n.text('operationalValue') }}</dt>
-                <dd>{{ row.operationalValue | number: '1.2-2' }}</dd>
-              </div>
-              <div>
-                <dt>{{ i18n.text('ledgerBalance') }}</dt>
-                <dd>{{ row.ledgerBalance | number: '1.2-2' }}</dd>
-              </div>
-              <div>
-                <dt>{{ i18n.text('difference') }}</dt>
-                <dd>{{ row.difference | number: '1.2-2' }}</dd>
-              </div>
-            </dl>
-            <footer>
-              @if (session.can('ProductStock.View')) {
-                <a
-                  class="ui-button secondary"
-                  routerLink="/inventory/stocks"
-                  [queryParams]="{ warehouseId: row.warehouseId }"
-                  >{{ i18n.text('viewStock') }}</a
-                >
-              }
-              @if (!row.hasInventoryAccount && session.can('Warehouses.Edit')) {
-                <a
-                  class="ui-button secondary"
-                  routerLink="/warehouses"
-                  [queryParams]="{ edit: row.warehouseId }"
-                  >{{ i18n.text('assignAccount') }}</a
-                >
-              }
-            </footer>
-          </article>
-        } @empty {
-          <p class="ui-card empty">{{ i18n.text('noInventoryExceptions') }}</p>
-        }
-      </div>
-    </section>
+    <app-detail-section
+      [title]="i18n.text('inventoryToLedger')"
+      [description]="i18n.text('inventoryDescription')"
+    >
+      <span detail-actions class="ui-badge"
+        >{{ i18n.text('exceptions') }}: {{ p.inventoryExceptionCount }}</span
+      >
+      <app-data-table
+        [label]="i18n.text('inventoryToLedger')"
+        [columns]="inventoryColumns()"
+        [rows]="inventoryRows()"
+        rowKey="rowKey"
+        [emptyTitle]="i18n.text('noInventoryExceptions')"
+      >
+        <ng-template appDataCell="warehouseName" let-row>
+          <strong>{{ row.warehouseName }}</strong>
+        </ng-template>
+        <ng-template appDataCell="inventoryAccountDisplay" let-row>
+          {{ row.hasInventoryAccount ? row.inventoryAccountDisplay : i18n.text('accountMissing') }}
+        </ng-template>
+        <ng-template appDataCell="operationalValue" let-row>
+          {{ row.operationalValue | number: '1.2-2' }}
+        </ng-template>
+        <ng-template appDataCell="ledgerBalance" let-row>
+          {{ row.ledgerBalance | number: '1.2-2' }}
+        </ng-template>
+        <ng-template appDataCell="difference" let-row>
+          <strong>{{ row.difference | number: '1.2-2' }}</strong>
+        </ng-template>
+        <ng-template appDataCell="status" let-row>
+          <span class="ui-badge">{{
+            row.isReconciled ? i18n.text('matched') : i18n.text('review')
+          }}</span>
+        </ng-template>
+        <ng-template appDataCell="actions" let-row>
+          <div class="row-actions">
+            @if (session.can('ProductStock.View')) {
+              <a
+                class="ui-button secondary"
+                routerLink="/inventory/stocks"
+                [queryParams]="{ warehouseId: row.warehouseId }"
+                >{{ i18n.text('viewStock') }}</a
+              >
+            }
+            @if (!row.hasInventoryAccount && session.can('Warehouses.Edit')) {
+              <a
+                class="ui-button secondary"
+                routerLink="/warehouses"
+                [queryParams]="{ edit: row.warehouseId }"
+                >{{ i18n.text('assignAccount') }}</a
+              >
+            }
+          </div>
+        </ng-template>
+      </app-data-table>
+    </app-detail-section>
     <section>
       <header class="section-header">
         <div>

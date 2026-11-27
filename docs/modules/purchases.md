@@ -417,3 +417,7 @@ Six focused Angular component tests now protect server-authored inventory/ledger
 ### Purchase Accounting Reconciliation context/filter/summary V4
 
 The first presentation slice replaces the hard-coded eyebrow, ad-hoc filter card and four legacy metric cards with bilingual Purchasing context, the shared FilterBar and a four-item SummaryStrip. The existing as-of/exception GET inputs, server-authored inventory/ledger/GRNI values and reconciliation booleans remain authoritative; evidence cards and permission-gated links are unchanged. Seven focused tests and the full gate pass: 377/377 Angular across 143 files, Backend Release with zero warnings/errors, 1,668 SecurityRegression checks, build and Playwright 7/7. FRD-ISS-012 remains independently open at 84.55 kB versus 80 kB.
+
+### Purchase Accounting Reconciliation inventory evidence V4
+
+Inventory-to-Ledger evidence now uses DetailSection and a seven-column typed DataTable for warehouse, inventory account, operational value, ledger balance, difference, server reconciliation status and permission-gated actions. Source order, named evidence, empty behavior and ProductStock.View/Warehouses.Edit boundaries are preserved. GRNI cards remain unchanged. Eight focused tests and the full gate pass: 378/378 Angular across 143 files, Backend Release with zero warnings/errors, 1,668 SecurityRegression checks, build and Playwright 7/7. FRD-ISS-012 remains independently open at 84.55 kB versus 80 kB.

@@ -1,6 +1,6 @@
 # 17 — Purchases migration audit
 
-> Status: FRD-J in progress — Reconciliation context/filter/summary complete; inventory evidence table next
+> Status: FRD-J in progress — Reconciliation inventory evidence complete; GRNI evidence table next
 > Date: 2026-11-27
 > Source of truth: Angular routes/components and clients, Internal API controllers, Application services/DTOs, repositories and purchasing module documentation
 
@@ -39,7 +39,7 @@ The authenticated Purchasing workspace exposes 59 Angular routes, including the 
 - Purchase Requests already uses FilterBar, SummaryStrip, FormSection, FieldCue, DetailSection, WorkflowProgress and WorkflowFooter. Purchase Orders uses WorkflowProgress and WorkflowFooter. Other pages remain mixed card/form/table layouts and must be migrated in bounded slices rather than by a feature-wide rewrite.
 - English and Arabic localization services exist for every surface; Purchase Templates intentionally reuses Purchase Agreement localization. Any changed copy must remain bilingual and RTL-safe.
 - At audit time, the purchasing feature had 20 API-client spec files but zero `*page.spec.ts` component files. API request coverage alone does not protect rendered server evidence, permission-gated actions, empty/error states, form payloads or dirty recovery.
-- The first FRD-J pilot now has seven Purchase Accounting Reconciliation component tests. The current baseline is 377 Angular tests across 143 files, Backend Release with zero warnings/errors, 1,668 SecurityRegression checks, production build and Playwright 7/7. Static gates report 14 FilterBars and 16 SummaryStrips. FRD-ISS-012 remains independently open at 84.55 kB versus 80 kB; live API/performance checks remain skipped without an external URL and authenticated state.
+- The first FRD-J pilot now has eight Purchase Accounting Reconciliation component tests. The current baseline is 378 Angular tests across 143 files, Backend Release with zero warnings/errors, 1,668 SecurityRegression checks, production build and Playwright 7/7. Static gates report 44 DataTables, 14 FilterBars, 16 SummaryStrips and 10 DetailSections. FRD-ISS-012 remains independently open at 84.55 kB versus 80 kB; live API/performance checks remain skipped without an external URL and authenticated state.
 
 ## Cross-layer contracts that must not change
 
@@ -65,7 +65,7 @@ Before any presentation change, add a focused component safety net that proves:
 4. Settings, stock, warehouse, receipt, order, bill and return links remain independently permission-gated;
 5. empty/error states do not invent evidence and the report remains explicitly read-only.
 
-The safety net and first presentation slice are complete. The page now has localized Purchasing context, a FilterBar over the existing as-of/exception query and a four-item SummaryStrip using server-returned totals/status; the legacy metrics CSS is removed. The next bounded slice converts only Inventory-to-Ledger evidence to DetailSection and a typed table while preserving source order, values, status, permission-gated remediation links and empty behavior. GRNI evidence remains unchanged until a later slice. Do not change the API, Application service, repository, DTOs, permissions or accounting calculations.
+The safety net, context/filter/summary and Inventory-to-Ledger evidence slices are complete. Inventory evidence now uses DetailSection and a seven-column typed table while preserving server order, warehouse/account names, operational/ledger/difference values, status, permission-gated stock/warehouse links and empty behavior. The next bounded slice converts only GRNI evidence to DetailSection and a typed table while preserving receipt/order/supplier/warehouse values, settlements, document permissions, source order and empty behavior. Do not change the API, Application service, repository, DTOs, permissions or accounting calculations.
 
 ## Deferred ordering
 

@@ -152,6 +152,20 @@ describe('PurchaseAccountingReconciliationPageComponent', () => {
     expect(element.querySelector('app-summary-strip')?.textContent).toContain('475.25');
     expect(element.querySelector('.metrics')).toBeNull();
   });
+  it('renders Inventory-to-Ledger as one seven-column typed table without changing GRNI cards', () => {
+    const fixture = TestBed.createComponent(PurchaseAccountingReconciliationPageComponent);
+    fixture.detectChanges();
+    const element = fixture.nativeElement as HTMLElement;
+    const inventorySection = element.querySelector('app-detail-section');
+
+    expect(inventorySection).not.toBeNull();
+    expect(inventorySection?.querySelectorAll('app-data-table th')).toHaveLength(7);
+    expect(inventorySection?.querySelectorAll('app-data-table tbody tr')).toHaveLength(1);
+    expect(inventorySection?.textContent).toContain('Main warehouse');
+    expect(inventorySection?.textContent).toContain('1310 — Inventory asset');
+    expect(inventorySection?.textContent).toContain('1,234.56');
+    expect(element.querySelectorAll('.cards .evidence')).toHaveLength(1);
+  });
   it('sends only the selected as-of date and exception flag to the read API', () => {
     const fixture = TestBed.createComponent(PurchaseAccountingReconciliationPageComponent);
     const component = fixture.componentInstance as any;

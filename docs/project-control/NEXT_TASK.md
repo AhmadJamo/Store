@@ -2,9 +2,9 @@
 
 ## FRD-J — Purchases Migration
 
-> الحالة: IN PROGRESS — reconciliation context/filter/summary complete; inventory evidence table next
+> الحالة: IN PROGRESS — reconciliation inventory evidence complete; GRNI evidence table next
 >
-> اكتمل سياق Purchasing المترجم وFilterBar للاستعلام الحالي وSummaryStrip بأربعة مؤشرات خادمية. نجح 377/377 والبناء وPlaywright 7/7؛ بقي FRD-ISS-012 مستقلاً. التالي الوحيد: حوّل قسم Inventory-to-Ledger وحده إلى DetailSection وDataTable typed يحفظ warehouse/account/operational/ledger/difference/status وروابط stock/warehouse المشروطة والحالة الفارغة وترتيب الخادم. لا تغيّر قسم GRNI بعد ولا API أو الحسابات.
+> اكتمل Inventory-to-Ledger ضمن DetailSection وجدول typed من سبعة أعمدة يحفظ warehouse/account/operational/ledger/difference/status وروابط الإصلاح المشروطة والحالة الفارغة وترتيب الخادم. نجح 378/378 والبناء وPlaywright 7/7؛ بقي FRD-ISS-012 مستقلاً. التالي الوحيد: حوّل قسم GRNI وحده إلى DetailSection وDataTable typed يحفظ receipt/date/supplier/warehouse/order/receipt-returned-billed/outstanding/settlements وروابط المستندات حسب الصلاحية وترتيب الخادم والحالة الفارغة. لا تغيّر API أو الحسابات.
 
 ## FRD-I — Inventory Migration
 
