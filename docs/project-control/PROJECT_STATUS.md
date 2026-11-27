@@ -1,5 +1,7 @@
 # حالة المشروع / Project Status
 
+> تحديث 2026-11-27: اكتمل Putaway safety audit بخمسة اختبارات تحمي كميات واقتراحات الخادم والفلاتر والترتيب والخيارات المسماة وProductStock.Edit وأوامر assign/rule/toggle ومفتاح idempotency والتحقق والأخطاء وdirty guard. نجح 355/355 والبناء وPlaywright 7/7؛ Assignment Form V4 هو التالي.
+
 > تحديث 2026-11-27: اكتملت Replenishment Workspace V4 بعد تحويل الاقتراحات إلى typed DataTable من 11 عموداً مع حفظ الأدلة والإجراءات والصلاحيات. نجح 350/350 والبناء وPlaywright 7/7؛ Putaway safety audit هو التالي.
 
 > تحديث 2026-11-27: اكتملت Replenishment Filters V4 بـFilterBar وثلاث إشارات حقول مع حفظ query contracts وسلوك التطبيق والمسح. نجح 350/350 والبناء وPlaywright 7/7؛ Suggestions DataTable هو التالي.
