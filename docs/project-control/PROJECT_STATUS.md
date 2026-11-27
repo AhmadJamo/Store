@@ -1,5 +1,7 @@
 # حالة المشروع / Project Status
 
+> تحديث 2026-11-27: اكتملت Location Movements Filters V4 بـFilterBar وإشارتين وتطبيق ومسح مع حفظ warehouse/query وصلاحية العرض وتحميل السجلين. نجح 367/367 والبناء وPlaywright 7/7؛ Operational History DataTable هو التالي.
+
 > تحديث 2026-11-27: اكتمل Location Movements Move Form V4 بسياق Inventory مترجم وقسم موصوف وسبع إشارات وتذييل إجراء مع حفظ الخيارات والكمية والصلاحية وidempotency والتحقق والـpayload. نجح 366/366 والبناء وPlaywright 7/7؛ Filters V4 هي التالية.
 
 > تحديث 2026-11-27: اكتمل Location Movements safety audit بخمسة اختبارات تحمي السجلين والمطابقة والصلاحيات والفلاتر والخيارات والكمية وidempotency والـpayload والتحقق والأخطاء وdirty guard دون تغيير runtime. نجح 365/365 والبناء وPlaywright 7/7؛ Move Form V4 هو التالي.

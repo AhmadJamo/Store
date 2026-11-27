@@ -13,3 +13,6 @@
 
 .putaway-filters .ui-field { min-inline-size: min(16rem, 100%); }
 @media (max-width: 680px) { .putaway-filters .ui-field { min-inline-size: 100%; } }
+
+.movement-filters .ui-field { min-inline-size: min(18rem, 100%); }
+@media (max-width: 680px) { .movement-filters .ui-field { min-inline-size: 100%; } }

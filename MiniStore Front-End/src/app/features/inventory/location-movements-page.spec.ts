@@ -105,6 +105,17 @@ describe('LocationMovementsPageComponent', () => {
     expect(form.querySelectorAll('app-field-cue')).toHaveLength(7);
     expect(form.querySelectorAll('app-workflow-footer')).toHaveLength(1);
   });
+  it('uses FilterBar cues and resets the exact movement query contract', () => {
+    const fixture = TestBed.createComponent(LocationMovementsPageComponent);
+    fixture.detectChanges();
+    const component = fixture.componentInstance as any;
+    expect(fixture.nativeElement.querySelectorAll('app-filter-bar')).toHaveLength(1);
+    expect(fixture.nativeElement.querySelectorAll('app-filter-bar app-field-cue')).toHaveLength(2);
+    component.filter.setValue({ warehouseId: 2, query: 'coffee' });
+    component.clearFilters();
+    expect(component.filter.getRawValue()).toEqual({ warehouseId: 0, query: '' });
+    expect(api.getLocationMovements).toHaveBeenLastCalledWith(undefined, '');
+  });
   it('blocks invalid moves, preserves server errors, and guards dirty work', () => {
     const component = TestBed.createComponent(LocationMovementsPageComponent).componentInstance as any;
     component.form.patchValue({ warehouseId: 2, productId: 1, fromStorageLocationId: 4, toStorageLocationId: 4, quantity: 3 });
