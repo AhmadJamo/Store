@@ -10,3 +10,6 @@
 
 .assignment-form, .rule-form { display: grid; gap: var(--erp-space-4); }
 .assignment-form .form-grid, .rule-form .rule-grid { margin-block-start: var(--erp-space-3); }
+
+.putaway-filters .ui-field { min-inline-size: min(16rem, 100%); }
+@media (max-width: 680px) { .putaway-filters .ui-field { min-inline-size: 100%; } }

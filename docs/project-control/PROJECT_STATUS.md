@@ -1,5 +1,7 @@
 # حالة المشروع / Project Status
 
+> تحديث 2026-11-27: اكتملت Putaway Filters V4 بـFilterBar وثلاث إشارات وإجرائي تطبيق ومسح مع حفظ warehouse/query وترتيب product/barcode/warehouse وسلوك التحميل والخطأ. نجح 358/358 والبناء وPlaywright 7/7؛ Unassigned Stock DataTable هو التالي.
+
 > تحديث 2026-11-27: اكتمل Putaway Rule Form V4 بقسم موصوف وأربع إشارات افتراضية وخامسة مشروطة وتذييل حفظ مع حفظ default/product/category والخيارات والأولوية والصلاحية والتحقق والأمر. نجح 357/357 والبناء وPlaywright 7/7؛ Filters V4 هي التالية.
 
 > تحديث 2026-11-27: اكتمل Putaway Assignment Form V4 بسياق Inventory مترجم وقسم موصوف وأربع إشارات حقول وتذييل إجراء مع حفظ الخيارات المسماة والاقتراح والكمية والصلاحية وidempotency والتحقق والأمر. نجح 356/356 والبناء وPlaywright 7/7؛ Rule Form V4 هو التالي.

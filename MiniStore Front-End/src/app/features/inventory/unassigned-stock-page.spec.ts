@@ -121,6 +121,17 @@ describe('UnassignedStockPageComponent', () => {
     fixture.detectChanges();
     expect(form().querySelectorAll('app-field-cue')).toHaveLength(5);
   });
+  it('uses FilterBar cues and resets the exact server filter contract', () => {
+    const fixture = TestBed.createComponent(UnassignedStockPageComponent);
+    fixture.detectChanges();
+    const component = fixture.componentInstance as any;
+    expect(fixture.nativeElement.querySelectorAll('app-filter-bar')).toHaveLength(1);
+    expect(fixture.nativeElement.querySelectorAll('app-filter-bar app-field-cue')).toHaveLength(3);
+    component.filter.setValue({ warehouseId: 2, query: 'coffee', sort: 'barcode' });
+    component.clearFilters();
+    expect(component.filter.getRawValue()).toEqual({ warehouseId: 0, query: '', sort: 'product' });
+    expect(api.getUnassigned).toHaveBeenLastCalledWith(undefined, '', 'product');
+  });
   it('blocks invalid commands, preserves server errors, and guards dirty work', () => {
     const component = TestBed.createComponent(UnassignedStockPageComponent).componentInstance as any;
     component.assignForm.patchValue({ productId: 0, warehouseId: 0, storageLocationId: 0, quantity: 0 });

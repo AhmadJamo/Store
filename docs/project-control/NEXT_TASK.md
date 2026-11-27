@@ -2,9 +2,9 @@
 
 ## FRD-I — Inventory Migration
 
-> الحالة: IN PROGRESS — Putaway Rule Form V4 مكتمل في 2026-11-27
+> الحالة: IN PROGRESS — Putaway Filters V4 مكتملة في 2026-11-27
 >
-> اكتمل Putaway Rule Form V4 بقسم موصوف وأربع FieldCues افتراضياً وخامسة للهدف الشرطي وWorkflowFooter، مع حفظ default/product/category والخيارات المسماة وpriority والتحقق وdirty guard وأمر createRule. نجح 357/357 والبناء وPlaywright 7/7. التالي الوحيد: حوّل فلاتر Putaway فقط إلى FilterBar مع FieldCue للمستودع والبحث وإجراءات apply/reset واضحة، وأظهر sort الحالي دون اختراع عقد جديد؛ احفظ warehouse/query/sort وloading/error behavior. لا تغيّر جدولي المخزون والقواعد أو API/Application في هذه الشريحة.
+> اكتملت Putaway Filters V4 بـFilterBar وثلاث FieldCues للمستودع والبحث وترتيب الخادم (product/barcode/warehouse) وإجرائي تطبيق ومسح، مع حفظ warehouse/query/sort وloading/error behavior. نجح 358/358 والبناء وPlaywright 7/7. التالي الوحيد: حوّل جدول Unassigned Stock فقط إلى typed DataTable يعرض product/barcode/warehouse وwarehouseQuantity/assignedQuantity/unassignedQuantity والاقتراح وإجراء assign المشروط، مع حفظ ترتيب الخادم والحالة الفارغة واختيار الصف. لا تغيّر Rules Table أو API/Application في هذه الشريحة.
 
 ## FRD-H — Branches/Warehouses Migration
 
