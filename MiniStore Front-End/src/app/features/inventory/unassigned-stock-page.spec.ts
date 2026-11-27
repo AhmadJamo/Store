@@ -109,6 +109,18 @@ describe('UnassignedStockPageComponent', () => {
     expect(form.querySelectorAll('app-field-cue')).toHaveLength(4);
     expect(form.querySelectorAll('app-workflow-footer')).toHaveLength(1);
   });
+  it('uses the shared V4 hierarchy for default and targeted putaway rules', () => {
+    const fixture = TestBed.createComponent(UnassignedStockPageComponent);
+    fixture.detectChanges();
+    const component = fixture.componentInstance as any;
+    const form = () => fixture.nativeElement.querySelector('form.rule-form');
+    expect(form().querySelectorAll('app-form-section')).toHaveLength(1);
+    expect(form().querySelectorAll('app-field-cue')).toHaveLength(4);
+    expect(form().querySelectorAll('app-workflow-footer')).toHaveLength(1);
+    component.ruleForm.controls.targetType.setValue('product');
+    fixture.detectChanges();
+    expect(form().querySelectorAll('app-field-cue')).toHaveLength(5);
+  });
   it('blocks invalid commands, preserves server errors, and guards dirty work', () => {
     const component = TestBed.createComponent(UnassignedStockPageComponent).componentInstance as any;
     component.assignForm.patchValue({ productId: 0, warehouseId: 0, storageLocationId: 0, quantity: 0 });

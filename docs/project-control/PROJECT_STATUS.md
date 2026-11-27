@@ -1,5 +1,7 @@
 # حالة المشروع / Project Status
 
+> تحديث 2026-11-27: اكتمل Putaway Rule Form V4 بقسم موصوف وأربع إشارات افتراضية وخامسة مشروطة وتذييل حفظ مع حفظ default/product/category والخيارات والأولوية والصلاحية والتحقق والأمر. نجح 357/357 والبناء وPlaywright 7/7؛ Filters V4 هي التالية.
+
 > تحديث 2026-11-27: اكتمل Putaway Assignment Form V4 بسياق Inventory مترجم وقسم موصوف وأربع إشارات حقول وتذييل إجراء مع حفظ الخيارات المسماة والاقتراح والكمية والصلاحية وidempotency والتحقق والأمر. نجح 356/356 والبناء وPlaywright 7/7؛ Rule Form V4 هو التالي.
 
 > تحديث 2026-11-27: اكتمل Putaway safety audit بخمسة اختبارات تحمي كميات واقتراحات الخادم والفلاتر والترتيب والخيارات المسماة وProductStock.Edit وأوامر assign/rule/toggle ومفتاح idempotency والتحقق والأخطاء وdirty guard. نجح 355/355 والبناء وPlaywright 7/7؛ Assignment Form V4 هو التالي.
