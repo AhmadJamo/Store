@@ -132,6 +132,19 @@ describe('UnassignedStockPageComponent', () => {
     expect(component.filter.getRawValue()).toEqual({ warehouseId: 0, query: '', sort: 'product' });
     expect(api.getUnassigned).toHaveBeenLastCalledWith(undefined, '', 'product');
   });
+  it('defines the complete typed unassigned-stock evidence and action table', () => {
+    const fixture = TestBed.createComponent(UnassignedStockPageComponent);
+    fixture.detectChanges();
+    const component = fixture.componentInstance as any;
+    expect(component.unassignedColumns().map((column: any) => column.key)).toEqual([
+      'productName', 'barcode', 'warehouseName', 'warehouseQuantity',
+      'assignedQuantity', 'unassignedQuantity', 'suggestedLocationCode', 'actions',
+    ]);
+    const table = fixture.nativeElement.querySelector('app-data-table.unassigned-table');
+    expect(table.textContent).toContain('10');
+    expect(table.textContent).toContain('6');
+    expect(table.querySelector('button')).not.toBeNull();
+  });
   it('blocks invalid commands, preserves server errors, and guards dirty work', () => {
     const component = TestBed.createComponent(UnassignedStockPageComponent).componentInstance as any;
     component.assignForm.patchValue({ productId: 0, warehouseId: 0, storageLocationId: 0, quantity: 0 });

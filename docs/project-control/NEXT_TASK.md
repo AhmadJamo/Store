@@ -2,9 +2,9 @@
 
 ## FRD-I — Inventory Migration
 
-> الحالة: IN PROGRESS — Putaway Filters V4 مكتملة في 2026-11-27
+> الحالة: IN PROGRESS — Putaway Unassigned Stock Table V4 مكتمل في 2026-11-27
 >
-> اكتملت Putaway Filters V4 بـFilterBar وثلاث FieldCues للمستودع والبحث وترتيب الخادم (product/barcode/warehouse) وإجرائي تطبيق ومسح، مع حفظ warehouse/query/sort وloading/error behavior. نجح 358/358 والبناء وPlaywright 7/7. التالي الوحيد: حوّل جدول Unassigned Stock فقط إلى typed DataTable يعرض product/barcode/warehouse وwarehouseQuantity/assignedQuantity/unassignedQuantity والاقتراح وإجراء assign المشروط، مع حفظ ترتيب الخادم والحالة الفارغة واختيار الصف. لا تغيّر Rules Table أو API/Application في هذه الشريحة.
+> اكتمل Unassigned Stock typed DataTable من ثمانية أعمدة يعرض product/barcode/warehouse وwarehouseQuantity/assignedQuantity/unassignedQuantity والاقتراح وإجراء assign المشروط، مع حفظ ترتيب الخادم والحالة الفارغة واختيار الصف. نجح 359/359 والبناء وPlaywright 7/7. التالي الوحيد: حوّل Rules Table فقط إلى typed DataTable يعرض warehouse/destination/target/priority/status وإجراء toggle المشروط بالصلاحية والحفظ، مع حفظ ترتيب الخادم والحالة الفارغة وأمر setRuleActive. لا تغيّر API/Application في هذه الشريحة.
 
 ## FRD-H — Branches/Warehouses Migration
 
