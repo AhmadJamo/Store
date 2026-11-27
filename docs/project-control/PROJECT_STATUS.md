@@ -1,5 +1,7 @@
 # حالة المشروع / Project Status
 
+> تحديث 2026-11-27: اكتمل Putaway Assignment Form V4 بسياق Inventory مترجم وقسم موصوف وأربع إشارات حقول وتذييل إجراء مع حفظ الخيارات المسماة والاقتراح والكمية والصلاحية وidempotency والتحقق والأمر. نجح 356/356 والبناء وPlaywright 7/7؛ Rule Form V4 هو التالي.
+
 > تحديث 2026-11-27: اكتمل Putaway safety audit بخمسة اختبارات تحمي كميات واقتراحات الخادم والفلاتر والترتيب والخيارات المسماة وProductStock.Edit وأوامر assign/rule/toggle ومفتاح idempotency والتحقق والأخطاء وdirty guard. نجح 355/355 والبناء وPlaywright 7/7؛ Assignment Form V4 هو التالي.
 
 > تحديث 2026-11-27: اكتملت Replenishment Workspace V4 بعد تحويل الاقتراحات إلى typed DataTable من 11 عموداً مع حفظ الأدلة والإجراءات والصلاحيات. نجح 350/350 والبناء وPlaywright 7/7؛ Putaway safety audit هو التالي.

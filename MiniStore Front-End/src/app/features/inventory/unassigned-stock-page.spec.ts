@@ -100,6 +100,15 @@ describe('UnassignedStockPageComponent', () => {
     expect(api.setRuleActive).toHaveBeenCalledWith(8, false);
   });
 
+  it('uses the shared V4 hierarchy for the assignment form only', () => {
+    const fixture = TestBed.createComponent(UnassignedStockPageComponent);
+    fixture.detectChanges();
+    const form = fixture.nativeElement.querySelector('form.assignment-form');
+    expect(fixture.nativeElement.textContent).toContain('inventoryNavigation');
+    expect(form.querySelectorAll('app-form-section')).toHaveLength(1);
+    expect(form.querySelectorAll('app-field-cue')).toHaveLength(4);
+    expect(form.querySelectorAll('app-workflow-footer')).toHaveLength(1);
+  });
   it('blocks invalid commands, preserves server errors, and guards dirty work', () => {
     const component = TestBed.createComponent(UnassignedStockPageComponent).componentInstance as any;
     component.assignForm.patchValue({ productId: 0, warehouseId: 0, storageLocationId: 0, quantity: 0 });

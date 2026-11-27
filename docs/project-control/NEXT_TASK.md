@@ -2,9 +2,9 @@
 
 ## FRD-I — Inventory Migration
 
-> الحالة: IN PROGRESS — Putaway safety audit مكتمل في 2026-11-27
+> الحالة: IN PROGRESS — Putaway Assignment Form V4 مكتمل في 2026-11-27
 >
-> اكتمل safety audit لشاشة Putaway / Unassigned Stock بخمسة اختبارات تحمي صفوف وأسماء الخادم والكميات والاقتراح، فلاتر warehouse/query/sort، ProductStock.Edit، الاختيار ومفتاح idempotency، assign/rule/toggle payloads، الخيارات المسماة، التحقق وأخطاء الخادم وdirty guard. نجح 355/355 والبناء وPlaywright 7/7. التالي الوحيد: حوّل Assignment Form فقط إلى V4 بسياق Inventory مترجم وFormSection وFieldCue وWorkflowFooter، مع حفظ اختيار product/warehouse/destination بالأسماء، suggested destination، quantity، الصلاحية، idempotency، التحقق/reset والـpayload. لا تغيّر Rule Form أو filters أو الجداول أو API/Application في هذه الشريحة.
+> اكتمل Assignment Form V4 بسياق Inventory مترجم وFormSection وأربع FieldCues وWorkflowFooter، مع حفظ اختيار product/warehouse/destination بالأسماء، الموقع المقترح، quantity، ProductStock.Edit، idempotency، التحقق/reset والـpayload. نجح 356/356 والبناء وPlaywright 7/7. التالي الوحيد: حوّل Putaway Rule Form فقط إلى V4 بقسم موصوف وإشارات warehouse/destination/target والهدف الشرطي والpriority وتذييل حفظ، مع حفظ default/product/category والخيارات المسماة والتحقق وdirty guard وأمر createRule. لا تغيّر filters أو الجدولين أو API/Application في هذه الشريحة.
 
 ## FRD-H — Branches/Warehouses Migration
 
