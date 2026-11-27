@@ -140,6 +140,19 @@ describe('LocationMovementsPageComponent', () => {
     expect(strip.textContent).toContain('reconciled');
     expect(strip.querySelector('article.success')).not.toBeNull();
   });
+  it('defines the complete typed physical ledger evidence table', () => {
+    const fixture = TestBed.createComponent(LocationMovementsPageComponent);
+    fixture.detectChanges();
+    const component = fixture.componentInstance as any;
+    expect(component.ledgerColumns().map((column: any) => column.key)).toEqual([
+      'createdAt', 'productName', 'warehouseName', 'fromLocation',
+      'toLocation', 'quantity', 'reference',
+    ]);
+    const table = fixture.nativeElement.querySelector('app-data-table.physical-ledger-table');
+    expect(table.textContent).toContain('Coffee');
+    expect(table.textContent).toContain('Main warehouse');
+    expect(table.textContent).toContain('MOVE-11');
+  });
   it('blocks invalid moves, preserves server errors, and guards dirty work', () => {
     const component = TestBed.createComponent(LocationMovementsPageComponent).componentInstance as any;
     component.form.patchValue({ warehouseId: 2, productId: 1, fromStorageLocationId: 4, toStorageLocationId: 4, quantity: 3 });

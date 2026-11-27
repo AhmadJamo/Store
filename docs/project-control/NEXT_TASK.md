@@ -2,9 +2,9 @@
 
 ## FRD-I — Inventory Migration
 
-> الحالة: IN PROGRESS — Location Movements Reconciliation Summary V4 مكتمل في 2026-11-27
+> الحالة: IN PROGRESS — Location Movements Workspace V4 مكتمل في 2026-11-27
 >
-> اكتملت reconciliation metrics كـSummaryStrip من أربعة مؤشرات total/linked/legacy/status مع حفظ أرقام الخادم وisReconciled والترجمة ونبرة الحالة. نجح 369/369 والبناء وPlaywright 7/7. التالي الوحيد: حوّل Physical Ledger فقط إلى typed DataTable من سبعة أعمدة يحفظ date/product/warehouse/from/to/quantity/reference وترتيب الخادم والحالة الفارغة. لا تغيّر API/Application.
+> اكتمل Physical Ledger typed DataTable من سبعة أعمدة يحفظ date/product/warehouse/from/to/quantity/reference وترتيب الخادم والحالة الفارغة؛ اكتملت Location Movements Workspace V4. نجح 370/370 والبناء وPlaywright 7/7. التالي الوحيد: نفّذ FRD-I Inventory acceptance closeout بدون تغيير runtime؛ شغّل البوابة الكاملة بما فيها backend وSecurityRegression، راجع مصفوفة 19 route/15 template مقابل المصدر، أنشئ سجل acceptance مؤرخاً، حدّث حالة FRD-I والخطة، واعمل commit مستقل. لا تدّعِ live authenticated API E2E من دون URL وstorage state.
 
 ## FRD-H — Branches/Warehouses Migration
 
